@@ -196,16 +196,16 @@ ModData = {
         rIN = "BELIEVED",
         rAS = "OMNI-SPIN",
         rDP = "PIERCING",
-        -- Trevor Smithy
-        eEX = "EASY"
-        eNH = "LESSENED"
-        eMS = "MIXED"
-        eGV = "FLOATED"
-        eVL = "SENSITIVE"
-        eDH = "PATCHED"
-        eIN = "VISIBLE"
-        eAS = "SPUN"
-        eDP = "FRIENDLY"
+        -- Trevor Smithy TODO FIX
+        -- eEX = "EASY"
+        -- eNH = "LESSENED"
+        -- eMS = "MIXED"
+        -- eGV = "FLOATED"
+        -- eVL = "SENSITIVE"
+        -- eDH = "PATCHED"
+        -- eIN = "VISIBLE"
+        -- eAS = "SPUN"
+        -- eDP = "FRIENDLY"
     },
     noun = {
         EX = "EXPERT",
@@ -226,16 +226,16 @@ ModData = {
         rIN = "BELIEF",
         rAS = "OMNI-SPIN",
         rDP = "HEARTACHE",
-        -- Trevor Smithy
-        eEX = "EASY"
-        eNH = "LESS HOLD"
-        eMS = "MIXUP"
-        eGV = "FLOAT"
-        eVL = "SENSITIVITY"
-        eDH = "PATCHED HOLE"
-        eIN = "VISIBLITY"
-        eAS = "SPIN"
-        eDP = "FRIEND"
+        -- Trevor Smithy TODO FIX
+        -- eEX = "EASY"
+        -- eNH = "LESS HOLD"
+        -- eMS = "MIXUP"
+        -- eGV = "FLOAT"
+        -- eVL = "SENSITIVITY"
+        -- eDH = "PATCHED HOLE"
+        -- eIN = "VISIBLITY"
+        -- eAS = "SPIN"
+        -- eDP = "FRIEND"
     },
 }
 
@@ -1167,7 +1167,8 @@ Fatigue = {
         { time = 1e99 }, -- Total: dmgTimerMul-90%, Cycle-1.5, Wrong+5
     },
     -- Trevor Smithy
-    eEX = { time = 90,  event = { 'extraQuestBase', .2, 'animDuration', .5 } },
+    eEX = {
+        { time = 90,  event = { 'extraQuestBase', .2, 'animDuration', .5 } },
         { time = 180, event = { 'extraQuestBase', .2, 'animDuration', .5 } },
         { time = 240, event = { 'extraQuestBase', .2, 'animDuration', 1 } },
         { time = 360, event = { 'dmgTimerMul', -.1, 'animDuration', 1 },                   text = "FATIGUE SETS IN_",          desc = "TimerSpeed++" },
@@ -1186,7 +1187,8 @@ Fatigue = {
         { time = 630, event = { 'animDuration', 20 }, --[[62]]                             text = "" },
         { time = 660, event = { 'animDuration', 64 }, --[[126]]                            text = "" },
         { time = 1e99 }, -- Total: dmgTimerMul-50%, Cycle-1, Wrong+2
-    --
+    },
+        --
     rDP = {
         { time = 20,  event = { 'dmgHeal', -1 }, --[[ 2 ]]                       text = "YOUR PASSION FADES_",                        desc = "Heal-",          duration = 10 },
         { time = 40,  event = { 'dmgHeal', -.5 }, --[[ 1.5 ]]                    text = "THEIR REPLIES BECOME LESS ENGAGED_",         desc = "Heal--",         duration = 10 },

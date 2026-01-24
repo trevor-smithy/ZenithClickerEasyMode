@@ -2452,7 +2452,9 @@ function GAME.finish(reason)
         end
 
         local resStr = {}
-        for i = 1, 7 do
+        --for i = 1, 7 do
+        -- Trevor Smithy
+        for i = 1, 14 do 
             if GAME[PieceData[i].id] then TABLE.append(resStr, PieceData[i].text) end
         end
         if #resStr > 0 then ins(resStr, " ") end

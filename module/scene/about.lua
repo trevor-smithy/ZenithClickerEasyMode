@@ -48,7 +48,8 @@ local function addMajorCredit(x, y, color, name, role, desc)
     if desc then addText({ COLOR.LD, desc }, x, y + 60, .2) end
 end
 
-addMajorCredit(0000, 060, { COLOR.HEX '80CCFF' }, "MRZ", "FOUNDER & LEAD PRODUCER", "Programming, Game Design, General Development")
+addMajorCredit(-160, 060, { COLOR.HEX '80CCFF' }, "MRZ", "FOUNDER & LEAD PRODUCER", "Programming, Game Design, General Development")
+addMajorCredit(0160, 060, { COLOR.HEX '00FF00' }, "TREVOR SMITHY", "EASY MODE PRODUCER", "of the mod: Zenith Clicker Easy Mode")
 addMajorCredit(-160, 160, { COLOR.HEX 'B966E3' }, "PETRTECH", "MUSIC", "F10 Music")
 addMajorCredit(0160, 160, { COLOR.HEX '9DBCFF' }, "RONEZKJ15", "MUSIC", "Extra Music")
 addMajorCredit(-320, 260, { COLOR.HEX 'DDFF80' }, "DJ  ASRIEL", "GRAPHICS", "Background Reconstruction & Game Icon")
