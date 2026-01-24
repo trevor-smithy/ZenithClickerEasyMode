@@ -563,7 +563,7 @@ function DrawBG(brightness, showRuler)
     gc_replaceTransform(SCR.origin)
     if GAME.bgH > -50 then
         local bgFloor = GAME.calculateFloor(GAME.bgH)
-        if STAT.bg and not GAME.invisUI then
+        if STAT.bg and not (GAME.invisUI or GAME.einvisUI) then
             if bgFloor < 10 then
                 gc_setColor(1, 1, 1)
                 local bottom = Floors[bgFloor - 1].top
@@ -655,7 +655,7 @@ function DrawBG(brightness, showRuler)
     gc_rectangle('fill', 0, 0, SCR.w, SCR.h)
 
     -- Ruler
-    if showRuler and GAME.bgH < 1700 and not GAME.invisUI then
+    if showRuler and GAME.bgH < 1700 and not (GAME.invisUI or GAME.einvisUI) then
         gc_replaceTransform(SCR.xOy_m)
         gc_setBlendMode('add')
         gc_setColor(1, 1, 1, GAME.bgH <= 1650 and .626 or .626 * (1700 - GAME.bgH) / 50 * brightness / 100)
@@ -701,7 +701,7 @@ function scene.draw()
         DrawBG(STAT.bgBrightness, true)
     end
 
-    if not GAME.invisUI then
+    if not (GAME.invisUI or GAME.einvisUI) then
         -- Wind Particles
         if GAME.height <= 1650 then
             gc_replaceTransform(SCR.origin)
@@ -838,6 +838,8 @@ function scene.draw()
         end
     end
 end
+
+-- TODO einvisUI stuff here
 
 local gvTimerColor1 = { 1, .942, .872, 0 }
 local gvTimerColor2 = { 0, 0, 0, 0 }
@@ -1417,6 +1419,47 @@ function scene.overDraw()
         end
     end
 
+    -- Trevor Smithy
+    -- TimeMul
+    if GAME.enightcore or GAME.eslowmo then
+        gc_replaceTransform(SCR.xOy_m)
+        gc_rotate(-1.5708)
+        gc_setLineWidth(42)
+        local a
+        if GAME.enightcore then
+            gc_setColor(1, 1, 1, GAME.playing and .1 or .26)
+            gc_circle('line', 0, 0, 620)
+            gc_setColor(1, 1, 1, GAME.playing and .26 or .42)
+            a = os.date('%H') / 6 * 3.1416
+            gc_setLineWidth(26)
+            gc_line(0, 0, 120 * cos(a), 120 * sin(a))
+            a = os.date('%M') / 30 * 3.1416
+            gc_setLineWidth(16)
+            gc_line(0, 0, 260 * cos(a), 260 * sin(a))
+            a = os.date('%S') / 30 * 3.1416
+            gc_setLineWidth(10)
+            gc_line(0, 0, 420 * cos(a), 420 * sin(a))
+            a = love.timer.getTime() / 30 * 3.1416 * 26
+            gc_line(0, 0, 520 * cos(a), 520 * sin(a))
+            a = love.timer.getTime() / 30 * 3.1416 * 60
+            gc_line(0, 0, 600 * cos(a), 600 * sin(a))
+        else
+            gc_setColor(1, 1, 1, GAME.playing and .0626 or .1)
+            gc_circle('line', 0, 0, 620)
+            gc_setColor(1, 1, 1, GAME.playing and .1 or .26)
+            a = os.date('%H') / 6 * 3.1416
+            gc_setLineWidth(26)
+            gc_line(0, 0, 120 * cos(a), 120 * sin(a))
+            a = os.date('%M') / 30 * 3.1416
+            gc_setLineWidth(16)
+            gc_line(0, 0, 260 * cos(a), 260 * sin(a))
+            a = os.date('%S') / 30 * 3.1416
+            gc_setLineWidth(10)
+            gc_line(0, 0, 420 * cos(a), 420 * sin(a))
+        end
+    end
+    --
+
     -- Test
     if TestMode then
         -- Watermark
@@ -1442,6 +1485,15 @@ function scene.overDraw()
         gc_draw(TEXTURE.transition, 0, 0, 0, .42 / 128 * SCR.w, SCR.h)
         gc_draw(TEXTURE.transition, SCR.w, 0, 0, -.42 / 128 * SCR.w, SCR.h)
     end
+
+    --Trevor Smithy
+    if GAME.efastLeak then
+        gc_replaceTransform(SCR.origin)
+        gc_setColor(0, .42, 1, (GAME.playing and .626 or 1) * (M.EX > 0 and .62 or .42))
+        gc_draw(TEXTURE.transition, 0, 0, 0, .42 / 128 * SCR.w, SCR.h)
+        gc_draw(TEXTURE.transition, SCR.w, 0, 0, -.42 / 128 * SCR.w, SCR.h)
+    end
+    --
 
     -- Ultra cover
     if URM and (not GAME.playing or GAME.anyRev) then

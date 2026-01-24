@@ -177,6 +177,15 @@ local GAME = {
     fastLeak = false,
     invisCard = false,
     invisUI = false,
+    -- Trevor Smithy
+    enightcore = false,
+    eslowmo = false,
+    eglassCard = false,
+    ecloseCard = false,
+    efastLeak = false,
+    einvisCard = false,
+    einvisUI = false,
+    --
 
     achv_perfectH = nil,
     achv_demoteH = nil,
@@ -919,6 +928,26 @@ end
 
 function GAME.showFloorText(f, name, duration)
     if GAME.invisUI then return end
+    -- Trevor Smithy
+    if GAME.einvisUI then
+        TEXT:add {
+            text = "Floor",
+            x = 160, y = 290, k = 1.6, fontSize = 30,
+            color = 'LT', duration = duration,
+        }
+        TEXT:add {
+            text = tostring(f),
+            x = 240, y = 280, k = 2.6, fontSize = 30,
+            color = 'LT', duration = duration, align = 'left',
+        }
+        TEXT:add {
+            text = name,
+            x = 200, y = 350, k = 1.2, fontSize = 30,
+            color = 'LT', duration = duration,
+        }
+        return
+    end
+    --
     TEXT:add {
         text = "Floor",
         x = 160, y = 290, k = 1.6, fontSize = 30,
@@ -1190,6 +1219,10 @@ function GAME.refreshRPC()
         local pitch = URM and M.GV == 2 and 3 or M.GV
         if GAME.nightcore then pitch = pitch + 12 end
         if GAME.slowmo then pitch = pitch - 12 end
+        -- Trevor Smithy
+        if GAME.enightcore then pitch = pitch + 12 end
+        if GAME.eslowmo then pitch = pitch - 12 end
+        --
         if pitch ~= 0 then stateStr = stateStr .. (pitch > 0 and " (+" or " (") .. pitch .. ")" end
         if M.IN > 0 then stateStr = stateStr:gsub(".", { j = "r", s = "z", p = "b", c = "g", t = "d" }) end
     end
@@ -1444,6 +1477,18 @@ function GAME.refreshRev()
         end):setUnique('revSwitched'):setDuration(.26):run()
     end
 end
+
+-- Trevor Smithy
+function GAME.refreshEasy()
+    local hasEasy = false
+    for _, C in ipairs(CD) do
+        if M[C.id] == -1 then
+            hasEasy = true
+            break
+        end
+    end
+end
+--
 
 function GAME.refreshUltra()
     GAME.anyUltra = URM and GAME.anyRev
@@ -2066,8 +2111,12 @@ function GAME.start()
     GAME.timerMul = 1
     GAME.isUltraRun = GAME.anyUltra
     GAME.attackMul = GAME.isUltraRun and .62 or 1
-    GAME.xpLockLevelMax = URM and M.NH == 2 and 1 or 5
-    GAME.leakSpeed = (M.EX > 0 and 5 or 3) + (GAME.fastLeak and 8 or 0)
+    -- Trevor Smithy
+    --GAME.xpLockLevelMax = URM and M.NH == 2 and 1 or 5
+    --GAME.leakSpeed = (M.EX > 0 and 5 or 3) + (GAME.fastLeak and 8 or 0)
+    GAME.xpLockLevelMax = URM and M.NH == 2 and 1 or GAME.efastLeak and 8 or 5
+    GAME.leakSpeed = (M.EX > 0 and 5 or 3) + (M.EX < 0 and -1 or 0) + (GAME.fastLeak and 8 or 0) + (GAME.efastLeak and -2 or 0)
+    --
     GAME.invincible = false
 
     TASK.unlock('sure_quit')

@@ -171,7 +171,10 @@ function Card:setActive(auto, key)
         end
     else
         TASK.unlock('cannotStart')
-        revOn = self.active and (key == 2 or KBIsDown('lctrl', 'lalt', 'rctrl', 'ralt'))
+        -- Trevor Smithy
+        --easyOn = self.active and (key == 3 or KBIsDown('lalt', 'ralt'))
+        --
+        revOn = self.active and (key == 2 or KBIsDown('lctrl', 'rctrl'))
         if revOn and completion[self.id] == 0 then
             revOn = false
             noSpin = true
@@ -183,6 +186,10 @@ function Card:setActive(auto, key)
         end
         local wasRev = M[self.id] == 2
         M[self.id] = self.active and (revOn and 2 or 1) or 0
+        -- Trevor Smithy TODO FIX PLZ
+        --M[self.id] = self.active and (revOn and 2 or easyOn and -1 or 1) or 0
+        --
+
         -- if revOn then -- Limit only one Rev mod can be selected
         --     for _, C in ipairs(Cards) do
         --         if C.active and C ~= self then
@@ -190,7 +197,11 @@ function Card:setActive(auto, key)
         --         end
         --     end
         -- end
-        self.upright = not (self.active and revOn)
+        -- TODO implement easyOn here
+        -- Trevor Smithy
+        --self.upright = not (self.active and revOn)
+        self.upright = not (self.active and revOn or self.active and easyOn)
+        --
         if revOn or wasRev then GAME.refreshRev() end
         TASK.removeTask_code(task_refreshBGM)
         TASK.new(task_refreshBGM)

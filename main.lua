@@ -1020,6 +1020,10 @@ function RefreshBGM(mode)
     local pitch = M.GV > 0 and 2 ^ ((URM and M.GV == 2 and 3 or M.GV) / 12) or 1
     if GAME.slowmo then pitch = pitch / 2 end
     if GAME.nightcore then pitch = pitch * 2 end
+    -- Trevor Smithy
+    if GAME.eslowmo then pitch = pitch / 2 end
+    if GAME.enightcore then pitch = pitch * 2 end
+    --
     local justBegin = BGM.tell() < 1
     BGM.set('all', 'pitch', pitch, justBegin and 0 or .26)
     BGM.set('all', 'highgain', M.IN == 0 and 1 or M.IN == 1 and .8 or not URM and .626 or .55, justBegin and 0 or .626)
