@@ -292,6 +292,9 @@ ComboData = {
         { set = "MS VL AS",         name = "Human Experiment" },
         { set = "EX GV DH",         name = "Thermal Anomaly" },
         { set = "MS GV AS",         name = "Dazed" },
+
+        -- Trevor Smithy
+        { set = "eEX eVL eAS",         name = "The Pro G(r)am(m)ing Smithy" },
     },
 
     game = {

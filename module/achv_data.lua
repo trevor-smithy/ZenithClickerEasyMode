@@ -1397,6 +1397,15 @@ Achievements = {
         type = 'issued',
         hide = TRUE,
     },
+    { -- Programmer & Pro Gamer
+        ex = true,
+        id = 'programmer_gamer',
+        name = "Programmer & Pro Gamer",
+        desc = [[Reach F10 while maintaining TERASPEED with eEX, eVL, eAS and eL]],
+        quote = [["WAH-BAAM!"]],
+        credit = "@TrevorSmithy",
+        type = 'issued',
+    },
 
     { title = "Issued-Misc (No CR)" },
     { -- identity

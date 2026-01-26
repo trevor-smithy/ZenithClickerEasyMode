@@ -363,4 +363,12 @@ return {
         This kind of crazy challenge shouldn't exist from the start.
         Congratulations.
     ]],
+    -- Trevor Smithy
+    ['eEX eVL eAS'] = STRING.trimIndent [[
+        The Pro G(r)am(m)ing Smithy, because, well, I'm Trevor Smithy and I'm both a
+        programmer and a (questionably) pro gamer. In any case, this has been fun to develop and playtest.
+        eEX & eL form a powerful combo, completely eliminating climb speed decay. 
+        eVL is just a +1 buff to all attacks and eAS with no downsides allows for some crazy fast runs.
+        Thanks for playing! WAH-BAAM! - Trevor Smithy
+    ]],
 }

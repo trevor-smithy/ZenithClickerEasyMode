@@ -326,7 +326,7 @@ function scene.mouseDown(x, y, k)
     -- Trevor Smithy
     --if getBtnPressed() > 1 + (URM and M.VL == 2 and 0 or floor(M.VL / 2)) then return true end
     if getBtnPressed() > 1 + (URM and M.VL == 2 and 0 or M.VL == -1 and 0 or floor(M.VL / 2)) then return true end
-    if M.EX == 0 then
+    if M.EX <= 0 then
         SFX.play('move')
         mouseTrigger(x, y, k)
     else
@@ -376,7 +376,7 @@ function scene.touchDown(x, y, id)
     end
 
     HoldingButtons['touch' .. tostring(id)] = true
-    if M.EX == 0 then
+    if M.EX <= 0 then
         SFX.play('move')
         mouseTrigger(x, y, next(revHold) and 2 or 1)
     else
@@ -413,7 +413,8 @@ function scene.keyDown(key)
             if floor == 10 then GAME.height = GAME.height + 6.26 end
         end
     else
-        if M.EX == 0 then
+        -- Trevor Smithy (== to <=)
+        if M.EX <= 0 then
             SFX.play('move')
             keyTrigger(key)
         else
@@ -1278,8 +1279,8 @@ function scene.overDraw()
     end
 
     if not GAME.invisUI then
-        -- Allspin keyboard hint
-        if M.AS > 0 and M.EX == 0 then
+        -- Allspin keyboard hint Trevor Smithy (any AS and eEX or no EX)
+        if M.AS ~= 0 and M.EX <= 0 then
             for i = 1, #Cards do
                 local obj = ShortCut[i]
                 local x, y = Cards[i].x + 90, Cards[i].y + 155
@@ -1321,7 +1322,11 @@ function scene.overDraw()
             gc_replaceTransform(SCR.xOy_ul)
             local h = TEXTS.title:getHeight()
             gc_setColor(TextColor)
-            gc_draw(TEXTS.title, lerp(-181, 10, exT), (h / 2 + 2) - d, 0, 1, 1 - 2 * revT, 0, (h / 2 + 2))
+            if M.EX ~= -1 then
+                gc_draw(TEXTS.title, lerp(-181, 10, exT), (h / 2 + 2) - d, 0, 1, 1 - 2 * revT, 0, (h / 2 + 2))
+            else
+                gc_draw(TEXTS.easyTitle, lerp(-181, 10, exT), (h / 2 + 2) - d, 0, 1, 1 - 2 * revT, 0, (h / 2 + 2))
+            end
             gc_replaceTransform(SCR.xOy_ur)
             gc_draw(TEXTS.pb, -10, -d, 0, 1, 1, TEXTS.pb:getWidth(), 0)
             gc_replaceTransform(SCR.xOy_dl)
@@ -1633,7 +1638,7 @@ scene.widgetList = {
         onPress = function(k)
             if k == 3 then return end
             HoldingButtons.startBtn = true
-            if M.EX == 0 then
+            if M.EX <= 0 then
                 SFX.play('move')
                 button_start()
             else
@@ -1656,7 +1661,7 @@ scene.widgetList = {
         onPress = function(k)
             if k == 3 then return end
             HoldingButtons.resetBtn = true
-            if M.EX == 0 then
+            if M.EX <= 0 then
                 SFX.play('move')
                 button_reset()
             else

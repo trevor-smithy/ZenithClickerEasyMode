@@ -37,6 +37,9 @@ return {
     f9r = 'assets/music/f9-rev.ogg',
     f10r = 'assets/music/f10-rev.ogg',
     terar = 'assets/music/tera-rev.ogg',
-
+    
     fomg = 'assets/music/fomg.ogg',
+
+    --Trevor Smithy
+    terae = 'assets/music/tera-easy.ogg',
 }

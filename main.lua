@@ -352,6 +352,7 @@ TEXTURE = {
             its_kinda_rare = aq(14, 4),
             fruitless_effort = aq(6, 7),
             false_god = aq(2, 8),
+            programmer_gamer = aq(10, 4),
 
             identity = aq(6, 6),
             respectful = aq(2, 1),
@@ -544,6 +545,7 @@ TEXTS = { -- Font size can only be 30 and 50 here !!!
     forfeit    = GC.newText(FONT.get(50), "KEEP HOLDING TO FORFEIT"),
     credit     = GC.newText(FONT.get(30), "Almost all assets from TETR.IO"),
     test       = GC.newText(FONT.get(50), "TEST"),
+    easyTitle  = GC.newText(FONT.get(50), "EASY QUICK PICK"),
 }
 if not FontLoaded then
     TASK.new(function()
@@ -932,6 +934,8 @@ BgmData = {
     fomg = { meta = '4|4  90 & 100 BPM  Db Major & Bb Minor', bar = 4, bpm = 100, toneFix = 3, loop = { 38.4 - 11.862, 144 - 11.862 }, end1 = 144 - 11.862, end2 = 153.6 - 11.862 },
     tera = { meta = '4|4  240 BPM  C# Minor', bar = 4, bpm = 240, toneFix = 1, loop = { 76, 140 }, introLen = 2, teleport = { -1, 20 }, end1 = 140, end2 = 142, end3 = 144, end4 = 146 },
     terar = { meta = '4|4  240 BPM  C# Minor', bar = 4, bpm = 240, toneFix = 1, loop = { 84 - 15.565, 172 - 15.565 }, teleport = { 0, 18 - 15.565 } },
+    --Trevor Smithy
+    terae = { meta = '4|4  240 BPM  C# Minor', bar = 4, bpm = 240, toneFix = 1, loop = { 76, 140 }, introLen = 2, teleport = { -1, 20 }, end1 = 140, end2 = 142, end3 = 144, end4 = 146 },
 }
 
 BgmPlaying = false ---@type ZC.bgmName | false
@@ -985,6 +989,15 @@ function PlayBGM(name, force)
         if startFrom then startFrom = startFrom - 1 end
         local start = (GAME.playing and GAME.floor or startFrom or math.random(0, 9)) * BgmData.tera.introLen
         BgmNeedSkip[1] = start + BgmData.tera.introLen
+        BGM.set('all', 'seek', start)
+        RefreshBGM()
+    elseif name == 'terae' then
+        BGM.play('terae', '-sdin')
+        local startFrom
+        startFrom = last and tonumber(last:match("%d+"))
+        if startFrom then startFrom = startFrom - 1 end
+        local start = (GAME.playing and GAME.floor or startFrom or math.random(0, 9)) * BgmData.terae.introLen
+        BgmNeedSkip[1] = start + BgmData.terae.introLen
         BGM.set('all', 'seek', start)
         RefreshBGM()
     else
@@ -1051,13 +1064,14 @@ function RefreshBGM(mode)
     if BgmPlaying == 'f0' then
         local revMode = mode == 'f0r' or RevMusicMode()
         BGM.set('all', 'volume', revMode and 0 or 1, 2.6)
-        BGM.set('expert', 'volume', M.EX > 0 and 1 or 0, .26)
+        -- Trevor Smithy > to ~=
+        BGM.set('expert', 'volume', M.EX ~= 0 and 1 or 0, .26)
         BGM.set('piano', 'volume', M.NH == 0 and 1 or M.NH == 1 and .26 or 0)
         BGM.set('piano2', 'pitch', 2 * pitch, 0)
-        BGM.set('piano2', 'volume', (M.DP > 0 or VALENTINE and not revMode) and .626 or 0, .26)
+        BGM.set('piano2', 'volume', (M.DP ~= 0 or VALENTINE and not revMode) and .626 or 0, .26)
         BGM.set('violin', 'volume', M.DP == 2 and 1 or 0, .26)
         BGM.set('violin2', 'volume', M.DP == 2 and 1 or 0, .26)
-        BGM.set('rev', 'volume', revMode and (M.DP > 0 and .5 or .7) or 0, revMode and 1.6 or 2.6)
+        BGM.set('rev', 'volume', revMode and (M.DP ~= 0 and .5 or .7) or 0, revMode and 1.6 or 2.6)
     elseif BgmPlaying == 'f1' then
         local revMode = mode == 'f1r' or RevMusicMode()
         BGM.set('f1', 'volume', 1)
@@ -1161,6 +1175,10 @@ function Task_MusicEnd(manual)
             BgmNeedStop = outroStart + 8 * 60 / D.bpm
         end
     elseif BgmPlaying == 'tera' then
+        outroStart = D.loop[2] + math.random(0, 3) * 8 * 60 / D.bpm
+        BgmNeedStop = outroStart + 8 * 60 / D.bpm
+    -- Trevor Smithy
+    elseif BgmPlaying == 'terae' then
         outroStart = D.loop[2] + math.random(0, 3) * 8 * 60 / D.bpm
         BgmNeedStop = outroStart + 8 * 60 / D.bpm
     elseif BgmPlaying == 'terar' then

@@ -22,7 +22,7 @@ function love.conf(t)
 
     t.identity = 'Zenith_Clicker_Easy_Mode'
     t.externalstorage = true
-    t.version = "0.2"
+    t.version = "11.4"
     t.gammacorrect = false
     t.appendidentity = true
     t.accelerometerjoystick = false

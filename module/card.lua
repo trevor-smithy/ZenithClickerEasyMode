@@ -58,7 +58,7 @@ end
 local completion = GAME.completion
 local KBIsDown = love.keyboard.isDown
 local function tween_deckPress(t) DeckPress = 26 * (1 - t) end
-local function tween_expertOn(t) GAME.exTimer = M.EX > 0 and t or (1 - t) end
+local function tween_expertOn(t) GAME.exTimer = M.EX ~= 0 and t or (1 - t) end
 local function task_refreshBGM()
     TASK.yieldT(.1)
     RefreshBGM()
@@ -724,7 +724,7 @@ function Card:draw()
     if faceUp then
         gc_setColor((GAME.glassCard and ModData.color or ModData.textColor)[self.id])
         local active = playing and self.inLastCommit or not playing and self.active
-        if M.EX == 0 then
+        if M.EX <= 0 then
             if active then
                 gc_setLineWidth(6)
                 gc.polygon('line', iconFrame)

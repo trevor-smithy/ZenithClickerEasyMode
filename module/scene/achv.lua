@@ -237,7 +237,7 @@ local function refreshAchivement()
         local count = (#setStr - revCount) / 2
         local len_noDP = count - (setStr:find('DP') and not setStr:find('rDP') and 1 or 0)
         if len_noDP >= 7 then
-            for i = len_noDP, 7, -1 do
+            for i = len_noDP, 14, -1 do
                 if revCount > 0 then swFin = SubmitAchv(sw[i - 6] .. '_plus', h, swFin) or swFin end
                 swFin = SubmitAchv(sw[i - 6], h, swFin) or swFin
             end

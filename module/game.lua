@@ -919,7 +919,11 @@ function GAME.startTeraAnim()
     TASK.removeTask_code(GAME.task_gigaspeed)
     TASK.new(GAME.task_gigaspeed)
     SFX.play('zenith_speedrun_start')
-    PlayBGM('tera', true)
+    if M.EX == -1 and M.AS == -1 and M.VL == -1 and GAME.efastLeak then
+        PlayBGM('terae', true)
+    else
+        PlayBGM('tera', true)
+    end
 end
 
 function GAME.stopTeraspeed(mode)
@@ -1016,10 +1020,11 @@ function GAME.upFloor()
         end
     end
 
+    -- Trevor Smithy
     GAME.questFavor =
         M.VL == 2 and 50 or (
-            (M.EX > 0 and 0 or 33)
-            - (M.MS > 0 and 25 or 0)
+            (M.EX > 0 and 0 or M.EX == -1 and 50 or 33)
+            - (M.MS ~= 0 and 25 or 0)
             - GAME.floor * 3
         )
     if M.GV > 0 then GAME.gravDelay = GravityTimer[M.GV][GAME.floor] end
@@ -1054,6 +1059,7 @@ function GAME.upFloor()
             GAME.gigaTime = GAME.time
             GAME.setGigaspeedAnim(false)
             if GAME.teramusic then IssueAchv('blazing_speed') end
+            if GAME.teramusic and M.EX == -1 and M.VL == -1 and M.AS == -1 and GAME.efastLeak then IssueAchv('programmer_gamer') end
             GAME.stopTeraspeed('f10')
 
             local setStr = (GAME.anyUltra and 'u' or '') .. GAME.comboStr
@@ -1144,11 +1150,11 @@ function GAME.downFloor()
             GAME.readyShuffle(GAME.negFloor * 2.6)
         end
     end
-
+    -- Trevor Smithy
     GAME.questFavor =
         M.VL == 2 and 50 or (
-            (M.EX > 0 and 0 or 33)
-            - (M.MS > 0 and 25 or 0)
+            (M.EX > 0 and 0 or M.EX == -1 and 50 or 33)
+            - (M.MS ~= 0 and 25 or 0)
             - GAME.negFloor * 3
         )
     if M.GV > 0 then GAME.gravDelay = GravityTimer[M.GV][GAME.negFloor] end
@@ -1192,11 +1198,12 @@ function GAME.nextNegEvent()
 end
 
 local revLetter = setmetatable({
-    P = "Ь", R = "ᖉ", T = "ꓕ", Q = "Ơ", U = "Ո", A = "Ɐ", L = "Γ", S = "Ƨ"
+    P = "Ь", R = "ᖉ", T = "ꓕ", Q = "Ơ", U = "Ո", A = "Ɐ", L = "Γ", S = "Ƨ", Y = "⅄"
 }, { __index = function(_, k) return k end })
 function GAME.refreshRPC()
     local detailStr = "QUICK PICK"
     if M.EX > 0 then detailStr = "EXPERT " .. detailStr end
+    if M.EX == -1 then detailStr = "EASY " .. detailStr end
     if M.DP > 0 then detailStr = detailStr:gsub("QUICK", "DUAL") end
     if TestMode then detailStr = detailStr:gsub("PICK", "TEST") end
     if GAME.anyRev then detailStr = detailStr:gsub(".", revLetter) end
@@ -2136,7 +2143,7 @@ function GAME.start()
     --GAME.xpLockLevelMax = URM and M.NH == 2 and 1 or 5
     --GAME.leakSpeed = (M.EX > 0 and 5 or 3) + (GAME.fastLeak and 8 or 0)
     GAME.xpLockLevelMax = URM and M.NH == 2 and 1 or GAME.efastLeak and 8 or 5
-    GAME.leakSpeed = (M.EX > 0 and 5 or 3) + (M.EX < 0 and -1 or 0) + (GAME.fastLeak and 8 or 0) + (GAME.efastLeak and -2 or 0)
+    GAME.leakSpeed = (M.EX > 0 and 5 or 3) + (M.EX == -1 and -1 or 0) + (GAME.fastLeak and 8 or 0) + (GAME.efastLeak and -2 or 0)
     --
     GAME.invincible = false
 
@@ -2184,7 +2191,7 @@ function GAME.start()
     GAME.floor = 0
     GAME.height = 0
     GAME.heightBuffer = 0
-    GAME.fatigueSet = Fatigue[M.EX == 2 and 'rEX' or M.DP == 2 and 'rDP' or 'normal']
+    GAME.fatigueSet = Fatigue[M.EX == 2 and 'rEX' or M.DP == 2 and 'rDP' or M.EX == -1 and 'eEX' or 'normal']
     GAME.fatigue = 1
     GAME.animDuration = GAME.slowmo and 26 or 1
     GAME.lastCommit = {}
@@ -2241,9 +2248,13 @@ function GAME.start()
     GAME.lastFlip = false
     GAME.switch_sickness = 0
     GAME.hasseenDPnerf = false
-    if M.DP == 2 then
+    -- Trevor Smithy
+    if M.DP == 2 and M.EX ~= -1 then
         GAME.rankLimit = 8 + 4 * M.EX
         GAME.dmgHeal = 3
+    elseif M.DP == 2 then
+        GAME.rankLimit = 16
+        GAME.dmgHeal = 4
     end
 
     if M.DP > 0 then
