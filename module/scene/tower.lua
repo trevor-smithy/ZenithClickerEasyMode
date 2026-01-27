@@ -383,9 +383,8 @@ function scene.touchDown(x, y, id)
     HoldingButtons['touch' .. tostring(id)] = true
     if M.EX <= 0 then
         SFX.play('move')
-        mouseTrigger(x, y, next(revHold) and 2 or 1)
         -- Trevor Smithy
-        mouseTrigger(x, y, next(easyHold) and 2 or 1)
+        mouseTrigger(x, y, next(easyHold) and 3 or next(revHold) and 2 or 1)
     else
         SFX.play('rotate')
         -- scene.mouseMove(x, y, 0, 0)
@@ -406,8 +405,7 @@ function scene.touchUp(x, y, id)
     if not HoldingButtons['touch' .. tostring(id)] then return end
     HoldingButtons['touch' .. tostring(id)] = nil
     if M.EX > 0 then
-        mouseTrigger(x, y, next(revHold) and 2 or 1)
-        mouseTrigger(x, y, next(easyHold) and 2 or 1)
+        mouseTrigger(x, y, next(easyHold) and 3 or next(revHold) and 2 or 1)
     end
 end
 
