@@ -833,8 +833,12 @@ function scene.draw()
             gc_setColor(TextColor)
             gc_setAlpha(.12 + abs(math.log(GAME.comboZP)) * 2)
             gc_draw(TEXTS.zpPreview, 1370, 275, 0, 1, 1, TEXTS.zpPreview:getWidth())
-            if GAME.comboMP >= 6 then
-                gc_setAlpha(clampInterpolate(5, 0, 8, 1, GAME.comboMP))
+            if GAME.comboMP >= 6 or GAME.comboMP <= -3 then
+                local tempComboMP = GAME.comboMP
+                if GAME.comboMP < 0 then
+                    tempComboMP = GAME.comboMP * -1
+                end
+                gc_setAlpha(clampInterpolate(2, 0, 8, 1, tempComboMP))
                 gc_draw(TEXTS.mpPreview, 1370, 235, 0, 1, 1, TEXTS.mpPreview:getWidth())
             end
         end
@@ -1171,7 +1175,8 @@ function scene.overDraw()
             local ky = max(kx, Q.k)
             local a = 1
             if M.IN == 2 then
-                local k = M.DP > 0 and i <= 2 and 1 / i or i ^ -2
+                -- Trevor Smithy
+                local k = M.DP ~= 0 and i <= 2 and 1 / i or i ^ -2
                 a = clamp(
                     a * (1 - (GAME.questTime - .26) * (GAME.floor + .62) * .26 * k),
                     GAME.faultWrong and not URM and i * .26 or 0, 1

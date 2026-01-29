@@ -234,7 +234,8 @@ local function refreshAchivement()
         setStr = setStr:gsub('^u', '')
         submit(setStr, h)
         local revCount = STRING.count(setStr, 'r')
-        local count = (#setStr - revCount) / 2
+        local easyCount = STRING.count(setStr, 'e')
+        local count = (#setStr - revCount - easyCount) / 2
         local len_noDP = count - (setStr:find('DP') and not setStr:find('rDP') and 1 or 0)
         if len_noDP >= 7 then
             for i = len_noDP, 14, -1 do
@@ -242,7 +243,7 @@ local function refreshAchivement()
                 swFin = SubmitAchv(sw[i - 6], h, swFin) or swFin
             end
         end
-        local mp = count + revCount
+        local mp = count + revCount - easyCount
         if revCount >= 2 and mp >= 8 then
             for m = mp, 8, -1 do
                 submit(RevSwampName[min(m, #RevSwampName)]:sub(2, -2):lower(), h, m < mp)

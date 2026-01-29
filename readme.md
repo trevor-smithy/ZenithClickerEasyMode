@@ -57,15 +57,17 @@ Each mod creates a unique experience by twisting the rules, but also increases t
 
 - You cannot manually deselect cards.
 
-### Less Hold (`eNH`)
+### Moderate Hold (`eNH`)
 
-- Cards must be pressed **twice** to deactivate. **(CURRENTLY NOT IMPLEMENTED)**
+- Cards must be pressed **twice** to deactivate.
+- Attack **increased by 1.**
+- Attack buffer **increased by 25%.**
 
 ### Messiness (`MS`)
 
 - Cards are **lightly shuffled** at the start of **floors 1, 2, 5, and 8**. The cards will always be in or adjacent to their correct position.
 
-### Mixup (`eMS`)
+### Tidiness (`eMS`)
 
 - Cards are **lightly shuffled** at the start of **floors 1 and 10.** The cards will always be in or adjacent to their correct position. **(CURRENTLY NOT IMPLEMENTED)**
 
@@ -73,7 +75,7 @@ Each mod creates a unique experience by twisting the rules, but also increases t
 
 - **Automatically commit** some time after the first card flip. The timer starts at **9s** at floor 1, and decreases every floor until **4s** at floor 10. The timer will also automatically start if you flip no cards for 2.6s.
 
-### Float (`eGV`)
+### Lift (`eGV`)
 
 - **Automatically commit** some time after the first card flip. The timer starts at **10s** at floor 1, and decreases every floor until **5s** at floor 10.
 - Damage timer is **25% slower.**
@@ -94,7 +96,7 @@ Each mod creates a unique experience by twisting the rules, but also increases t
 - Quests can sometimes be slightly shuffled.
 - TODO: add specifics to difficulty change
 
-### Patched Hole (`eDH`)
+### Salvation (`eDH`)
 
 - Quests are **easier.**
 - Maximum quest size **reduced by 1.** (until final fatigue effect)
@@ -108,8 +110,7 @@ Each mod creates a unique experience by twisting the rules, but also increases t
 ### Visible (`eIN`)
 
 - All cards are **face down.**
-- Quest colours are desaturated **if they contain multiple cards.**
-- Quest hints are **always shown.** **(CURRENTLY NOT IMPLEMENTED)**
+- Quest hints are **always shown.**
 
 ### All-Spin (`AS`)
 
@@ -131,8 +132,7 @@ Each mod creates a unique experience by twisting the rules, but also increases t
 ### Friend (`eDP`)
 
 - There are two "players" instead of one. You can swap players by activating the Duo card, or by completing the second quest in the queue (the cards will be highlighted pink while you do this).
-- Revives are a bit easier.
-- Fatigue effects allow for greater healing. **(CURRENTLY NOT IMPLEMENTED)**
+- Revives are a **bit easier**. 
 
 ## SPOILERS
 

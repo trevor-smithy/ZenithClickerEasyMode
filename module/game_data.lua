@@ -110,18 +110,18 @@ ModData = {
     -- Trevor Smithy
     easyName = {
         EX = "< EASY MODE >",
-        NH = "< LESS HOLD >",
-        MS = "< MINOR MIXUP >",
-        GV = "< FLOAT >",
+        NH = "< MODERATE HOLD >",
+        MS = "< TIDINESS >",
+        GV = "< LIFT >",
         VL = "< TRANQUILITY >",
-        DH = "< PATCHED HOLE >",
+        DH = "< SALVATION >",
         IN = "< VISIBLE >",
         AS = "< SPIN >",
         DP = "< FRIEND >",
     },
     easyDesc = {
         EX = "A MORE LENIENT CHALLENGE",
-        NH = "CANCELING IS DIFFICULT",
+        NH = "CANCELING IS DIFFICULT, MUST CLICK TWICE",
         MS = "SHUFFLES SOME CARDS",
         GV = "AUTO COMMITS OCCUR",
         VL = "LARGER GAPS BETWEEN CARDS",
@@ -179,7 +179,7 @@ ModData = {
     --prio_name = { IN = 0, MS = 1, VL = 2, NH = 3, DH = 4, AS = 5, GV = 6, EX = 7, DP = 8, rIN = 0, rMS = 1, rVL = 2, rNH = 3, rDH = 4, rAS = 5, rGV = 6, rEX = 7, rDP = 8 },
     --prio_icon = { EX = 0, DP = 1, DH = 2, VL = 3, GV = 4, NH = 5, MS = 6, IN = 7, AS = 8, rEX = 0, rDP = 1, rDH = 2, rVL = 3, rGV = 4, rNH = 5, rMS = 6, rIN = 7, rAS = 8 },
     --prio_card = { EX = 0, NH = 1, MS = 2, GV = 3, VL = 4, DH = 5, IN = 6, AS = 7, DP = 8, rEX = 0, rNH = 1, rMS = 2, rGV = 3, rVL = 4, rDH = 5, rIN = 6, rAS = 7, rDP = 8 },
-    prio_name = { IN = 0, MS = 1, VL = 2, NH = 3, DH = 4, AS = 5, GV = 6, EX = 7, DP = 8, rIN = 0, rMS = 1, rVL = 2, rNH = 3, rDH = 4, rAS = 5, rGV = 6, rEX = 7, rDP = 8, eIN = 0, eMS = 1, eVL = 2, eNH = 3, eDH = 4, eAS = 5, eGV = 6, eEX = 7, eDP = 8 },
+    prio_name = { IN = 0, MS = 1, VL = 2, NH = 3, DH = 4, AS = 5, GV = 6, EX = 7, DP = 8, rIN = 0, rMS = 1, rVL = 2, rNH = 3, rDH = 4, rAS = 5, rGV = 6, rEX = 7, rDP = 8, eEX = 0, eIN = 1, eMS = 2, eVL = 3, eNH = 4, eDH = 5, eGV = 6, eDP = 7, eAS = 8 },
     prio_icon = { EX = 0, DP = 1, DH = 2, VL = 3, GV = 4, NH = 5, MS = 6, IN = 7, AS = 8, rEX = 0, rDP = 1, rDH = 2, rVL = 3, rGV = 4, rNH = 5, rMS = 6, rIN = 7, rAS = 8, eEX = 0, eDP = 1, eDH = 2, eVL = 3, eGV = 4, eNH = 5, eMS = 6, eIN = 7, eAS = 8 },
     prio_card = { EX = 0, NH = 1, MS = 2, GV = 3, VL = 4, DH = 5, IN = 6, AS = 7, DP = 8, rEX = 0, rNH = 1, rMS = 2, rGV = 3, rVL = 4, rDH = 5, rIN = 6, rAS = 7, rDP = 8, eEX = 0, eNH = 1, eMS = 2, eGV = 3, eVL = 4, eDH = 5, eIN = 6, eAS = 7, eDP = 8 },
     --
@@ -203,15 +203,15 @@ ModData = {
         rAS = "OMNI-SPIN",
         rDP = "PIERCING",
         -- Trevor Smithy
-        eEX = "EASY",
-        eNH = "LESSENED",
-        eMS = "MIXED",
-        eGV = "FLOATED",
-        eVL = "TRANQUIL",
-        eDH = "PATCHED",
-        eIN = "VISIBLE",
-        eAS = "SPUN",
-        eDP = "FRIENDLY",
+        eEX = "EASY", -- 0 7 
+        eNH = "MODERATE", -- 4 3
+        eMS = "TIDY", -- 2 1
+        eGV = "LIFTED", -- 6 6
+        eVL = "TRANQUIL", -- 3 2
+        eDH = "SAVED", -- 5 4
+        eIN = "VISIBLE", -- 1 0
+        eAS = "SPUN", -- 8 5
+        eDP = "FRIENDLY", -- 7 8
     },
     noun = {
         EX = "EXPERT",
@@ -234,13 +234,13 @@ ModData = {
         rDP = "HEARTACHE",
         -- Trevor Smithy
         eEX = "EASY",
-        eNH = "LESS HOLD",
-        eMS = "MIXUP",
-        eGV = "FLOAT",
+        eNH = "MODERATION",
+        eMS = "TIDINESS",
+        eGV = "LIFT",
         eVL = "TRANQUILITY",
-        eDH = "PATCHED HOLE",
+        eDH = "SALVATION",
         eIN = "VISIBLITY",
-        eAS = "SPIN",
+        eAS = "SPIN", --8
         eDP = "FRIEND",
     },
 }
@@ -1271,7 +1271,7 @@ Fatigue = {
         { time = 425, event = { 'dmgTimerMul', -.02 } },
         { time = 1e99 }, -- Total: dmgTimerMul-70%
     },
-    -- Trevor Smithy #TODO fix text
+    -- Trevor Smithy SCRAPPED?
     eDP = {
         { time = 20,  event = { 'dmgHeal', -0.5 }, --[[ 2 ]]                       text = "YOUR PASSION FADES_",                        desc = "Heal-",          duration = 10 },
         { time = 40,  event = { 'dmgHeal', -.25 }, --[[ 1.5 ]]                    text = "THEIR REPLIES BECOME LESS ENGAGED_",         desc = "Heal--",         duration = 10 },

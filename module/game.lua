@@ -289,22 +289,25 @@ end
 
 ---@param list string[]
 function GAME.getComboMP(list)
-    return #table.concat(list) - #list
+    local easyCnt = table.concat(list):count('e')
+    return #table.concat(list) - #list - easyCnt*3
 end
 
 ---@param list string[]
 function GAME.getComboZP(list)
     local m = TABLE.getValueSet(list)
     local zp = 1
-    if m.EX then zp = zp * 1.4 elseif m.rEX then zp = zp * 2.6 end
-    if m.NH then zp = zp * 1.1 elseif m.rNH then zp = zp * 1.8 end
-    if m.MS then zp = zp * 1.2 elseif m.rMS then zp = zp * (m.rGV and 2.0 or 1.7) end
-    if m.GV then zp = zp * 1.1 elseif m.rGV then zp = zp * (1.2 + .02 * (#list - 1)) end
-    if m.VL then zp = zp * 1.1 elseif m.rVL then zp = zp * (1.2 + .02 * (#list - 1)) end
-    if m.DH then zp = zp * 1.2 elseif m.rDH then zp = zp * (m.rIN and 2.0 or 1.6) end
-    if m.IN then zp = zp * 1.2 elseif m.rIN then zp = zp * 1.6 end
-    if m.AS then zp = zp * .85 elseif m.rAS then zp = zp * 1.1 end
-    if m.DP then zp = zp * .95 elseif m.rDP then zp = zp * (m.rEX and 1.8 or 2.1) end
+    if m.EX then zp = zp * 1.4 elseif m.rEX then zp = zp * 2.6 elseif m.eEX then zp = zp * 0.9 end
+    if m.NH then zp = zp * 1.1 elseif m.rNH then zp = zp * 1.8 elseif m.eNH then zp = zp * 0.95 end
+    if m.MS then zp = zp * 1.2 elseif m.rMS then zp = zp * (m.rGV and 2.0 or 1.7) elseif m.eMS then zp = zp * 1.1 end
+    if m.GV then zp = zp * 1.1 elseif m.rGV then zp = zp * (1.2 + .02 * (#list - 1)) elseif m.eGV then zp = zp * 0.9 end
+    if m.VL then zp = zp * 1.1 elseif m.rVL then zp = zp * (1.2 + .02 * (#list - 1)) elseif m.eVL then zp = zp * 0.914 end
+    if m.DH then zp = zp * 1.2 elseif m.rDH then zp = zp * (m.rIN and 2.0 or 1.6) elseif m.eDH then zp = zp * 0.8 end
+    if m.IN then zp = zp * 1.2 elseif m.rIN then zp = zp * 1.6 elseif m.eIN then zp = zp * 0.9 end
+    if m.AS then zp = zp * .85 elseif m.rAS then zp = zp * 1.1 elseif m.eAS then zp = zp * 0.8 end
+    if m.DP then zp = zp * .95 elseif m.rDP then zp = zp * (m.rEX and 1.8 or 2.1) elseif m.eDP then zp = zp * 0.95 end
+
+    if GAME.enightcore or GAME.eglassCard then zp = zp * .9 elseif GAME.eslowmo then zp = zp * .825 elseif GAME.efastLeak then zp = zp * .75 end
 
     local hardCnt = table.concat(list):count('r')
     if m.EX then hardCnt = hardCnt + 1 end
@@ -361,7 +364,7 @@ function GAME.getComboName(list, mode)
             for i = #fstr, 1, -1 do
                 ins(fstr, i, { MATH.rand(.872, 1), MATH.rand(.872, 1), MATH.rand(.872, 1) })
             end
-            if M.IN == 0 then
+            if M.IN <= 0 then
                 local colors = {}
                 for i = 1, #list do ins(colors, MD.color[list[i]]) end
                 if #colors == 1 then
@@ -609,7 +612,7 @@ function GAME.genQuest()
         GAME.atkBuffer = GAME.atkBufferCap
     end
     GAME.atkBuffer = clamp(GAME.atkBuffer - (max(GAME.floor / 3, GAME.atkBufferCap / 4) + MATH.rand(-.62, .62)), 0, GAME.atkBufferCap)
-    if M.DP > 0 then r = r * (GAME[GAME.getLifeKey(true)] == 0 and 1.26 or 1.1) end
+    if M.DP ~= 0 then r = r * (GAME[GAME.getLifeKey(true)] == 0 and 1.26 or 1.1) end
 
     local pool = TABLE.copyAll(MD.weight)
 
@@ -668,7 +671,7 @@ function GAME.questReady()
     GAME.achv_resetCount = 0
     for _, C in ipairs(CD) do C.touchCount, C.required, C.required2 = 0, false, false end
     for _, v in next, GAME.quests[1].combo do CD[v].required = true end
-    if M.DP > 0 and GAME.quests[2] then for _, v in next, GAME.quests[2].combo do CD[v].required2 = true end end
+    if M.DP ~= 0 and GAME.quests[2] then for _, v in next, GAME.quests[2].combo do CD[v].required2 = true end end
 end
 
 function GAME.startRevive()
@@ -680,6 +683,8 @@ function GAME.startRevive()
     TABLE.clear(GAME.reviveTasks)
     if GAME.reviveDifficulty < 9999 then
         local power = min(GAME.floor + GAME.reviveDifficulty, 17)
+        if M.DP == -1 then power = power - 3 end
+        if power < 1 then power = 1 end
         local maxOut = power == 17
         local powerList = TABLE.new(floor(power / 3), 3)
         if power % 3 == 1 then
@@ -1211,7 +1216,7 @@ function GAME.refreshRPC()
     local detailStr = "QUICK PICK"
     if M.EX > 0 then detailStr = "EXPERT " .. detailStr end
     if M.EX == -1 then detailStr = "EASY " .. detailStr end
-    if M.DP > 0 then detailStr = detailStr:gsub("QUICK", "DUAL") end
+    if M.DP ~= 0 then detailStr = detailStr:gsub("QUICK", "DUAL") end
     if TestMode then detailStr = detailStr:gsub("PICK", "TEST") end
     if GAME.anyRev then detailStr = detailStr:gsub(".", revLetter) end
 
@@ -1365,7 +1370,13 @@ function GAME.refreshCurrentCombo()
     if not GAME.playing then
         GAME.comboMP = GAME.getComboMP(hand)
         GAME.comboZP = GAME.getComboZP(hand)
-        TEXTS.mpPreview:set(GAME.comboMP .. " MP")
+        mp = GAME.comboMP
+        if GAME.comboMP < 0 then
+            mp = mp * -1
+            TEXTS.mpPreview:set("-" .. mp .. " MP")
+        else
+            TEXTS.mpPreview:set(GAME.comboMP .. " MP")
+        end
         TEXTS.zpPreview:set(("%.2fx ZP"):format(GAME.comboZP))
         DailyActived =
             #GAME.getHand(true) == #DAILY and
@@ -1653,7 +1664,7 @@ function GAME.commit(auto)
 
     if #hand == 0 and GAME.questTime < .1 then return SFX.play('no') end
 
-    if M.DP > 0 and not (GAME.achv_shareModH and GAME.achv_noShareModH) and GAME.totalQuest >= 1 then
+    if M.DP ~= 0 and not (GAME.achv_shareModH and GAME.achv_noShareModH) and GAME.totalQuest >= 1 then
         local noRep = #TABLE.subtract(TABLE.copy(hand), GAME.lastCommit) == #hand
         if noRep then
             if not GAME.achv_shareModH then
@@ -1673,7 +1684,7 @@ function GAME.commit(auto)
     for _, id in next, GAME.lastCommit do CD[id].inLastCommit = true end
 
     local q1 = TABLE.sort(GAME.quests[1].combo)
-    local q2 = M.DP > 0 and GAME.quests[2] and TABLE.sort(GAME.quests[2].combo)
+    local q2 = M.DP ~= 0 and GAME.quests[2] and TABLE.sort(GAME.quests[2].combo)
 
     if GAME.currentTask then
         GAME.incrementPrompt('commit')
@@ -1831,7 +1842,11 @@ function GAME.commit(auto)
             end
 
             SFX.play(MATH.roll(.626) and 'clearspin' or 'clearquad', .5)
-            if M.NH < 2 then attack = attack + 1 end
+            if M.NH == -1 then 
+                attack = attack + 2 
+            elseif M.NH< 2 then 
+                attack = attack + 1 
+            end
             if M.AS == 2 and GAME.chain >= 4 then attack = attack + 1 end
             xp = xp + 3
 
@@ -1975,7 +1990,7 @@ function GAME.commit(auto)
 
         local oldAllyLife = GAME[GAME.getLifeKey(true)]
         ---@cast oldAllyLife number
-        if M.DP > 0 then
+        if M.DP ~= 0 then
             if GAME[GAME.getLifeKey(true)] == 0 then
                 xp = xp / 2
                 attack = attack / 2
@@ -2061,7 +2076,7 @@ function GAME.commit(auto)
             end
         end
 
-        if M.DP > 0 and (correct == 2 or dblCorrect) then
+        if M.DP ~= 0 and (correct == 2 or dblCorrect) then
             if GAME.swapControl() then
                 SFX.play('party_ready', MATH.clampInterpolate(15, 1, 40, .6, GAME.switch_sickness))
                 GAME.switch_sickness = GAME.switch_sickness + 1
@@ -2164,7 +2179,7 @@ function GAME.start()
     MSG.clear()
 
     SFX.play('menuconfirm', .8)
-    SFX.play((M.DP > 0 or VALENTINE and not GAME.anyRev) and 'zenith_start_duo' or 'zenith_start', 1, 0, Tone(0))
+    SFX.play((M.DP ~= 0 or VALENTINE and not GAME.anyRev) and 'zenith_start_duo' or 'zenith_start', 1, 0, Tone(0))
 
     GAME.playing = true
 
@@ -2236,7 +2251,7 @@ function GAME.start()
     GAME.teraCount = 0
     GAME.teramusic = false
     GAME.atkBuffer = 0
-    GAME.atkBufferCap = 8 + (M.DH == 1 and M.NH < 2 and 2 or 0)
+    GAME.atkBufferCap = 8 + (M.DH == 1 and M.NH < 2 and 2 or 0) + (M.NH == -1 and 2 or 0)
     GAME.shuffleMessiness = false
 
     -- Spike
@@ -2267,7 +2282,7 @@ function GAME.start()
         GAME.dmgHeal = 4
     end
 
-    if M.DP > 0 then
+    if M.DP ~= 0 then
         GAME.life = 15
         GAME.life2 = 15
         GAME.fullHealth = 15

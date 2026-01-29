@@ -41,8 +41,8 @@ function Card.new(d)
 
         touchCount = 0,
         burn = false,
-        required = false,
-        required2 = false,
+        required = false, --main quest
+        required2 = false, --duo quest (pink)
         inLastCommit = false,
         charge = 0,
     }, Card)
@@ -69,7 +69,7 @@ function Card:setActive(auto, key)
         SFX.play('no')
         return
     end
-    if M.VL == 1 then
+    if M.VL == 1 and not self.active then
         if not self.active and not auto then
             self.charge = self.charge + 1
             SFX.play('clearline', .42)
@@ -81,7 +81,7 @@ function Card:setActive(auto, key)
             SFX.play('combo_4', .626, 0, Tone(0))
             self.charge = 0
         end
-    elseif M.VL == 2 then
+    elseif M.VL == 2 and not self.active then
         self.charge = self.charge + (auto and 3.55 or 1)
         if self.charge < 3.1 then
             SFX.play('clearline', .3)
@@ -103,7 +103,6 @@ function Card:setActive(auto, key)
     -- Trevor Smithy
     elseif M.VL == -1 then
         SFX.play('combo_4', .626, 0, Tone(0))
-        self.charge = 0
     end
 
     if GAME.currentTask then
@@ -125,7 +124,25 @@ function Card:setActive(auto, key)
         GAME.lastFlip = self.id
     end
 
-    self.active = not self.active
+    -- Trevor Smithy
+    if GAME.playing and self.active and M.NH == -1 then -- if card is active and less hold enabled
+        if not auto then -- assuming not auto
+            self.charge = self.charge + 1 -- charge it
+            SFX.play('clearline', .42)
+            if self.charge < 1.2 then -- if not charged then
+                self:shake()
+                SFX.play('combo_' .. rnd(2, 3), .826, 0, Tone(-2))
+                return -- no
+            end
+            SFX.play('combo_4', .826, 0, Tone(0))
+            self.charge = 0
+            self.active = false -- if it is charged, feel free to cancel though
+        else -- if it is auto, obviously we do need to actually cancel it
+            self.active = not self.active
+        end
+    else
+        self.active = not self.active
+    end
     local noSpin, revOn
     if GAME.playing then
         if not auto then
@@ -144,7 +161,7 @@ function Card:setActive(auto, key)
                 GAME.fault = true
             end
         end
-        if M.DP > 0 and not auto and self.id == 'DP' and self.active and not (URM and M.DP == 2) then
+        if M.DP ~= 0 and not auto and self.id == 'DP' and self.active and not (URM and M.DP == 2) then
             if GAME.swapControl() then
                 SFX.play('party_ready', .8)
             end
@@ -547,6 +564,11 @@ function Card:draw()
                         elseif M.IN == 1 then
                             if GAME.hardMode then qt = qt * .626 end
                             a1 = -.1 + .4 * sin(3.1416 + qt * 3)
+                        -- Trevor Smithy
+                        elseif M.IN == -1 then
+                            qt = qt + 1.5
+                            a1 = clampInterpolate(1, 0, 2, .4, qt) +
+                                clampInterpolate(1.2, 0, 2.6, .2, qt) * sin(qt * 26 - self.x * .0026) + 0.2
                         end
                     end
                     if self.required2 then
@@ -558,6 +580,11 @@ function Card:draw()
                         elseif M.IN == 1 then
                             if GAME.hardMode then qt = qt * .626 end
                             a2 = -.1 + .2 * sin(3.1416 + qt * 3)
+                        -- Trevor Smithy
+                        elseif M.IN == -1 then
+                            r2, g2, b2 = .942, .626, .872
+                            qt = qt + 1.5
+                            a2 = clampInterpolate(1, 0, 2, .2, qt) + 0.2
                         end
                     end
                 end
