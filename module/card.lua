@@ -210,7 +210,7 @@ function Card:setActive(auto, key)
         local wasRev = M[self.id] == 2
         local wasEasy = M[self.id] == -1
         --M[self.id] = self.active and (revOn and 2 or 1) or 0
-        -- Trevor Smithy TODO FIX PLZ
+        -- Trevor Smithy
         M[self.id] = self.active and (revOn and 2 or easyOn and -1 or 1) or 0
         --
 
@@ -221,7 +221,6 @@ function Card:setActive(auto, key)
         --         end
         --     end
         -- end
-        -- TODO implement easyOn here
         -- Trevor Smithy
         --self.upright = not (self.active and revOn)
         self.upright = not (self.active and revOn or self.active and easyOn)
@@ -236,7 +235,7 @@ function Card:setActive(auto, key)
             TABLE.clear(HoldingButtons)
         elseif self.id == 'IN' then
             for _, C in ipairs(CD) do C:flip() end
-            noSpin = M.IN == 1
+            noSpin = (M.IN == 1 or M.IN == -1)
         end
         -- Trevor Smithy
         if easyOn or wasEasy then GAME.refreshEasy() end

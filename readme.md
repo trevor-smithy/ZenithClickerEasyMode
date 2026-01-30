@@ -48,7 +48,7 @@ Each mod creates a unique experience by twisting the rules, but also increases t
 
 ### Easy (`eEX`)
 
-- Climb speed **decays 33% slower.**
+- Climb speed **decays 40% slower.**
 - Quests are **more likely to repeat.**
 - Fatigue effects start **1 minute later.**
 - AS keyboard hints **ARE** shown (if enabled).
@@ -62,6 +62,7 @@ Each mod creates a unique experience by twisting the rules, but also increases t
 - Cards must be pressed **twice** to deactivate.
 - Attack **increased by 1.**
 - Attack buffer **increased by 25%.**
+- XP Lock time **increased by 2 seconds.**
 
 ### Messiness (`MS`)
 

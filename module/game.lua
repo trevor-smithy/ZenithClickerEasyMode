@@ -319,7 +319,6 @@ function GAME.getComboZP(list)
 end
 
 local function modNameSorter(a, b) return MD.prio_name[a] < MD.prio_name[b] end
-local function modCardSorter(a, b) return MD.prio_card[a] < MD.prio_card[b] end
 local function trimR(s) return s:sub(2) end
 
 ---@param list string[] WILL BE SORTED!!!
@@ -409,11 +408,21 @@ function GAME.getComboName(list, mode)
 
         -- General
         for i = 1, len - 1 do
-            ins(fstr, MD.textColor[list[i]])
-            ins(fstr, MD.adj[list[i]] .. " ")
+            --if M.IN == -1 and M.MS == -1 then
+                -- code go here TODO
+            --    ins(fstr, MD.adj[list[i]] .. " ")
+            --else
+                ins(fstr, MD.textColor[list[i]])
+                ins(fstr, MD.adj[list[i]] .. " ")
+            --end
         end
-        ins(fstr, MD.textColor[list[len]])
-        ins(fstr, MD.noun[list[len]])
+        --if M.IN == -1 and M.MS == -1 then
+            -- code go here TODO
+            --ins(fstr, MD.noun[list[len]])
+        --else
+            ins(fstr, MD.textColor[list[len]])
+            ins(fstr, MD.noun[list[len]])
+        --end
         if M.IN > 0 then
             local r = rnd(0, 3)
             for i = 1, #fstr, 2 do
@@ -1026,6 +1035,8 @@ function GAME.upFloor()
             GAME.readyShuffle(Floors[GAME.floor].MSshuffle)
         elseif M.MS == 2 and not URM then
             GAME.readyShuffle(GAME.floor * 2.6)
+        elseif M.MS == -1 then
+            GAME.readyShuffle(Floors[GAME.floor].eMSshuffle)
         end
     end
 
@@ -1098,7 +1109,9 @@ function GAME.upFloor()
             end
             if GAME.time <= 76.2 then IssueSecret('subluminal') end
             if GAME.time <= 42 then IssueSecret('superluminal') end
-            if GAME.time - GAME.gigaspeedEntered >= 300 then IssueAchv('worn_out') end
+            if GAME.gigaspeed then
+                if GAME.time - GAME.gigaspeedEntered >= 300 then IssueAchv('worn_out') end
+            end
             if GAME.closeCard and GAME.comboStr == 'rEX' then IssueSecret('true_expert') end
             if GAME.nightcore and GAME.comboStr == 'rGV' then IssueSecret('true_master') end
             if GAME.fastLeak and GAME.comboStr == 'rVL' then IssueSecret('true_strength') end
@@ -2098,6 +2111,8 @@ function GAME.commit(auto)
                 GAME.weakShuffleCards(GAME.shuffleMessiness)
             elseif M.MS == 2 then
                 GAME.shuffleCards(GAME.shuffleMessiness)
+            elseif M.MS == -1 then
+                GAME.weakShuffleCards(GAME.shuffleMessiness)
             end
             GAME.shuffleMessiness = false
         end
@@ -2120,10 +2135,15 @@ function GAME.commit(auto)
 
         GAME.fault = true
         GAME.faultWrong = true
-
-        GAME.takeDamage(max(GAME.dmgWrong + GAME.dmgWrongExtra, 1), 'wrong')
+        local minimumDmgWrong = 1
+        if M.MS == -1 and M.DP == 0 then --just because there are quests that require taking damage
+            minimumDmgWrong = 0
+        end
+        GAME.takeDamage(max(GAME.dmgWrong + GAME.dmgWrongExtra, minimumDmgWrong), 'wrong')
         if not GAME.playing then return end
-        GAME.dmgWrongExtra = GAME.dmgWrongExtra + .5
+        if M.MS ~= -1 then
+            GAME.dmgWrongExtra = GAME.dmgWrongExtra + .5
+        end
         -- Trevor Smithy
         if M.GV ~= 0 then GAME.gravTimer = GAME.gravDelay end
         if M.EX > 0 then
@@ -2154,6 +2174,8 @@ local function task_startSpin()
         GAME.weakShuffleCards(0)
     elseif M.MS == 2 then
         GAME.shuffleCards(2.6)
+    elseif M.MS == -1 then
+        GAME.weakShuffleCards(0)
     end
 end
 function GAME.start()
@@ -2239,9 +2261,9 @@ function GAME.start()
     -- 1.626 if DH, 0.374 if eDH, 1 if no DH (or rDH)
     GAME.extraQuestVar = M.DH == 1 and .626 or M.DH == -1 and -0.2 or 1
     GAME.questFavor = 0 -- Initialized in GAME.upFloor()
-    GAME.dmgHeal = 2
-    GAME.dmgWrong = 1
-    GAME.dmgTime = 2
+    GAME.dmgHeal = M.MS == -1 and 3 or 2
+    GAME.dmgWrong = M.MS == -1 and 0 or 1
+    GAME.dmgTime = M.MS == -1 and 1 or 2
     GAME.dmgTimerMul = 1
     GAME.dmgDelay = 15
     GAME.dmgCycle = 5
@@ -3065,7 +3087,10 @@ function GAME.update(dt)
 
     if GAME.floor >= 10 then
         -- Omega floor
-        if smithyMode then GAME.stopTeraspeed('f10') end
+        if smithyMode then 
+            GAME.stopTeraspeed('f10') 
+            smithyMode = false
+        end
         if not GAME.omega and GAME.height >= 6200 then
             GAME.omega = true
             GAME.showFloorText("Ω", Floors[11].name, 6.2)

@@ -780,7 +780,7 @@ Floors = {
     { top = 1100, event = { 'dmgDelay', -1, 'dmgCycle', -.5 },                 name = "The Laboratory",      MSshuffle = 3 },
     { top = 1350, event = { 'dmgDelay', -1, 'dmgCycle', -.5 },                 name = "The Core" },
     { top = 1650, event = { 'dmgDelay', -.5, 'dmgWrong', 1 },                  name = "Corruption",          MSshuffle = 4 },
-    { top = 1e99, event = { 'dmgDelay', -.5, 'dmgCycle', -.5, 'dmgTime', 1 },  name = "Platform of the Gods" },
+    { top = 1e99, event = { 'dmgDelay', -.5, 'dmgCycle', -.5, 'dmgTime', 1 },  name = "Platform of the Gods", eMSshuffle = 1 },
     { top = 1e99, name = "Stellar Nebula Frontier" }, -- Only name is used
     -- Initial: Delay=15. Cycle=5, Wrong=1
     -- Total: Delay-10, Cycle-3, Wrong+4
