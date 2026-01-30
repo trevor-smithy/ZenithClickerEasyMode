@@ -234,6 +234,7 @@ GAME.chain = 0
 local M = GAME.mod
 local MD = ModData
 local CD = Cards
+local smithyMode = false
 
 ---Unsorted, like {'rEX','NH',...}
 ---@param real boolean current mod setting or literally selected cards
@@ -889,6 +890,7 @@ function GAME.addXP(xp)
             GAME.refreshRPC()
         end
         if GAME.gigaspeed and not GAME.teramusic and GAME.rank >= TeraMusicReq[GAME.floor] then
+            if (M.EX == -1 and M.VL == -1 and M.AS == -1 and (M.NH == 0 and M.MS == 0 and M.GV == 0 and M.DH == 0 and M.IN == 0 and M.DP == 0)) then smithyMode = true end
             GAME.startTeraAnim()
             GAME.refreshRPC()
         end
@@ -926,7 +928,7 @@ function GAME.startTeraAnim()
     TASK.removeTask_code(GAME.task_gigaspeed)
     TASK.new(GAME.task_gigaspeed)
     SFX.play('zenith_speedrun_start')
-    if M.EX == -1 and M.AS == -1 and M.VL == -1 and GAME.efastLeak and M.NH == 0 and M.MS == 0 and M.GV <= 0 and M.DH <= 0 and M.IN <= 0 and M.DP == 0 then
+    if smithyMode then
         PlayBGM('terae', true)
     else
         PlayBGM('tera', true)
@@ -1059,7 +1061,7 @@ function GAME.upFloor()
     -- End game
     if GAME.floor >= 10 then
         local roundTime = roundUnit(GAME.time, .001)
-        if GAME.gigaspeed then
+        if GAME.gigaspeed or smithyMode then
             if GAME.time < STAT.minTime then
                 STAT.minTime = roundTime
                 STAT.timeDate = os.date("%y.%m.%d %H:%M%p")
@@ -1068,9 +1070,12 @@ function GAME.upFloor()
             GAME.gigaTime = GAME.time
             GAME.setGigaspeedAnim(false)
             if GAME.teramusic then IssueAchv('blazing_speed') end
-            if GAME.teramusic and M.EX == -1 and M.VL == -1 and M.AS == -1 and GAME.efastLeak then IssueAchv('programmer_gamer') end
+            if GAME.teramusic and M.EX == -1 and M.VL == -1 and M.AS == -1 and (M.NH == 0 and M.MS == 0 and M.GV == 0 and M.DH == 0 and M.IN == 0 and M.DP == 0) then IssueAchv('programmer_gamer') end
             if GAME.teramusic and M.EX == -1 and M.GV == 2 and URM and M.DH == -1 and GAME.enightcore and (not GAME.achv_noManualCommitH or GAME.achv_noManualCommitH >= 1650) then IssueAchv("one_of_mine") end
-            GAME.stopTeraspeed('f10')
+            if not smithyMode then 
+                -- don't stop my cover until we get to fomg
+                GAME.stopTeraspeed('f10')
+            end
 
             local setStr = (GAME.anyUltra and 'u' or '') .. GAME.comboStr
             local t = BEST.speedrun[setStr]
@@ -1637,7 +1642,9 @@ function GAME.task_cancelAll(instant)
     for i = 1, #CD do
         needFlip[i] = spinMode or CD[i].active
     end
-    local interval = not instant and .042 * (M.AS == 2 and .62 or 1) * (1 + 2 * M.NH) * (GAME.slowmo and 2.6 or 1) * (GAME.nightcore and 1 / 2.6 or 1)
+    local mnh = 0 -- mod no hold
+    if M.NH == -1 then mnh = 1.5 else mnh = M.NH end --if easy, don't be negative because then negative interval
+    local interval = not instant and .042 * (M.AS == 2 and .62 or 1) * (1 + 2 * mnh) * ((GAME.slowmo or GAME.eslowmo) and 2.6 or 1) * ((GAME.nightcore or GAME.enightcore) and 1 / 2.6 or 1)
     for i = 1, #list do
         if needFlip[i] then
             list[i]:setActive(true)
@@ -1844,7 +1851,7 @@ function GAME.commit(auto)
             SFX.play(MATH.roll(.626) and 'clearspin' or 'clearquad', .5)
             if M.NH == -1 then 
                 attack = attack + 2 
-            elseif M.NH< 2 then 
+            elseif M.NH < 2 then 
                 attack = attack + 1 
             end
             if M.AS == 2 and GAME.chain >= 4 then attack = attack + 1 end
@@ -2167,8 +2174,9 @@ function GAME.start()
     -- Trevor Smithy
     --GAME.xpLockLevelMax = URM and M.NH == 2 and 1 or 5
     --GAME.leakSpeed = (M.EX > 0 and 5 or 3) + (GAME.fastLeak and 8 or 0)
-    GAME.xpLockLevelMax = URM and M.NH == 2 and 1 or GAME.efastLeak and 8 or 5
-    GAME.leakSpeed = (M.EX > 0 and 5 or 3) + (M.EX == -1 and -1 or 0) + (GAME.fastLeak and 8 or 0) + (GAME.efastLeak and -2 or 0)
+    GAME.xpLockLevelMax = URM and M.NH == 2 and 1 or 5 + (GAME.efastLeak and 3 or 0) + (M.NH == -1 and 2 or 0)
+    -- fast leak increases leakSpeed to 2.666 times normal rate, slow leak decreases leakSpeed to 1/2.666 times normal rate
+    GAME.leakSpeed = (M.EX > 0 and 5 or 3) + (GAME.fastLeak and 8 or 0) + (M.EX == -1 and -1.2 or 0) + (GAME.efastLeak and -1.875 or 0) + (GAME.efastLeak and M.EX == -1 and (0.075 + 0.3) or 0)
     --
     GAME.invincible = false
 
@@ -3057,11 +3065,12 @@ function GAME.update(dt)
 
     if GAME.floor >= 10 then
         -- Omega floor
+        if smithyMode then GAME.stopTeraspeed('f10') end
         if not GAME.omega and GAME.height >= 6200 then
             GAME.omega = true
             GAME.showFloorText("Ω", Floors[11].name, 6.2)
             SFX.play('zenith_levelup_a', 1, 0, Tone(1))
-            PlayBGM('fomg')
+            PlayBGM('fomg', force)
             ins(GAME.secTime, GAME.floorTime)
             GAME.refreshSectionTime()
             GAME.floorTime = 0
