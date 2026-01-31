@@ -70,7 +70,9 @@ Each mod creates a unique experience by twisting the rules, but also increases t
 
 ### Tidiness (`eMS`)
 
-- Cards are **lightly shuffled** at the start of **floors 1 and 10.** The cards will always be in or adjacent to their correct position. **(CURRENTLY NOT IMPLEMENTED)**
+- Cards are **lightly shuffled** at the start of **floors 1 and 10.** The cards will always be in or adjacent to their correct position.
+- Timer damage and wrong commit damage **reduced by 1.** (Minimum damage not changed if any DP is active.)
+- Base heal **increased by 1.**
 
 ### Gravity (`GV`)
 
@@ -89,7 +91,8 @@ Each mod creates a unique experience by twisting the rules, but also increases t
 ### Tranquility (`eVL`)
 
 - Cards are **20px (18%)** further apart.
-- XP gain **increased by 1.**
+- XP gain from selecting cards **increased by 2.**
+- XP gain from all other sources **increased by 1.**
 
 ### Double Hole (`DH`)
 
@@ -112,6 +115,7 @@ Each mod creates a unique experience by twisting the rules, but also increases t
 
 - All cards are **face down.**
 - Quest hints are **always shown.**
+- If **combined with eMS and any AS** then quests will show the **normal mod's color** for non-named quests. (**NOTE**: Quests generated at the start or before a shuffle will be incorrectly colored if the mod's card is shuffled. In the current implementation of ZC, there is no way to fix this.)
 
 ### All-Spin (`AS`)
 

@@ -1222,8 +1222,16 @@ function scene.overDraw()
             end
             if rank >= 12 then
                 for i = 0, rank - 12 do
-                    gc_rectangle('fill', 800 + 222 + 15 * i, 955, 10, 32)
-                    gc_rectangle('fill', 800 - 222 - 15 * i, 955, -10, 32)
+                    if i < 44 then
+                        gc_rectangle('fill', 800 + 222 + 15 * i, 955, 10, 32)
+                        gc_rectangle('fill', 800 - 222 - 15 * i, 955, -10, 32)
+                    end
+                end
+            end
+            if rank >= 56 then
+                for i = 0, rank - 55 do
+                    gc_rectangle('fill', 1648, 955 - 37 * i, 10, 32)
+                    gc_rectangle('fill', -74, 955 - 37 * i, -10, 32)
                 end
             end
         end

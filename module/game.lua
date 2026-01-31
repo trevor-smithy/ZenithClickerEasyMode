@@ -405,24 +405,149 @@ function GAME.getComboName(list, mode)
                 list[r1], list[r2] = list[r2], list[r1]
             end
         end
-
+        local CardOrder = {}
+        local colorModNumber = 1
+        local messyText = ""
+        --local originalCardOrder = {}
+        --MSG('bright',"hello world")
         -- General
         for i = 1, len - 1 do
-            --if M.IN == -1 and M.MS == -1 then
+            if M.IN == -1 and M.MS == -1 and M.AS ~= 0 then
                 -- code go here TODO
-            --    ins(fstr, MD.adj[list[i]] .. " ")
-            --else
+                --psuedocode: goal - get card order from CD[j].initOrder, use that to generate a new index for the MD.textColor  
+                -- forgive me lord for i have sinned        
+                if MD.name[list[i]] == 'expert' then
+                    --MSG('dark', "Current Card: " .. CD[1].initOrder)
+                    colorModNumber = CD[1].initOrder
+                elseif MD.name[list[i]] == 'nohold' then
+                    --MSG('dark', "Current Card: " .. CD[2].initOrder)
+                    colorModNumber = CD[2].initOrder
+                elseif MD.name[list[i]] == 'messy' then
+                    --MSG('dark', "Current Card: " .. CD[3].initOrder)
+                    colorModNumber = CD[3].initOrder
+                elseif MD.name[list[i]] == 'gravity' then
+                    --MSG('dark', "Current Card: " .. CD[4].initOrder)
+                    colorModNumber = CD[4].initOrder
+                elseif MD.name[list[i]] == 'volatile' then
+                    --MSG('dark', "Current Card: " .. CD[5].initOrder)
+                    colorModNumber = CD[5].initOrder
+                elseif MD.name[list[i]] == 'doublehole' then
+                    --MSG('dark', "Current Card: " .. CD[6].initOrder)
+                    colorModNumber = CD[6].initOrder
+                elseif MD.name[list[i]] == 'invisible' then
+                    --MSG('dark', "Current Card: " .. CD[7].initOrder)
+                    colorModNumber = CD[7].initOrder
+                elseif MD.name[list[i]] == 'allspin' then
+                    --MSG('dark', "Current Card: " .. CD[8].initOrder)
+                    colorModNumber = CD[8].initOrder
+                elseif MD.name[list[i]] == 'duo' then
+                    --MSG('dark', "Current Card: " .. CD[9].initOrder)
+                    colorModNumber = CD[9].initOrder
+                end
+                if colorModNumber == 1 then
+                    ins(fstr, MD.textColor['EX'])
+                    messyText = "e"
+                elseif colorModNumber == 2 then
+                    ins(fstr, MD.textColor['NH'])
+                    messyText = "h"
+                elseif colorModNumber == 3 then
+                    ins(fstr, MD.textColor['MS'])
+                    messyText = "m"
+                elseif colorModNumber == 4 then
+                    ins(fstr, MD.textColor['GV'])
+                    messyText = "g"
+                elseif colorModNumber == 5 then
+                    ins(fstr, MD.textColor['VL'])
+                    messyText = "v"
+                elseif colorModNumber == 6 then
+                    ins(fstr, MD.textColor['DH'])
+                    messyText = "d"
+                elseif colorModNumber == 7 then
+                    ins(fstr, MD.textColor['IN'])
+                    messyText = "i"
+                elseif colorModNumber == 8 then
+                    ins(fstr, MD.textColor['AS'])
+                    messyText = "a"
+                elseif colorModNumber == 9 then
+                    ins(fstr, MD.textColor['DP'])
+                    messyText = "o"
+                end
+                --ins(fstr, {COLOR.HEX "C29F68FF"})
+                ins(fstr, MD.adj[list[i]] .. " ")
+                --ins(fstr, messyText .. MD.adj[list[i]] .. " ")
+                --MSG('dark', "Added mod to quest: " .. MD.name[list[i]])
+            else
                 ins(fstr, MD.textColor[list[i]])
                 ins(fstr, MD.adj[list[i]] .. " ")
-            --end
+                
+            end
         end
-        --if M.IN == -1 and M.MS == -1 then
-            -- code go here TODO
-            --ins(fstr, MD.noun[list[len]])
-        --else
+        if M.IN == -1 and M.MS == -1 and M.AS ~= 0 then
+            --ins(fstr, {COLOR.HEX "C29F68FF"})
+            -- forgive me lord for i have sinned
+            if MD.name[list[len]] == 'expert' then
+                --MSG('dark', "Current Card: " .. CD[1].initOrder)
+                colorModNumber = CD[1].initOrder
+            elseif MD.name[list[len]] == 'nohold' then
+                --MSG('dark', "Current Card: " .. CD[2].initOrder)
+                colorModNumber = CD[2].initOrder
+            elseif MD.name[list[len]] == 'messy' then
+                --MSG('dark', "Current Card: " .. CD[3].initOrder)
+                colorModNumber = CD[3].initOrder
+            elseif MD.name[list[len]] == 'gravity' then
+                --MSG('dark', "Current Card: " .. CD[4].initOrder)
+                colorModNumber = CD[4].initOrder
+            elseif MD.name[list[len]] == 'volatile' then
+                --MSG('dark', "Current Card: " .. CD[5].initOrder)
+                colorModNumber = CD[5].initOrder
+            elseif MD.name[list[len]] == 'doublehole' then
+                --MSG('dark', "Current Card: " .. CD[6].initOrder)
+                colorModNumber = CD[6].initOrder
+            elseif MD.name[list[len]] == 'invisible' then
+                --MSG('dark', "Current Card: " .. CD[7].initOrder)
+                colorModNumber = CD[7].initOrder
+            elseif MD.name[list[len]] == 'allspin' then
+                --MSG('dark', "Current Card: " .. CD[8].initOrder)
+                colorModNumber = CD[8].initOrder
+            elseif MD.name[list[len]] == 'duo' then
+                --MSG('dark', "Current Card: " .. CD[9].initOrder)
+                colorModNumber = CD[9].initOrder
+            end
+            if colorModNumber == 1 then
+                ins(fstr, MD.textColor['EX'])
+                messyText = "e"
+            elseif colorModNumber == 2 then
+                ins(fstr, MD.textColor['NH'])
+                messyText = "h"
+            elseif colorModNumber == 3 then
+                ins(fstr, MD.textColor['MS'])
+                messyText = "m"
+            elseif colorModNumber == 4 then
+                ins(fstr, MD.textColor['GV'])
+                messyText = "g"
+            elseif colorModNumber == 5 then
+                ins(fstr, MD.textColor['VL'])
+                messyText = "v"
+            elseif colorModNumber == 6 then
+                ins(fstr, MD.textColor['DH'])
+                messyText = "d"
+            elseif colorModNumber == 7 then
+                ins(fstr, MD.textColor['IN'])
+                messyText = "i"
+            elseif colorModNumber == 8 then
+                ins(fstr, MD.textColor['AS'])
+                messyText = "a"
+            elseif colorModNumber == 9 then
+                ins(fstr, MD.textColor['DP'])
+                messyText = "o"
+            end
+            ins(fstr, MD.noun[list[len]])
+            --ins(fstr, messyText .. MD.noun[list[len]])
+            --MSG('dark', "Added mod to quest: " .. MD.name[list[len]])
+        else
             ins(fstr, MD.textColor[list[len]])
             ins(fstr, MD.noun[list[len]])
-        --end
+        end
         if M.IN > 0 then
             local r = rnd(0, 3)
             for i = 1, #fstr, 2 do
@@ -865,6 +990,9 @@ end
 
 local speedupSFX = { 0, 1, 1, 1, 2, 2, 2, 3, 3 }
 function GAME.addXP(xp)
+    if M.VL == -1 then
+        xp = xp + 1
+    end
     GAME.xp = GAME.xp + xp
     if GAME.rankupLast and GAME.xp >= 2 * GAME.rank then GAME.xpLockLevel = GAME.xpLockLevelMax end
 
@@ -2198,7 +2326,7 @@ function GAME.start()
     --GAME.leakSpeed = (M.EX > 0 and 5 or 3) + (GAME.fastLeak and 8 or 0)
     GAME.xpLockLevelMax = URM and M.NH == 2 and 1 or 5 + (GAME.efastLeak and 3 or 0) + (M.NH == -1 and 2 or 0)
     -- fast leak increases leakSpeed to 2.666 times normal rate, slow leak decreases leakSpeed to 1/2.666 times normal rate
-    GAME.leakSpeed = (M.EX > 0 and 5 or 3) + (GAME.fastLeak and 8 or 0) + (M.EX == -1 and -1.2 or 0) + (GAME.efastLeak and -1.875 or 0) + (GAME.efastLeak and M.EX == -1 and (0.075 + 0.3) or 0)
+    GAME.leakSpeed = (M.EX > 0 and 5 or 3) + (GAME.fastLeak and 8 or 0) + (M.EX == -1 and -1.2 or 0) + (GAME.efastLeak and -1.875 or 0) + (GAME.efastLeak and M.EX == -1 and (0.075 + 0.15) or 0)
     --
     GAME.invincible = false
 
