@@ -868,6 +868,8 @@ function scene.draw()
             gc_setColor(COLOR.D)
             gc_mDraw(TEXTS.endFloor, 0, 204)
         end
+        gc_setColor(COLOR.L)
+        gc_mDraw(TEXTS.endFloor, 0, 201)
         gc_setColor(COLOR.DL)
         gc_draw(TEXTS.floorTime, -616, 224 - GAME.uiHide * 150, 0, .38)
         gc_draw(TEXTS.rankTime, -526, 224 - GAME.uiHide * 150, 0, .38)

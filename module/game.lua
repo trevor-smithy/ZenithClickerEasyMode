@@ -63,7 +63,7 @@ local ins, rem = table.insert, table.remove
 ---@field maxQuestSize number
 ---@field extraQuestBase number
 ---@field extraQuestVar number
----@field questFavor number Higher questFavor will result in mods generated consecutively more often, in design
+---@field questFavor number Increase by floor. Higher questFavor will result in mods generated consecutively more often, in design
 ---@field dmgHeal number
 ---@field dmgWrong number
 ---@field dmgWrongExtra number
@@ -133,6 +133,7 @@ local GAME = {
     comboMP = 0,
     comboZP = 1,
     isUltraRun = false,
+    endFloorFstr = {},
 
     completion = { -- 0=not mastered, 1=mastered, 2=rev mastered
         EX = 0,
@@ -2741,6 +2742,7 @@ function GAME.finish(reason)
         else
             endFloorStr = ("B$1: $2"):repD((GAME.negFloor - 1) % 10 + 1, NegFloors[GAME.negFloor].name)
         end
+        TABLE.clear(GAME.endFloorFstr)
         if GAME.gigaspeedEntered then
             if GAME.gigaTime then
                 local t = GAME.gigaTime < 60 and roundUnit(GAME.gigaTime, .001) .. "s" or STRING.time_simp(GAME.gigaTime)
@@ -2749,15 +2751,18 @@ function GAME.finish(reason)
                 else
                     endFloorStr = endFloorStr .. "    F10 in " .. t
                 end
-                if GAME.finishTera then endFloorStr = endFloorStr .. "!!!" end
+                if GAME.finishTera then endFloorStr = endFloorStr .. "!!" end
             end
-            local l = {}
             for _, codepoint in STRING.u8codes(endFloorStr) do
-                ins(l, STRING.u8char(codepoint))
+                ins(GAME.endFloorFstr, STRING.u8char(codepoint))
             end
-            local len = #l
-            for i = len, 1, -1 do ins(l, i, { COLOR.HSV(lerp(.026, .626, i / len), GAME.gigaTime and .6 or .2, 1) }) end
-            TEXTS.endFloor:set(l)
+            local len = #GAME.endFloorFstr
+            if GAME.finishTera then
+                for i = len, 1, -1 do ins(GAME.endFloorFstr, i, { COLOR.HSV(i / len, .42, 1) }) end
+            else
+                for i = len, 1, -1 do ins(GAME.endFloorFstr, i, { COLOR.HSV(lerp(.026, .626, i / len), GAME.gigaTime and .6 or .2, 1) }) end
+            end
+            TEXTS.endFloor:set(GAME.endFloorFstr)
         else
             TEXTS.endFloor:set(endFloorStr)
         end
@@ -2787,6 +2792,7 @@ function GAME.finish(reason)
 
             table.sort(maxCSP, function(a, b) return a[1] < b[1] end)
             local bestPos, bestSum = 0, 0
+            for i = min(mainRank[1], 62 - (rankTimeCount - 1)), max(mainRank[1] - (rankTimeCount - 1), 1), -1 do
             for i = min(mainRank[1], 62 - (rankTimeCount - 1)), max(mainRank[1] - (rankTimeCount - 1), 1), -1 do
                 local sum = 0
                 for j = i, i + (rankTimeCount - 1) do
