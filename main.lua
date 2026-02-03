@@ -1092,7 +1092,11 @@ function Task_MusicEnd(manual)
         outroStart = D.loop[2]
         BgmNeedStop = outroStart + 8 * 60 / D.bpm
     elseif BgmPlaying == 'f3' then
-        outroStart = D.loop[2]
+        if BGM.tell() < D.loop[1] then
+            outroStart = D.end1
+        else
+            outroStart = D.end2
+        end
         BgmNeedStop = outroStart + 8 * 60 / D.bpm
     elseif BgmPlaying == 'f4' then
         outroStart = D.loop[2]

@@ -1208,7 +1208,10 @@ function GAME.upFloor()
             end
             GAME.gigaTime = GAME.time
             GAME.setGigaspeedAnim(false)
-            if GAME.teramusic then IssueAchv('blazing_speed') end
+            if GAME.teramusic then 
+                IssueAchv('blazing_speed') 
+                GAME.finishTera = true
+            end
             if GAME.teramusic and M.EX == -1 and M.VL == -1 and M.AS == -1 and (M.NH == 0 and M.MS == 0 and M.GV == 0 and M.DH == 0 and M.IN == 0 and M.DP == 0) then IssueAchv('programmer_gamer') end
             if GAME.teramusic and M.EX == -1 and M.GV == 2 and URM and M.DH == -1 and GAME.enightcore and (not GAME.achv_noManualCommitH or GAME.achv_noManualCommitH >= 1650) then IssueAchv("one_of_mine") end
             if not smithyMode then 
@@ -2352,7 +2355,7 @@ function GAME.start()
     GAME.totalSurge = 0
     GAME.heightBonus = 0
     GAME.peakRank = 1
-    GAME.rankTimer = TABLE.new(0, 26)
+    GAME.rankTimer = TABLE.new(0, 62)
 
     -- Time
     GAME.time = 0
@@ -2408,6 +2411,7 @@ function GAME.start()
     GAME.gigaCount = 0
     GAME.teraCount = 0
     GAME.teramusic = false
+    GAME.finishTera = false
     GAME.atkBuffer = 0
     GAME.atkBufferCap = 8 + (M.DH == 1 and M.NH < 2 and 2 or 0) + (M.NH == -1 and 2 or 0)
     GAME.shuffleMessiness = false
@@ -2745,6 +2749,7 @@ function GAME.finish(reason)
                 else
                     endFloorStr = endFloorStr .. "    F10 in " .. t
                 end
+                if GAME.finishTera then endFloorStr = endFloorStr .. "!!!" end
             end
             local l = {}
             for _, codepoint in STRING.u8codes(endFloorStr) do
@@ -2782,7 +2787,7 @@ function GAME.finish(reason)
 
             table.sort(maxCSP, function(a, b) return a[1] < b[1] end)
             local bestPos, bestSum = 0, 0
-            for i = min(mainRank[1], 26 - (rankTimeCount - 1)), max(mainRank[1] - (rankTimeCount - 1), 1), -1 do
+            for i = min(mainRank[1], 62 - (rankTimeCount - 1)), max(mainRank[1] - (rankTimeCount - 1), 1), -1 do
                 local sum = 0
                 for j = i, i + (rankTimeCount - 1) do
                     sum = sum + maxCSP[j][2]
@@ -3077,7 +3082,7 @@ function GAME.update(dt)
     if GAME.eslowmo then timerMulMod = 0.5 end
 
     GAME.time = GAME.time + dt * (GAME.timerMul * timerMulMod)
-    local r = min(GAME.rank, 26)
+    local r = min(GAME.rank, 62)
     GAME.rankTimer[r] = GAME.rankTimer[r] + dt
     GAME.questTime = GAME.questTime + dt
     GAME.floorTime = GAME.floorTime + dt
