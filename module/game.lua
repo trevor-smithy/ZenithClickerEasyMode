@@ -114,6 +114,7 @@ local ins, rem = table.insert, table.remove
 ---@field currentTask ReviveTask |false
 ---@field DPlock boolean
 ---@field lastFlip number | false
+---@field smithyMode boolean
 local GAME = {
     forfeitTimer = 0,
     exTimer = 0,
@@ -235,7 +236,7 @@ GAME.chain = 0
 local M = GAME.mod
 local MD = ModData
 local CD = Cards
-local smithyMode = false
+GAME.smithyMode = false
 
 ---Unsorted, like {'rEX','NH',...}
 ---@param real boolean current mod setting or literally selected cards
@@ -776,13 +777,24 @@ function GAME.genQuest()
         pool[mod] = 0
         local p = TABLE.find(CD, CD[mod])
         if p then
-            if p > 1 then
-                local left = CD[p - 1].id
-                pool[left] = max(pool[left] * (1 - GAME.questFavor * .01), 0)
-            end
-            if p < 9 then
-                local right = CD[p + 1].id
-                pool[right] = max(pool[right] * (1 - GAME.questFavor * .01), 0)
+            if M.DH == -1 then --if easy DH, then "fix" the quest favor to increase the chance for adjacent cards instead of decrease
+                if p > 1 then
+                    local left = CD[p - 1].id
+                    pool[left] = max(pool[left] * (1 + GAME.questFavor * .01), 0)
+                end
+                if p < 9 then
+                    local right = CD[p + 1].id
+                    pool[right] = max(pool[right] * (1 + GAME.questFavor * .01), 0)
+                end
+            else
+                if p > 1 then
+                    local left = CD[p - 1].id
+                    pool[left] = max(pool[left] * (1 - GAME.questFavor * .01), 0)
+                end
+                if p < 9 then
+                    local right = CD[p + 1].id
+                    pool[right] = max(pool[right] * (1 - GAME.questFavor * .01), 0)
+                end
             end
         end
 
@@ -1028,7 +1040,7 @@ function GAME.addXP(xp)
             GAME.refreshRPC()
         end
         if GAME.gigaspeed and not GAME.teramusic and GAME.rank >= TeraMusicReq[GAME.floor] then
-            if (M.EX == -1 and M.VL == -1 and M.AS == -1 and (M.NH == 0 and M.MS == 0 and M.GV == 0 and M.DH == 0 and M.IN == 0 and M.DP == 0)) then smithyMode = true end
+            if (M.EX == -1 and M.VL == -1 and M.AS == -1 and (M.NH == 0 and M.MS == 0 and M.GV == 0 and M.DH == 0 and M.IN == 0 and M.DP == 0)) then GAME.smithyMode = true end
             GAME.startTeraAnim()
             GAME.refreshRPC()
         end
@@ -1066,7 +1078,7 @@ function GAME.startTeraAnim()
     TASK.removeTask_code(GAME.task_gigaspeed)
     TASK.new(GAME.task_gigaspeed)
     SFX.play('zenith_speedrun_start')
-    if smithyMode then
+    if GAME.smithyMode then
         PlayBGM('terae', true)
     else
         PlayBGM('tera', true)
@@ -1201,7 +1213,7 @@ function GAME.upFloor()
     -- End game
     if GAME.floor >= 10 then
         local roundTime = roundUnit(GAME.time, .001)
-        if GAME.gigaspeed or smithyMode then
+        if GAME.gigaspeed or GAME.smithyMode then
             if GAME.time < STAT.minTime then
                 STAT.minTime = roundTime
                 STAT.timeDate = os.date("%y.%m.%d %H:%M%p")
@@ -1214,8 +1226,16 @@ function GAME.upFloor()
                 GAME.finishTera = true
             end
             if GAME.teramusic and M.EX == -1 and M.VL == -1 and M.AS == -1 and (M.NH == 0 and M.MS == 0 and M.GV == 0 and M.DH == 0 and M.IN == 0 and M.DP == 0) then IssueAchv('programmer_gamer') end
-            if GAME.teramusic and M.EX == -1 and M.GV == 2 and URM and M.DH == -1 and GAME.enightcore and (not GAME.achv_noManualCommitH or GAME.achv_noManualCommitH >= 1650) then IssueAchv("one_of_mine") end
-            if not smithyMode then 
+            if GAME.teramusic and M.EX == -1 and M.GV == 2 and URM and M.DH == -1 and GAME.enightcore and (not GAME.achv_noManualCommitH or GAME.achv_noManualCommitH >= 1650) then IssueAchv('one_of_mine') end
+            -- Perfectly Balanced
+            if GAME.comboMP == 4 then
+                local revCount = GAME.comboStr:count('r')
+                local easyCount = GAME.comboStr:count('e')
+                if revCount == 4 and easyCount == 4 then
+                    IssueAchv('perfectly_balanced')
+                end
+            end
+            if not GAME.smithyMode then 
                 -- don't stop my cover until we get to fomg
                 GAME.stopTeraspeed('f10')
             end
@@ -2542,6 +2562,13 @@ function GAME.finish(reason)
     FloatOnCard = nil
     GAME.refreshLayout()
 
+    -- If you didn't get teramusic or didn't make it to Omega, then you don't keep smithyMode
+    if GAME.smithyMode and GAME.teramusic and GAME.omega then
+        GAME.smithyMode = true
+    else
+        GAME.smithyMode = false
+    end
+
     GAME.playing = false
     if M.DH == 2 then GAME.finishTime = love.timer.getTime() end
     ins(GAME.secTime, GAME.floorTime)
@@ -2926,11 +2953,32 @@ function GAME.finish(reason)
             --     if GAME.achv_totalResetCount == 0 then
             --         SubmitAchv('minimalism', GAME.achv_maxChain)
             --     end
+        -- Trevor Smithy
+        elseif URM and M.EX == 2 and M.NH == -1 and M.MS == -1 and M.GV == -1 and M.VL == -1 and M.DH == -1 and M.IN == -1 and M.AS == -1 and M.DP == 0 then
+            SubmitAchv('peasant_revolution', GAME.roundHeight)
+        elseif URM and M.EX == -1 and M.NH == 2 and M.MS == 0 and M.GV == -1 and M.VL == 0 and M.DH == -1 and M.IN == 0 and M.AS == 0 and M.DP == 0 then
+            SubmitAchv('holy_ascention', GAME.roundHeight)
+        elseif URM and M.EX == -1 and M.NH == 0 and M.MS == 2 and M.GV == 0 and M.VL == 0 and M.DH == 0 and M.IN == -1 and M.AS == 0 and M.DP == -1 then
+            SubmitAchv('stabilized_entropy', GAME.roundHeight)
+        elseif URM and M.EX == -1 and M.NH == 0 and M.MS == 0 and M.GV == 2 and M.VL == 0 and M.DH == 0 and M.IN == 0 and M.AS == -1 and M.DP == -1 then
+            SubmitAchv('restrained_collapse', GAME.roundHeight)
+        elseif URM and M.EX == -1 and M.NH == -1 and M.MS == 0 and M.GV == -1 and M.VL == 2 and M.DH == 0 and M.IN == 0 and M.AS == 0 and M.DP == 0 then
+            SubmitAchv('restored_volition', GAME.roundHeight)
+        elseif URM and M.EX == -1 and M.NH == 0 and M.MS == -1 and M.GV == 0 and M.VL == 0 and M.DH == 2 and M.IN == -1 and M.AS == 0 and M.DP == 0 then
+            SubmitAchv('disproven_blasphemy', GAME.roundHeight)
+        elseif URM and M.EX == -1 and M.NH == 0 and M.MS == 0 and M.GV == 0 and M.VL == 0 and M.DH == -1 and M.IN == 2 and M.AS == -1 and M.DP == 0 then
+            SubmitAchv('solved_paradox', GAME.roundHeight)
+        elseif URM and M.EX == -1 and M.NH == -1 and M.MS == 0 and M.GV == 0 and M.VL == -1 and M.DH == 0 and M.IN == 0 and M.AS == 2 and M.DP == 0 then
+            SubmitAchv('demystified_grimoire', GAME.roundHeight)
+        elseif URM and M.EX == -1 and M.NH == 0 and M.MS == -1 and M.GV == 0 and M.VL == -1 and M.DH == 0 and M.IN == 0 and M.AS == 0 and M.DP == 2 then
+            SubmitAchv('restored_eden', GAME.roundHeight)
+        elseif M.EX == -1 and M.NH == -1 and M.MS == 0 and M.GV == -1 and M.VL == -1 and M.DH == -1 and M.IN == -1 and ((M.AS == -1 and M.DP == 1) or (M.AS == 1 and M.DP == -1) or (M.AS == 1 and M.DP == 1)) then
+            SubmitAchv('ggbw', GAME.achv_carriedH or GAME.roundHeight)
         end
         if M.EX < 2 and M.DP < 2 then
             SubmitAchv('speed_bonus', GAME.gigaCount + GAME.teraCount)
         end
-        if M.DP > 0 then
+        if M.DP ~= 0 then
             SubmitAchv('the_responsible_one', GAME.reviveCount)
             SubmitAchv('the_responsible_one_plus', GAME.reviveCount * GAME.comboMP)
             SubmitAchv('guardian_angel', GAME.achv_maxReviveH or 0)
@@ -3225,9 +3273,8 @@ function GAME.update(dt)
 
     if GAME.floor >= 10 then
         -- Omega floor
-        if smithyMode then 
+        if GAME.smithyMode then 
             GAME.stopTeraspeed('f10') 
-            smithyMode = false
         end
         if not GAME.omega and GAME.height >= 6200 then
             GAME.omega = true

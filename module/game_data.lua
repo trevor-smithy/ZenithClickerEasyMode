@@ -1260,7 +1260,7 @@ Fatigue = {
         { time = 600, event = { 'animDuration', 16 }, --[[42]]                             text = "" },
         { time = 630, event = { 'animDuration', 20 }, --[[62]]                             text = "" },
         { time = 660, event = { 'animDuration', 64 }, --[[126]]                            text = "" },
-        { time = 1080, event = { 'atkBufferCap', 6, 'animDuration', 128, 'maxQuestSize', 1 }, text = "IT'S TIME TO STOP!",                 desc = "QuestDifficulty++++++",     duration = 26, color = 'lB', },
+        { time = 840, event = { 'atkBufferCap', 6, 'extraQuestVar', 1, 'maxQuestSize', 1 }, text = "IT'S TIME TO STOP!",                 desc = "QuestDifficulty++++++",     duration = 26, color = 'lB', },
         { time = 1e99 }, -- Total: dmgTimerMul-50%, Cycle-1, Wrong+2
     },
         --
