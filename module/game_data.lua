@@ -336,6 +336,18 @@ ComboData = {
         { set = "eEX eNH eGV eVL eDH eIN AS DP",            name = "Gamer Girl Bath Water"},
         { set = "eEX eNH eGV eVL eDH eIN eAS DP",            name = "Gamer Girl Bath Water"},
         { set = "eEX eNH eGV eVL eDH eIN AS eDP",            name = "Gamer Girl Bath Water"},
+        -- Credit: Rejuvenating rack
+        { set = "eEX eNH rMS eGV VL eDH eIN eAS",            name = "Goth Mommy Bath Water"},
+        -- ultras
+        { set = "rEX eNH eMS eGV eVL eDH eIN eAS",      name = "Peasant Revolution"},
+        { set = "eEX rNH eGV eDH",      name = "Holy Ascention"},
+        { set = "eEX rMS eIN eDP",      name = "Stabilized Entropy"},
+        { set = "eEX rGV eAS eDP",      name = "Restrained Collapse"},
+        { set = "eEX eNH eGV rVL",      name = "Restored Volition"},
+        { set = "eEX eMS rDH eIN",      name = "Disproven Blasphemy"},
+        { set = "eEX eDH rIN eAS",      name = "Solved Paradox"},
+        { set = "eEX eNH eVL rAS",      name = "Demystified Grimoire"},
+        { set = "eEX eMS eVL rDP",      name = "Restored Eden"},
     },
 
     game = {

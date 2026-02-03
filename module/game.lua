@@ -2374,7 +2374,7 @@ function GAME.start()
     GAME.floor = 0
     GAME.height = 0
     GAME.heightBuffer = 0
-    GAME.fatigueSet = Fatigue[M.EX == 2 and 'rEX' or M.DP == 2 and 'rDP' or M.EX == -1 and 'eEX' or 'normal']
+    GAME.fatigueSet = Fatigue[M.EX == 2 and 'rEX' or M.EX == -1 and 'eEX' or M.DP == 2 and 'rDP' or 'normal']
     GAME.fatigue = 1
     GAME.animDuration = GAME.slowmo and 26 or 1
     GAME.lastCommit = {}
