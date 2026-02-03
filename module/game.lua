@@ -2793,7 +2793,6 @@ function GAME.finish(reason)
             table.sort(maxCSP, function(a, b) return a[1] < b[1] end)
             local bestPos, bestSum = 0, 0
             for i = min(mainRank[1], 62 - (rankTimeCount - 1)), max(mainRank[1] - (rankTimeCount - 1), 1), -1 do
-            for i = min(mainRank[1], 62 - (rankTimeCount - 1)), max(mainRank[1] - (rankTimeCount - 1), 1), -1 do
                 local sum = 0
                 for j = i, i + (rankTimeCount - 1) do
                     sum = sum + maxCSP[j][2]
