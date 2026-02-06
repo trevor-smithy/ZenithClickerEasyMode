@@ -1422,10 +1422,10 @@ function GAME.refreshRPC()
         if GAME.slowmo then pitch = pitch - 12 end
         -- Trevor Smithy
         if GAME.enightcore then pitch = pitch + 12 end
-        if GAME.eslowmo then pitch = pitch - 12 end
+        if GAME.eslowmo then pitch = pitch - 6 end
         --
         if pitch ~= 0 then stateStr = stateStr .. (pitch > 0 and " (+" or " (") .. pitch .. ")" end
-        if M.IN > 0 then stateStr = stateStr:gsub(".", { j = "r", s = "z", p = "b", c = "g", t = "d" }) end
+        if M.IN ~= 0 then stateStr = stateStr:gsub(".", { j = "r", s = "z", p = "b", c = "g", t = "d" }) end
     end
 
     DiscordState = {
@@ -2346,11 +2346,15 @@ function GAME.start()
     GAME.isUltraRun = GAME.anyUltra
     GAME.attackMul = GAME.isUltraRun and .62 or 1
     -- Trevor Smithy
+    local slowMo = 0
+    if GAME.eslowmo then
+        slowMo = 0.5
+    end
     --GAME.xpLockLevelMax = URM and M.NH == 2 and 1 or 5
     --GAME.leakSpeed = (M.EX > 0 and 5 or 3) + (GAME.fastLeak and 8 or 0)
-    GAME.xpLockLevelMax = URM and M.NH == 2 and 1 or 5 + (GAME.efastLeak and 3 or 0) + (M.NH == -1 and 2 or 0)
-    -- fast leak increases leakSpeed to 2.666 times normal rate, slow leak decreases leakSpeed to 1/2.666 times normal rate
-    GAME.leakSpeed = (M.EX > 0 and 5 or 3) + (GAME.fastLeak and 8 or 0) + (M.EX == -1 and -1.2 or 0) + (GAME.efastLeak and -1.875 or 0) + (GAME.efastLeak and M.EX == -1 and (0.075 + 0.15) or 0)
+    GAME.xpLockLevelMax = (URM and M.NH == 2 and 1 or 5 + (GAME.efastLeak and 5 or 0) + (M.NH == -1 and 2 or 0)) * (1 + slowMo)
+    -- fast leak increases leakSpeed to 2.666 times normal rate, slow leak decreases leakSpeed to 1/2.666 times normal rate, eslowmo halves leak speed
+    GAME.leakSpeed = ((M.EX > 0 and 5 or 3) + (GAME.fastLeak and 8 or 0) + (M.EX == -1 and -1.2 or 0) + (GAME.efastLeak and -1.875 or 0) + (GAME.efastLeak and M.EX == -1 and (0.075 + 0.15) or 0)) / (1 + slowMo)
     --
     GAME.invincible = false
 
@@ -2548,7 +2552,8 @@ function GAME.finish(reason)
 
     GAME.sortCards()
     for _, C in ipairs(CD) do
-        if (M[C.id] > 0) ~= C.active then
+        -- Trevor Smithy
+        if (M[C.id] ~= 0) ~= C.active then
             C:setActive(true)
         end
         if not C.active and not C.upright then C.upright = true end
@@ -3132,7 +3137,7 @@ function GAME.update(dt)
     -- Timers
     -- Trevor Smithy
     local timerMulMod = 1
-    if GAME.eslowmo then timerMulMod = 0.5 end
+    if GAME.eslowmo then timerMulMod = 0.75 end
 
     GAME.time = GAME.time + dt * (GAME.timerMul * timerMulMod)
     local r = min(GAME.rank, 62)
@@ -3259,7 +3264,7 @@ function GAME.update(dt)
     -- Trevor Smithy
     local gravTimerMod = 1 -- larger = slower, smaller = faster
     if GAME.eslowmo then
-        gravTimerMod = 2
+        gravTimerMod = 1.5
     elseif GAME.enightcore then
         gravTimerMod = 0.5
     end

@@ -143,7 +143,7 @@ function Card:setActive(auto, key)
     else
         self.active = not self.active
     end
-    local noSpin, revOn
+    local noSpin, revOn, easyOn
     if GAME.playing then
         if not auto then
             self.touchCount = self.touchCount + 1
@@ -157,7 +157,7 @@ function Card:setActive(auto, key)
                     -- Trevor Smithy
                     GAME.addXP(M.VL == 1 and 2 or M.VL == -1 and 2 or 1)
                 end
-            elseif not GAME.fault and not self.burn then
+            elseif not GAME.fault and not self.burn and not (M.NH == -1 and M.DP == 0) then
                 GAME.fault = true
             end
         end
@@ -311,7 +311,7 @@ function Card:spin()
     TWEEN.tag_kill('shake_' .. self.id)
     local animFunc, ease
     local re = (GAME.playing or self.upright) and 0 or 3.1416
-    if M.IN ~= 1 then
+    if M.IN ~= 1 and M.IN ~= -1 then
         -- Normal
         ease = 'OutQuart'
         function animFunc(t)
