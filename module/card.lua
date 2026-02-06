@@ -81,7 +81,7 @@ function Card:setActive(auto, key)
             SFX.play('combo_4', .626, 0, Tone(0))
             self.charge = 0
         end
-    elseif M.VL == 2 and not self.active then
+    elseif M.VL == 2 and not (self.active and M.NH == -1) then
         self.charge = self.charge + (auto and 3.55 or 1)
         if self.charge < 3.1 then
             SFX.play('clearline', .3)
