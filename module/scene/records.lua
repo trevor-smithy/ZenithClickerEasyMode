@@ -155,6 +155,8 @@ local function query()
     for i = 1, #MD.deck do
         if set.sel[i] > 0 then
             table.insert(list, (set.sel[i] == 2 and 'r' or '') .. cardIDs[i])
+        elseif set.sel[i] == -1 then
+            table.insert(list, 'e' .. cardIDs[i])
         end
     end
     if set.match == 'exact' then
@@ -343,10 +345,12 @@ end
 
 function scene.touchClick(x, y) scene.mouseClick(x, y, 1) end
 
-local function setMod(i, rev)
+local function setMod(i, rev, easy)
     if GAME.completion[cardIDs[i]] > 0 then
         if rev then
             set.sel[i] = set.sel[i] == 0 and 2 or 0
+        elseif easy then
+            set.sel[i] = set.sel[i] == 0 and -1 or 0
         else
             set.sel[i] = (set.sel[i] + 1) % 3
         end
@@ -355,7 +359,7 @@ local function setMod(i, rev)
     end
     if set.sel[i] == 0 then
         SFX.play('card_slide_' .. math.random(4))
-    elseif set.sel[i] == 1 then
+    elseif set.sel[i] == 1 or set.sel[i] == -1 then
         SFX.play('card_select', .8)
     elseif set.sel[i] == 2 then
         SFX.play('card_select_reverse', 1)
@@ -365,10 +369,11 @@ end
 function scene.keyDown(key, isRep)
     if isRep then return true end
     local ctrl = love.keyboard.isDown('lctrl', 'rctrl')
+    local alt = love.keyboard.isDown('lalt', 'ralt')
     local bindID = TABLE.find(STAT.keybind, key)
     if bindID and bindID <= 18 then
         local i = bindID > 9 and bindID - 9 or bindID
-        setMod(i, ctrl)
+        setMod(i, ctrl, alt)
         refresh()
     elseif key == STAT.keybind[19] or key == 'return' then
         -- Confirm
@@ -673,9 +678,9 @@ for i = 1, #CD do
         textColor = { COLOR.lerp(MD.textColor[cardIDs[i]], COLOR.LL, .26) },
         text = cardIDs[i], sound_off = false, sound_on = false,
         x = baseX - 60 + 100 * i, y = baseY + 100,
-        disp = function() return set.sel[i] > 0 end,
+        disp = function() return set.sel[i] ~= 0 end,
         code = function(k)
-            setMod(i, k == 2 or love.keyboard.isDown('lctrl', 'rctrl'))
+            setMod(i, k == 2 or love.keyboard.isDown('lctrl', 'rctrl'), k == -1 or love.keyboard.isDown('lalt', 'ralt'))
             refresh()
         end,
     })

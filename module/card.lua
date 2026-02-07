@@ -239,8 +239,6 @@ function Card:setActive(auto, key)
         end
         -- Trevor Smithy
         if easyOn or wasEasy then GAME.refreshEasy() end
-        TASK.removeTask_code(task_refreshBGM)
-        TASK.new(task_refreshBGM)
         if wasEasy and not easyOn then self:spin() end
         --if self.id == 'EX' then
         --    TWEEN.new(tween_expertOn):setDuration(M.EX > 0 and .26 or .1):run()

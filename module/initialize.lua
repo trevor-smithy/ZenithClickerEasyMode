@@ -234,7 +234,7 @@ function Initialize(save)
         STAT.timeDate = "NO DATE"
     end
     for setStr in next, BEST.highScore do
-        setStr = setStr:gsub('[ur]', '')
+        setStr = setStr:gsub('[ure]', '')
         local illegal
         for i = 1, #setStr, 2 do
             if not GAME.completion[setStr:sub(i, i + 1)] then

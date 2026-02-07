@@ -14,17 +14,17 @@ if love['_os'] == 'Web' then
 end
 
 function love.conf(t)
-    local identity = 'Zenith_Clicker_Easy_Mode'
+    local identity = 'Easy_Mode_Zenith_Clicker'
     local mobile = love._os == 'Android' or love._os == 'iOS'
 
     local fs = love.filesystem
     fs.setIdentity(identity)
 
-    t.identity = 'Zenith_Clicker_Easy_Mode'
+    t.identity = 'Easy_Mode_Zenith_Clicker'
+    t.appendidentity = true
     t.externalstorage = true
     t.version = "11.4"
     t.gammacorrect = false
-    t.appendidentity = true
     t.accelerometerjoystick = false
     if t.audio then
         t.audio.mic = false

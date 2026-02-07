@@ -33,14 +33,14 @@ local function q(oy, n, size)
     return GC.newQuad(
         n * size, oy,
         size, size,
-        2178, 1663
+        2178*2, 1663 -- was 2178
     )
 end
 local function q2(ox, oy, w, h)
     return GC.newQuad(
         ox, oy,
         w, h,
-        2178, 1663
+        2178*2, 1663
     )
 end
 local function aq(x, y) return GC.newQuad((x - 1) % 16 * 256, (y - 1) % 16 * 256, 256, 256, 4096, 2048) end
@@ -53,7 +53,7 @@ TEXTURE = {
         throb_a = assets 'panel/throb-a.png',
         throb_b = assets 'panel/throb-b.png',
     },
-    modIcon = assets 'mod_icon.png',
+    modIcon = assets 'mod_icon_easy.png',
     modQuad_ig = {
         VL = q(0, 0, 225),
         NH = q(0, 1, 225),
@@ -74,15 +74,15 @@ TEXTURE = {
         rDH = q(225, 7, 242),
         rAS = q(225, 8, 242),
         -- Trevor Smithy
-        eVL = q(0, 0, 225),
-        eNH = q(0, 1, 225),
-        eMS = q(0, 2, 225),
-        eIN = q(0, 3, 225),
-        eGV = q(0, 4, 225),
-        eEX = q(0, 5, 225),
-        eDP = q(0, 6, 225),
-        eDH = q(0, 7, 225),
-        eAS = q(0, 8, 225),
+        eVL = q(0, 9, 225),
+        eNH = q(0, 10, 225),
+        eMS = q(0, 11, 225),
+        eIN = q(0, 12, 225),
+        eGV = q(0, 13, 225),
+        eEX = q(0, 14, 225),
+        eDP = q(0, 15, 225),
+        eDH = q(0, 16, 225),
+        eAS = q(0, 17, 225),
         --
     },
     modQuad_res = {

@@ -244,25 +244,25 @@ function GAME.getHand(real)
     local list = {}
     if real then
         -- FOR ULTIMATE SPEED
-        if M.EX > 0 then ins(list, M.EX == 1 and 'EX' or 'rEX') end
-        if M.NH > 0 then ins(list, M.NH == 1 and 'NH' or 'rNH') end
-        if M.MS > 0 then ins(list, M.MS == 1 and 'MS' or 'rMS') end
-        if M.GV > 0 then ins(list, M.GV == 1 and 'GV' or 'rGV') end
-        if M.VL > 0 then ins(list, M.VL == 1 and 'VL' or 'rVL') end
-        if M.DH > 0 then ins(list, M.DH == 1 and 'DH' or 'rDH') end
-        if M.IN > 0 then ins(list, M.IN == 1 and 'IN' or 'rIN') end
-        if M.AS > 0 then ins(list, M.AS == 1 and 'AS' or 'rAS') end
-        if M.DP > 0 then ins(list, M.DP == 1 and 'DP' or 'rDP') end
+        if M.EX ~= 0 then ins(list, M.EX == 1 and 'EX' or M.EX == -1 and 'eEX' or 'rEX') end
+        if M.NH ~= 0 then ins(list, M.NH == 1 and 'NH' or M.NH == -1 and 'eNH' or 'rNH') end
+        if M.MS ~= 0 then ins(list, M.MS == 1 and 'MS' or M.MS == -1 and 'eMS' or 'rMS') end
+        if M.GV ~= 0 then ins(list, M.GV == 1 and 'GV' or M.GV == -1 and 'eGV' or 'rGV') end
+        if M.VL ~= 0 then ins(list, M.VL == 1 and 'VL' or M.VL == -1 and 'eVL' or 'rVL') end
+        if M.DH ~= 0 then ins(list, M.DH == 1 and 'DH' or M.DH == -1 and 'eDH' or 'rDH') end
+        if M.IN ~= 0 then ins(list, M.IN == 1 and 'IN' or M.IN == -1 and 'eIN' or 'rIN') end
+        if M.AS ~= 0 then ins(list, M.AS == 1 and 'AS' or M.AS == -1 and 'eAS' or 'rAS') end
+        if M.DP ~= 0 then ins(list, M.DP == 1 and 'DP' or M.DP == -1 and 'eDP' or 'rDP') end
         -- Trevor Smithy
-        if M.EX == -1 then ins(list, 'eEX') end
-        if M.NH == -1 then ins(list, 'eNH') end
-        if M.MS == -1 then ins(list, 'eMS') end
-        if M.GV == -1 then ins(list, 'eGV') end
-        if M.VL == -1 then ins(list, 'eVL') end
-        if M.DH == -1 then ins(list, 'eDH') end
-        if M.IN == -1 then ins(list, 'eIN') end
-        if M.AS == -1 then ins(list, 'eAS') end
-        if M.DP == -1 then ins(list, 'eDP') end
+        --if M.EX == -1 then ins(list, 'eEX') end
+        --if M.NH == -1 then ins(list, 'eNH') end
+        --if M.MS == -1 then ins(list, 'eMS') end
+        --if M.GV == -1 then ins(list, 'eGV') end
+        --if M.VL == -1 then ins(list, 'eVL') end
+        --if M.DH == -1 then ins(list, 'eDH') end
+        --if M.IN == -1 then ins(list, 'eIN') end
+        --if M.AS == -1 then ins(list, 'eAS') end
+        --if M.DP == -1 then ins(list, 'eDP') end
         --
 
         -- for i = 1, #MD.deck do
