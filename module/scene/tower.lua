@@ -740,7 +740,7 @@ function scene.draw()
     end
 
     if not (GAME.invisUI or GAME.einvisUI) then
-        -- Wind Particles
+        -- Wind particles
         if GAME.height <= 1650 then
             gc_replaceTransform(SCR.origin)
             local dh = GAME.bgH - GAME.bgLastH
@@ -760,10 +760,10 @@ function scene.draw()
             gc_draw(WindBatch)
         end
 
-        -- PB Line
+        -- PB line
         drawPBline(GAME.prevPB, true)
 
-        -- KM Line
+        -- KM line
         if GAME.floor >= 10 then
             gc_setColor(1, 1, 1, GAME.uiHide)
             drawPBline(MATH.roundUnit(GAME.bgH, 1000), false, 6, TEXTS.lineKM)
@@ -1208,7 +1208,7 @@ function scene.overDraw()
     --     gc.print(Cards[i].ty, Cards[i].x, Cards[i].y-260)
     -- end
 
-    -- Bottom In-game UI
+    -- bottom in-game UI
     if GAME.uiHide > 0 and not GAME.invisUI then
         local h = 100 - GAME.uiHide * 100
         gc_ucs_move(0, h)
