@@ -177,18 +177,51 @@ function Card:setActive(auto, key)
                     TASK.removeTask_code(GAME.task_cancelAll)
                     local p = TABLE.find(CD, self) or 0
                     local l = { -3, -2, -1, 1, 2, 3 }
-                    CD[(p + table.remove(l, rnd(4, 6)) - 1) % #CD + 1]:setActive(true)
-                    CD[(p + table.remove(l, rnd(1, 3)) - 1) % #CD + 1]:setActive(true)
+                    local coinFlip = rnd(1,2)
+                    if M.NH ~= -1 then
+                        CD[(p + table.remove(l, rnd(4, 6)) - 1) % #CD + 1]:setActive(true)
+                        CD[(p + table.remove(l, rnd(1, 3)) - 1) % #CD + 1]:setActive(true)
+                    elseif M.NH == -1 and coinFlip == 1 then
+                        CD[(p + table.remove(l, rnd(4, 6)) - 1) % #CD + 1]:setActive(true)
+                    elseif M.NH == -1 and coinFlip == 2 then
+                        CD[(p + table.remove(l, rnd(1, 3)) - 1) % #CD + 1]:setActive(true)
+                    end
                     GAME.achv_escapeBurnt = true
                     if M.AS == 2 then
-                        CD[(p + table.remove(l, rnd(3, 4)) - 1) % #CD + 1]:setActive(true)
-                        CD[(p + table.remove(l, rnd(1, 2)) - 1) % #CD + 1]:setActive(true)
+                        if M.NH ~= -1 then
+                            CD[(p + table.remove(l, rnd(3, 4)) - 1) % #CD + 1]:setActive(true)
+                            CD[(p + table.remove(l, rnd(1, 2)) - 1) % #CD + 1]:setActive(true)
+                        elseif M.NH == -1 and coinFlip == 1 then
+                            CD[(p + table.remove(l, rnd(1, 2)) - 1) % #CD + 1]:setActive(true)
+                        elseif M.NH == -1 and coinFlip == 2 then
+                            CD[(p + table.remove(l, rnd(3, 4)) - 1) % #CD + 1]:setActive(true)
+                        end
                         if GAME.floor < 10 and GAME.gigaspeed then GAME.achv_felMagicBurnt = true end
-                        if URM then return GAME.takeDamage(1e99, 'wrong') end
+                        if M.NH ~= -1 then
+                            if URM then return GAME.takeDamage(1e99, 'wrong') end
+                        else
+                            if URM then 
+                                GAME.takeDamage(GAME.fullHealth-1, 'wrong') 
+                                GAME.fault = true
+                                if GAME[GAME.getLifeKey()] > 0.01 then
+                                    TEXT:add {
+                                        text = 'CAREFUL THERE!',
+                                        x = 800, y = 265, fontSize = 30, k = 1.5,
+                                        style = 'score', duration = 5,
+                                        inPoint = .1, outPoint = .26,
+                                        color = 'lM',
+                                    }
+                                end
+                            end
+                        end
                     end
                     SFX.play('wound')
                 else
-                    self.burn = M.AS == 1 and 3 + GAME.floor / 2 or 1e99
+                    if M.NH == -1 then
+                        self.burn = (M.AS == 1 and 1.5 + GAME.floor / 4) or (M.AS == 2 and not URM and 3 + GAME.floor / 2) or 1e99
+                    else
+                        self.burn = M.AS == 1 and 3 + GAME.floor / 2 or 1e99
+                    end
                 end
             end
         end

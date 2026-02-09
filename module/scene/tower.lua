@@ -1258,7 +1258,9 @@ function scene.overDraw()
         elseif GAME.DPlock then
             gc_setAlpha(.26)
         end
-        gc_mRect('fill', 800, 965, 420 * GAME.xp / (4 * rank), 3 * min(GAME.xpLockLevel, 5))
+        --gc_mRect('fill', 800, 965, 420 * GAME.xp / (4 * rank), 3 * min(GAME.xpLockLevel, 5))
+        -- change this to:
+        gc_mRect('fill', 800, 965, 420 * GAME.xp / (4 * rank), 3 * clamp(GAME.xpLockLevel, 1, 5))
 
         -- Height & Time
         altitudeText[1] = ("%.1f"):format(GAME.roundHeight)

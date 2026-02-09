@@ -115,6 +115,7 @@ local ins, rem = table.insert, table.remove
 ---@field DPlock boolean
 ---@field lastFlip number | false
 ---@field smithyMode boolean
+---@field finalFatigueOSPActivated boolean
 local GAME = {
     forfeitTimer = 0,
     exTimer = 0,
@@ -766,7 +767,7 @@ function GAME.genQuest()
             end
         end
         local questCount = MATH.clamp(MATH.roundRnd(r), 1, GAME.maxQuestSize)
-        if questCount == 1 then
+        if questCount == 1 and M.DP ~= -1 then
             -- Prevent 1-mod quest being DP
             pool.DP = 0
         elseif M.DH == 2 then
@@ -1009,8 +1010,16 @@ end
 
 local speedupSFX = { 0, 1, 1, 1, 2, 2, 2, 3, 3 }
 function GAME.addXP(xp)
+    local xpRankModifier = 20 -- 1/10th
+    local xpLockLevelMin = 1
+    if GAME.xpLockLevelMax == 0 then
+        xpLockLevelMin = 0
+    end
     if M.VL == -1 then
         xp = xp + 1
+    end
+    if M.EX == -1 and GAME.rank > 1 then
+        xp = xp * (1 + (GAME.rank - 1)/xpRankModifier)
     end
     GAME.xp = GAME.xp + xp
     if GAME.rankupLast and GAME.xp >= 2 * GAME.rank then GAME.xpLockLevel = GAME.xpLockLevelMax end
@@ -1020,7 +1029,7 @@ function GAME.addXP(xp)
     while GAME.xp >= 4 * GAME.rank do
         GAME.xp = GAME.xp - 4 * GAME.rank
         GAME.rank = GAME.rank + 1
-        GAME.xpLockLevel = max(GAME.xpLockLevel - 1, 1)
+        GAME.xpLockLevel = max(GAME.xpLockLevel - 1, xpLockLevelMin)
 
         -- Rank skip
         if GAME.xp >= 2 * GAME.rank then
@@ -2169,7 +2178,7 @@ function GAME.commit(auto)
         local oldAllyLife = GAME[GAME.getLifeKey(true)]
         ---@cast oldAllyLife number
         if M.DP ~= 0 then
-            if GAME[GAME.getLifeKey(true)] == 0 then
+            if GAME[GAME.getLifeKey(true)] == 0 and M.DP ~= -1 then
                 xp = xp / 2
                 attack = attack / 2
             elseif not allyWasDead and not GAME.achv_carriedH then
@@ -2336,6 +2345,7 @@ function GAME.start()
     TASK.removeTask_code(Task_MusicEnd)
     MusicPlayer = false
 
+    GAME.finalFatigueOSPActivated = false
     GAME.omega = false
     GAME.negFloor = 1
     GAME.negEvent = 1
@@ -2349,9 +2359,13 @@ function GAME.start()
     end
     --GAME.xpLockLevelMax = URM and M.NH == 2 and 1 or 5
     --GAME.leakSpeed = (M.EX > 0 and 5 or 3) + (GAME.fastLeak and 8 or 0)
-    GAME.xpLockLevelMax = (URM and M.NH == 2 and 1 or 5 + (GAME.efastLeak and 5 or 0) + (M.NH == -1 and 2 or 0)) * (1 + slowMo)
+    GAME.xpLockLevelMax = (((URM and M.NH == 2 and 1) or (M.EX == -1 and 0) or (5)) + (GAME.efastLeak and 5 or 0) + (M.NH == -1 and 3 or 0)) * (1 + slowMo)
+    if GAME.xpLockLevelMax == 0 and GAME.eslowmo then
+        GAME.xpLockLevelMax = 1.5
+    end
     -- fast leak increases leakSpeed to 2.666 times normal rate, slow leak decreases leakSpeed to 1/2.666 times normal rate, eslowmo halves leak speed
-    GAME.leakSpeed = ((M.EX > 0 and 5 or 3) + (GAME.fastLeak and 8 or 0) + (M.EX == -1 and -1.2 or 0) + (GAME.efastLeak and -1.875 or 0) + (GAME.efastLeak and M.EX == -1 and (0.075 + 0.15) or 0)) / (1 + slowMo)
+    --GAME.leakSpeed = ((M.EX > 0 and 5 or 3) + (GAME.fastLeak and 8 or 0) + (M.EX == -1 and -1.2 or 0) + (GAME.efastLeak and -1.875 or 0) + (GAME.efastLeak and M.EX == -1 and (0.075 + 0.15) or 0)) / (1 + slowMo)
+    GAME.leakSpeed = ((M.EX > 0 and 5 or 3) + (GAME.fastLeak and 8 or GAME.efastLeak and -1.875 or 0)) / (1 + slowMo)
     --
     GAME.invincible = false
 
@@ -2570,6 +2584,7 @@ function GAME.finish(reason)
     else
         GAME.smithyMode = false
     end
+    GAME.finalFatigueOSPActivated = false
 
     GAME.playing = false
     if M.DH == 2 then GAME.finishTime = love.timer.getTime() end
@@ -3154,8 +3169,54 @@ function GAME.update(dt)
             GAME.dmgHeal = GAME.dmgHeal - 0.05 * dt
         end
     end
-    if GAME.time >= GAME.fatigueSet[GAME.fatigue].time then
-        GAME.nextFatigue()
+
+    local finalFatigueTime = 900
+    local finalFatigueTimePostOSP = finalFatigueTime + 5
+    if GAME.time >= GAME.fatigueSet[GAME.fatigue].time or GAME.finalFatigueOSPActivated then
+        local delayedFatigue = GAME.fatigue
+        if M.EX == -1 and M.NH == -1 and GAME.time >= finalFatigueTime and GAME.time <= finalFatigueTimePostOSP and not GAME.finalFatigueOSPActivated then
+            GAME.finalFatigueOSPActivated = true
+            GAME.takeDamage(GAME[GAME.getLifeKey()] - 0.1, 'time')
+            GAME.fault = true
+            if GAME[GAME.getLifeKey()] > 0.01 then
+                TEXT:add {
+                    text = 'YOU CHEAT DEATH, IF JUST FOR A MOMENT',
+                    x = 800, y = 265, fontSize = 30, k = 1.5,
+                    style = 'score', duration = 5,
+                    inPoint = .1, outPoint = .26,
+                    color = 'lB',
+                }
+            end
+        elseif M.EX == -1 and M.NH == -1 and GAME.time >= finalFatigueTime and GAME.time < finalFatigueTimePostOSP then
+            GAME.dmgHeal = 0
+        elseif M.EX == -1 and M.NH == -1 and GAME.time >= finalFatigueTimePostOSP and finalFatigueOSPActivated then
+            local stage = {event = { 'dmgCycle', -4.99, 'dmgTimerMul', -.99, 'dmgTime', 666 }, text = "Thank you so much for playing my mod!", desc = "WAH-BAAM!", duration = 26, color = 'lB', }
+            local e = stage.event
+            GAME.dmgCycle = -4.99
+            GAME.dmgTimerMul = -.99
+            GAME.dmgTime = 666
+            GAME.takeDamage(666, 'time')
+            if stage.text then
+                TEXT:add {
+                    text = stage.text,
+                    x = 800, y = 265, fontSize = 30, k = 1.5,
+                    style = 'score', duration = stage.duration or 5,
+                    inPoint = .1, outPoint = .26,
+                    color = stage.color or 'lB',
+                }
+                if stage.desc then
+                    TEXT:add {
+                        text = stage.desc,
+                        x = 800, y = 300, fontSize = 30,
+                        style = 'score', duration = stage.duration or 5,
+                        inPoint = .26, outPoint = .1,
+                        color = stage.color or 'lB',
+                    }
+                end
+            end
+        else
+            if GAME.time >= GAME.fatigueSet[GAME.fatigue].time then GAME.nextFatigue() end
+        end
     end
 
     -- Gigaspeed timer text
@@ -3187,7 +3248,7 @@ function GAME.update(dt)
     end
 
     local releaseHeight = GAME.heightBuffer
-    GAME.heightBuffer = max(MATH.expApproach(GAME.heightBuffer, 0, dt * 6.3216), GAME.heightBuffer - 600 * dt)
+    GAME.heightBuffer = max(MATH.expApproach(GAME.heightBuffer, 0, dt * 6.3216), GAME.heightBuffer - 6000 * dt)
     releaseHeight = releaseHeight - GAME.heightBuffer
 
     local oldHeight = GAME.height
@@ -3269,6 +3330,12 @@ function GAME.update(dt)
         GAME.gravTimer = GAME.gravTimer - dt / gravTimerMod
         if GAME.gravTimer <= 0 then
             GAME.faultWrong = false
+            GAME.commit(true)
+        end
+        --Trevor Smithy
+        local q1 = TABLE.sort(GAME.quests[1].combo)
+        local hand = TABLE.sort(GAME.getHand(false))
+        if M.GV == -1 and TABLE.equal(hand, q1) then
             GAME.commit(true)
         end
     end
