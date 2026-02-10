@@ -48,7 +48,8 @@ Each mod creates a unique experience by twisting the rules, but also increases t
 
 ### Easy (`eEX`)
 
-- Climb speed **decays 40% slower.**
+- Climb speed **xp requirements scale slower.** [Graph](https://www.desmos.com/calculator/8w92jenkar)
+- XP Lock **set to 0** to balance the above effect.
 - Quests are **more likely to repeat.**
 - Fatigue effects start **1 minute later.**
 - AS keyboard hints **ARE** shown (if enabled).
@@ -60,9 +61,10 @@ Each mod creates a unique experience by twisting the rules, but also increases t
 ### Moderate Hold (`eNH`)
 
 - Cards must be pressed **twice** to deactivate.
-- Attack **increased by 1.**
-- Attack buffer **increased by 25%.**
 - XP Lock time **increased by 2 seconds.**
+- Slows down **SPIN** speed.
+- Reduces **max quest size to 2 if rDH is active.**
+- **Adds OSP** (one shot protection), meaning you will survive insta-kill effects. (There are only 2 in the game.)
 
 ### Messiness (`MS`)
 
@@ -73,14 +75,16 @@ Each mod creates a unique experience by twisting the rules, but also increases t
 - Cards are **lightly shuffled** at the start of **floors 1 and 10.** The cards will always be in or adjacent to their correct position.
 - Timer damage and wrong commit damage **reduced by 1.** (Minimum damage not changed if any DP is active.)
 - Base heal **increased by 1.**
+- **Slightly improves** quest favor.
 
 ### Gravity (`GV`)
 
-- **Automatically commit** some time after the first card flip. The timer starts at **9s** at floor 1, and decreases every floor until **4s** at floor 10. The timer will also automatically start if you flip no cards for 2.6s.
+- **Automatically commits** some time after the first card flip. The timer starts at **9s** at floor 1, and decreases every floor until **4s** at floor 10. The timer will also automatically start if you flip no cards for 2.6s.
 
 ### Lift (`eGV`)
 
-- **Automatically commit** some time after the first card flip. The timer starts at **10s** at floor 1, and decreases every floor until **5s** at floor 10.
+- **Automatically commits** some time after the first card flip. The timer starts at **10s** at floor 1, and decreases every floor until **5s** at floor 10.
+- **Automatically commits** upon correct mod selection.
 - Damage timer is **25% slower.**
 
 ### Volatility (`VL`)
@@ -103,7 +107,7 @@ Each mod creates a unique experience by twisting the rules, but also increases t
 ### Salvation (`eDH`)
 
 - Quests are **easier.**
-- Maximum quest size **reduced by 1.** (until final fatigue effect)
+- Quest favor makes it **more likely to have adjacent cards,** rather than less likely.
 
 ### Invisible (`IN`)
 
@@ -127,6 +131,7 @@ Each mod creates a unique experience by twisting the rules, but also increases t
 
 - You can flip cards with your keyboard: on ANSI QWERTY layout, the inputs are 1-9, Q-O, or A-L. If cards are shuffled by `(r)MS`, they are flipped based on their *position*, not by which card they are.
 - The RESET button is replaced with **SPIN**. Using SPIN quickly flips all cards one-by-one.
+- Attack increased by 1 if Back 2 Back is active.
 
 ### Duo (`DP`)
 
@@ -137,6 +142,7 @@ Each mod creates a unique experience by twisting the rules, but also increases t
 ### Friend (`eDP`)
 
 - There are two "players" instead of one. You can swap players by activating the Duo card, or by completing the second quest in the queue (the cards will be highlighted pink while you do this).
+- If one player is incapacitated, they can be revived by completing some revive prompts.
 - Revives are a **bit easier**. 
 
 ## SPOILERS

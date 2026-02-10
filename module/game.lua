@@ -115,7 +115,9 @@ local ins, rem = table.insert, table.remove
 ---@field DPlock boolean
 ---@field lastFlip number | false
 ---@field smithyMode boolean
+---@field OSPActivated boolean
 ---@field finalFatigueOSPActivated boolean
+---@field bonusRecoveryHealth number
 local GAME = {
     forfeitTimer = 0,
     exTimer = 0,
@@ -1018,7 +1020,7 @@ function GAME.addXP(xp)
     if M.VL == -1 then
         xp = xp + 1
     end
-    if M.EX == -1 and GAME.rank > 1 then
+    if M.EX == -1 and GAME.rank > 1 and GAME.rank <= 126 then
         xp = xp * (1 + (GAME.rank - 1)/xpRankModifier)
     end
     GAME.xp = GAME.xp + xp
@@ -1198,9 +1200,9 @@ function GAME.upFloor()
 
     -- Trevor Smithy
     GAME.questFavor =
-        M.VL == 2 and 50 or (
-            (M.EX > 0 and 0 or M.EX == -1 and 50 or 33)
-            - (M.MS ~= 0 and 25 or 0)
+        M.VL == 2 and (50 + (M.EX == -1 and M.DH == -1 and 50 or 0) + (M.MS == -1 and M.DH == -1 and 25 or 0)) or (
+            (M.EX > 0 and 0 or (M.EX == -1 and M.DH == -1) and 50 or (M.EX == -1 and M.DH ~= -1) and -50 or 33)
+            - (M.MS > 0 and 25 or (M.MS == -1 and M.DH == -1) and -25 or (M.MS == -1 and M.DH ~= -1) and 25 or 0) -- minus negative is positive
             - GAME.floor * 3
         )
         -- Trevor Smithy
@@ -1347,10 +1349,10 @@ function GAME.downFloor()
     end
     -- Trevor Smithy
     GAME.questFavor =
-        M.VL == 2 and 50 or (
-            (M.EX > 0 and 0 or M.EX == -1 and 50 or 33)
-            - (M.MS ~= 0 and 25 or 0)
-            - GAME.negFloor * 3
+        M.VL == 2 and (50 + (M.EX == -1 and M.DH == -1 and 50 or 0) + (M.MS == -1 and M.DH == -1) and 25 or 0) or (
+            (M.EX > 0 and 0 or (M.EX == -1 and M.DH == -1) and 50 or (M.EX == -1 and M.DH ~= -1) and -50 or 33)
+            - (M.MS > 0 and 25 or (M.MS == -1 and M.DH == -1) and -25 or (M.MS == -1 and M.DH ~= -1) and 25 or 0) -- minus negative is positive
+            - GAME.floor * 3
         )
     -- Trevor Smithy
     if M.GV == -1 then GAME.gravDelay = GravityTimer[3][GAME.negFloor] end
@@ -1818,7 +1820,7 @@ function GAME.task_cancelAll(instant)
     local list = TABLE.copy(CD, 0)
     local needFlip = {}
     --Trevor Smithy
-    local spinMode = not instant and (M.AS > 0 or M.AS == -1)
+    local spinMode = not instant and (M.AS ~= 0)
     for i = 1, #CD do
         needFlip[i] = spinMode or CD[i].active
     end
@@ -1945,8 +1947,13 @@ function GAME.commit(auto)
             GAME.achv_clutchQuest = GAME.achv_clutchQuest + 1
             SFX.play('clutch')
         end
-
-        GAME.heal((dblCorrect and 3 or 1) * GAME.dmgHeal)
+        local hp = 0
+        if GAME.bonusRecoveryHealth > 0 then
+            hp = GAME.bonusRecoveryHealth
+            GAME.bonusRecoveryHealth = GAME.bonusRecoveryHealth - 1
+            GAME.dmgTimerMul = GAME.dmgTimerMul - 1/3
+        end
+        GAME.heal((dblCorrect and 3 or 1) * GAME.dmgHeal + GAME.bonusRecoveryHealth)
         if MATH.between(Floors[GAME.floor].top - (GAME.height + GAME.heightBuffer), 0, 2) then GAME.addHeight(3, true) end
 
         local dp = TABLE.find(hand, 'DP')
@@ -2029,12 +2036,8 @@ function GAME.commit(auto)
             end
 
             SFX.play(MATH.roll(.626) and 'clearspin' or 'clearquad', .5)
-            if M.NH == -1 then 
-                attack = attack + 2 
-            elseif M.NH < 2 then 
-                attack = attack + 1 
-            end
-            if M.AS == 2 and GAME.chain >= 4 then attack = attack + 1 end
+            if M.NH < 2 then attack = attack + 1 end
+            if (M.AS == 2 or M.AS == -1) and GAME.chain >= 4 then attack = attack + 1 end
             xp = xp + 3
 
             if correct == 1 then
@@ -2344,7 +2347,7 @@ function GAME.start()
     if URM and M.VL == 2 and not UltraVlCheck('start') then return end
     TASK.removeTask_code(Task_MusicEnd)
     MusicPlayer = false
-
+    GAME.OSPActivated = false
     GAME.finalFatigueOSPActivated = false
     GAME.omega = false
     GAME.negFloor = 1
@@ -2353,13 +2356,14 @@ function GAME.start()
     GAME.isUltraRun = GAME.anyUltra
     GAME.attackMul = GAME.isUltraRun and .62 or 1
     -- Trevor Smithy
+    GAME.bonusRecoveryHealth = 0
     local slowMo = 0
     if GAME.eslowmo then
         slowMo = 0.5
     end
     --GAME.xpLockLevelMax = URM and M.NH == 2 and 1 or 5
     --GAME.leakSpeed = (M.EX > 0 and 5 or 3) + (GAME.fastLeak and 8 or 0)
-    GAME.xpLockLevelMax = (((URM and M.NH == 2 and 1) or (M.EX == -1 and 0) or (5)) + (GAME.efastLeak and 5 or 0) + (M.NH == -1 and 3 or 0)) * (1 + slowMo)
+    GAME.xpLockLevelMax = (((URM and M.NH == 2 and 1) or (M.EX == -1 and 0) or (5)) + (GAME.efastLeak and 5 or 0) + (M.NH == -1 and 2 or 0)) * (1 + slowMo)
     if GAME.xpLockLevelMax == 0 and GAME.eslowmo then
         GAME.xpLockLevelMax = 1.5
     end
@@ -2422,8 +2426,8 @@ function GAME.start()
     -- Params
     GAME.maxQuestCount = M.NH == 2 and 2 or 3
     -- Trevor Smithy
-    -- 1+3=4 if no rNH but rDH, 1+2=3 if no rNH but eDH, 1+1 = 2 if rNH AND eDH, 4 for anything else
-    GAME.maxQuestSize = (M.NH < 2 and M.DH == 2) and 3 or (M.NH < 2 and M.DH == -1) and 4 or (M.DH == -1) and 3 or 4
+    -- 3 if no rNH but rDH, 4 if no rNH but eDH, 1+1 = 2 if rNH AND eDH, 4 for anything else
+    GAME.maxQuestSize = (M.NH == -1 and M.DH == 2) and 2 or (M.NH < 2 and M.DH == 2) and 3 or 4
     -- 1+(1.26)=2.26 if rNH and no DH, 1+(1+2.42-1)=3.42 if rNH and DH, 1+(1+2.42-2)=2.42 if rNH and rDH, 1+0.26=1.26 if DH, 0 if no DH
     GAME.extraQuestBase = M.NH == 2 and (M.DH > 0 and 2.42 - M.DH or 1.26) or M.DH == 1 and 0.26 or 0
     -- 1.626 if DH, 0.374 if eDH, 1 if no DH (or rDH)
@@ -2450,7 +2454,7 @@ function GAME.start()
     GAME.teramusic = false
     GAME.finishTera = false
     GAME.atkBuffer = 0
-    GAME.atkBufferCap = 8 + (M.DH == 1 and M.NH < 2 and 2 or 0) + (M.NH == -1 and 2 or 0)
+    GAME.atkBufferCap = 8 + (M.DH == 1 and M.NH < 2 and 2 or 0)
     GAME.shuffleMessiness = false
 
     -- Spike
@@ -2584,6 +2588,7 @@ function GAME.finish(reason)
     else
         GAME.smithyMode = false
     end
+    GAME.OSPActivated = false
     GAME.finalFatigueOSPActivated = false
 
     GAME.playing = false
@@ -2979,11 +2984,11 @@ function GAME.finish(reason)
             SubmitAchv('stabilized_entropy', GAME.roundHeight)
         elseif URM and M.EX == -1 and M.NH == 0 and M.MS == 0 and M.GV == 2 and M.VL == 0 and M.DH == 0 and M.IN == 0 and M.AS == -1 and M.DP == -1 then
             SubmitAchv('restrained_collapse', GAME.roundHeight)
-        elseif URM and M.EX == -1 and M.NH == -1 and M.MS == 0 and M.GV == -1 and M.VL == 2 and M.DH == 0 and M.IN == 0 and M.AS == 0 and M.DP == 0 then
+        elseif URM and M.EX == -1 and M.NH == 0 and M.MS == 0 and M.GV == -1 and M.VL == 2 and M.DH == -1 and M.IN == 0 and M.AS == 0 and M.DP == 0 then
             SubmitAchv('restored_volition', GAME.roundHeight)
         elseif URM and M.EX == -1 and M.NH == 0 and M.MS == -1 and M.GV == 0 and M.VL == 0 and M.DH == 2 and M.IN == -1 and M.AS == 0 and M.DP == 0 then
             SubmitAchv('disproven_blasphemy', GAME.roundHeight)
-        elseif URM and M.EX == -1 and M.NH == 0 and M.MS == 0 and M.GV == 0 and M.VL == 0 and M.DH == -1 and M.IN == 2 and M.AS == -1 and M.DP == 0 then
+        elseif URM and M.EX == -1 and M.NH == -1 and M.MS == 0 and M.GV == 0 and M.VL == 0 and M.DH == 0 and M.IN == 2 and M.AS == -1 and M.DP == 0 then
             SubmitAchv('solved_paradox', GAME.roundHeight)
         elseif URM and M.EX == -1 and M.NH == -1 and M.MS == 0 and M.GV == 0 and M.VL == -1 and M.DH == 0 and M.IN == 0 and M.AS == 2 and M.DP == 0 then
             SubmitAchv('demystified_grimoire', GAME.roundHeight)

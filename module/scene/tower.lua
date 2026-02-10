@@ -105,7 +105,7 @@ end
 
 local function keyTrigger(key)
     local bindID = TABLE.find(STAT.keybind, key)
-    if bindID and bindID <= 18 and (M.AS > 0 or (not GAME.playing and (bindID == 8 or bindID == 17))) then
+    if bindID and bindID <= 18 and (M.AS ~= 0 or (not GAME.playing and (bindID == 8 or bindID == 17))) then
         if bindID > 9 then bindID = bindID - 9 end
         local C = Cards[bindID]
         if C then
@@ -122,25 +122,6 @@ local function keyTrigger(key)
             end
             if not GAME.achv_noKeyboardH then GAME.achv_noKeyboardH = GAME.roundHeight end
         end
-    -- Trevor Smithy
-    elseif bindID and bindID <= 18 and (M.AS == -1 or (not GAME.playing and (bindID == 8 or bindID == 17))) then
-        if bindID > 9 then bindID = bindID - 9 end
-        local C = Cards[bindID]
-        if C then
-            if GAME.playing or not C.lock then
-                GAME.nixPrompt('keep_no_keyboard')
-                FloatOnCard = bindID
-                SetMouseVisible(false)
-                MX, MY = C.x + math.random(-126, 126), C.y + math.random(-260, 260)
-                C:setActive()
-                GAME.refreshLayout()
-            else
-                C:flick()
-                SFX.play('no')
-            end
-            if not GAME.achv_noKeyboardH then GAME.achv_noKeyboardH = GAME.roundHeight end
-        end
-    --
     else
         if key == 'escape' then
             if not GAME.playing then
@@ -1239,11 +1220,16 @@ function scene.overDraw()
             end
             if rank >= 56 then
                 for i = 0, rank - 55 do
-                    gc_rectangle('fill', 1648, 955 - 37 * i, 10, 32)
-                    gc_rectangle('fill', -74, 955 - 37 * i, -10, 32)
+                    gc_setColor(min(1-(i+1)/100, 1), (i)/100, 0)
+                    gc_rectangle('fill', 1662, 940 - 13 * i, 32, 8)
+                    gc_rectangle('fill', -62, 940 - 13 * i, -32, 8)
                 end
+                gc_setColor(min(1-(rank-55)/100, 1), (rank-55)/100, 0)
+                gc_mDraw(TEXTS.rank, 1662-32, 945 - 13 * (rank-55), 0, .626)
+                gc_mDraw(TEXTS.rank, -62+32, 945 - 13 * (rank-55), 0, .626)
             end
         end
+        gc_setColor(rankColor[rank - 1] or COLOR.dL)
         if GAME.rankupLast then
             if GAME.xpLockLevel < GAME.xpLockLevelMax and not (URM and M.NH == 2) then
                 gc_mRect('fill', 800 - 105, 965, 2, 26 - 4)
@@ -1633,9 +1619,6 @@ local function button_start()
 end
 local function button_reset()
     if M.AS == 0 then GAME.nixPrompt('keep_no_reset') end
-    -- Trevor Smithy
-    if M.AS == -1 then GAME.nixPrompt('keep_no_reset') end
-    --
     GAME.cancelAll()
     if UsingTouch then
         FloatOnCard = nil

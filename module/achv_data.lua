@@ -1556,7 +1556,7 @@ Achievements = {
     { -- uVL
         id = 'restored_volition',
         name = "Restored Volition",
-        desc = [[HFD with eEX, eNH, eGV, and uVL]],
+        desc = [[HFD with eEX, eDH, eGV, and uVL]],
         quote = [["With careful planning and a timely execution, we can rise again."]],
         credit = "@TrevorSmithy",
         rank = floorRank(1, 3, 5, 7, 8, 9, 10),
@@ -1574,7 +1574,7 @@ Achievements = {
     { -- uIN
         id = 'solved_paradox',
         name = "Solved Paradox",
-        desc = [[HFD with eEX, eDH, eAS, and uIN]],
+        desc = [[HFD with eEX, eNH, eAS, and uIN]],
         quote = [["Dude, I'm telling you, just a bit of simple magic clears it all up."]],
         credit = "@TrevorSmithy",
         rank = floorRank(1, 3, 5, 7, 8, 9, 10),

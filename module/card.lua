@@ -25,6 +25,7 @@ function Card.new(d)
         active = false,
         front = true,
         upright = true,
+        easy = false,
 
         x = 0,
         y = 0,
@@ -144,6 +145,19 @@ function Card:setActive(auto, key)
         self.active = not self.active
     end
     local noSpin, revOn, easyOn
+    local eNHBlocksFaults = true
+    if M.NH == -1 and M.DP ~= 0 then
+        if GAME.currentTask then
+            local p = GAME.reviveTasks[1].prompt
+            if p == 'pass_imperfect' or p == 'pass_imperfect_row' or p == 'b2b_break_4' or p == 'b2b_break_6' or p == 'b2b_break_8' or p == 'b2b_break_10' or p == 'b2b_break_windup' or p == 'b2b_break_windup3' or p == 'keep_no_perfect' then
+                eNHBlocksFaults = false
+            else
+                eNHBlocksFaults = true
+            end
+        else
+            eNHBlocksFaults = true
+        end
+    end
     if GAME.playing then
         if not auto then
             self.touchCount = self.touchCount + 1
@@ -157,7 +171,7 @@ function Card:setActive(auto, key)
                     -- Trevor Smithy
                     GAME.addXP(M.VL == 1 and 2 or M.VL == -1 and 2 or 1)
                 end
-            elseif not GAME.fault and not self.burn and not (M.NH == -1 and M.DP == 0) then
+            elseif not GAME.fault and not self.burn and not (eNHBlocksFaults) then
                 GAME.fault = true
             end
         end
@@ -173,6 +187,7 @@ function Card:setActive(auto, key)
             end
             if M.AS > 0 then
                 if self.burn then
+                    if URM and M.NH == -1 then GAME.OSPActivated = true end
                     self.burn = false
                     TASK.removeTask_code(GAME.task_cancelAll)
                     local p = TABLE.find(CD, self) or 0
@@ -197,21 +212,27 @@ function Card:setActive(auto, key)
                             CD[(p + table.remove(l, rnd(3, 4)) - 1) % #CD + 1]:setActive(true)
                         end
                         if GAME.floor < 10 and GAME.gigaspeed then GAME.achv_felMagicBurnt = true end
-                        if M.NH ~= -1 then
+                        if not GAME.OSPActivated then
                             if URM then return GAME.takeDamage(1e99, 'wrong') end
                         else
-                            if URM then 
-                                GAME.takeDamage(GAME.fullHealth-1, 'wrong') 
-                                GAME.fault = true
-                                if GAME[GAME.getLifeKey()] > 0.01 then
-                                    TEXT:add {
-                                        text = 'CAREFUL THERE!',
-                                        x = 800, y = 265, fontSize = 30, k = 1.5,
-                                        style = 'score', duration = 5,
-                                        inPoint = .1, outPoint = .26,
-                                        color = 'lM',
-                                    }
+                            GAME.takeDamage(GAME.fullHealth-(GAME.dmgWrong+0.1), 'wrong') 
+                            GAME.fault = true
+                            GAME.bonusRecoveryHealth = GAME.bonusRecoveryHealth + 3
+                            GAME.dmgTimerMul = GAME.dmgTimerMul + 1
+                            GAME.OSPActivated = false
+                            for i = 1, #Cards do
+                                if Cards[i].burn then
+                                    Cards[i].burn = 8/9 + (GAME.floor)/9
                                 end
+                            end
+                            if GAME[GAME.getLifeKey()] > 0.01 then
+                                TEXT:add {
+                                    text = 'CAREFUL THERE!',
+                                    x = 800, y = 265, fontSize = 30, k = 1.5,
+                                    style = 'score', duration = 5,
+                                    inPoint = .1, outPoint = .26,
+                                    color = 'lM',
+                                }
                             end
                         end
                     end
@@ -257,6 +278,7 @@ function Card:setActive(auto, key)
         -- Trevor Smithy
         --self.upright = not (self.active and revOn)
         self.upright = not (self.active and revOn or self.active and easyOn)
+        self.easy = self.active and easyOn and not revOn
         --
         if revOn or wasRev then GAME.refreshRev() end
         TASK.removeTask_code(task_refreshBGM)
@@ -627,7 +649,9 @@ function Card:draw()
         end
     else
         if self.active then
-            if not self.upright then
+            if self.easy then
+                r1, g1, b1 = 0, 1, 0          -- Green
+            elseif not self.upright then
                 r1, g1, b1 = 0, .5, .7        -- Reversed
             elseif self.id ~= 'DP' then
                 r1, g1, b1 = 1, .26, 0        -- Orange
@@ -733,7 +757,7 @@ function Card:draw()
             -- Star
             if completion[self.id] > 0 then
                 img = self.active and TEXTURE.star1 or TEXTURE.star0
-                local t = self.upright and self.float or 1
+                local t = (self.upright or self.easy) and self.float or 1
                 local blur = (FloatOnCard == self.initOrder or not self.upright) and 0 or -.2
                 local x = lerp(155, 0, t)
                 local y = lerp(-370, -330, t)
@@ -742,7 +766,7 @@ function Card:draw()
                 local ang = -t * 6.2832
                 gc_scale(abs(1 / self.kx * self.ky), 1)
                 -- Base star
-                if self.upright then
+                if self.upright or self.easy then
                     gc_setColor(.26, .26, .26)
                     gc_setBlendMode('add')
                     gc_blurCircle(blur, x, y, cr)
