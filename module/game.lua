@@ -753,8 +753,8 @@ function GAME.genQuest()
         GAME.atkBuffer = GAME.atkBufferCap
     end
     GAME.atkBuffer = clamp(GAME.atkBuffer - (max(GAME.floor / 3, GAME.atkBufferCap / 4) + MATH.rand(-.62, .62)), 0, GAME.atkBufferCap)
-    if M.DP ~= 0 then r = r * (GAME[GAME.getLifeKey(true)] == 0 and 1.26 or 1.1) end
-
+    if M.DP > 0 then r = r * (GAME[GAME.getLifeKey(true)] == 0 and 1.26 or 1.1) end
+    if M.DH == -1 then r = r * 5/8 end
         local pool = TABLE.copyAll(MD.weight)
 
         local lastQ = GAME.quests[#GAME.quests]
