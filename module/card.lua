@@ -230,6 +230,7 @@ function Card:setActive(auto, key)
                                     inPoint = .1, outPoint = .26,
                                     color = 'lM',
                                 }
+                                IssueAchv('cheat_death')
                             end
                         end
                     end
@@ -517,7 +518,7 @@ local gc_translate, gc_scale = gc.translate, gc.scale
 local gc_rotate, gc_shear = gc.rotate, gc.shear
 local gc_setColor, gc_setAlpha = gc.setColor, GC.setAlpha
 local gc_setShader, gc_setLineWidth = GC.setShader, gc.setLineWidth
-local gc_draw, gc_mDraw, gc_mRect = gc.draw, GC.mDraw, GC.mRect
+local gc_draw, gc_mDraw, gc_mRect, gc_circle = gc.draw, GC.mDraw, GC.mRect, GC.circle
 local gc_blurCircle, gc_setBlendMode = GC.blurCircle, GC.setBlendMode
 
 local iconFrame
@@ -723,6 +724,9 @@ function Card:draw()
                 local b = STAT.cardBrightness / 100
                 gc_setColor(b, b, b)
             end
+            if GAME.einvisCard then
+                gc_setColor(1,1,1,0.26)
+            end
             gc_draw(img, -img:getWidth() / 2, -img:getHeight() / 2)
             if img2 then
                 gc_draw(img2, -img2:getWidth() / 2, -img2:getHeight() / 2)
@@ -730,6 +734,23 @@ function Card:draw()
         end
 
         -- Outline (draw)
+        if GAME.einvisCard then
+            gc_setLineWidth(20)
+            local temp = M.IN == 1 and 2 or M.IN == 2 and not URM and 3 or URM and 4 or 1
+            if self.required then 
+                gc_setColor(ModData.textColor[self.id]) 
+                if M.IN > 0 then
+                    gc_setAlpha(1.26/temp + sin(love.timer.getTime() * 5.2/temp)/temp)
+                end
+                if STAT.oldHitbox and MOBILE then
+                    gc_circle('fill', 0, 0, 40)
+                end
+            else
+                gc_setColor(1,1,1)
+                gc_setAlpha(0.26/temp)
+            end
+            gc_mRect('line', 0, 0, 240 * 2 + 10, 330 * 2 + 10, 10)
+        end
         if a1 then
             gc_setColor(r1, g1, b1, a1)
             gc_draw(activeFrame, 0, 0, 0, sign(self.kx), 1, frame1W, frame1H)

@@ -64,7 +64,9 @@ Each mod creates a unique experience by twisting the rules, but also increases t
 - XP Lock time **increased by 2 seconds.**
 - Slows down **SPIN** speed.
 - Reduces **max quest size to 2 if rDH is active.**
-- **Adds OSP** (one shot protection), meaning you will survive insta-kill effects. (There are only 2 in the game.)
+- Burn damage **halved.** (Both in time and quantity.)
+- Prevents faults from deselection.
+- **Adds OSP** (one shot protection), meaning you will survive insta-kill effects. (There are only 3 in the game.)
 
 ### Messiness (`MS`)
 

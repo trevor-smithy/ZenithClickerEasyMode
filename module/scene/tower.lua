@@ -878,6 +878,7 @@ local gvTimerColor2 = { 0, 0, 0, 0 }
 local altitudeText = { 0, COLOR.dL, "m" }
 function scene.overDraw()
     local t = love.timer.getTime()
+    local eTAlpha = GAME.einvisUI and 5 or 1
     if GAME.zenithTraveler then return end
 
     gc_translate(0, DeckPress)
@@ -905,14 +906,14 @@ function scene.overDraw()
         if GigaSpeed.alpha > 0 then
             local w, h = TEXTS.gigatime:getDimensions()
             local gigaFade = clamp((GAME.time - (GAME.gigaspeedEntered or GAME.time) - 120) / 180, 0, 1)
-            gc_setColor(GigaSpeed.r, GigaSpeed.g, GigaSpeed.b, .2 * (GigaSpeed.alpha - gigaFade))
+            gc_setColor(GigaSpeed.r, GigaSpeed.g, GigaSpeed.b, .2 * (GigaSpeed.alpha - gigaFade)/eTAlpha)
             gc_strokeDraw('full', 3, TEXTS.gigatime, 800, 264, 0, 1.5, 1.2, w * .5, h * .5)
             if M.DP < 2 then
-                gc_setAlpha(GigaSpeed.alpha)
+                gc_setAlpha(GigaSpeed.alpha/eTAlpha)
                 gc_draw(TEXTS.gigatime, 800, 264, 0, 1.5, 1.2, w * .5, h * .5)
                 if gigaFade > 0 then
                     local l = gigaFade == 1 and .5 or .8
-                    gc_setColor(l, l, l, GigaSpeed.alpha * gigaFade)
+                    gc_setColor(l, l, l, GigaSpeed.alpha * gigaFade/eTAlpha)
                     gc_draw(TEXTS.gigatime, 800, 264, 0, 1.5, 1.2, w * .5, h * .5)
                 end
             end
@@ -922,6 +923,9 @@ function scene.overDraw()
         if GigaSpeed.textTimer then
             gc_setBlendMode('add')
             gc_setColor(.26, .26, .26)
+            if GAME.einvisUI then
+                gc_setColor(.26, .26, .26, 1/eTAlpha)
+            end
             if GigaSpeed.isTera then
                 for p = -10, 10, 3 do
                     gc_mDraw(TEXTS.teraspeed, 800 + (GigaSpeed.textTimer + p * .01) ^ 5 * 2600, 355, 0, 2.6)
@@ -942,9 +946,9 @@ function scene.overDraw()
             local bk = _t < .12 and 1 + 62 * _t * (.12 - _t) or 1
             gc_scale(min(GAME.spikeCounter / 60, 1) + bk)
             local ox, oy = TEXTS.spike:getWidth() / 2, TEXTS.spike:getHeight() / 2
-            gc_setColor(1, 1, 1, GAME.spikeTimer * .62)
+            gc_setColor(1, 1, 1, GAME.spikeTimer * .62/eTAlpha)
             gc_strokeDraw('full', 2, TEXTS.spike, 0, 0, 0, 1, 1, ox, oy)
-            gc_setColor(0, 0, 0, GAME.spikeTimer * 2.6)
+            gc_setColor(0, 0, 0, GAME.spikeTimer * 2.6/eTAlpha)
             gc_draw(TEXTS.spike, 0, 0, 0, 1, 1, ox, oy)
             gc_pop()
         end
@@ -953,6 +957,7 @@ function scene.overDraw()
         local safeHP = GAME.playing and max(GAME.dmgWrong + GAME.dmgWrongExtra, GAME.dmgTime) or 0
         if M.DP == 0 then
             gc_setColor(GAME.playing and GAME.life > safeHP and COLOR.L or COLOR.R)
+            gc_setAlpha(1/eTAlpha)
             gc_mRect('fill', 800, 440, 1540 * GAME.lifeShow / GAME.fullHealth, 10)
             if GAME.playing then
                 gc_setColor(COLOR.LD)
@@ -979,15 +984,18 @@ function scene.overDraw()
             if M.DP > 0 then
                 if GAME.comboStr == 'rDP' and not GAME.achv_protectH then
                     gc_setColor(COLOR.lG)
+                    gc_setAlpha(1/eTAlpha)
                     gc_mRect('fill', 800 + 1540 / 2 * 10 / GAME.fullHealth, 442, 4, 20)
                     gc_mRect('fill', 800 - 1540 / 2 * 10 / GAME.fullHealth, 442, 4, 20)
                 end
                 if not GAME.achv_shareModH then
                     gc_setColor(COLOR.M)
+                    gc_setAlpha(1/eTAlpha)
                     gc_mRect('fill', 800, 435, 10, 10)
                 end
                 if not GAME.achv_noShareModH then
                     gc_setColor(COLOR.dR)
+                    gc_setAlpha(1/eTAlpha)
                     gc_mRect('fill', 800, 445, 10, 10)
                 end
             end
@@ -995,6 +1003,7 @@ function scene.overDraw()
             -- Quest counter
             if GAME.totalQuest <= 40 then
                 gc_setColor(TextColor)
+                gc_setAlpha(1/eTAlpha)
                 gc.print(GAME.totalQuest, 1210, 230)
             end
             -- Revive counter
@@ -1011,19 +1020,20 @@ function scene.overDraw()
                 local r, g, b, a
                 if GAME.fault then
                     local l = M.AS < 2 and .62 or .42
-                    r, g, b, a = l, l, l, c < 8 and .26 or 1
+                    r, g, b, a = l, l, l, c < 8 and .26/eTAlpha or 1/eTAlpha
                 elseif M.AS < 2 then
                     r, g, b, a = COLOR.HSL(
                         26 / (c + 22) + 1.3, 1,
                         icLerp(-260, 420, c),
-                        c < 8 and .26 or 1
+                        c < 8 and .26/eTAlpha or 1/eTAlpha
                     )
                 else
                     r, g, b, a = COLOR.HSV(
                         clampInterpolate(4, .76, 26, 0.926, c), 1, 1,
-                        .16
+                        .16/eTAlpha
                     )
                     gc_setColor(0, 0, 0)
+                    gc_setAlpha(1/eTAlpha)
                     gc_mDraw(chargeIcon, 326, 270, GAME.time * 2.6, .25 * k * bk)
                 end
 
@@ -1032,21 +1042,24 @@ function scene.overDraw()
                 end
 
                 -- Spike ball
-                gc_setColor(r, g, b, a)
+                gc_setColor(r, g, b, a/eTAlpha)
                 gc_blurCircle(-.26, 326, 270, 100 * k)
                 gc_mDraw(chargeIcon, 326, 270, GAME.time * 2.6, .25 * k * bk)
 
                 -- Spark
                 if not (URM and M.NH == 2) then
                     gc_setColor(.7 + r * .3, .7 + g * .3, .7 + b * .3)
+                    gc_setAlpha(1/eTAlpha)
                     for i = 1, 3 do gc_draw(SparkPS[i], 326, 270, 0, k * .8) end
                 end
 
                 -- "B2B x"
                 local x = 255 - 50 * k * bk
                 gc_setColor(COLOR.D)
+                gc_setAlpha(1/eTAlpha)
                 gc_draw(TEXTS.b2b, x, 216)
                 gc_setColor(r, g, b)
+                gc_setAlpha(1/eTAlpha)
                 gc_draw(TEXTS.b2b, x, 214)
 
                 -- Number
@@ -1054,9 +1067,11 @@ function scene.overDraw()
                 if M.AS < 2 then
                     if c >= 8 then
                         gc_setColor(COLOR.L)
+                        gc_setAlpha(1/eTAlpha)
                         gc_strokeDraw('full', k * 2, chain, 326, 268, 0, k * bk, nil,
                             chain:getWidth() / 2, chain:getHeight() / 2)
                         gc_setColor(COLOR.D)
+                        gc_setAlpha(1/eTAlpha)
                     end
                     gc_mDraw(chain, 326, 268, 0, k * bk)
                 else
@@ -1064,11 +1079,13 @@ function scene.overDraw()
 
                     if not GAME.fault then
                         gc_setColor(r, g, b, .26 + .1 * math.sin(GAME.time * 4.2))
+                        gc_setAlpha(1/eTAlpha)
                         gc_setBlendMode('add')
                         gc_strokeDraw('full', 3.55 * k, chain, 326, 268, 0, k * bk)
                         gc_setBlendMode('alpha')
                     end
                     gc_setColor(COLOR.L)
+                    gc_setAlpha(1/eTAlpha)
                     gc_draw(chain, 326, 268, 0, k * bk)
                 end
             elseif GAME.comboStr == 'VLrGV' then
@@ -1079,9 +1096,11 @@ function scene.overDraw()
             local delay = GAME.dmgDelay
             local w = -360 * min(GAME.dmgTimerMul ^ .5, 1)
             gc_setColor(GAME.dmgTimer > GAME.dmgCycle and COLOR.DL or COLOR.lR)
+            gc_setAlpha(1/eTAlpha)
             gc_rectangle('fill', 390, 430, w * (GAME.dmgTimer / delay), -20 - 2 * delay)
             gc_setLineWidth(3)
             gc_setColor(COLOR.LD)
+            gc_setAlpha(1/eTAlpha)
             gc_rectangle('line', 390, 430, w * (GAME.dmgCycle / delay), -20 - 2 * delay)
             gc_rectangle('line', 390, 430, w, -20 - 2 * delay)
 
@@ -1091,6 +1110,7 @@ function scene.overDraw()
                 gc_translate(1300, 270)
                 gc_scale(GAME.uiHide)
                 gc_setColor(COLOR.DL)
+                gc_setAlpha(1/eTAlpha)
                 if GAME.gravTimer then
                     gc_arc('fill', 'pie', 0, 0, 40, -1.5708,
                         -1.5708 + 6.2832 * GAME.gravTimer / GAME.gravDelay)
@@ -1098,6 +1118,7 @@ function scene.overDraw()
                     gc_circle('fill', 0, 0, 40)
                 end
                 gc_setColor(COLOR.LD)
+                gc_setAlpha(1/eTAlpha)
                 gc_circle('line', 0, 0, 40)
                 if GAME.gravTimer and GAME.gravTimer < 4.2 then
                     setFont(30)
@@ -1149,7 +1170,7 @@ function scene.overDraw()
                 gc_pop()
 
                 -- Short Text & Panel
-                gc_setColor(.3, .1, 0, .62)
+                gc_setColor(.3, .1, 0, .62/eTAlpha)
                 gc_mRect('fill', 800, 330, GAME.currentTask.shortObj:getWidth() * 1.6 + 50, 75, 20)
                 gc_setColor(1, 1, 1)
                 gc_mDraw(GAME.currentTask.shortObj, 800, 330, 0, 1.6)
@@ -1197,8 +1218,10 @@ function scene.overDraw()
         -- Thruster (XP bar)
         local rank = GAME.rank
         gc_setColor(rankColor[rank - 1] or COLOR.dL)
-        if GAME.DPlock then gc_setAlpha(.26) end
+        gc_setAlpha(1/eTAlpha)
+        if GAME.DPlock then gc_setAlpha(.26/eTAlpha) end
         gc_setLineWidth(26 / (GAME.leakSpeed + 2))
+        gc_setAlpha(1/eTAlpha)
         gc_mRect('line', 800, 965, 420 + 6, 26)
         gc_rectangle('fill', 800 - 35, 985, 70, 6)
         for i = 1, min(rank - 1, 6) do
@@ -1221,15 +1244,18 @@ function scene.overDraw()
             if rank >= 56 then
                 for i = 0, rank - 55 do
                     gc_setColor(min(1-(i+1)/100, 1), (i)/100, 0)
+                    gc_setAlpha(1/eTAlpha)
                     gc_rectangle('fill', 1662, 940 - 13 * i, 32, 8)
                     gc_rectangle('fill', -62, 940 - 13 * i, -32, 8)
                 end
                 gc_setColor(min(1-(rank-55)/100, 1), (rank-55)/100, 0)
+                gc_setAlpha(1/eTAlpha)
                 gc_mDraw(TEXTS.rank, 1662-32, 945 - 13 * (rank-55), 0, .626)
                 gc_mDraw(TEXTS.rank, -62+32, 945 - 13 * (rank-55), 0, .626)
             end
         end
         gc_setColor(rankColor[rank - 1] or COLOR.dL)
+        gc_setAlpha(1/eTAlpha)
         if GAME.rankupLast then
             if GAME.xpLockLevel < GAME.xpLockLevelMax and not (URM and M.NH == 2) then
                 gc_mRect('fill', 800 - 105, 965, 2, 26 - 4)
@@ -1239,10 +1265,11 @@ function scene.overDraw()
             gc_mRect('fill', 800, 965, 420, 1)
         end
         gc_setColor(rankColor[rank] or COLOR.L)
+        gc_setAlpha(1/eTAlpha)
         if GAME.xpLockTimer > 0 then
-            gc_setAlpha((sin(6200 / (GAME.xpLockTimer + 4.2) ^ 3) * .26 + .74) * (GAME.DPlock and .26 or 1))
+            gc_setAlpha((sin(6200 / (GAME.xpLockTimer + 4.2) ^ 3) * .26 + .74) * (GAME.DPlock and .26 or 1)/eTAlpha)
         elseif GAME.DPlock then
-            gc_setAlpha(.26)
+            gc_setAlpha(.26/eTAlpha)
         end
         --gc_mRect('fill', 800, 965, 420 * GAME.xp / (4 * rank), 3 * min(GAME.xpLockLevel, 5))
         -- change this to:
@@ -1253,6 +1280,7 @@ function scene.overDraw()
         TEXTS.height:set(altitudeText)
         TEXTS.time:set(STRING.time_simp(GAME.time))
         gc_setColor(COLOR.D)
+        gc_setAlpha(1/eTAlpha)
         local wid, hgt = TEXTS.height:getDimensions()
         gc_strokeDraw('full', 1, TEXTS.height, 800, 978, 0, 1, 1, wid / 2, hgt / 2)
         wid, hgt = TEXTS.time:getDimensions()
@@ -1261,17 +1289,20 @@ function scene.overDraw()
         gc_strokeDraw('full', 1, TEXTS.rank, 1027, 990, 0, .626, .626, wid / 2, hgt / 2)
 
         gc_setColor(GAME.timerMul, .99, .99)
+        gc_setAlpha(1/eTAlpha)
         gc_mDraw(TEXTS.time, 375, 978)
         gc_setColor(COLOR.L)
+        gc_setAlpha(1/eTAlpha)
         gc_mDraw(TEXTS.rank, 1027, 990, 0, .626)
         if GAME.DPlock then
             gc_setColor(GAME.time % .9 > .45 and COLOR.R or COLOR.D)
+            gc_setAlpha(1/eTAlpha)
         end
         gc_mDraw(TEXTS.height, 800, 978)
 
         if GAME.attackMul < 1 then
             setFont(30)
-            gc_setColor(1, 0, 0, t % .52 < .26 and .872 or .42)
+            gc_setColor(1, 0, 0, t % .52 < .26 and .872/eTAlpha or .42/eTAlpha)
             gc.print("x" .. GAME.attackMul, 1024, 926, 0, .7)
         end
 
@@ -1332,9 +1363,9 @@ function scene.overDraw()
         if GAME.uiHide > 0 then
             gc_replaceTransform(SCR.xOy_dr)
             local ox, oy = TEXTS.floorTime:getDimensions()
-            gc_setColor(0, 0, 0, .626)
+            gc_setColor(0, 0, 0, .626/eTAlpha)
             gc_draw(TEXTS.floorTime, -10, -5 + 260 * (1 - GAME.uiHide), 0, .7, .7, ox, oy)
-            gc_setColor(.626, .626, .626, .626)
+            gc_setColor(.626, .626, .626, .626/eTAlpha)
             gc_draw(TEXTS.floorTime, -10, -5 + 260 * (1 - GAME.uiHide), 0, .7, .7, ox, oy)
         end
 
@@ -1592,7 +1623,7 @@ function scene.overDraw()
     -- Version number
     if not GAME.invisUI then
         gc_replaceTransform(SCR.xOy_d)
-        gc_setColor(.626, .626, .626, .626)
+        gc_setColor(.626, .626, .626, .626/eTAlpha)
         gc_mDraw(TEXTS.version, GAME.invisUI and 0 or -260 * GAME.uiHide, -10, 0, .62)
     end
 

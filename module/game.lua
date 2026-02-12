@@ -1125,17 +1125,17 @@ function GAME.showFloorText(f, name, duration)
         TEXT:add {
             text = "Floor",
             x = 160, y = 290, k = 1.6, fontSize = 30,
-            color = 'LT', duration = duration,
+            color = {.96, .92, .74, .2}, duration = duration,
         }
         TEXT:add {
             text = tostring(f),
             x = 240, y = 280, k = 2.6, fontSize = 30,
-            color = 'LT', duration = duration, align = 'left',
+            color = {.96, .92, .74, .2}, duration = duration, align = 'left',
         }
         TEXT:add {
             text = name,
             x = 200, y = 350, k = 1.2, fontSize = 30,
-            color = 'LT', duration = duration,
+            color = {.96, .92, .74, .2}, duration = duration,
         }
         return
     end
@@ -1331,6 +1331,8 @@ function GAME.nextFatigue()
             IssueAchv('royal_resistance')
         elseif GAME.fatigueSet == Fatigue.rDP then
             IssueAchv('lovers_stand')
+        elseif GAME.fatigue == Fatigue.eEX then
+            IssueAchv('your_long')
         end
     end
 
@@ -1931,6 +1933,10 @@ function GAME.commit(auto)
     end
 
     if correct then
+        --Trevor Smithy
+        if #hand == 7 and not TABLE.find(hand, 'DP') and M.EX == -1 and M.GV == -1 and M.IN == -1 then
+            IssueAchv('trip_to_hell')
+        end
         if GAME.currentTask then
             GAME.incrementPrompt('pass')
             for i = 1, #hand do GAME.incrementPrompt('pass_' .. hand[i]) end
@@ -2137,6 +2143,9 @@ function GAME.commit(auto)
             if GAME.chain >= 75 and GAME.chain - (dblCorrect and 2 or 1) < 75 then
                 SubmitAchv('perfect_speedrun', GAME.time)
             end
+            if GAME.chain >= 864 and GAME.chain - (dblCorrect and 2 or 1) < 864 then
+                SubmitAchv('perfect_speedrun_plus', GAME.time)
+            end
         end
 
         SFX.play(dp and 'zenith_start_duo' or 'zenith_start', .626, 0, Tone(12))
@@ -2189,7 +2198,21 @@ function GAME.commit(auto)
                 if GAME.totalQuest >= 26 then SFX.play('btb_break') end
             end
             if M.DP == 2 then
-                GAME.takeDamage(URM and attack / 2.6 or attack / 4, 'wrong', oldAllyLife > 0)
+                if (oldAllyLife == GAME.fullHealth and M.NH == -1 and (oldAllyLife - (URM and attack / 2.6 or attack / 4) <= 0)) or (oldAllyLife <= 0 and GAME[GAME.getLifeKey(false)] > GAME.fullHealth -(GAME.dmgWrong+3) and M.NH == -1 and GAME[GAME.getLifeKey(false)] - (URM and attack / 2.6 or attack / 4) <= 0) then
+                    GAME.takeDamage(GAME.fullHealth-(GAME.dmgWrong+3), 'wrong', oldAllyLife > 0)
+                    GAME.bonusRecoveryHealth = GAME.bonusRecoveryHealth + 3
+                    GAME.dmgTimerMul = GAME.dmgTimerMul + 1
+                    TEXT:add {
+                        text = 'CAREFUL THERE!',
+                        x = 800, y = 265, fontSize = 30, k = 1.5,
+                        style = 'score', duration = 5,
+                        inPoint = .1, outPoint = .26,
+                        color = 'lM',
+                    }
+                    IssueAchv('cheat_death')
+                else
+                    GAME.takeDamage(URM and attack / 2.6 or attack / 4, 'wrong', oldAllyLife > 0)
+                end
                 if not GAME.playing then return end
                 if check_achv_romantic_homicide then IssueAchv('romantic_homicide') end
             end
@@ -2912,6 +2935,9 @@ function GAME.finish(reason)
         SubmitAchv('multitasker', roundUnit(GAME.height * GAME.comboMP, .1))
         SubmitAchv('effective', zpGain)
         SubmitAchv('drag_racing', GAME.peakRank)
+        if GAME.peakRank >= 26 then
+            SubmitAchv('your_too_fast', GAME.peakRank)
+        end
         SubmitAchv('space_race', GAME.peakRank * GAME.comboMP)
         table.sort(maxCSP, function(a, b) return a[1] > b[1] end)
         for i = 1, #maxCSP do
@@ -3018,6 +3044,7 @@ function GAME.finish(reason)
             SubmitAchv('the_spike_of_all_time_minus', GAME.maxSpikeWeak)
         else
             local revCount = GAME.comboStr:count('r')
+            local easyCount = GAME.comboStr:count('e')
             local len_noDP = #hand - (M.DP == 1 and 1 or 0)
             if len_noDP >= 7 then
                 local sw = {
@@ -3027,11 +3054,11 @@ function GAME.finish(reason)
                 }
                 local swFin
                 for i = len_noDP, 7, -1 do
-                    if revCount > 0 then swFin = SubmitAchv(sw[i - 6] .. '_plus', GAME.roundHeight, swFin) or swFin end
+                    if revCount > 0 and easyCount == 0 then swFin = SubmitAchv(sw[i - 6] .. '_plus', GAME.roundHeight, swFin) or swFin end
                     swFin = SubmitAchv(sw[i - 6], GAME.roundHeight, swFin) or swFin
                 end
             end
-            if revCount >= 2 and GAME.comboMP >= 8 then
+            if revCount >= 2 and GAME.comboMP >= 8 and easyCount == 0 then
                 for m = GAME.comboMP, 8, -1 do
                     SubmitAchv(RevSwampName[min(m, #RevSwampName)]:sub(2, -2):lower(), GAME.roundHeight, m < GAME.comboMP)
                 end
@@ -3191,6 +3218,7 @@ function GAME.update(dt)
                     inPoint = .1, outPoint = .26,
                     color = 'lB',
                 }
+                IssueAchv('cheat_death')
             end
         elseif M.EX == -1 and M.NH == -1 and GAME.time >= finalFatigueTime and GAME.time < finalFatigueTimePostOSP then
             GAME.dmgHeal = 0
