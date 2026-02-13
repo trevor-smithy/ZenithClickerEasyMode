@@ -347,7 +347,7 @@ ComboData = {
         { set = "eEX eMS rDH eIN",      name = "Disproven Blasphemy"},
         { set = "eEX eNH rIN eAS",      name = "Solved Paradox"},
         { set = "eEX eNH eVL rAS",      name = "Demystified Grimoire"},
-        { set = "eEX eMS eVL rDP",      name = "Restored Eden"},
+        { set = "eEX eMS eVL rDP",      name = "Revived Eden"},
     },
 
     game = {
@@ -1263,7 +1263,7 @@ Fatigue = {
         { time = 630, event = { 'animDuration', 20 }, --[[62]]                             text = "" },
         { time = 660, event = { 'animDuration', 64 }, --[[126]]                            text = "YOUR VISION WEAKENS_", desc = "QuestSpeed------", duration = 26, color = 'lB', },
         { time = 750, event = { 'animDuration', -16, 'dmgHeal', 1 }, --[[110]]             text = "YOU'RE STILL GOING?", desc = "QuestSpeed++++, Heal++", duration = 26, color = 'lB', },
-        { time = 840, event = { 'atkBufferCap', 6, 'extraQuestVar', 1, 'maxQuestSize', 1 }, text = "IT'S TIME TO STOP!",                 desc = "QuestDifficulty++++++",     duration = 26, color = 'lB', final = true},
+        { time = 840, event = { 'atkBufferCap', 6, 'extraQuestVar', 1, 'maxQuestSize', 1 }, text = "IT'S TIME TO STOP!",                 desc = "QuestDifficulty++++++",     duration = 26, color = 'lB', final = true },
         { time = 870, event = { 'extraQuestBase', .01 }, text = "YOU FEEL THE IMPENDING DOOM_",                 desc = "30 Seconds Remain",     duration = 12, color = 'lB', },
         { time = 885, event = { 'extraQuestBase', .01 }, text = "DIE!",                 desc = "15 Seconds Remain",     duration = 4, color = 'lB', },
         { time = 890, event = { 'extraQuestBase', .01 }, text = "DIE!",                 desc = "10 Seconds Remain",     duration = 0.5, color = 'lB', },

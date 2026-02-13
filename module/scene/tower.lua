@@ -886,7 +886,17 @@ function scene.overDraw()
     if not GAME.invisUI then
         -- Current combo
         if not GAME.playing or M.IN < 2 then
-            gc_setColor(TextColor)
+            if GAME.customUltraCombo then
+                local speedMod = (GAME.enightcore or GAME.nightcore) and 2 or GAME.eslowmo and 0.75 or GAME.slowmo and 0.5 or 1
+                TEXTS.mod:setFont(FONT.get(60))
+                gc_setColor(COLOR.rainbow_light(2.6 * t * speedMod))
+            elseif GAME.smithyMode then
+                TEXTS.mod:setFont(FONT.get(50))
+                gc_setColor(0,1,0)
+            else
+                TEXTS.mod:setFont(FONT.get(30))
+                gc_setColor(TextColor)
+            end
             if M.IN == 2 then gc_setAlpha(.42 + .26 * sin(t * 2.6)) end
             gc_mDraw(TEXTS.mod, 800, 396, 0, min(1, 760 / TEXTS.mod:getWidth()))
         end
@@ -1835,7 +1845,8 @@ scene.widgetList = {
                 GAME.refreshLayout()
                 RefreshBGM()
                 GAME.refreshRPC()
-
+                -- Trevor Smithy
+                GAME.refreshCurrentCombo()
                 MSG({
                     cat = 'dark',
                     str = PieceData[PieceSFXID].popup,

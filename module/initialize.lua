@@ -192,6 +192,11 @@ function Initialize(save)
         end
         STAT.version = 191
     end
+    if STAT.version == 191 then
+        ACHV.revived_eden = ACHV.restored_eden
+        ACHV.restored_eden = nil
+        STAT.version = 192
+    end
 
     -- Some initialization
     for i = 1, #Cards do

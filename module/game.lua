@@ -118,6 +118,9 @@ local ins, rem = table.insert, table.remove
 ---@field OSPActivated boolean
 ---@field finalFatigueOSPActivated boolean
 ---@field bonusRecoveryHealth number
+---@field teraComplete boolean
+---@field teraLostHeight number
+---@field customUltraCombo boolean
 local GAME = {
     forfeitTimer = 0,
     exTimer = 0,
@@ -239,7 +242,6 @@ GAME.chain = 0
 local M = GAME.mod
 local MD = ModData
 local CD = Cards
-GAME.smithyMode = false
 
 ---Unsorted, like {'rEX','NH',...}
 ---@param real boolean current mod setting or literally selected cards
@@ -489,7 +491,7 @@ function GAME.getComboName(list, mode)
         end
         if M.IN == -1 and M.MS == -1 and M.AS ~= 0 then
             --ins(fstr, {COLOR.HEX "C29F68FF"})
-            -- forgive me lord for i have sinned
+            -- forgive me lord for i have sinned yet again
             if MD.name[list[len]] == 'expert' then
                 --MSG('dark', "Current Card: " .. CD[1].initOrder)
                 colorModNumber = CD[1].initOrder
@@ -594,7 +596,7 @@ function GAME.getComboName(list, mode)
             local cmbID = table.concat(list)
             if cmbID:count('r') >= 2 then
                 local mp = GAME.getComboMP(list)
-                if mp >= 8 then return RevSwampName[min(mp, #RevSwampName)] end
+                if mp >= 8 and cmbID:count('e') == 0 then return RevSwampName[min(mp, #RevSwampName)] end
             -- Trevor Smithy
             elseif cmbID:count('e') == 0 then
             --
@@ -1104,8 +1106,12 @@ end
 
 function GAME.stopTeraspeed(mode)
     GAME.teramusic = false
+    if mode == 'f10' then
+        GAME.teraComplete = true
+    end
     if mode == 'drop' then
         PlayBGM('f' .. max(GAME.floor, GAME.negFloor), true)
+        GAME.teraLostHeight = GAME.roundHeight
     end
 end
 
@@ -1242,16 +1248,6 @@ function GAME.upFloor()
                 IssueAchv('blazing_speed') 
                 GAME.finishTera = true
             end
-            if GAME.teramusic and M.EX == -1 and M.VL == -1 and M.AS == -1 and (M.NH == 0 and M.MS == 0 and M.GV == 0 and M.DH == 0 and M.IN == 0 and M.DP == 0) then IssueAchv('programmer_gamer') end
-            if GAME.teramusic and M.EX == -1 and M.GV == 2 and URM and M.DH == -1 and GAME.enightcore and (not GAME.achv_noManualCommitH or GAME.achv_noManualCommitH >= 1650) then IssueAchv('one_of_mine') end
-            -- Perfectly Balanced
-            if GAME.comboMP == 4 then
-                local revCount = GAME.comboStr:count('r')
-                local easyCount = GAME.comboStr:count('e')
-                if revCount == 4 and easyCount == 4 then
-                    IssueAchv('perfectly_balanced')
-                end
-            end
             if not GAME.smithyMode then 
                 -- don't stop my cover until we get to fomg
                 GAME.stopTeraspeed('f10')
@@ -1331,7 +1327,7 @@ function GAME.nextFatigue()
             IssueAchv('royal_resistance')
         elseif GAME.fatigueSet == Fatigue.rDP then
             IssueAchv('lovers_stand')
-        elseif GAME.fatigue == Fatigue.eEX then
+        elseif GAME.fatigueSet == Fatigue.eEX then
             IssueAchv('your_long')
         end
     end
@@ -1351,7 +1347,7 @@ function GAME.downFloor()
     end
     -- Trevor Smithy
     GAME.questFavor =
-        M.VL == 2 and (50 + (M.EX == -1 and M.DH == -1 and 50 or 0) + (M.MS == -1 and M.DH == -1) and 25 or 0) or (
+        M.VL == 2 and (50 + (M.EX == -1 and M.DH == -1 and 50 or 0) + (M.MS == -1 and M.DH == -1 and 25 or 0)) or (
             (M.EX > 0 and 0 or (M.EX == -1 and M.DH == -1) and 50 or (M.EX == -1 and M.DH ~= -1) and -50 or 33)
             - (M.MS > 0 and 25 or (M.MS == -1 and M.DH == -1) and -25 or (M.MS == -1 and M.DH ~= -1) and 25 or 0) -- minus negative is positive
             - GAME.floor * 3
@@ -1551,9 +1547,49 @@ end
 function GAME.refreshCurrentCombo()
     local hand = GAME.getHand(not GAME.playing)
     local comboName = GAME.getComboName(hand, 'button')
+    if not GAME.playing and (M.EX == -1 and M.VL == -1 and M.AS == -1 and (M.NH == 0 and M.MS == 0 and M.GV == 0 and M.DH == 0 and M.IN == 0 and M.DP == 0)) then GAME.smithyMode = true else 
+        if not GAME.playing then GAME.smithyMode = false end
+    end
     if not GAME.playing and GAME.anyUltra and #hand > 0 then
         ---@cast comboName string
         comboName = comboName:gsub("([^\"])", "ULTRA %1", 1)
+        -- SPECIAL - Trevor Smithy
+        if M.EX == -1 and M.GV == 2 and URM and M.DH == -1 and M.AS == -1 and M.NH == 0 and M.MS == 0 and M.VL == 0 and M.IN == 0 and M.DP == 0 and GAME.enightcore then 
+            comboName = "BUT IT ISN'T ONE OF MINE"
+            GAME.customUltraCombo = true
+        elseif M.EX == 2 and M.NH == -1 and M.MS == -1 and M.GV == -1 and M.VL == -1 and M.DH == -1 and M.IN == -1 and M.AS == -1 and M.DP == 0 then 
+            comboName = "PEASANT REVOLUTION"
+            GAME.customUltraCombo = true
+        elseif M.EX == -1 and M.NH == 2 and M.MS == 0 and M.GV == -1 and M.VL == 0 and M.DH == -1 and M.IN == 0 and M.AS == 0 and M.DP == 0 then 
+            comboName = "HOLY ASCENTION"
+            GAME.customUltraCombo = true
+        elseif M.EX == -1 and M.NH == 0 and M.MS == 2 and M.GV == 0 and M.VL == 0 and M.DH == 0 and M.IN == -1 and M.AS == 0 and M.DP == -1 then 
+            comboName = "STABILIZED ENTROPY"
+            GAME.customUltraCombo = true
+        elseif M.EX == -1 and M.NH == 0 and M.MS == 0 and M.GV == 2 and M.VL == 0 and M.DH == 0 and M.IN == 0 and M.AS == -1 and M.DP == -1 then 
+            comboName = "RESTRAINED COLLAPSE"
+            GAME.customUltraCombo = true
+        elseif M.EX == -1 and M.NH == 0 and M.MS == 0 and M.GV == -1 and M.VL == 2 and M.DH == -1 and M.IN == 0 and M.AS == 0 and M.DP == 0 then 
+            comboName = "RESTORED VOLITION"
+            GAME.customUltraCombo = true
+        elseif M.EX == -1 and M.NH == 0 and M.MS == -1 and M.GV == 0 and M.VL == 0 and M.DH == 2 and M.IN == -1 and M.AS == 0 and M.DP == 0 then 
+            comboName = "DISPROVEN BLASPHEMY"
+            GAME.customUltraCombo = true
+        elseif M.EX == -1 and M.NH == -1 and M.MS == 0 and M.GV == 0 and M.VL == 0 and M.DH == 0 and M.IN == 2 and M.AS == -1 and M.DP == 0 then 
+            comboName = "SOLVED PARADOX"
+            GAME.customUltraCombo = true
+        elseif M.EX == -1 and M.NH == -1 and M.MS == 0 and M.GV == 0 and M.VL == -1 and M.DH == 0 and M.IN == 0 and M.AS == 2 and M.DP == 0 then 
+            comboName = "DEMYSTIFIED GRIMOIRE"
+            GAME.customUltraCombo = true
+        elseif M.EX == -1 and M.NH == 0 and M.MS == -1 and M.GV == 0 and M.VL == -1 and M.DH == 0 and M.IN == 0 and M.AS == 0 and M.DP == 2 then 
+            comboName = "REVIVED EDEN"
+            GAME.customUltraCombo = true
+        else
+            GAME.customUltraCombo = false
+        end
+            --
+    else
+        GAME.customUltraCombo = false    
     end
     TEXTS.mod:set(comboName)
     if not GAME.playing then
@@ -2370,8 +2406,11 @@ function GAME.start()
     if URM and M.VL == 2 and not UltraVlCheck('start') then return end
     TASK.removeTask_code(Task_MusicEnd)
     MusicPlayer = false
+    GAME.smithyMode = false
     GAME.OSPActivated = false
     GAME.finalFatigueOSPActivated = false
+    GAME.teraComplete = false
+    GAME.teraLostHeight = 0
     GAME.omega = false
     GAME.negFloor = 1
     GAME.negEvent = 1
@@ -2605,14 +2644,24 @@ function GAME.finish(reason)
     FloatOnCard = nil
     GAME.refreshLayout()
 
-    -- If you didn't get teramusic or didn't make it to Omega, then you don't keep smithyMode
-    if GAME.smithyMode and GAME.teramusic and GAME.omega then
-        GAME.smithyMode = true
-    else
-        GAME.smithyMode = false
+    if GAME.smithyMode and (GAME.teramusic or GAME.teraLostHeight or GAME.teraComplete) then
+        local smithyModeHeight = GAME.roundHeight
+        if GAME.teraLostHeight > 0 then
+            smithyModeHeight = GAME.teraLostHeight
+        end
+        SubmitAchv('programmer_gamer', smithyModeHeight)
     end
-    GAME.OSPActivated = false
-    GAME.finalFatigueOSPActivated = false
+    if (GAME.teramusic or GAME.teraLostHeight or GAME.teraComplete) and M.EX == -1 and M.GV == 2 and URM and M.DH == -1 and M.AS == -1 and M.NH == 0 and M.MS == 0 and M.VL == 0 and M.IN == 0 and M.DP == 0 and GAME.enightcore then
+        SubmitAchv('one_of_mine', GAME.achv_noManualCommitH or GAME.roundHeight) 
+    end
+    -- Perfectly Balanced
+    if GAME.comboMP == 4 then
+        local revCount = GAME.comboStr:count('r')
+        local easyCount = GAME.comboStr:count('e')
+        if revCount == 4 and easyCount == 4 then
+            SubmitAchv('perfectly_balanced', GAME.roundHeight)
+        end
+    end
 
     GAME.playing = false
     if M.DH == 2 then GAME.finishTime = love.timer.getTime() end
@@ -2949,7 +2998,9 @@ function GAME.finish(reason)
         SubmitAchv('empty_box', GAME.achv_noResetH or GAME.roundHeight)
         SubmitAchv('the_perfectionist', GAME.achv_perfectH or GAME.roundHeight)
         SubmitAchv('sunk_cost', GAME.achv_demoteH or GAME.roundHeight)
-        SubmitAchv('patience_is_a_virtue', GAME.achv_noManualCommitH or GAME.roundHeight)
+        if M.GV ~= -1 then
+            SubmitAchv('patience_is_a_virtue', GAME.achv_noManualCommitH or GAME.roundHeight)
+        end
         SubmitAchv(GAME.comboStr, GAME.roundHeight)
         local soat = SubmitAchv('the_spike_of_all_time', GAME.maxSpikeWeak)
         SubmitAchv('the_spike_of_all_time_plus', GAME.maxSpike, soat)
@@ -3019,7 +3070,7 @@ function GAME.finish(reason)
         elseif URM and M.EX == -1 and M.NH == -1 and M.MS == 0 and M.GV == 0 and M.VL == -1 and M.DH == 0 and M.IN == 0 and M.AS == 2 and M.DP == 0 then
             SubmitAchv('demystified_grimoire', GAME.roundHeight)
         elseif URM and M.EX == -1 and M.NH == 0 and M.MS == -1 and M.GV == 0 and M.VL == -1 and M.DH == 0 and M.IN == 0 and M.AS == 0 and M.DP == 2 then
-            SubmitAchv('restored_eden', GAME.roundHeight)
+            SubmitAchv('revived_eden', GAME.roundHeight)
         elseif M.EX == -1 and M.NH == -1 and M.MS == 0 and M.GV == -1 and M.VL == -1 and M.DH == -1 and M.IN == -1 and ((M.AS == -1 and M.DP == 1) or (M.AS == 1 and M.DP == -1) or (M.AS == 1 and M.DP == 1)) then
             SubmitAchv('ggbw', GAME.achv_carriedH or GAME.roundHeight)
         end
@@ -3135,7 +3186,12 @@ local questStyleDP = {
 local KBisDown = love.keyboard.isDown
 function GAME.update(dt)
     GAME.spikeTimer = GAME.spikeTimer - dt
-    if not GAME.playing then return end
+    if not GAME.playing then 
+        if GAME.customUltraCombo or GAME.smithyMode then
+            GAME.refreshCurrentCombo()
+        end
+        return 
+    end
     if TestMode then
         if KBisDown(']') then
             GAME.addXP(dt * GAME.rank * 8)
