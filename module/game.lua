@@ -3367,12 +3367,12 @@ function GAME.update(dt)
             if not URM then
                 GAME.height = GAME.height - dt * (GAME.floor * (GAME.floor + 1) + 10) / 20
                 if GAME.eglassCard then
-                    GAME.height = GAME.height + GAME.rank / 4 * passiveClimbSpeedMod*0.3 * dt * icLerp(1, 6, Floors[GAME.floor].top - GAME.height)
+                    GAME.height = GAME.height + GAME.rank / 4 * passiveClimbSpeedMod*0.6 * dt * icLerp(1, 6, Floors[GAME.floor].top - GAME.height)
                 end
                 GAME.height = max(GAME.height, Floors[GAME.floor - 1].top)
             else
                 if GAME.eglassCard then
-                    GAME.height = GAME.height + GAME.rank / 4 * passiveClimbSpeedMod*0.15 * dt * icLerp(1, 6, Floors[GAME.floor].top - GAME.height)
+                    GAME.height = GAME.height + GAME.rank / 4 * passiveClimbSpeedMod*0.3 * dt * icLerp(1, 6, Floors[GAME.floor].top - GAME.height)
                 end
                 if GAME.negFloor > 0 then
                     if GAME.negFloor >= 2 then
