@@ -347,7 +347,7 @@ ComboData = {
         { set = "eEX eMS rDH eIN",      name = "Disproven Blasphemy"},
         { set = "eEX eNH rIN eAS",      name = "Solved Paradox"},
         { set = "eEX eNH eVL rAS",      name = "Demystified Grimoire"},
-        { set = "eEX eMS eVL rDP",      name = "Revived Eden"},
+        { set = "eEX eMS eVL rDP",      name = "Lasting Eden"},
     },
 
     game = {
@@ -1364,8 +1364,11 @@ end
 local function f5() return math.max(GAME.floor, GAME.negFloor) <= 5 end
 local function F6() return math.max(GAME.floor, GAME.negFloor) >= 6 end
 local function F9() return math.max(GAME.floor, GAME.negFloor) >= 9 end
-local function F9wind() return math.max(GAME.floor, GAME.negFloor) >= 9 and GAME.maxQuestSize >= 4 end
-local function F9wind3() return math.max(GAME.floor, GAME.negFloor) >= 9 and GAME.maxQuestSize >= 5 end
+local function F9wind() return math.max(GAME.floor, GAME.negFloor) >= 9 and GAME.maxQuestSize >= 4 and GAME.mod.DH ~= -1 end
+local function F9wind3() return math.max(GAME.floor, GAME.negFloor) >= 9 and GAME.maxQuestSize >= 5 and GAME.mod.DH ~= -1 end
+local function notENH() return GAME.mod.NH ~= -1 end
+local function notENHorF9wind() return math.max(GAME.floor, GAME.negFloor) >= 9 and GAME.maxQuestSize >= 4 and GAME.mod.DH ~= -1 and GAME.mod.NH ~= -1 end
+local function notENHorF9wind3() return math.max(GAME.floor, GAME.negFloor) >= 9 and GAME.maxQuestSize >= 5 and GAME.mod.DH ~= -1 and GAME.mod.NH ~= -1 end
 
 ---@class Prompt
 ---@field rank number[]
@@ -1420,10 +1423,10 @@ RevivePrompts = {
     { rank = { 4, 6 }, prompt = 'pass_$1',              target = 4,   short = "Pass 4 with $1",          text = "Pass 4 times\nwith $1",                       init = rndMod },
     { rank = { 2, 4 }, prompt = 'pass_perfect',         target = 6,   short = "6x perf",                 text = "Get 6 perfect passes" },
     { rank = { 5, 6 }, prompt = 'pass_perfect',         target = 12,  short = "12x perf",                text = "Get 12 perfect passes" },
-    { rank = { 2, 4 }, prompt = 'pass_imperfect',       target = 6,   short = "6x im-perf",              text = "Get 6 imperfect passes" },
-    { rank = { 5, 6 }, prompt = 'pass_imperfect',       target = 12,  short = "12x im-perf",             text = "Get 12 imperfect passes" },
-    { rank = { 4, 5 }, prompt = 'pass_imperfect_row',   target = 3,   short = "3x chain im-perf",        text = "Get 3 imperfect\npasses in a row" },
-    { rank = { 5, 6 }, prompt = 'pass_imperfect_row',   target = 8,   short = "8x chain im-perf",        text = "Get 8 imperfect\npasses in a row" },
+    { rank = { 2, 4 }, prompt = 'pass_imperfect',       target = 6,   short = "6x im-perf",              text = "Get 6 imperfect passes",                       cond = notENH },
+    { rank = { 5, 6 }, prompt = 'pass_imperfect',       target = 12,  short = "12x im-perf",             text = "Get 12 imperfect passes",                      cond = notENH },
+    { rank = { 4, 5 }, prompt = 'pass_imperfect_row',   target = 3,   short = "3x chain im-perf",        text = "Get 3 imperfect\npasses in a row",             cond = notENH },
+    { rank = { 5, 6 }, prompt = 'pass_imperfect_row',   target = 8,   short = "8x chain im-perf",        text = "Get 8 imperfect\npasses in a row",             cond = notENH },
     { rank = { 2, 4 }, prompt = 'pass_perfect_row',     target = 4,   short = "4x chain perf",           text = "Get 4 perfect\npasses in a row" },
     { rank = { 3, 5 }, prompt = 'pass_perfect_row',     target = 6,   short = "6x chain perf",           text = "Get 6 perfect\npasses in a row" },
     { rank = { 4, 5 }, prompt = 'pass_perfect_row',     target = 8,   short = "8x chain perf",           text = "Get 8 perfect\npasses in a row" },
@@ -1431,12 +1434,12 @@ RevivePrompts = {
     { rank = { 2, 3 }, prompt = 'pass_second',          target = 4,   short = "2nd quest 4x",            text = "Pass the second\nquest 4 times" },
     { rank = { 3, 4 }, prompt = 'pass_second',          target = 8,   short = "2nd quest 8x",            text = "Pass the second\nquest 8 times" },
     { rank = { 4, 5 }, prompt = 'pass_second',          target = 12,  short = "2nd quest 12x",           text = "Pass the second\nquest 12 times" },
-    { rank = { 2, 4 }, prompt = 'b2b_break_4',          target = 1,   short = "Break B2B 4x",            text = "Break B2B chain\nat B2B x4" },
-    { rank = { 3, 4 }, prompt = 'b2b_break_6',          target = 1,   short = "Break B2B 6x",            text = "Break B2B chain\nat B2B x6" },
-    { rank = { 4, 5 }, prompt = 'b2b_break_8',          target = 1,   short = "Break B2B 8x",            text = "Break B2B chain\nat B2B x8" },
-    { rank = { 4, 6 }, prompt = 'b2b_break_10',         target = 1,   short = "Break B2B 10x",           text = "Break B2B chain\nat B2B x10" },
-    { rank = { 4, 6 }, prompt = 'b2b_break_windup',     target = 1,   short = "Break B2B at a windup",   text = "Break B2B at a windup",                       cond = F9 },
-    { rank = { 5, 6 }, prompt = 'b2b_break_windup3',    target = 1,   short = "Break B2B at a windup3+", text = "Break B2B at\na Lv.3+ windup",                cond = F9 },
+    { rank = { 2, 4 }, prompt = 'b2b_break_4',          target = 1,   short = "Break B2B 4x",            text = "Break B2B chain\nat B2B x4",                   cond = notENH },
+    { rank = { 3, 4 }, prompt = 'b2b_break_6',          target = 1,   short = "Break B2B 6x",            text = "Break B2B chain\nat B2B x6",                   cond = notENH },
+    { rank = { 4, 5 }, prompt = 'b2b_break_8',          target = 1,   short = "Break B2B 8x",            text = "Break B2B chain\nat B2B x8",                   cond = notENH },
+    { rank = { 4, 6 }, prompt = 'b2b_break_10',         target = 1,   short = "Break B2B 10x",           text = "Break B2B chain\nat B2B x10",                  cond = notENH },
+    { rank = { 4, 6 }, prompt = 'b2b_break_windup',     target = 1,   short = "Break B2B at a windup",   text = "Break B2B at a windup",                       cond = notENHorF9wind },
+    { rank = { 5, 6 }, prompt = 'b2b_break_windup3',    target = 1,   short = "Break B2B at a windup3+", text = "Break B2B at\na Lv.3+ windup",                cond = notENHorF9wind3 },
     { rank = { 1, 3 }, prompt = 'heal',                 target = 8,   short = "Heal 8 HP",               text = "Heal 8 HP" },
     { rank = { 2, 4 }, prompt = 'heal',                 target = 20,  short = "Heal 20 HP",              text = "Heal 20 HP" },
     { rank = { 1, 2 }, prompt = 'send',                 target = 6,   short = "Send 6",                  text = "Send 6 Attack" },
@@ -1463,7 +1466,7 @@ RevivePrompts = {
     { rank = { 2, 4 }, prompt = 'keep_no_commit',       target = 6,   short = "No commit 6s",            text = "Don't commit\nfor 6 seconds",                 cond = f5 },
     { rank = { 3, 6 }, prompt = 'keep_no_cancel',       target = 8,   short = "No cancel 8s",            text = "Don't cancel\nfor 8 seconds" },
     { rank = { 2, 5 }, prompt = 'keep_no_keyboard',     target = 10,  short = "No keyboard 10s",         text = "Don't use the keyboard\nfor 10 seconds",      cond = F6 },
-    { rank = { 3, 5 }, prompt = 'keep_no_perfect',      target = 12,  short = "No perfect 12s",          text = "Have no perfect\npasses for 12 seconds" },
+    { rank = { 3, 5 }, prompt = 'keep_no_perfect',      target = 12,  short = "No perfect 12s",          text = "Have no perfect\npasses for 12 seconds",       cond = notENH },
     { rank = { 4, 6 }, prompt = 'keep_no_imperfect',    target = 14,  short = "No imperfect 14s",        text = "Have no imperfect\npasses for 14 seconds",    cond = F6 },
     { rank = { 3, 5 }, prompt = 'keep_no_reset',        target = 16,  short = "No reset 16s",            text = "Don't reset\nfor 16 seconds" },
 }

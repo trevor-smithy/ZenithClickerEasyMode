@@ -1022,8 +1022,10 @@ function GAME.addXP(xp)
     if M.VL == -1 then
         xp = xp + 1
     end
-    if M.EX == -1 and GAME.rank > 1 and GAME.rank <= 126 then
+    if M.EX == -1 and GAME.rank > 1 and GAME.rank <= 126 and not (URM and GAME.comboStr:count('r') == 0) then
         xp = xp * (1 + (GAME.rank - 1)/xpRankModifier)
+    elseif M.EX == -1 and GAME.rank > 1 and GAME.rank <= 126 then
+        xp = xp * (1 + (GAME.rank - 1)/(xpRankModifier*3))
     end
     GAME.xp = GAME.xp + xp
     if GAME.rankupLast and GAME.xp >= 2 * GAME.rank then GAME.xpLockLevel = GAME.xpLockLevelMax end
@@ -1097,8 +1099,12 @@ function GAME.startTeraAnim()
     TASK.removeTask_code(GAME.task_gigaspeed)
     TASK.new(GAME.task_gigaspeed)
     SFX.play('zenith_speedrun_start')
-    if GAME.smithyMode then
+    if GAME.smithyMode and M.EX == -1 and URM and GAME.comboStr:count('r') == 0 then --if smithyMode and ultra but no reversed and easy enabled
+        PlayBGM('terael', true)
+    elseif GAME.smithyMode then
         PlayBGM('terae', true)
+    elseif M.EX == -1 and URM and GAME.comboStr:count('r') == 0 then
+        PlayBGM('teral', true)
     else
         PlayBGM('tera', true)
     end
@@ -1582,13 +1588,23 @@ function GAME.refreshCurrentCombo()
             comboName = "DEMYSTIFIED GRIMOIRE"
             GAME.customUltraCombo = true
         elseif M.EX == -1 and M.NH == 0 and M.MS == -1 and M.GV == 0 and M.VL == -1 and M.DH == 0 and M.IN == 0 and M.AS == 0 and M.DP == 2 then 
-            comboName = "REVIVED EDEN"
+            comboName = "LASTING EDEN"
             GAME.customUltraCombo = true
         else
             GAME.customUltraCombo = false
         end
-            --
     else
+        if (M.EX == -1 and URM and M.NH < 2 and M.MS < 2 and M.GV < 2 and M.VL < 2 and M.DH < 2 and M.IN < 2 and M.AS < 2 and M.DP < 2) then
+            if comboName:count('EASY') == 1 then 
+                comboName = comboName:gsub("EASY", "UNEASY", 1)
+            else 
+                if GAME.smithyMode then
+                    comboName = comboName:gsub("P", "UNEASY P", 1)
+                else
+                    comboName = comboName:gsub("([^\"])", "UNEASY %1", 1)
+                end 
+            end
+        end
         GAME.customUltraCombo = false    
     end
     TEXTS.mod:set(comboName)
@@ -2416,7 +2432,7 @@ function GAME.start()
     GAME.negEvent = 1
     GAME.timerMul = 1
     GAME.isUltraRun = GAME.anyUltra
-    GAME.attackMul = GAME.isUltraRun and .62 or 1
+    GAME.attackMul = GAME.isUltraRun and .62 or (M.EX == -1 and URM and M.NH < 2 and M.MS < 2 and M.GV < 2 and M.VL < 2 and M.DH < 2 and M.IN < 2 and M.AS < 2 and M.DP < 2) and 0.33 or 1
     -- Trevor Smithy
     GAME.bonusRecoveryHealth = 0
     local slowMo = 0
@@ -2848,6 +2864,9 @@ function GAME.finish(reason)
         local resStr = {}
         --for i = 1, 7 do
         -- Trevor Smithy
+        if M.EX == -1 and GAME.comboStr:count('r') == 0 and URM then
+            TABLE.append(resStr, {COLOR.DR, "U"})
+        end
         for i = 1, 14 do 
             if GAME[PieceData[i].id] then TABLE.append(resStr, PieceData[i].text) end
         end
@@ -3070,7 +3089,7 @@ function GAME.finish(reason)
         elseif URM and M.EX == -1 and M.NH == -1 and M.MS == 0 and M.GV == 0 and M.VL == -1 and M.DH == 0 and M.IN == 0 and M.AS == 2 and M.DP == 0 then
             SubmitAchv('demystified_grimoire', GAME.roundHeight)
         elseif URM and M.EX == -1 and M.NH == 0 and M.MS == -1 and M.GV == 0 and M.VL == -1 and M.DH == 0 and M.IN == 0 and M.AS == 0 and M.DP == 2 then
-            SubmitAchv('revived_eden', GAME.roundHeight)
+            SubmitAchv('restored_eden', GAME.roundHeight)
         elseif M.EX == -1 and M.NH == -1 and M.MS == 0 and M.GV == -1 and M.VL == -1 and M.DH == -1 and M.IN == -1 and ((M.AS == -1 and M.DP == 1) or (M.AS == 1 and M.DP == -1) or (M.AS == 1 and M.DP == 1)) then
             SubmitAchv('ggbw', GAME.achv_carriedH or GAME.roundHeight)
         end

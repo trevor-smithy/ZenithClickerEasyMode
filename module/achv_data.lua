@@ -1493,7 +1493,7 @@ Achievements = {
     { -- one_of_mine
         id = 'one_of_mine',
         name = "But It Isn't One Of Mine",
-        desc = [[Reach F10 while maintaining TERASPEED and not manually committing with at least eEX, uGV, and eDH +eZ]],
+        desc = [[Reach F10 while maintaining TERASPEED and not manually committing WU eEX, uGV, eDH, and eAS +eZ]],
         quote = [["Ain't nobody got time for that!"]],
         credit = "@TrevorSmithy",
         rank = floorRank(1, 3, 5, 7, 9, 10, 6200),
@@ -1602,8 +1602,8 @@ Achievements = {
         type = 'unranked',
     },
     { -- uDP
-        id = 'revived_eden',
-        name = "Revived Eden",
+        id = 'restored_eden',
+        name = "Lasting Eden",
         desc = [[HFD with eEX, eMS, eVL, and uDP]],
         quote = [["How about you just keep the place clean and quiet? Then we would be fine!"]],
         credit = "@TrevorSmithy",

@@ -54,6 +54,15 @@ Each mod creates a unique experience by twisting the rules, but also increases t
 - Fatigue effects start **1 minute later.**
 - AS keyboard hints **ARE** shown (if enabled).
 
+### Uneasy (`ueEX`) - Enabled with Ultra and no Reversed Mods
+
+- Climb speed **xp requirements scale slightly slower.** [Graph](https://www.desmos.com/calculator/bge9yjxriu)
+- Attack **divided by 3.**
+- XP Lock **set to 0.**
+- Quests are **more likely to repeat.**
+- Fatigue effects start **1 minute later.**
+- AS keyboard hints **ARE** shown (if enabled).
+
 ### No Hold (`NH`)
 
 - You cannot manually deselect cards.
@@ -125,13 +134,13 @@ Each mod creates a unique experience by twisting the rules, but also increases t
 
 ### All-Spin (`AS`)
 
-- You can flip cards with your keyboard: on ANSI QWERTY layout, the inputs are 1-9, Q-O, or A-L. If cards are shuffled by `(r)MS`, they are flipped based on their *position*, not by which card they are.
+- You can flip cards with your keyboard: on ANSI QWERTY layout, the inputs are 1-9, Q-O, or A-L. If cards are shuffled by any variant of `(r)MS`, they are flipped based on their *position*, not by which card they are.
 - The RESET button is replaced with **SPIN**. Using SPIN quickly flips all cards one-by-one.
 - Flipping a card will apply a **burn** to it, indicated by it flashing yellow. Burns last **3s** and this duration increases by **0.5s per floor**. They can be removed by committing (even if the selected card is a wrong one) or pressing SPIN. Flipping a burned card will cause you to get **wounded**, force-flipping two cards. These cards do *not* get a Burn.
 
 ### Spin (`eAS`)
 
-- You can flip cards with your keyboard: on ANSI QWERTY layout, the inputs are 1-9, Q-O, or A-L. If cards are shuffled by `(r)MS`, they are flipped based on their *position*, not by which card they are.
+- You can flip cards with your keyboard: on ANSI QWERTY layout, the inputs are 1-9, Q-O, or A-L. If cards are shuffled by any variant of `MS`, they are flipped based on their *position*, not by which card they are.
 - The RESET button is replaced with **SPIN**. Using SPIN quickly flips all cards one-by-one.
 - Attack increased by 1 if Back 2 Back is active.
 

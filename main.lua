@@ -930,6 +930,8 @@ BgmData = {
     terar = { meta = '4|4  240 BPM  C# Minor', bar = 4, bpm = 240, toneFix = 1, loop = { 84 - 15.565, 172 - 15.565 }, teleport = { 0, 18 - 15.565 } },
     --Trevor Smithy
     terae = { meta = '4|4  240 BPM  C# Minor', bar = 4, bpm = 240, toneFix = 1, loop = { 76, 140 }, introLen = 2, teleport = { -1, 20 }, end1 = 140, end2 = 142, end3 = 144, end4 = 146 },
+    teral = { meta = '4|4  240 BPM  C# Minor', bar = 4, bpm = 240, toneFix = 1, loop = { 76, 140 }, introLen = 2, teleport = { -1, 20 }, end1 = 140, end2 = 142, end3 = 144, end4 = 146 },
+    terael = { meta = '4|4  240 BPM  C# Minor', bar = 4, bpm = 240, toneFix = 1, loop = { 76, 140 }, introLen = 2, teleport = { -1, 20 }, end1 = 140, end2 = 142, end3 = 144, end4 = 146 },
 }
 
 BgmPlaying = false ---@type ZC.bgmName | false
@@ -976,8 +978,8 @@ function PlayBGM(name, force)
         BgmNeedSkip[1] = start + BgmData.f1.introLen
         BGM.set('all', 'seek', start)
         RefreshBGM(name)
-    elseif name == 'tera' then
-        BGM.play('tera', '-sdin')
+    elseif name == 'tera' or name == 'terae' or name == 'teral' or name == 'terael'then
+        BGM.play(name, '-sdin')
         local startFrom
         if last then
             ---@cast last string
@@ -986,15 +988,6 @@ function PlayBGM(name, force)
         end
         local start = (GAME.playing and GAME.floor or startFrom or math.random(0, 9)) * BgmData.tera.introLen
         BgmNeedSkip[1] = start + BgmData.tera.introLen
-        BGM.set('all', 'seek', start)
-        RefreshBGM()
-    elseif name == 'terae' then
-        BGM.play('terae', '-sdin')
-        local startFrom
-        startFrom = last and tonumber(last:match("%d+"))
-        if startFrom then startFrom = startFrom - 1 end
-        local start = (GAME.playing and GAME.floor or startFrom or math.random(0, 9)) * BgmData.terae.introLen
-        BgmNeedSkip[1] = start + BgmData.terae.introLen
         BGM.set('all', 'seek', start)
         RefreshBGM()
     else
@@ -1175,11 +1168,7 @@ function Task_MusicEnd(manual)
             outroStart = D.loop[2]
             BgmNeedStop = outroStart + 8 * 60 / D.bpm
         end
-    elseif BgmPlaying == 'tera' then
-        outroStart = D.loop[2] + math.random(0, 3) * 8 * 60 / D.bpm
-        BgmNeedStop = outroStart + 8 * 60 / D.bpm
-    -- Trevor Smithy
-    elseif BgmPlaying == 'terae' then
+    elseif BgmPlaying == 'tera' or 'terae' or 'teral' or 'terael' then
         outroStart = D.loop[2] + math.random(0, 3) * 8 * 60 / D.bpm
         BgmNeedStop = outroStart + 8 * 60 / D.bpm
     elseif BgmPlaying == 'terar' then

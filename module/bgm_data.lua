@@ -42,4 +42,6 @@ return {
 
     --Trevor Smithy
     terae = 'assets/music/tera-easy.ogg',
+    teral = 'assets/music/tera-lyric.ogg',
+    terael = 'assets/music/tera-easy-lyric.ogg',
 }

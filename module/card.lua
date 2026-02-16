@@ -148,12 +148,12 @@ function Card:setActive(auto, key)
     local eNHBlocksFaults = false
     if M.NH == -1 then
         eNHBlocksFaults = true
-        if GAME.currentTask then
-            local p = GAME.reviveTasks[1].prompt
-            if p == 'pass_imperfect' or p == 'pass_imperfect_row' or p == 'b2b_break_4' or p == 'b2b_break_6' or p == 'b2b_break_8' or p == 'b2b_break_10' or p == 'b2b_break_windup' or p == 'b2b_break_windup3' or p == 'keep_no_perfect' then
-                eNHBlocksFaults = false
-            end
-        end
+    --    if GAME.currentTask then --This has now been changed to just disable the below reviveTasks
+    --        local p = GAME.reviveTasks[1].prompt
+    --        if p == 'pass_imperfect' or p == 'pass_imperfect_row' or p == 'b2b_break_4' or p == 'b2b_break_6' or p == 'b2b_break_8' or p == 'b2b_break_10' or p == 'b2b_break_windup' or p == 'b2b_break_windup3' or p == 'keep_no_perfect' then
+    --            eNHBlocksFaults = false
+    --        end
+    --    end
     end
     if GAME.playing then
         if not auto then
