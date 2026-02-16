@@ -2276,11 +2276,8 @@ function GAME.commit(auto)
         GAME.totalAttack = GAME.totalAttack + attack
         GAME.totalSurge = GAME.totalSurge + surge
 
-        local attackMulMod = 1
-        if GAME.eglassCard then attackMulMod = 0.5 end
-
         if GAME.DPlock then attack = min(attack, URM and oldAllyLife * 2.6 or oldAllyLife * 4) end
-        if attack > 0 then GAME.addHeight(attack * GAME.attackMul * attackMulMod) end
+        if attack > 0 then GAME.addHeight(attack * GAME.attackMul) end
         GAME.addXP(attack + xp)
 
         -- rMS little shuffle
@@ -2432,7 +2429,9 @@ function GAME.start()
     GAME.negEvent = 1
     GAME.timerMul = 1
     GAME.isUltraRun = GAME.anyUltra
-    GAME.attackMul = GAME.isUltraRun and .62 or (M.EX == -1 and URM and M.NH < 2 and M.MS < 2 and M.GV < 2 and M.VL < 2 and M.DH < 2 and M.IN < 2 and M.AS < 2 and M.DP < 2) and 0.33 or 1
+    local attackMulMod = 1
+    if GAME.eglassCard then attackMulMod = 0.5 end
+    GAME.attackMul = (GAME.isUltraRun and .62 or (M.EX == -1 and URM and M.NH < 2 and M.MS < 2 and M.GV < 2 and M.VL < 2 and M.DH < 2 and M.IN < 2 and M.AS < 2 and M.DP < 2) and 0.33 or 1) * attackMulMod
     -- Trevor Smithy
     GAME.bonusRecoveryHealth = 0
     local slowMo = 0
@@ -3367,8 +3366,14 @@ function GAME.update(dt)
         if M.EX == 2 then
             if not URM then
                 GAME.height = GAME.height - dt * (GAME.floor * (GAME.floor + 1) + 10) / 20
+                if GAME.eglassCard then
+                    GAME.height = GAME.height + GAME.rank / 4 * passiveClimbSpeedMod*0.3 * dt * icLerp(1, 6, Floors[GAME.floor].top - GAME.height)
+                end
                 GAME.height = max(GAME.height, Floors[GAME.floor - 1].top)
             else
+                if GAME.eglassCard then
+                    GAME.height = GAME.height + GAME.rank / 4 * passiveClimbSpeedMod*0.15 * dt * icLerp(1, 6, Floors[GAME.floor].top - GAME.height)
+                end
                 if GAME.negFloor > 0 then
                     if GAME.negFloor >= 2 then
                         GAME.height = min(GAME.height, NegFloors[GAME.negFloor - 1].bottom)
