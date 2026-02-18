@@ -367,8 +367,39 @@ return {
     ['eEX eVL eAS'] = STRING.trimIndent [[
         The Pro G(r)am(m)ing Smithy, because, well, I'm Trevor Smithy and I'm both a
         programmer and a (questionably) pro gamer. In any case, this has been fun to develop and playtest.
-        eEX & eL form a powerful combo, completely eliminating climb speed decay. 
-        eVL is just a +1 buff to all attacks and eAS with no downsides allows for some crazy fast runs.
-        Thanks for playing! WAH-BAAM! - Trevor Smithy
+        eEX is very strong, making getting high climb speed ranks significantly easier, especially if combined with eL. 
+        eVL is just a +1 buff to all XP and eAS adding +1 to attacks with no downsides allows for some crazy fast runs.
+        Thanks for playing my mod! WAH-BAAM! - Trevor Smithy
+    ]],
+    ['eEX uGV eDH eAS'] = STRING.trimIndent [[
+        But It Isn't One Of Mine, the Easy Mode counterpart to Patience Is A Virtue.
+        While this message will display even if Nightcore+ is not enabled,
+        in order to get the achievement with the same name it is required.
+    ]],
+    ['eEX eNH eGV eVL eDH eIN AS eDP'] = STRING.trimIndent [[
+        One of 3 variants of Gamer Girl Bath Water, this is the one that I believe is 
+        optimal for "The Biggest Fan" because Friend doesn't punish you for having your ally dead.
+    ]],
+    ['eEX eNH eGV eVL eDH eIN eAS DP'] = STRING.trimIndent [[
+        One of 3 variants of Gamer Girl Bath Water, this is the one that I believe is the best 
+        alternative for "The Biggest Fan", especially if you are prone to burns with AS. 
+        However, DP does hurt your ability to climb when your ally is dead.
+    ]],
+    ['eEX eNH eGV eVL eDH eIN AS DP'] = STRING.trimIndent [[
+        One of 3 variants of Gamer Girl Bath Water, this is the one that I believe is the most 
+        challenging for "The Biggest Fan", since you are prone to burns with AS 
+        and DP hurts your ability to climb when your ally is dead.
+    ]],
+    ['uEX eNH eMS eGV eVL eDH eIN eAS'] = STRING.trimIndent [[
+        "Sir! The peasants have broken through the castle gate! They're rapidly advancing in!"
+        "Quiet, fool. Such simple people do not understand the rules that guide a ruler. They will never stand a cha-"
+        At that moment, the 'Psychotic Sovereign' collapsed to the ground, a spear lodged deep through his cold heart.
+    ]],
+    ['eEX uNH eGV eDH'] = STRING.trimIndent [[
+        "GEEZ - GOD! How'd you get here so fast??" You begin to clip through the fabric of reality. "Wait WAIT WAIT!! Y-You have to save all the mortals!
+        "My servants have them! You're supposed to go to their temples first." You flip over a table before sliding backwards out of the room,
+        destroying the door as you leave. After a few short minutes, you return. "Okay okay! You can have it, I'm sorry!" God says, tossing you your prize.
+        However, you will not stand to be rewarded so flippantly, so you leap after God, who screams "NOOOOOOOO!!!" as he tries to escape 
+        and you cave his face in with a powerful backhand slap before grabbing him and tossing him into the distance where he explodes.
     ]],
 }

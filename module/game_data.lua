@@ -296,6 +296,7 @@ ComboData = {
 
         -- Trevor Smithy
         { set = "eEX eVL eAS",      name = "The Pro G(r)am(m)ing Smithy" },
+        { set = "eEX rGV eDH eAS",  name = "But It Isn't One Of Mine" },
 
         -- Bath Waters
         { set = "eEX eNH eMS eGV eVL eDH eIN eAS",      name = "Bath Water"},

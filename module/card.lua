@@ -293,6 +293,7 @@ function Card:setActive(auto, key)
         -- Trevor Smithy
         if easyOn or wasEasy then GAME.refreshEasy() end
         if wasEasy and not easyOn then self:spin() end
+        
         --if self.id == 'EX' then
         --    TWEEN.new(tween_expertOn):setDuration(M.EX > 0 and .26 or .1):run()
         --    TABLE.clear(HoldingButtons)
@@ -361,13 +362,17 @@ end
 function Card:spin()
     TWEEN.tag_kill('shake_' .. self.id)
     local animFunc, ease
-    local re = (GAME.playing or self.upright) and 0 or 3.1416
+    local re = (GAME.playing or self.upright or self.easy) and 0 or 3.1416
+
     if M.IN ~= 1 and M.IN ~= -1 then
         -- Normal
         ease = 'OutQuart'
         function animFunc(t)
+            if self.easy then
+                self.kx = -self.kx
+            end
             self.ky = .9 + .1 * cos(t * 6.2832)
-            self.r = t * 6.2832
+            self.r = t * (self.easy and -6.2832 or 6.2832)
             self.kx = cos((M.AS + 1) * t * 6.2832)
             if not self.front then
                 self.kx = -self.kx
@@ -568,7 +573,7 @@ function Card:draw()
     gc_push('transform')
     gc_translate(self.x, self.y + self.visY1)
     gc_rotate(self.r)
-    if not playing and not self.upright then gc_rotate(3.1416) end
+    if not playing and not (self.upright or self.easy) then gc_rotate(3.1416) end
     gc_scale(abs(self.size * self.kx), self.size * self.ky)
 
     if self == CD[FloatOnCard] then
@@ -648,7 +653,11 @@ function Card:draw()
     else
         if self.active then
             if self.easy then
-                r1, g1, b1 = 0, 1, 0          -- Green
+                if not (URM and self.id == 'EX' and M.EX == -1 and M.NH < 2 and M.MS < 2 and M.GV < 2 and M.VL < 2 and M.DH < 2 and M.IN < 2 and M.AS < 2 and M.DP < 2) then
+                    r1, g1, b1 = 0, 1, 0          -- Green
+                else
+                    r1, g1, b1 = 0.626, 0, 0          -- Dark Red (for Uneasy)
+                end
             elseif not self.upright then
                 r1, g1, b1 = 0, .5, .7        -- Reversed
             elseif self.id ~= 'DP' then

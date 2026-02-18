@@ -305,15 +305,21 @@ end
 function GAME.getComboZP(list)
     local m = TABLE.getValueSet(list)
     local zp = 1
-    if m.EX then zp = zp * 1.4 elseif m.rEX then zp = zp * 2.6 elseif m.eEX then zp = zp * 0.9 end
-    if m.NH then zp = zp * 1.1 elseif m.rNH then zp = zp * 1.8 elseif m.eNH then zp = zp * 0.95 end
+    if m.EX then zp = zp * 1.4 elseif m.rEX then zp = zp * 2.6 elseif m.eEX then 
+        if URM and table.concat(list):count('r') == 0 then
+            zp = zp * 2.7
+        else
+           zp = zp * 0.9 
+        end
+    end
+    if m.NH then zp = zp * 1.1 elseif m.rNH then zp = zp * 1.8 elseif m.eNH then zp = zp * 0.90 end
     if m.MS then zp = zp * 1.2 elseif m.rMS then zp = zp * (m.rGV and 2.0 or 1.7) elseif m.eMS then zp = zp * 1.1 end
-    if m.GV then zp = zp * 1.1 elseif m.rGV then zp = zp * (1.2 + .02 * (#list - 1)) elseif m.eGV then zp = zp * 0.9 end
-    if m.VL then zp = zp * 1.1 elseif m.rVL then zp = zp * (1.2 + .02 * (#list - 1)) elseif m.eVL then zp = zp * 0.914 end
+    if m.GV then zp = zp * 1.1 elseif m.rGV then zp = zp * (1.2 + .02 * (#list - 1)) elseif m.eGV then zp = zp * 0.85 end
+    if m.VL then zp = zp * 1.1 elseif m.rVL then zp = zp * (1.2 + .02 * (#list - 1)) elseif m.eVL then zp = zp * 0.9 end
     if m.DH then zp = zp * 1.2 elseif m.rDH then zp = zp * (m.rIN and 2.0 or 1.6) elseif m.eDH then zp = zp * 0.8 end
     if m.IN then zp = zp * 1.2 elseif m.rIN then zp = zp * 1.6 elseif m.eIN then zp = zp * 0.9 end
     if m.AS then zp = zp * .85 elseif m.rAS then zp = zp * 1.1 elseif m.eAS then zp = zp * 0.8 end
-    if m.DP then zp = zp * .95 elseif m.rDP then zp = zp * (m.rEX and 1.8 or 2.1) elseif m.eDP then zp = zp * 0.95 end
+    if m.DP then zp = zp * .95 elseif m.rDP then zp = zp * (m.rEX and 1.8 or 2.1) elseif m.eDP then zp = zp * 0.90 end
 
     if GAME.enightcore or GAME.eglassCard then zp = zp * .9 elseif GAME.eslowmo then zp = zp * .825 elseif GAME.efastLeak then zp = zp * .75 end
 
@@ -3124,7 +3130,7 @@ function GAME.finish(reason)
                 local swFin
                 for i = len_noDP, 7, -1 do
                     if revCount > 0 and easyCount == 0 then swFin = SubmitAchv(sw[i - 6] .. '_plus', GAME.roundHeight, swFin) or swFin end
-                    swFin = SubmitAchv(sw[i - 6], GAME.roundHeight, swFin) or swFin
+                    if easyCount == 0 then swFin = SubmitAchv(sw[i - 6], GAME.roundHeight, swFin) or swFin end
                 end
             end
             if revCount >= 2 and GAME.comboMP >= 8 and easyCount == 0 then
@@ -3372,7 +3378,7 @@ function GAME.update(dt)
                 GAME.height = max(GAME.height, Floors[GAME.floor - 1].top)
             else
                 if GAME.eglassCard then
-                    GAME.height = GAME.height + GAME.rank / 4 * passiveClimbSpeedMod*0.3 * dt * icLerp(1, 6, Floors[GAME.floor].top - GAME.height)
+                    GAME.height = GAME.height + GAME.rank / 4 * passiveClimbSpeedMod*0.6 * dt * icLerp(1, 6, Floors[GAME.floor].top - GAME.height)
                 end
                 if GAME.negFloor > 0 then
                     if GAME.negFloor >= 2 then
