@@ -269,7 +269,7 @@ function scene.mouseMove(x, y, _, dy)
     if GAME.zenithTraveler then
         GAME.height = clamp(GAME.height +
             dy / 260 *
-            (M.VL + 1) *
+            (M.VL >= 0 and M.VL + 1 or 1) *
             (M.EX > 0 and 2.6 or 6.2) *
             (M.AS > 0 and -1 or 1), 0,
             STAT.maxHeight
@@ -338,7 +338,7 @@ function scene.wheelMove(_, dy)
     if GAME.zenithTraveler and M.NH < 2 then
         GAME.height = clamp(GAME.height -
             dy *
-            (M.VL + 1) *
+            (M.VL >= 0 and M.VL + 1 or 1) *
             (M.EX > 0 and 2.6 or 6.2) *
             (M.AS > 0 and -1 or 1), 0,
             STAT.maxHeight
@@ -444,7 +444,7 @@ function scene.update(dt)
     if GAME.nightcore then dt = dt * 2.6 end
     if GAME.zenithTraveler and M.EX == 2 then
         local f = GAME.calculateFloor(GAME.bgH)
-        GAME.height = max(GAME.height - dt * (f * (f + 1) + 10) * (M.VL + 1), 0)
+        GAME.height = max(GAME.height - dt * (f * (f + 1) + 10) * (M.VL >= 0 and M.VL + 1 or 1), 0)
     end
     if dt > .26 then dt = .26 end
     GAME.update(dt)

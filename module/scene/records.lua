@@ -106,7 +106,7 @@ local function newRecord(list, isUltra)
         _ultra = isUltra,
 
         comboText = GC.newText(FONT.get(50), comboText),
-        modsText = GC.newText(FONT.get(30), (isUltra and mods:gsub('r', 'u') or mods) .. (mp > 2 and "  [" .. mp .. "]" or "")),
+        modsText = GC.newText(FONT.get(30), (isUltra and mods:gsub('r', 'u') or mods) .. "  [" .. mp .. "]"),
         floorText = GC.newText(FONT.get(50), floorText),
         scoreText = GC.newText(FONT.get(50), scoreText),
         extraText = GC.newText(FONT.get(30), extraText),
@@ -186,8 +186,10 @@ local function query()
                 end
 
                 -- mp check
-                if not (set.mpComp == '>' and set.mp == 1 or set.mpComp == '<' and set.mp == 18) then
-                    local mp = (#setStr - (ultra and 1 or 0) + setStr:count('r')) / 2
+                if not (set.mpComp == '>' and set.mp == -9 or set.mpComp == '<' and set.mp == 18) then
+                    --local mp = (#setStr - (ultra and 1 or 0) + setStr:count('r')) / 2
+                    -- add each r, subtract each e twice (once to cancel, another to make negative), EX NH MS GV VL DH IN AS DP add two letters each so half them
+                    local mp = setStr:count('r') - setStr:count('e')*2 + setStr:count('[A-Z]')/2
                     if
                         set.mpComp == '>' and mp < set.mp or
                         set.mpComp == '<' and mp > set.mp or
@@ -199,13 +201,13 @@ local function query()
 
                 -- combo check
                 if ultra then setStr = setStr:sub(2) end
-                local setL = {}; for m in setStr:gmatch('r?..') do table.insert(setL, m) end
+                local setL = {}; for m in setStr:gmatch('[re]?..') do table.insert(setL, m) end
                 local setS = TABLE.getValueSet(setL)
                 if set.match == 'include' then
                     if #setL < #list then break end
                     local notFound
                     for i = 1, #set.sel do
-                        if set.sel[i] > 0 and not setS[(set.sel[i] == 2 and 'r' or '') .. cardIDs[i]] then
+                        if set.sel[i] ~= 0 and not setS[(set.sel[i] == 2 and 'r' or set.sel[i] == -1 and 'e' or '') .. cardIDs[i]] then
                             notFound = true
                             break
                         end
@@ -214,7 +216,7 @@ local function query()
                 elseif set.match == 'exclude' then
                     local found
                     for i = 1, #set.sel do
-                        if set.sel[i] > 0 and setS[(set.sel[i] == 2 and 'r' or '') .. cardIDs[i]] then
+                        if set.sel[i] ~= 0 and setS[(set.sel[i] == 2 and 'r' or set.sel[i] == -1 and 'e' or '') .. cardIDs[i]] then
                             found = true
                             break
                         end
@@ -224,7 +226,7 @@ local function query()
                     if #setL < #list then break end
                     local notFound
                     for i = 1, #set.sel do
-                        if set.sel[i] > 0 and not (setS[cardIDs[i]] or setS['r' .. cardIDs[i]]) then
+                        if set.sel[i] ~= 0 and not (setS[cardIDs[i]] or setS['r' .. cardIDs[i]] or setS['e' .. cardIDs[i]]) then
                             notFound = true
                             break
                         end
@@ -234,7 +236,7 @@ local function query()
                     if #setL + #list > 9 then break end
                     local found
                     for i = 1, #set.sel do
-                        if set.sel[i] > 0 and (setS[cardIDs[i]] or setS['r' .. cardIDs[i]]) then
+                        if set.sel[i] ~= 0 and (setS[cardIDs[i]] or setS['r' .. cardIDs[i]] or setS['e' .. cardIDs[i]]) then
                             found = true
                             break
                         end
@@ -244,7 +246,7 @@ local function query()
                     if #setL ~= #list then break end
                     local notMatch
                     for i = 1, #set.sel do
-                        if (set.sel[i] == 0) ~= not (setS[cardIDs[i]] or setS['r' .. cardIDs[i]]) then
+                        if (set.sel[i] == 0) ~= not (setS[cardIDs[i]] or setS['r' .. cardIDs[i]] or setS['e' .. cardIDs[i]]) then
                             notMatch = true
                             break
                         end
@@ -378,13 +380,13 @@ function scene.keyDown(key, isRep)
     elseif key == STAT.keybind[19] or key == 'return' then
         -- Confirm
         cd = min(cd, .01)
-    elseif key == STAT.keybind[20] then
+    elseif key == STAT.keybind[20] or key == 'r' then
         -- Reset
         for i = 1, #set.sel do set.sel[i] = 0 end
         set.match = 'include'
         set.floor = 1
         set.floorComp = '>'
-        set.mp = 1
+        set.mp = 0
         set.mpComp = '>'
         set.mode = 'altitude'
         set.order = 'first'
@@ -750,7 +752,7 @@ table.insert(scene.widgetList, WIDGET.new {
 table.insert(scene.widgetList, WIDGET.new {
     type = 'slider',
     x = baseX + 40, y = baseY + 206, w = 480,
-    axis = { 0, 18, 1 },
+    axis = { -9, 18, 1 },
     frameColor = 'dD', fillColor = clr.D,
     disp = function() return set.mp end,
     code = function(value)
@@ -849,7 +851,7 @@ table.insert(scene.widgetList, WIDGET.new {
     color = clr.btn1,
     sound_hover = 'menutap',
     fontSize = 30, text = "    RESET", textColor = clr.btn2,
-    onClick = function() love.keypressed(STAT.keybind[20]) end,
+    onClick = function() love.keypressed('r') end,
 })
 
 -- Hint
