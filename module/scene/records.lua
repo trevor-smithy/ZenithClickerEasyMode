@@ -87,7 +87,15 @@ local function newRecord(list, isUltra)
     local comboText = setStr == "" and [["QUICK PICK"]] or GAME.getComboName(list, 'record')
     ---@cast comboText string
     if isUltra then
-        if #setStr == 4 and M.DH == 2 then
+        if comboText:sub(1, 1) ~= "\"" and setStr:count('r') == 0 then
+            comboText = "UNEASY " .. comboText
+        elseif comboText:sub(2, 4) == "THE" and setStr:count('r') == 0 then
+            comboText = comboText:gsub("THE", "THE UNEASY", 1)
+        elseif comboText:sub(2, 5) == "EASY" and setStr:count('r') == 0 then
+            comboText = comboText:gsub("EASY", "UNEASY", 1)
+        elseif setStr:count('r') == 0 then
+            comboText = "\"UNEASY " .. comboText:sub(2)
+        elseif #setStr == 4 and M.DH == 2 then
             comboText = ComboData.gameEX[setStr].name
         elseif comboText:sub(1, 1) ~= "\"" then
             comboText = "ULTRA " .. comboText

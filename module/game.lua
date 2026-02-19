@@ -1265,7 +1265,7 @@ function GAME.upFloor()
                 GAME.stopTeraspeed('f10')
             end
 
-            local setStr = (GAME.anyUltra and 'u' or '') .. GAME.comboStr
+            local setStr = ((GAME.anyUltra or (URM and M.EX == -1 and GAME.comboStr:count('r') == 0)) and 'u' or '') .. GAME.comboStr
             local t = BEST.speedrun[setStr]
             SFX.play('applause', GAME.time < t and t < 1e99 and 1 or .42)
             if GAME.time < t then
@@ -1691,7 +1691,7 @@ function GAME.refreshLockState()
 end
 
 function GAME.refreshPBText()
-    local setStr = (GAME.anyUltra and 'u' or '') .. table.concat(TABLE.sort(GAME.getHand(true)))
+    local setStr = ((GAME.anyUltra or (URM and M.EX == -1 and M.NH < 2 and M.MS < 2 and M.GV < 2 and M.VL < 2 and M.DH < 2 and M.IN < 2 and M.AS < 2 and M.DP < 2)) and 'u' or '') .. table.concat(TABLE.sort(GAME.getHand(true)))
     local height = BEST.highScore[setStr]
     if height == 0 then
         TEXTS.pb:set("No score yet")
@@ -2826,7 +2826,7 @@ function GAME.finish(reason)
 
         -- Best
         local hand = GAME.getHand(true)
-        local setStr = (GAME.anyUltra and 'u' or '') .. GAME.comboStr
+        local setStr = ((GAME.anyUltra or (URM and M.EX == -1 and GAME.comboStr:count('r') == 0)) and 'u' or '') .. GAME.comboStr
         local oldPB = BEST.highScore[setStr]
         if GAME.roundHeight > oldPB then
             BEST.highScore[setStr] = GAME.roundHeight
@@ -2841,7 +2841,7 @@ function GAME.finish(reason)
                     size = GAME.comboMP == 18 and 2.6 or 1.626
                     duration = 12.6
                 else
-                    t = (GAME.anyUltra and "U-" or GAME.anyRev and "R-" or "") .. (#hand == 1 and "MOD" or "COMBO") .. " MASTERED"
+                    t = ((GAME.anyUltra or (URM and M.EX == -1 and GAME.comboStr:count('r') == 0)) and "U-" or GAME.anyRev and "R-" or "") .. (#hand == 1 and "MOD" or "COMBO") .. " MASTERED"
                     size = 2.26
                     color = 'lC'
                     duration = 6.2
