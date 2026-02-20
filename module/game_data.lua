@@ -130,6 +130,28 @@ ModData = {
         AS = "ENABLE KEYBOARD CONTROLS",
         DP = "FLOOD THE TOWER WITH AN IMAGINARY FRIEND",
     },
+    uneasyName = {
+        EX = "< UNEASY MODE >",
+        NH = "< MODERATE HOLD >",
+        MS = "< TIDINESS >",
+        GV = "< LIFT >",
+        VL = "< TRANQUILITY >",
+        DH = "< SALVATION >",
+        IN = "< VISIBLE >",
+        AS = "< SPIN >",
+        DP = "< FRIEND >",
+    },
+    uneasyDesc = {
+        EX = "THE WEIGHT OF REALITY PRESENTS ITS OWN CHALLENGE",
+        NH = "CANCELING IS DIFFICULT, MUST CLICK TWICE",
+        MS = "SHUFFLES SOME CARDS",
+        GV = "AUTO COMMITS OCCUR",
+        VL = "LARGER GAPS BETWEEN CARDS",
+        DH = "COMBO DIFFICULTY IS DECREASED",
+        IN = "CARDS ARE FACED DOWN AND ARE HIGHLIGHTED",
+        AS = "ENABLE KEYBOARD CONTROLS",
+        DP = "FLOOD THE TOWER WITH AN IMAGINARY FRIEND",
+    },
     --
     ultraImpactTone = {
         EX = { 0, nil, 0 }, -- 6 6

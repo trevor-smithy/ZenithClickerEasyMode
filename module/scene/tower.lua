@@ -1398,6 +1398,8 @@ function scene.overDraw()
             gc_setColor(TextColor)
             if M.EX ~= -1 then
                 gc_draw(TEXTS.title, lerp(-181, 10, exT), (h / 2 + 2) - d, 0, 1, 1 - 2 * revT, 0, (h / 2 + 2))
+            elseif (URM and M.EX == -1 and M.NH < 2 and M.MS < 2 and M.GV < 2 and M.VL < 2 and M.DH < 2 and M.IN < 2 and M.AS < 2 and M.DP < 2) then
+                gc_draw(TEXTS.uneasyTitle, lerp(-181, 10, exT), (h / 2 + 2) - d, 0, 1, 1 - 2 * revT, 0, (h / 2 + 2))
             else
                 gc_draw(TEXTS.easyTitle, lerp(-181, 10, exT), (h / 2 + 2) - d, 0, 1, 1 - 2 * revT, 0, (h / 2 + 2))
             end
@@ -1448,11 +1450,25 @@ function scene.overDraw()
                 )
                 -- Trevor Smithy
             elseif M[infoID] == -1 then
-                setFont(70)
-                gc_strokePrint('full', 3, ShadeColor, TextColor, MD.easyName[infoID], 130, -150, 2600, 'center', 0, .9, 1)
-                setFont(30)
-                gc_strokePrint('full', 2, ShadeColor, TextColor, MD.easyDesc[infoID], 260, -73, 2600, 'center', 0, .8, 1)
-                --
+                if (URM and M.EX == -1 and M.NH < 2 and M.MS < 2 and M.GV < 2 and M.VL < 2 and M.DH < 2 and M.IN < 2 and M.AS < 2 and M.DP < 2) and C.id == 'EX' then
+                    setFont(70)
+                    gc_strokePrint('full', 6, COLOR.Black, nil, MD.uneasyName[infoID], 130, -150 + 4, 2600, 'center', 0, .9, 1)
+                    gc_strokePrint('full', 4, COLOR.DarkRed, nil, MD.uneasyName[infoID], 130, -150 + 2, 2600, 'center', 0, .9, 1)
+                    gc_strokePrint(
+                        'full', 2, COLOR.darkRed, COLOR.Red,
+                        MD.uneasyName[infoID], 130, -150, 2600, 'center', 0, .9, 1
+                    )
+                    setFont(30)
+                    gc_strokePrint(
+                        'full', 2, COLOR.DarkRed, COLOR.Red,
+                        MD.uneasyDesc[infoID], 260, -68, 2600, 'center', 0, .8, 1
+                    )
+                else
+                    setFont(70)
+                    gc_strokePrint('full', 3, ShadeColor, TextColor, MD.easyName[infoID], 130, -150, 2600, 'center', 0, .9, 1)
+                    setFont(30)
+                    gc_strokePrint('full', 2, ShadeColor, TextColor, MD.easyDesc[infoID], 260, -73, 2600, 'center', 0, .8, 1)
+                end
             else
                 setFont(70)
                 gc_strokePrint('full', 3, ShadeColor, TextColor, MD.fullName[infoID], 130, -150, 2600, 'center', 0, .9, 1)

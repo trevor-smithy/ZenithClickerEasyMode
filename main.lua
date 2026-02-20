@@ -541,6 +541,7 @@ TEXTS = { -- Font size can only be 30 and 50 here !!!
     credit     = GC.newText(FONT.get(30), "Almost all assets from TETR.IO"),
     test       = GC.newText(FONT.get(50), "TEST"),
     easyTitle  = GC.newText(FONT.get(50), "EASY QUICK PICK"),
+    uneasyTitle= GC.newText(FONT.get(50), "UNEASY QUICK PICK"),
 }
 if not FontLoaded then
     TASK.new(function()
@@ -1055,7 +1056,7 @@ function RefreshBGM(mode)
         local revMode = mode == 'f0r' or RevMusicMode()
         BGM.set('all', 'volume', revMode and 0 or 1, 2.6)
         -- Trevor Smithy > to ~=
-        BGM.set('expert', 'volume', M.EX ~= 0 and 1 or 0, .26)
+        BGM.set('expert', 'volume', M.EX > 0 and 1 or (URM and M.EX == -1 and M.NH < 2 and M.MS < 2 and M.GV < 2 and M.VL < 2 and M.DH < 2 and M.IN < 2 and M.AS < 2 and M.DP < 2) and 0.5 or 0, .26)
         BGM.set('piano', 'volume', M.NH == 0 and 1 or M.NH == 1 and .26 or 0)
         BGM.set('piano2', 'pitch', 2 * pitch, 0)
         BGM.set('piano2', 'volume', (M.DP ~= 0 or VALENTINE and not revMode) and .626 or 0, .26)
