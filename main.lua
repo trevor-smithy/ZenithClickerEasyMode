@@ -396,6 +396,7 @@ TEXTURE = {
 
     logo = assets 'icon.png',
     logo_old = assets 'icon_old.png',
+    programmingsmithy = assets 'programmingsmithy.png'
 }
 TEXTURE = TABLE.linkSource({}, TEXTURE, function(path)
     if type(path) ~= 'string' then return path end

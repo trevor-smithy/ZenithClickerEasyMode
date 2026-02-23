@@ -364,6 +364,7 @@ return {
         Congratulations.
     ]],
     -- Trevor Smithy
+    --programming smithy
     ['eEX eVL eAS'] = STRING.trimIndent [[
         The Pro G(r)am(m)ing Smithy, because, well, I'm Trevor Smithy and I'm both a
         programmer and a (questionably) pro gamer. In any case, this has been fun to develop and playtest.
@@ -371,35 +372,106 @@ return {
         eVL is just a +1 buff to all XP and eAS adding +1 to attacks with no downsides allows for some crazy fast runs.
         Thanks for playing my mod! WAH-BAAM! - Trevor Smithy
     ]],
+    --one of mine
     ['eEX uGV eDH eAS'] = STRING.trimIndent [[
         But It Isn't One Of Mine, the Easy Mode counterpart to Patience Is A Virtue.
         While this message will display even if Nightcore+ is not enabled,
         in order to get the achievement with the same name it is required.
     ]],
+    --ggbw
     ['eEX eNH eGV eVL eDH eIN AS eDP'] = STRING.trimIndent [[
         One of 3 variants of Gamer Girl Bath Water, this is the one that I believe is 
         optimal for "The Biggest Fan" because Friend doesn't punish you for having your ally dead.
+        Combine with Uneasy for a bigger challenge.
     ]],
     ['eEX eNH eGV eVL eDH eIN eAS DP'] = STRING.trimIndent [[
         One of 3 variants of Gamer Girl Bath Water, this is the one that I believe is the best 
         alternative for "The Biggest Fan", especially if you are prone to burns with AS. 
         However, DP does hurt your ability to climb when your ally is dead.
+        Combine with Uneasy for a bigger challenge.
     ]],
     ['eEX eNH eGV eVL eDH eIN AS DP'] = STRING.trimIndent [[
         One of 3 variants of Gamer Girl Bath Water, this is the one that I believe is the most 
         challenging for "The Biggest Fan", since you are prone to burns with AS 
         and DP hurts your ability to climb when your ally is dead.
+        Combine with Uneasy for a bigger challenge.
     ]],
+    --uEX
     ['uEX eNH eMS eGV eVL eDH eIN eAS'] = STRING.trimIndent [[
         "Sir! The peasants have broken through the castle gate! They're rapidly advancing in!"
         "Quiet, fool. Such simple people do not understand the rules that guide a ruler. They will never stand a cha-"
         At that moment, the 'Psychotic Sovereign' collapsed to the ground, a spear lodged deep through his cold heart.
     ]],
+    --uNH
     ['eEX uNH eGV eDH'] = STRING.trimIndent [[
         "GEEZ - GOD! How'd you get here so fast??" You begin to clip through the fabric of reality. "Wait WAIT WAIT!! Y-You have to save all the mortals!
         "My servants have them! You're supposed to go to their temples first." You flip over a table before sliding backwards out of the room,
         destroying the door as you leave. After a few short minutes, you return. "Okay okay! You can have it, I'm sorry!" God says, tossing you your prize.
         However, you will not stand to be rewarded so flippantly, so you leap after God, who screams "NOOOOOOOO!!!" as he tries to escape 
         and you cave his face in with a powerful backhand slap before grabbing him and tossing him into the distance where he explodes.
+    ]],
+    --uMS
+    ['eEX uMS eIN eDP'] = STRING.trimIndent [[
+        "Hey man, I know that life can be quite the mess. Especially since you're going through a rough path. But I'm here for you, alright?
+        And look, you, no, WE made it. Together. You did great. Don't ever let anyone tell you otherwise, got it? Take care man. See ya."
+    ]],
+    --uGV
+    ['eEX uGV eAS eDP'] = STRING.trimIndent [[
+        "It...it stopped. We did it! It stopped! Good... We made it in time. We stabilized the collapse... Hey! Do you realize what you've been doing to
+        everything?" "Wait...Don't be so hard on him. He was lonely." "He was trying to destroy everything around him! That's not the same as a lonely
+        man! We can't allow that!" "The power of the mask made him do it, it was too much for him to handle." "It's cause he doesn't know his place! He has
+        a weak will, and he's a fool!" "CERTAINLY, HE HAD FAR TOO MANY WEAKNESSES TO USE MY POWER." "Yeah, that's right, admit your stupidity!
+        Huh?" "A PUPPET THAT CAN NO LONGER BE USED IS MERE GARBAGE. THIS PUPPET'S ROLE HAS JUST ENDED" "It can't be! Then the galaxy?!"
+    ]],
+    --uVL
+    ['eEX eGV uVL eDH'] = STRING.trimIndent [[
+        "You cannot tell from appearances how things will go. Sometimes imagination makes things out far worse than they are; yet without imagination
+        not much can be done. Those people who are imaginative see many more dangers than perhaps exist; certainly many more than will happen;
+        but then they must also pray to be given that extra courage to carry this far-reaching imagination. ... This is the lesson: never give in,
+        never give in, never, never, never, never-in nothing, great or small, large or petty - never give in except to convictions of honour
+        and good sense. Never yield to force; never yield to the apparently overwhelming might of the enemy." - Winston Churchill, 1941
+    ]],
+    --uDH
+    ['eEX eMS uDH eIN'] = STRING.trimIndent [[
+        "See? What did I tell you. All you had to do was give up on trying to understand the hellish mess that we just went through
+        and just follow my instructions. Turns out, life can be a lot easier if you don't have to solve every problem by yourself.
+        Now, that being said, I wouldn't become TOO reliant on my help, because I won't always be there, but when I am, just trust me, okay?"
+    ]],
+    --uIN
+    ['eEX eNH uIN eAS'] = STRING.trimIndent [[
+        "Huh. Okay, so, maybe that was a bit more tricky of a paradox to decipher than I thought. I apologize for being so dismissive of
+        your thoughts earlier. But hey, how was I supposed to know that every solution would quickly vanish if we didn't keep up?
+        Like, are you kidding me? Who designed this? All our progress kept getting deleted just because I was missing a single 'e'..."
+        "This took way too long to fix." "Facts. But hey, made it work in the end."
+    ]],
+    --uAS
+    ['eEX eNH eVL uAS'] = STRING.trimIndent [[
+        You knock on the door before entering the dimly lit room. "Oh, hello! Welcome back. You're just in time for today's meeting of AA,
+        or All-Spinners Anonymous. Please, tell us about your latest progress." You sit up, looking around the room, clearing your throat.
+        "Well, I may have had a lapse. I'm sorry, I'm such a degenerate magician, I know. I just couldn't help myself. It's all so addicting...
+        The high speed climb, the flashing lights, the growing numbers, all atop the adrenaline of the threat of death at the smallest slip-up."
+        The therapist looks at you, shaking her head, "I'm sorry, but I think it's for the best if you leave. You're clearly beyond saving."
+    ]],
+    --uDP
+    ['eEX eMS eVL uDP'] = STRING.trimIndent [[
+        "Dear, can we talk for a moment? I know that lately, we've been going through a bit of a rough patch, and I haven't been helping."
+        "Uh huh." "I just wanted to apologize for making you feel uncomfortable at home here. I know you're busy with work and whatnot."
+        "Yea." "Also, I realize that me making you do a bunch of random tasks hasn't exactly been productive either."
+        "Yup." "But now I know that I need to be better, for you, me, us as a couple. Going forward, I'll try to communicate more, okay?"
+        "Okay." "Good. Now, I'm making homemade spaghetti for dinner. Would you mind setting the table?" "Sure, dear."
+    ]],
+
+    --misc
+    ['eEX eNH rMS eGV VL eDH eIN eAS'] = STRING.trimIndent [[
+        Mikamiyu: "if only goth mommy bathwater :("                  
+        Trevor Smithy: "hmm, what would that even be?"               
+        Mikamiyu: "rMS VL bath water. need. be subtle about it iykyk"
+        Trevor Smithy: "i'll consider it"                            
+        Mikamiyu: "wait fr ong crazy"                                
+    ]],
+    ['eAS'] = STRING.trimIndent [[
+        SPEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEN
+        When you're in Spain without the A
+        aka: Gamer, Degenerate
     ]],
 }

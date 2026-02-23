@@ -28,11 +28,11 @@ local function addSection(y)
 end
 
 for d = .5, 2.5, .5 do
-    addText({ COLOR.LD, "ZENITH" }, 40 + d, 20 + d)
-    addText({ COLOR.LD, "CLICKER" }, 80 + d, 95 + d)
+    addText({ COLOR.LD, "ZENITH CLICKER" }, 90 + d, 20 + d)
+    addText({ COLOR.LD, "EASY MODE" }, 80 + d, 95 + d)
 end
-addText("ZENITH", 40, 20)
-addText("CLICKER", 80, 95)
+addText("ZENITH CLICKER", 90, 20)
+addText("EASY MODE", 80, 95)
 
 addSection(220)
 
@@ -210,19 +210,30 @@ function scene.draw()
 
     gc_setColor(1, 1, 1)
     local icon, kx, ky
+    local smithyMode = GAME.mod.EX == -1 and GAME.mod.NH == 0 and GAME.mod.MS == 0 and GAME.mod.GV == 0 and GAME.mod.VL == -1 and GAME.mod.DH == 0 and GAME.mod.IN == 0 and GAME.mod.AS == -1 and GAME.mod.DP == 0
     if GAME.mod.EX > 0 then
         icon = TEXTURE.logo_old
         kx, ky = .5, .5
+    elseif smithyMode then
+        icon = TEXTURE.programmingsmithy
+        kx, ky = .3, .3
     else
         icon = TEXTURE.logo
         kx, ky = .3, .3
     end
     if GAME.anyRev then ky = -ky end
-    gc_mDraw(icon, -170, 100, 0, kx, ky)
+    if smithyMode then
+        gc_mDraw(icon, -270, 110, 0, kx, ky)
+    else
+        gc_mDraw(icon, -270, 100, 0, kx, ky)
+    end
     gc_draw(AboutText)
     gc_draw(DevNoteText, 0, 285 - DevNoteText:getHeight() * (.68 / 2), 0, .68, .68, 1000, 0)
 
     gc_setColor(1, 1, 1, .2)
+    if smithyMode then
+        gc_setColor(0, 1, 0, .2)
+    end
     gc_setLineWidth(0.5)
     for i = 1, #lines do
         gc_line(-600, lines[i], 600, lines[i])
@@ -243,12 +254,15 @@ function scene.draw()
     -- Top bar & title
     gc_replaceTransform(SCR.xOy_u)
     gc_setColor(clr.D)
+    if smithyMode then gc_setColor(COLOR.dG) end
     gc_rectangle('fill', -1300, 0, 2600, 70)
     gc_setColor(clr.L)
+    if smithyMode then gc_setColor(COLOR.LG) end
     gc_setAlpha(.626)
     gc_rectangle('fill', -1300, 70, 2600, 3)
     gc_replaceTransform(SCR.xOy_ul)
     gc_setColor(clr.L)
+    if smithyMode then gc_setColor(COLOR.LG) end
     FONT.set(50)
     if GAME.anyRev then
         gc_print("ABOUT", 15, 68, 0, 1, -1)
@@ -259,12 +273,15 @@ function scene.draw()
     -- Bottom bar & thanks
     gc_replaceTransform(SCR.xOy_d)
     gc_setColor(clr.D)
+    if smithyMode then gc_setColor(COLOR.dG) end
     gc_rectangle('fill', -1300, 0, 2600, -50)
     gc_setColor(clr.L)
+    if smithyMode then gc_setColor(COLOR.LG) end
     gc_setAlpha(.626)
     gc_rectangle('fill', -1300, -50, 2600, -3)
     gc_replaceTransform(SCR.xOy_dl)
     gc_setColor(clr.L)
+    if smithyMode then gc_setColor(COLOR.LG) end
     FONT.set(30)
     gc_print("THANK YOU FOR PLAYING ZENITH CLICKER!", 15, -45, 0, .85, 1)
 end

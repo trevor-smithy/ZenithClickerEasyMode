@@ -142,7 +142,7 @@ Each mod creates a unique experience by twisting the rules, but also increases t
 
 - You can flip cards with your keyboard: on ANSI QWERTY layout, the inputs are 1-9, Q-O, or A-L. If cards are shuffled by any variant of `MS`, they are flipped based on their *position*, not by which card they are.
 - The RESET button is replaced with **SPIN**. Using SPIN quickly flips all cards one-by-one.
-- Attack increased by 1 if Back 2 Back is active.
+- Enables Back 2 Back Chaining. Attack increased by 1 at B2Bx4, 8, 24, 67, 185, and 504.
 
 ### Duo (`DP`)
 
