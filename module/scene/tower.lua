@@ -856,6 +856,8 @@ function scene.draw()
         gc_draw(TEXTS.rankTime, -526, 224 - GAME.uiHide * 150, 0, .38)
         gc_setColor(COLOR.dL)
         gc_mDraw(TEXTS.zpChange, 220, 93, 0, .626)
+        -- Version Check for records
+        gc_mDraw(TEXTS.easyModeVersion, 220, 111, 0, .626)
     end
 
     -- Daily Challenge Button

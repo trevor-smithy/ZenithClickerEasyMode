@@ -317,9 +317,6 @@ ComboData = {
         { set = "MS GV AS",         name = "Dazed" },
 
         -- Trevor Smithy
-        { set = "eEX eVL eAS",      name = "The Pro G(r)am(m)ing Smithy" },
-        { set = "eEX rGV eDH eAS",  name = "But It Isn't One Of Mine" },
-
         -- Bath Waters
         { set = "eEX eNH eMS eGV eVL eDH eIN eAS",      name = "Bath Water"},
         { set = "eNH eMS eGV eVL eDH eIN eAS",          name = "Soft Bath Water"},
@@ -359,9 +356,11 @@ ComboData = {
         { set = "eEX eNH eGV eVL eDH eIN AS DP",            name = "Gamer Girl Bath Water"},
         { set = "eEX eNH eGV eVL eDH eIN eAS DP",            name = "Gamer Girl Bath Water"},
         { set = "eEX eNH eGV eVL eDH eIN AS eDP",            name = "Gamer Girl Bath Water"},
-        -- Credit: Rejuvenating rack
+        -- Credit: Rejuvenating rack/Mikamiyu
         { set = "eEX eNH rMS eGV VL eDH eIN eAS",            name = "Goth Mommy Bath Water"},
         -- ultras
+        { set = "eEX rGV eDH eAS",      name = "But It Isn't One Of Mine" },
+
         { set = "rEX eNH eMS eGV eVL eDH eIN eAS",      name = "Peasant Revolution"},
         { set = "eEX rNH eGV eDH",      name = "Holy Ascention"},
         { set = "eEX rMS eIN eDP",      name = "Stabilized Entropy"},
@@ -371,6 +370,17 @@ ComboData = {
         { set = "eEX eNH rIN eAS",      name = "Solved Paradox"},
         { set = "eEX eNH eVL rAS",      name = "Demystified Grimoire"},
         { set = "eEX eMS eVL rDP",      name = "Lasting Eden"},
+        --misc (no dev commentary except programming smithy)
+        { set = "eNH eGV",          name = "Shameless Cashgrab"},
+        { set = "eNH eMS eDH",      name = "Clean Break"},
+        { set = "eMS eDH eAS",      name = "Clean Gamer"},
+        { set = "eGV eIN",          name = "Humble Pupil"},
+        { set = "EX eNH eDH",       name = "Emperor's Development"},
+        { set = "eEX eMS eVL eDH",  name = "Pro Cleaner"},
+        { set = "eNH eAS",          name = "Overweight Gamer"},
+        { set = "eEX eVL eAS",      name = "The Pro G(r)am(m)ing Smithy" },
+        { set = "eEX eDP",          name = "Best Friends"},
+        { set = "eEX eMS",          name = "Block Feast"},
     },
 
     game = {
@@ -1605,7 +1615,7 @@ end
 
 DevScore = {vip_list=108,GVIN=9358.41,ASNH=14508.3,DPEX=5417.82,GVNH=8373.29,DHMSNH=4603.14,DHEXNH=6784.1,DHEXMSVL=2766.57,ASEXVL=4432.7,swamp_water_lite=4878.84,swamp_water=2985.03,rGVrIN=6076.5,EXNHrAS=5891.7,INrASrDHrNH=2711.9,DHEXrGV=6096.52,EXGVNHrMS=2860.57,ASDPGVrMSrNH=2005.6,DHrEXrVL=1664.66,ASGVrDPrMS=1853.87,NHVLrDPrGV=2178.42,VLrEXrIN=1688.17,rDPrEX=2279.1,INMSrDHrEX=1244.64,ASMSrDHrIN=848.9,swamp_water_lite_plus=4878.84,swamp_water_plus=2714.92,talentless=7817.15,quest_rationing=631.02,the_responsible_one=18,the_unreliable_one=14,the_responsible_one_plus=144,guardian_angel=6061.19,carried=5528.27,level_19_cap=7207.94,the_escape_artist=132,fel_magic=107,empurple=2919.81,faltered=1854.3,patience_is_a_virtue=2627.37,spotless=2916.6,a_mutual_agreement=3620.9,the_cheaters=1786.5,overprotection=1986.85,clutch_main=191,sunk_cost=4278.1,wax_wings=2412.74,the_masterful_juggler=122,the_oblivious_artist=172,zero_to_sixty=5.4,speed_bonus=10,arrogance=772.74,scarcity_mindset=57,detail_oriented=0,psychokinesis=1692,divine_rejection=1649.9,moon_struck=0,lovers_promise=10598.95,hardcore_beginning=13.88,love_hotel=2.597011165,financially_responsible=5.898309714,unfair_battle=4.344901018,museum_heist=2.4841288230001,workaholic=2.3799148589999,human_experiment=2.733007991,thermal_anomaly=0.467,ultra_dash=0.496,perfect_speedrun=23.747579831,the_perfectionist=8310.52,cruise_control=23,dazed=16,drag_racing=29,space_race=209,fickle_fuel=851.3,the_spike_of_all_time_plus=498,blight=7733.35,desolation=6284.45,havoc=3656.14,pandemonium=3481.3,inferno=2875.1,plonk=148.99,zenith_explorer=10666.27,cataclysm=1395.49,annihilation=777.19,armageddon=423.31,abyss=196.02,cut_off=0,worn_out=0,the_harbinger=0,final_defiance=0,speedrun_speedrunning=0,abyss_weaver=0,royal_resistance=0,lovers_stand=0,divine_speedrunner=691.846,the_spike_of_all_time=437,blazing_speed=0,clock_out=798,its_kinda_rare=0,fruitless_effort=0,false_god=0,respectful=0,zenith_relocation=0,intended_glitch=0,lucky_coincidence=0,zenith_traveler=0,dark_force=0,return_to_the_light=true,smooth_dismount=0,clicker=1094831,contender=9881,elegance=423591,garbage_offensive=2137751,tower_regular=30441,speed_player=6358,purgatory=1840,naga_eyes=26.456631063,zenith_speedrun=48.891,zenith_speedrun_plus=28.87,zenith_challenger=97361.9,divine_challenger=53702.1,zenith_speedrunner=481.933,romantic_homicide=0,benevolent_ambition=0,the_spike_of_all_time_minus=192,dusty_memories=0,perdition=1624.7,VL=11377.6,NH=10586.4,MS=6326.3,IN=10929.7,GV=10604.39,EX=8612.63,DP=10598.95,DH=9644.52,AS=18681.62,rVL=6036.9,rNH=6282.1,rMS=3982.7,rIN=5503.13,rGV=8520,rEX=2807.73,rDP=3980.74,rDH=4273.85,rAS=12315.11,effective=41446.887071386,multitasker=61866.8,supercharged_plus=447,supercharged=288,clicker_speedrun=15.91585565,zenith_explorer_plus=18681.62,tower_climber=6347851.9,identity=0,
 -- Trevor Smithy Dev scores
-    demystified_grimoire=17952.5}
+    programmer_gamer=42909.0,one_of_mine=26856.9,ggbw=69085.8,perfect_speedrun_plus=361.02,perfectly_balanced=10783.0,peasant_revolution=15511.8,holy_ascention=4814.9,stabilized_entropy=3115.4,restrained_collapse=17205.3,restored_volition=8606.7,disproven_blasphemy=5223.9,solved_paradox=4103.1,demystified_grimoire=17952.5,restored_eden=2650.3,your_too_fast=187}
 
 DevScore.contender = 6200
 DevScore.clicker = 620e3

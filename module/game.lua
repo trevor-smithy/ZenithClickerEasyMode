@@ -2771,6 +2771,9 @@ function GAME.finish(reason)
         local zpGain = GAME.roundHeight * GAME.comboZP
         TEXTS.zpChange:set(("%.0f ZP  (+%.0f%s)"):format(zpGain, 0, DailyActived and ", 260%" or ""))
 
+        -- Easy Mode Version for records
+        TEXTS.easyModeVersion:set((STAT.oldHitbox and "eT" or "eV") .. (require 'version'.verStr))
+
         -- Daily
         if DailyActived then
             STAT.dzp = max(STAT.dzp, zpGain)
@@ -3153,6 +3156,7 @@ function GAME.finish(reason)
         TEXTS.endFloor:set("")
         TEXTS.endResult:set("")
         TEXTS.zpChange:set("")
+        TEXTS.easyModeVersion:set("")
         TEXTS.floorTime:set("")
         TEXTS.rankTime:set("")
         GAME.resIB:clear()

@@ -243,8 +243,8 @@ local function refreshAchivement()
                 swFin = SubmitAchv(sw[i - 6], h, swFin) or swFin
             end
         end
-        local mp = count + revCount - easyCount
-        if revCount >= 2 and mp >= 8 then
+        local mp = count + revCount - (easyCount * 2)
+        if revCount >= 2 and mp >= 8 and easyCount == 0 then
             for m = mp, 8, -1 do
                 submit(RevSwampName[min(m, #RevSwampName)]:sub(2, -2):lower(), h, m < mp)
             end
@@ -570,7 +570,11 @@ function scene.draw()
 
                 -- Dev
                 if a.overDev then
-                    gc_setColor(1, 1, 1, .1)
+                    if a.id == 'programmer_gamer' or a.id == 'one_of_mine' or a.id == 'ggbw' or a.id == 'perfect_speedrun_plus' or a.id == 'perfectly_balanced' or a.id == 'peasant_revolution' or a.id == 'holy_ascention' or a.id == 'stabilized_entropy' or a.id == 'restrained_collapse' or a.id == 'restored_volition' or a.id == 'disproven_blasphemy' or a.id == 'solved_paradox' or a.id == 'demystified_grimoire' or a.id == 'restored_eden' or a.id == 'your_too_fast' then
+                        gc_setColor(0, 1, 0, .1)
+                    else
+                        gc_setColor(1, 1, 1, .1)
+                    end
                     gc_mDraw(texture.overDev, 565, 75, 0, .26)
                 end
 

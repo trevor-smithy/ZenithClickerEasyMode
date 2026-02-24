@@ -1589,7 +1589,7 @@ Achievements = {
         desc = [[HFD with eEX, eNH, eAS, and uIN]],
         quote = [["Dude, I'm telling you, just a bit of simple magic clears it all up."]],
         credit = "@TrevorSmithy",
-        rank = floorRank(1, 3, 5, 7, 9, 10, 6200),
+        rank = floorRank(1, 3, 5, 7, 9, 10, 4000),
         type = 'unranked',
     },
     { -- uAS
