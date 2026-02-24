@@ -3462,12 +3462,13 @@ function GAME.update(dt)
             GAME.faultWrong = false
             GAME.commit(true)
         end
-        --Trevor Smithy
-        local q1 = TABLE.sort(GAME.quests[1].combo)
-        local hand = TABLE.sort(GAME.getHand(false))
-        if M.GV == -1 and TABLE.equal(hand, q1) then
-            GAME.commit(true)
-        end
+    end
+
+    --Trevor Smithy
+    local q1 = TABLE.sort(GAME.quests[1].combo)
+    local hand = TABLE.sort(GAME.getHand(false))
+    if M.GV == -1 and TABLE.equal(hand, q1) then
+        GAME.commit(true)
     end
 
     if GAME.floor >= 10 then

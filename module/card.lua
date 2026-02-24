@@ -106,6 +106,34 @@ function Card:setActive(auto, key)
         SFX.play('combo_4', .626, 0, Tone(0))
     end
 
+    -- Closer Card
+    if GAME.playing and GAME.ecloseCard and not auto then
+        if not self.active and self.required and not auto then --if not active and needed, activate. if active and not needed, deactivate. if active and needed, don't do anything. if not active and not needed, don't do anything.
+            self:setActive(true)
+        elseif self.active and not self.required and not auto then
+            self:setActive(true)
+        end
+        local leftCard
+        local rightCard
+        if self.tempOrder > 1 then leftCard = CD[self.tempOrder - 1] end
+        if leftCard ~= nil then
+            if not leftCard.active and leftCard.required then --if not active and needed, activate. if active and not needed, deactivate. if active and needed, don't do anything. if not active and not needed, don't do anything.
+                leftCard:setActive(true)
+            elseif leftCard.active and not leftCard.required then
+                leftCard:setActive(true)
+            end
+        end
+        if self.tempOrder < 9 then rightCard = CD[self.tempOrder + 1] end
+        if rightCard ~= nil then
+            if not rightCard.active and rightCard.required then --if not active and needed, activate. if active and not needed, deactivate. if active and needed, don't do anything. if not active and not needed, don't do anything.
+                rightCard:setActive(true)
+            elseif rightCard.active and not rightCard.required then
+                rightCard:setActive(true)
+            end
+        end
+        return
+    end
+
     if GAME.currentTask then
         if self.active then
             GAME.incrementPrompt('cancel')
