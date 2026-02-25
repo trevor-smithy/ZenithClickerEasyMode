@@ -1652,10 +1652,18 @@ function GAME.refreshLayout()
         for i = 1, #CD do
             local C = CD[i]
             if i < FloatOnCard then
-                C.tx = MATH.interpolate(1, baseL, FloatOnCard - 1, selX - dodge, i)
+                if not GAME.ecloseCard then 
+                    C.tx = MATH.interpolate(1, baseL, FloatOnCard - 1, selX - dodge, i) 
+                else
+                    C.tx = MATH.interpolate(1, baseL, FloatOnCard, selX, i) 
+                end
                 if C.tx ~= C.tx then C.tx = baseL end
             elseif i > FloatOnCard then
-                C.tx = MATH.interpolate(#CD, baseR, FloatOnCard + 1, selX + dodge, i)
+                if not GAME.ecloseCard then 
+                    C.tx = MATH.interpolate(#CD, baseR, FloatOnCard + 1, selX + dodge, i)
+                else
+                    C.tx = MATH.interpolate(#CD, baseR, FloatOnCard, selX, i)
+                end
                 if C.tx ~= C.tx then C.tx = baseR end
             else
                 C.tx = selX
