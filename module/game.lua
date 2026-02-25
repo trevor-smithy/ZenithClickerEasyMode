@@ -1573,7 +1573,7 @@ function GAME.refreshCurrentCombo()
             comboName = "PEASANT REVOLUTION"
             GAME.customUltraCombo = true
         elseif M.EX == -1 and M.NH == 2 and M.MS == 0 and M.GV == -1 and M.VL == 0 and M.DH == -1 and M.IN == 0 and M.AS == 0 and M.DP == 0 then 
-            comboName = "HOLY ASCENTION"
+            comboName = "HOLY ASCENSION"
             GAME.customUltraCombo = true
         elseif M.EX == -1 and M.NH == 0 and M.MS == 2 and M.GV == 0 and M.VL == 0 and M.DH == 0 and M.IN == -1 and M.AS == 0 and M.DP == -1 then 
             comboName = "STABILIZED ENTROPY"
@@ -1603,9 +1603,9 @@ function GAME.refreshCurrentCombo()
         if (M.EX == -1 and URM and M.NH < 2 and M.MS < 2 and M.GV < 2 and M.VL < 2 and M.DH < 2 and M.IN < 2 and M.AS < 2 and M.DP < 2) then
             if comboName:count('EASY') == 1 then 
                 comboName = comboName:gsub("EASY", "UNEASY", 1)
-            else 
+            elseif not GAME.playing then
                 if GAME.smithyMode then
-                    comboName = comboName:gsub("P", "UNEASY P", 1)
+                    comboName = comboName:gsub("PRO G", "UNEASY PRO G", 1)
                 else
                     comboName = comboName:gsub("([^\"])", "UNEASY %1", 1)
                 end 

@@ -88,7 +88,11 @@ local function newRecord(list, isUltra)
     ---@cast comboText string
     if isUltra then
         if comboText:sub(1, 1) ~= "\"" and setStr:count('r') == 0 then
-            comboText = "UNEASY " .. comboText
+            if comboText == "EASY" then
+                comboText = "UNEASY"
+            else
+                comboText = "UNEASY " .. comboText
+            end
         elseif comboText:sub(2, 4) == "THE" and setStr:count('r') == 0 then
             comboText = comboText:gsub("THE", "THE UNEASY", 1)
         elseif comboText:sub(2, 5) == "EASY" and setStr:count('r') == 0 then
@@ -388,7 +392,7 @@ function scene.keyDown(key, isRep)
     elseif key == STAT.keybind[19] or key == 'return' then
         -- Confirm
         cd = min(cd, .01)
-    elseif key == STAT.keybind[20] or key == 'r' then
+    elseif key == STAT.keybind[20] or key == 'f13' then
         -- Reset
         for i = 1, #set.sel do set.sel[i] = 0 end
         set.match = 'include'
@@ -859,7 +863,7 @@ table.insert(scene.widgetList, WIDGET.new {
     color = clr.btn1,
     sound_hover = 'menutap',
     fontSize = 30, text = "    RESET", textColor = clr.btn2,
-    onClick = function() love.keypressed('r') end,
+    onClick = function() love.keypressed('f13') end,
 })
 
 -- Hint

@@ -127,7 +127,7 @@ function Card:setActive(auto, key)
     end
 
     -- Trevor Smithy
-    if GAME.playing and self.active and M.NH == -1 then -- if card is active and less hold enabled
+    if (GAME.playing or M.VL == 2) and self.active and M.NH == -1 then -- if card is active and less hold enabled
         if not auto then -- assuming not auto
             self.charge = self.charge + 1 -- charge it
             SFX.play('clearline', .42)

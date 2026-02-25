@@ -1540,7 +1540,7 @@ Achievements = {
     },
     { -- uNH
         id = 'holy_ascention',
-        name = "Holy Ascention",
+        name = "Holy Ascension",
         desc = [[HFD with eEX, eDH, eGV, and uNH]],
         quote = [["The key to ascending is taking the quick and simple path, no?"]],
         credit = "@TrevorSmithy",

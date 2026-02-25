@@ -362,7 +362,7 @@ ComboData = {
         { set = "eEX rGV eDH eAS",      name = "But It Isn't One Of Mine" },
 
         { set = "rEX eNH eMS eGV eVL eDH eIN eAS",      name = "Peasant Revolution"},
-        { set = "eEX rNH eGV eDH",      name = "Holy Ascention"},
+        { set = "eEX rNH eGV eDH",      name = "Holy Ascension"},
         { set = "eEX rMS eIN eDP",      name = "Stabilized Entropy"},
         { set = "eEX rGV eAS eDP",      name = "Restrained Collapse"},
         { set = "eEX eDH eGV rVL",      name = "Restored Volition"},
