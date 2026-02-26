@@ -1444,7 +1444,7 @@ function GAME.refreshRPC()
         if BgmPlaying and BgmPlaying ~= 'f0' then
             stateStr = stateStr .. " (" .. BgmPlaying:upper():gsub("R$", "-R") .. ")"
         end
-        local pitch = URM and M.GV == 2 and 3 or M.GV
+        local pitch = M.GV == -1 and -6 or URM and M.GV == 2 and 3 or M.GV
         if GAME.nightcore then pitch = pitch + 12 end
         if GAME.slowmo then pitch = pitch - 12 end
         -- Trevor Smithy

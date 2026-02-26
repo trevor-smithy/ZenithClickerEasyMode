@@ -1554,7 +1554,7 @@ function scene.overDraw()
     elseif M.GV == 1 then
         gravityMod = 2 ^ (1/12)
     elseif M.GV == -1 then
-        gravityMod = 2/3
+        gravityMod = 2 ^ (-6/12)
     end
     local clockMod = 9.57
     -- ClockEffect

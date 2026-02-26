@@ -1061,11 +1061,11 @@ end
 
 function RefreshBGM(mode)
     if not BGM.isPlaying() then return end
-    local pitch = M.GV > 0 and 2 ^ ((URM and M.GV == 2 and 3 or M.GV) / 12) or M.GV < 0 and 0.667 or 1
+    local pitch = M.GV < 0 and 2^(-1/2) or M.GV > 0 and 2 ^ ((URM and M.GV == 2 and 3 or M.GV) / 12) or 1
     if GAME.slowmo then pitch = pitch / 2 end
     if GAME.nightcore then pitch = pitch * 2 end
     -- Trevor Smithy
-    if GAME.eslowmo then pitch = pitch / 2 end
+    if GAME.eslowmo then pitch = pitch * 2^(-1/2) end
     if GAME.enightcore then pitch = pitch * 2 end
     --
     local justBegin = BGM.tell() < 1
@@ -1211,7 +1211,7 @@ function Task_MusicEnd(manual)
 end
 
 function Tone(pitch)
-    return pitch + (URM and M.GV == 2 and 3 or M.GV) + BgmData[BgmPlaying].toneFix
+    return pitch + (M.GV == -1 and -6 or URM and M.GV == 2 and 3 or M.GV) + BgmData[BgmPlaying].toneFix
 end
 
 function ApplySettings()
