@@ -146,6 +146,10 @@ function scene.load()
         setStr = 'u' .. setStr
         cID = cID:gsub("r", "u")
     end
+    if (GAME.mod.EX == -1 and URM and GAME.mod.NH < 2 and GAME.mod.MS < 2 and GAME.mod.GV < 2 and GAME.mod.VL < 2 and GAME.mod.DH < 2 and GAME.mod.IN < 2 and GAME.mod.AS < 2 and GAME.mod.DP < 2) then
+        setStr = 'u' .. setStr
+        cID = cID:gsub("eEX", "ueEX")
+    end
     local text
     if devCommentary[cID] then
         if BEST.highScore[setStr] < Floors[9].top then

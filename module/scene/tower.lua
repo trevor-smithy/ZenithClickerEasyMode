@@ -988,8 +988,12 @@ function scene.overDraw()
             if not onAlly then gc_setAlpha(.42) end
             gc_rectangle('fill', 800, 440 - 5, 1540 / 2 * GAME.lifeShow2 / GAME.fullHealth, onAlly and 12 or 8 * M.DP)
         end
+    elseif M.EX == -1 and URM and M.DP == -1 and M.NH == 0 and M.MS == 0 and M.GV == 0 and M.VL == 0 and M.DH == 0 and M.AS == 0 and M.IN == 0 then
+        TEXTS.mod:setFont(FONT.get(30))
+        gc_setColor(TextColor)
+        gc_setAlpha(.42 + .26 * sin(t * 2.6))
+        gc_mDraw(TEXTS.mod, 800, 396, 0, min(1, 760 / TEXTS.mod:getWidth()))
     end
-
     if GAME.playing then
         if not GAME.invisUI then
             -- Achievement state mark

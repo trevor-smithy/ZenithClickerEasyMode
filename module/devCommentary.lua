@@ -474,4 +474,20 @@ return {
         When you're in Spain without the A
         aka: Gamer, Degenerate
     ]],
+    -- Future achievement update
+    -- Profligacy ueEX, eNH+J, fastest time to floor 10
+    -- Diogenes Syndrome ueEX, eMS+eJ, fastest time to floor 10
+    -- Dysania ueEX, eGV+S, fastest time to floor 10
+    ['ueEX eGV'] = STRING.trimIndent [[
+        (Achievement requires Sloooooow-mo) "You're up early." "HEY, BUDDY. HOW'S IT GOING?" "Woah! Yo what?" 
+        "WHAT?" "Why is your voice so deep?" "OH IT'S JUST A LITTLE DEEPER IN THE MORNING. YOURS DOESN'T DO THAT?"
+        "You sound like you're narrating a Ford commercial." "YEAH, I GET THAT SOMETIMES." "Is that like a condition or-"
+        "I DON'T KNOW WHY IT DOES THAT. IT'S EARLY. WILL YOU LET ME ENJOY MY MORNING IN PEACE?" 
+        "Yeah. Okay." "I'M GONNA MAKE SOME TEA. YOU WANT ONE TOO?" "Uh, no sir- No... No thank you."
+    ]],
+    -- Subluxation ueEX, eVL+I, fastest time to floor 10
+    -- Purgatory ueEX, eDH+Z, fastest time to floor 10
+    -- Presbyopia ueEX, eIN+O, fastest time to floor 10
+    -- Carpal Tunnel ueEX, eAS+L, fastest time to floor 10
+    -- Prosopagnosia ueEX, eDP+T, fastest time to floor 10
 }

@@ -378,9 +378,19 @@ ComboData = {
         { set = "EX eNH eDH",       name = "Emperor's Development"},
         { set = "eEX eMS eVL eDH",  name = "Pro Cleaner"},
         { set = "eNH eAS",          name = "Overweight Gamer"},
-        { set = "eEX eVL eAS",      name = "The Pro G(r)am(m)ing Smithy" },
+        { set = "eEX eVL eAS",      name = "The Pro G(r)am(m)ing Smithy"},
         { set = "eEX eDP",          name = "Best Friends"},
         { set = "eEX eMS",          name = "Block Feast"},
+        --future achievement update
+        { set = "eEX eNH",         name = "Spending Spree"},
+        -- eMS is already done as block feast
+        { set = "eEX eGV",         name = "Comfy Bed"},
+        { set = "eEX eVL",         name = "Professional Weightlifter"},
+        { set = "eEX eDH",         name = "Heaven"},
+        { set = "eEX eIN",         name = "Perfect Vision"},
+        { set = "eEX eAS",         name = "Gaming Addict"},
+        -- eDP is already done as best friends
+
     },
 
     game = {

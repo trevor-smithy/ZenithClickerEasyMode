@@ -1562,51 +1562,42 @@ function GAME.refreshCurrentCombo()
     if not GAME.playing and (M.EX == -1 and M.VL == -1 and M.AS == -1 and (M.NH == 0 and M.MS == 0 and M.GV == 0 and M.DH == 0 and M.IN == 0 and M.DP == 0)) then GAME.smithyMode = true else 
         if not GAME.playing then GAME.smithyMode = false end
     end
+    local uneasyMode = (M.EX == -1 and URM and M.NH < 2 and M.MS < 2 and M.GV < 2 and M.VL < 2 and M.DH < 2 and M.IN < 2 and M.AS < 2 and M.DP < 2)
     if not GAME.playing and GAME.anyUltra and #hand > 0 then
-        ---@cast comboName string
-        comboName = comboName:gsub("([^\"])", "ULTRA %1", 1)
         -- SPECIAL - Trevor Smithy
-        if M.EX == -1 and M.GV == 2 and URM and M.DH == -1 and M.AS == -1 and M.NH == 0 and M.MS == 0 and M.VL == 0 and M.IN == 0 and M.DP == 0 and GAME.enightcore then 
-            comboName = "BUT IT ISN'T ONE OF MINE"
-            GAME.customUltraCombo = true
-        elseif M.EX == 2 and M.NH == -1 and M.MS == -1 and M.GV == -1 and M.VL == -1 and M.DH == -1 and M.IN == -1 and M.AS == -1 and M.DP == 0 then 
-            comboName = "PEASANT REVOLUTION"
-            GAME.customUltraCombo = true
-        elseif M.EX == -1 and M.NH == 2 and M.MS == 0 and M.GV == -1 and M.VL == 0 and M.DH == -1 and M.IN == 0 and M.AS == 0 and M.DP == 0 then 
-            comboName = "HOLY ASCENSION"
-            GAME.customUltraCombo = true
-        elseif M.EX == -1 and M.NH == 0 and M.MS == 2 and M.GV == 0 and M.VL == 0 and M.DH == 0 and M.IN == -1 and M.AS == 0 and M.DP == -1 then 
-            comboName = "STABILIZED ENTROPY"
-            GAME.customUltraCombo = true
-        elseif M.EX == -1 and M.NH == 0 and M.MS == 0 and M.GV == 2 and M.VL == 0 and M.DH == 0 and M.IN == 0 and M.AS == -1 and M.DP == -1 then 
-            comboName = "RESTRAINED COLLAPSE"
-            GAME.customUltraCombo = true
-        elseif M.EX == -1 and M.NH == 0 and M.MS == 0 and M.GV == -1 and M.VL == 2 and M.DH == -1 and M.IN == 0 and M.AS == 0 and M.DP == 0 then 
-            comboName = "RESTORED VOLITION"
-            GAME.customUltraCombo = true
-        elseif M.EX == -1 and M.NH == 0 and M.MS == -1 and M.GV == 0 and M.VL == 0 and M.DH == 2 and M.IN == -1 and M.AS == 0 and M.DP == 0 then 
-            comboName = "DISPROVEN BLASPHEMY"
-            GAME.customUltraCombo = true
-        elseif M.EX == -1 and M.NH == -1 and M.MS == 0 and M.GV == 0 and M.VL == 0 and M.DH == 0 and M.IN == 2 and M.AS == -1 and M.DP == 0 then 
-            comboName = "SOLVED PARADOX"
-            GAME.customUltraCombo = true
-        elseif M.EX == -1 and M.NH == -1 and M.MS == 0 and M.GV == 0 and M.VL == -1 and M.DH == 0 and M.IN == 0 and M.AS == 2 and M.DP == 0 then 
-            comboName = "DEMYSTIFIED GRIMOIRE"
-            GAME.customUltraCombo = true
-        elseif M.EX == -1 and M.NH == 0 and M.MS == -1 and M.GV == 0 and M.VL == -1 and M.DH == 0 and M.IN == 0 and M.AS == 0 and M.DP == 2 then 
-            comboName = "LASTING EDEN"
+        if (comboName == '"BUT IT ISN\'T ONE OF MINE"' and GAME.enightcore) or comboName == '"PEASANT REVOLUTION"' or comboName == '"HOLY ASCENSION"' or comboName == '"STABILIZED ENTROPY"'
+        or comboName == '"RESTRAINED COLLAPSE"' or comboName == '"RESTORED VOLITION"' or comboName == '"DISPROVEN BLASPHEMY"'
+        or comboName == '"SOLVED PARADOX"' or comboName == '"DEMYSTIFIED GRIMOIRE"' or comboName == '"LASTING EDEN"' then  
             GAME.customUltraCombo = true
         else
             GAME.customUltraCombo = false
+            ---@cast comboName string
+            comboName = comboName:gsub("([^\"])", "ULTRA %1", 1)
         end
     else
-        if (M.EX == -1 and URM and M.NH < 2 and M.MS < 2 and M.GV < 2 and M.VL < 2 and M.DH < 2 and M.IN < 2 and M.AS < 2 and M.DP < 2) then
+        if uneasyMode then -- if Uneasy Mode
             if comboName:count('EASY') == 1 then 
                 comboName = comboName:gsub("EASY", "UNEASY", 1)
             elseif not GAME.playing then
                 if GAME.smithyMode then
                     comboName = comboName:gsub("PRO G", "UNEASY PRO G", 1)
-                else
+                elseif comboName == '"SPENDING SPREE"' and GAME.glassCard then
+                    comboName = '"PROFLIGACY"'
+                elseif comboName == '"BLOCK FEAST"' and GAME.slowmo then
+                    comboName = '"DIOGENES SYNDROME"'
+                elseif comboName == '"COMFY BED"' and GAME.slowmo then
+                    comboName = '"DYSANIA"'
+                elseif comboName == '"PROFESSIONAL WEIGHTLIFTER"' and GAME.closeCard then
+                    comboName = '"SUBLUXATION"'
+                elseif comboName == '"HEAVEN"' and GAME.nightcore then
+                    comboName = '"PURGATORY"'
+                elseif comboName == '"PERFECT VISION"' and GAME.invisCard then
+                    comboName = '"PRESBYOPIA"'
+                elseif comboName == '"GAMING ADDICT"' and GAME.fastLeak then
+                    comboName = '"CARPAL TUNNEL"'
+                elseif comboName == '"BEST FRIENDS"' and GAME.invisUI then
+                    comboName = '"PROSOPAGNOSIA"'
+                else 
                     comboName = comboName:gsub("([^\"])", "UNEASY %1", 1)
                 end 
             end
@@ -3229,12 +3220,7 @@ local questStyleDP = {
 local KBisDown = love.keyboard.isDown
 function GAME.update(dt)
     GAME.spikeTimer = GAME.spikeTimer - dt
-    if not GAME.playing then 
-        if GAME.customUltraCombo or GAME.smithyMode then
-            GAME.refreshCurrentCombo()
-        end
-        return 
-    end
+    if not GAME.playing then return end
     if TestMode then
         if KBisDown(']') then
             GAME.addXP(dt * GAME.rank * 8)
