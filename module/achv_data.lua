@@ -1502,7 +1502,7 @@ Achievements = {
     { -- GGBW
         id = 'ggbw',
         name = "The Biggest Fan",
-        desc = [[HFD without passing any quest with both players alive, with any variant of "Gamer Girl Bath Water"]],
+        desc = [[HFD without passing any quest when both players alive, with any variant of "Gamer Girl Bath Water"]],
         quote = [["If only we could be together for real..."]],
         credit = "@TrevorSmithy",
         rank = floorRank(1, 3, 5, 7, 9, 10, 6200),
