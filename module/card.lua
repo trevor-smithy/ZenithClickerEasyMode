@@ -71,8 +71,8 @@ function Card:setActive(auto, key)
         SFX.play('no')
         return
     end
-    if M.VL == 1 and not self.active then
-        if not self.active and not auto then
+    if (M.VL == 1 and not self.active) or (M.NH == -1 and (GAME.playing or (M.VL == 2 and not GAME.playing)) and self.active) then
+        if not auto then
             self.charge = self.charge + 1
             SFX.play('clearline', .42)
             if self.charge < 1.2 then
@@ -83,7 +83,7 @@ function Card:setActive(auto, key)
             SFX.play('combo_4', .626, 0, Tone(0))
             self.charge = 0
         end
-    elseif M.VL == 2 and not (self.active and M.NH == -1) then
+    elseif M.VL == 2 then
         self.charge = self.charge + (auto and 3.55 or 1)
         if self.charge < 3.1 then
             SFX.play('clearline', .3)
@@ -127,114 +127,89 @@ function Card:setActive(auto, key)
     end
 
     -- Trevor Smithy
-    if (GAME.playing or M.VL == 2) and self.active and M.NH == -1 then -- if card is active and less hold enabled
-        if not auto then -- assuming not auto
-            self.charge = self.charge + 1 -- charge it
-            SFX.play('clearline', .42)
-            if self.charge < 1.2 then -- if not charged then
-                self:shake()
-                SFX.play('combo_' .. rnd(2, 3), .826, 0, Tone(-2))
-                return -- no
+    self.active = not self.active -- the main flip
+    --Closer Card
+    if GAME.ecloseCard and GAME.playing and not auto then
+        self.active = not self.active
+        local leftCard
+        local rightCard
+        local mvl
+        if M.VL == -1 then mvl = 1 else mvl = M.VL end
+        --local baseDist = 110 + (M.EX > 0 and (URM and M.EX == 2 and -30 or -10) or 0) + mvl * 20 + (GAME.closeCard and -30 or GAME.ecloseCard and -50 or 0)
+        local maxCardDistance = 1 + (M.EX == 2 and URM and 2 or M.EX == 2 and 1 or M.EX == 1 and 1 or 0) - mvl
+        local otherCardActivated = false
+        if self.tempOrder > 1 then leftCard = CD[self.tempOrder - 1] end
+        if leftCard then
+            if not leftCard.active and leftCard.required or leftCard.active and not leftCard.required then --if not active and needed, activate. if active and not needed, deactivate. if active and needed, don't do anything. if not active and not needed, don't do anything.
+                leftCard.active = not leftCard.active
+                otherCardActivated = true
             end
-            SFX.play('combo_4', .826, 0, Tone(0))
-            self.charge = 0
-            self.active = false -- if it is charged, feel free to cancel though
-        else -- if it is auto, obviously we do need to actually cancel it
-            self.active = not self.active
         end
-    else
-        self.active = not self.active -- the main flip
-        --Closer Card
-        if GAME.ecloseCard and GAME.playing and not auto then
-            self.active = not self.active
-            local leftCard
-            local rightCard
-            local mvl
-            if M.VL == -1 then mvl = 1 else mvl = M.VL end
-            --local baseDist = 110 + (M.EX > 0 and (URM and M.EX == 2 and -30 or -10) or 0) + mvl * 20 + (GAME.closeCard and -30 or GAME.ecloseCard and -50 or 0)
-            local maxCardDistance = 1 + (M.EX == 2 and URM and 2 or M.EX == 2 and 1 or M.EX == 1 and 1 or 0) - mvl
-            local otherCardActivated = false
-            if self.tempOrder > 1 then leftCard = CD[self.tempOrder - 1] end
-            if leftCard ~= nil then
+        if self.tempOrder < 9 then rightCard = CD[self.tempOrder + 1] end
+        if rightCard then
+            if not rightCard.active and rightCard.required or rightCard.active and not rightCard.required then --if not active and needed, activate. if active and not needed, deactivate. if active and needed, don't do anything. if not active and not needed, don't do anything.
+                rightCard.active = not rightCard.active
+                otherCardActivated = true
+            end
+        end
+        if maxCardDistance >= 2 then
+            if self.tempOrder > 2 then leftCard = CD[self.tempOrder - 2] end
+            if leftCard then
                 if not leftCard.active and leftCard.required or leftCard.active and not leftCard.required then --if not active and needed, activate. if active and not needed, deactivate. if active and needed, don't do anything. if not active and not needed, don't do anything.
                     leftCard.active = not leftCard.active
                     otherCardActivated = true
                 end
             end
-            if self.tempOrder < 9 then rightCard = CD[self.tempOrder + 1] end
-            if rightCard ~= nil then
+            if self.tempOrder < 8 then rightCard = CD[self.tempOrder + 2] end
+            if rightCard then
                 if not rightCard.active and rightCard.required or rightCard.active and not rightCard.required then --if not active and needed, activate. if active and not needed, deactivate. if active and needed, don't do anything. if not active and not needed, don't do anything.
                     rightCard.active = not rightCard.active
                     otherCardActivated = true
                 end
             end
-            leftCard = nil
-            rightCard = nil
-            if maxCardDistance >= 2 then
-                if self.tempOrder > 2 then leftCard = CD[self.tempOrder - 2] end
-                if leftCard ~= nil then
+            if maxCardDistance >= 3 then
+                if self.tempOrder > 3 then leftCard = CD[self.tempOrder - 3] end
+                if leftCard then
                     if not leftCard.active and leftCard.required or leftCard.active and not leftCard.required then --if not active and needed, activate. if active and not needed, deactivate. if active and needed, don't do anything. if not active and not needed, don't do anything.
                         leftCard.active = not leftCard.active
                         otherCardActivated = true
                     end
                 end
-                if self.tempOrder < 8 then rightCard = CD[self.tempOrder + 2] end
-                if rightCard ~= nil then
+                if self.tempOrder < 7 then rightCard = CD[self.tempOrder + 3] end
+                if rightCard then
                     if not rightCard.active and rightCard.required or rightCard.active and not rightCard.required then --if not active and needed, activate. if active and not needed, deactivate. if active and needed, don't do anything. if not active and not needed, don't do anything.
                         rightCard.active = not rightCard.active
                         otherCardActivated = true
                     end
                 end
-                leftCard = nil
-                rightCard = nil
-                if maxCardDistance >= 3 then
-                    if self.tempOrder > 3 then leftCard = CD[self.tempOrder - 3] end
-                    if leftCard ~= nil then
+                if maxCardDistance == 4 then
+                    if self.tempOrder > 4 then leftCard = CD[self.tempOrder - 4] end
+                    if leftCard then
                         if not leftCard.active and leftCard.required or leftCard.active and not leftCard.required then --if not active and needed, activate. if active and not needed, deactivate. if active and needed, don't do anything. if not active and not needed, don't do anything.
                             leftCard.active = not leftCard.active
                             otherCardActivated = true
                         end
                     end
-                    if self.tempOrder < 7 then rightCard = CD[self.tempOrder + 3] end
-                    if rightCard ~= nil then
+                    if self.tempOrder < 6 then rightCard = CD[self.tempOrder + 4] end
+                    if rightCard then
                         if not rightCard.active and rightCard.required or rightCard.active and not rightCard.required then --if not active and needed, activate. if active and not needed, deactivate. if active and needed, don't do anything. if not active and not needed, don't do anything.
                             rightCard.active = not rightCard.active
                             otherCardActivated = true
                         end
                     end
-                    leftCard = nil
-                    rightCard = nil
-                    if maxCardDistance == 4 then
-                        if self.tempOrder > 4 then leftCard = CD[self.tempOrder - 4] end
-                        if leftCard ~= nil then
-                            if not leftCard.active and leftCard.required or leftCard.active and not leftCard.required then --if not active and needed, activate. if active and not needed, deactivate. if active and needed, don't do anything. if not active and not needed, don't do anything.
-                                leftCard.active = not leftCard.active
-                                otherCardActivated = true
-                            end
-                        end
-                        if self.tempOrder < 6 then rightCard = CD[self.tempOrder + 4] end
-                        if rightCard ~= nil then
-                            if not rightCard.active and rightCard.required or rightCard.active and not rightCard.required then --if not active and needed, activate. if active and not needed, deactivate. if active and needed, don't do anything. if not active and not needed, don't do anything.
-                                rightCard.active = not rightCard.active
-                                otherCardActivated = true
-                            end
-                        end
-                        leftCard = nil
-                        rightCard = nil
-                    end
                 end
             end
-            if not self.active and self.required then --if not active and needed, activate. if active and not needed, deactivate. if active and needed, don't do anything. if not active and not needed, don't do anything.
-                self.active = not self.active
-            elseif self.active and not self.required then
-                self.active = not self.active
-            elseif self.active and self.required and (self.touchCount == 0 or M.NH == -1 and self.touchCount <= 1) then
-                --don't deselect a correct card
-            elseif not otherCardActivated then
-                self.active = not self.active
-                if not eNHBlocksFaults then
-                    GAME.fault = true
-                end
+        end
+        if not self.active and self.required then --if not active and needed, activate. if active and not needed, deactivate. if active and needed, don't do anything. if not active and not needed, don't do anything.
+            self.active = not self.active
+        elseif self.active and not self.required then
+            self.active = not self.active
+        elseif self.active and self.required and (self.touchCount == 0 or M.NH == -1 and self.touchCount <= 1) then
+            --don't deselect a correct card
+        elseif not otherCardActivated then
+            self.active = not self.active
+            if not eNHBlocksFaults then
+                GAME.fault = true
             end
         end
     end

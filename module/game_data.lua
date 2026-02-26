@@ -358,6 +358,7 @@ ComboData = {
         { set = "eEX eNH eGV eVL eDH eIN AS eDP",            name = "Gamer Girl Bath Water"},
         -- Credit: Rejuvenating rack/Mikamiyu
         { set = "eEX eNH rMS eGV VL eDH eIN eAS",            name = "Goth Mommy Bath Water"},
+        { set = "eEX eNH eMS eGV rVL rDH eAS eDP",            name = "Shocking Bath With A Toaster"},
         -- ultras
         { set = "eEX rGV eDH eAS",      name = "But It Isn't One Of Mine" },
 
