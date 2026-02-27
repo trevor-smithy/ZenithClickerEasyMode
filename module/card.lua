@@ -863,7 +863,7 @@ function Card:draw()
 
             -- Star
             if completion[self.id] > 0 then
-                img = self.active and TEXTURE.star1 or TEXTURE.star0
+                img = TEXTURE[self.active and (self.id=='DP' and 'star2' or 'star1') or 'star0']
                 local t = (self.upright or self.easy) and self.float or 1
                 local blur = (FloatOnCard == self.initOrder or not self.upright) and 0 or -.2
                 local x = lerp(155, 0, t)
@@ -901,8 +901,9 @@ function Card:draw()
                         gc_setBlendMode('alpha')
                     end
                     gc_setColor(1, 1, 1, t)
-                    gc_mDraw(TEXTURE.star1, x, y, ang, lerp(.16, .42, t))
-                    if revMastery then gc_mDraw(TEXTURE.star1, -x, -y, ang, lerp(.16, .42, t)) end
+                    local star1=TEXTURE[self.id=='DP' and 'star2' or 'star1']
+                    gc_mDraw(star1, x, y, ang, lerp(.16, .42, t))
+                    if revMastery then gc_mDraw(star1, -x, -y, ang, lerp(.16, .42, t)) end
                 end
             end
             gc_pop()
