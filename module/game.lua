@@ -1033,6 +1033,11 @@ function GAME.addXP(xp)
     elseif M.EX == -1 and GAME.rank > 1 and GAME.rank <= 126 then
         xp = xp * (1 + (GAME.rank - 1)/(xpRankModifier*3))
     end
+    local oldXP = xp
+    if GAME.ecloseCard then
+        xp = roundUnit(xp * max((1-(GAME.height/1000000)), 0), 0.01)
+    end
+    --if oldXP > 0 then MSG("bright", "Old XP=" .. oldXP .. " XP=" .. xp) end
     GAME.xp = GAME.xp + xp
     if GAME.rankupLast and GAME.xp >= 2 * GAME.rank then GAME.xpLockLevel = GAME.xpLockLevelMax end
 
@@ -1057,6 +1062,9 @@ function GAME.addXP(xp)
     end
     if GAME.rank ~= oldRank then
         GAME.xpLockTimer = GAME.xpLockLevel
+        if GAME.ecloseCard then
+            GAME.xpLockTimer = roundUnit(GAME.xpLockLevel * max((1-(GAME.height/1000000)), 0), 0.01)
+        end
         GAME.rankupLast = true
         GAME.peakRank = max(GAME.peakRank, GAME.rank)
         TEXTS.rank:set("R-" .. GAME.rank)
@@ -3446,7 +3454,11 @@ function GAME.update(dt)
     if GAME.xpLockTimer > 0 then
         GAME.xpLockTimer = GAME.xpLockTimer - dt
     else
-        GAME.xp = GAME.xp - dt * GAME.leakSpeed * GAME.rank * (GAME.rank + 1) / 60
+        local closerCardLeakSpeedMod = 1
+        if GAME.ecloseCard and GAME.height > 0 then
+            closerCardLeakSpeedMod = min((1+(GAME.height/1000000)), 2)
+        end
+        GAME.xp = GAME.xp - dt * GAME.leakSpeed * closerCardLeakSpeedMod * GAME.rank * (GAME.rank + 1) / 60
         if GAME.xp <= 0 then
             GAME.xp = 0
             if GAME.rank > 1 then
