@@ -2003,7 +2003,7 @@ function GAME.commit(auto)
                 totalAssistPenalty = totalAssistPenalty + CD[i].assistPenalty
             end
         end
-        MSG("bright", "totalAssistPenalty=".. totalAssistPenalty)
+        --MSG("bright", "totalAssistPenalty=".. totalAssistPenalty)
         if GAME.currentTask then
             GAME.incrementPrompt('pass')
             for i = 1, #hand do GAME.incrementPrompt('pass_' .. hand[i]) end
@@ -2259,7 +2259,7 @@ function GAME.commit(auto)
             end 
         end
         local roundedAttack = MATH.roundRnd(attack)
-        MSG("bright", "baseAttack:".. baseAttack .. " adjustedAttack:".. attack)
+        --MSG("bright", "baseAttack:".. baseAttack .. " adjustedAttack:".. attack)
         --
         GAME.spikeCounter = GAME.spikeCounter + roundedAttack + surge
         GAME.maxSpike = max(GAME.maxSpike, GAME.spikeCounter)
