@@ -46,6 +46,7 @@ function Card.new(d)
         required2 = false, --duo quest (pink)
         inLastCommit = false,
         charge = 0,
+        assistPenalty = 5,
     }, Card)
     return obj
 end
@@ -131,6 +132,10 @@ function Card:setActive(auto, key)
     --Closer Card
     if GAME.ecloseCard and GAME.playing and not auto then
         self.active = not self.active
+        if not GAME.achv_noManualFlipH then
+            GAME.achv_noManualFlipH = GAME.roundHeight
+            if GAME.totalQuest >= 3 then SFX.play('btb_break') end
+        end
         local leftCard
         local rightCard
         local mvl
@@ -143,6 +148,7 @@ function Card:setActive(auto, key)
             if not leftCard.active and leftCard.required or leftCard.active and not leftCard.required then --if not active and needed, activate. if active and not needed, deactivate. if active and needed, don't do anything. if not active and not needed, don't do anything.
                 leftCard.active = not leftCard.active
                 otherCardActivated = true
+                leftCard.assistPenalty = leftCard.active and min(leftCard.assistPenalty, 1) or 5
             end
         end
         if self.tempOrder < 9 then rightCard = CD[self.tempOrder + 1] end
@@ -150,6 +156,7 @@ function Card:setActive(auto, key)
             if not rightCard.active and rightCard.required or rightCard.active and not rightCard.required then --if not active and needed, activate. if active and not needed, deactivate. if active and needed, don't do anything. if not active and not needed, don't do anything.
                 rightCard.active = not rightCard.active
                 otherCardActivated = true
+                rightCard.assistPenalty = rightCard.active and min(rightCard.assistPenalty, 1) or 5
             end
         end
         if maxCardDistance >= 2 then
@@ -158,6 +165,7 @@ function Card:setActive(auto, key)
                 if not leftCard.active and leftCard.required or leftCard.active and not leftCard.required then --if not active and needed, activate. if active and not needed, deactivate. if active and needed, don't do anything. if not active and not needed, don't do anything.
                     leftCard.active = not leftCard.active
                     otherCardActivated = true
+                    leftCard.assistPenalty = leftCard.active and min(leftCard.assistPenalty, 2) or 5
                 end
             end
             if self.tempOrder < 8 then rightCard = CD[self.tempOrder + 2] end
@@ -165,6 +173,7 @@ function Card:setActive(auto, key)
                 if not rightCard.active and rightCard.required or rightCard.active and not rightCard.required then --if not active and needed, activate. if active and not needed, deactivate. if active and needed, don't do anything. if not active and not needed, don't do anything.
                     rightCard.active = not rightCard.active
                     otherCardActivated = true
+                    rightCard.assistPenalty = rightCard.active and min(rightCard.assistPenalty, 2) or 5
                 end
             end
             if maxCardDistance >= 3 then
@@ -173,6 +182,7 @@ function Card:setActive(auto, key)
                     if not leftCard.active and leftCard.required or leftCard.active and not leftCard.required then --if not active and needed, activate. if active and not needed, deactivate. if active and needed, don't do anything. if not active and not needed, don't do anything.
                         leftCard.active = not leftCard.active
                         otherCardActivated = true
+                        leftCard.assistPenalty = leftCard.active and min(leftCard.assistPenalty, 3) or 5
                     end
                 end
                 if self.tempOrder < 7 then rightCard = CD[self.tempOrder + 3] end
@@ -180,6 +190,7 @@ function Card:setActive(auto, key)
                     if not rightCard.active and rightCard.required or rightCard.active and not rightCard.required then --if not active and needed, activate. if active and not needed, deactivate. if active and needed, don't do anything. if not active and not needed, don't do anything.
                         rightCard.active = not rightCard.active
                         otherCardActivated = true
+                        rightCard.assistPenalty = rightCard.active and min(rightCard.assistPenalty, 3) or 5
                     end
                 end
                 if maxCardDistance == 4 then
@@ -188,6 +199,7 @@ function Card:setActive(auto, key)
                         if not leftCard.active and leftCard.required or leftCard.active and not leftCard.required then --if not active and needed, activate. if active and not needed, deactivate. if active and needed, don't do anything. if not active and not needed, don't do anything.
                             leftCard.active = not leftCard.active
                             otherCardActivated = true
+                            leftCard.assistPenalty = leftCard.active and min(leftCard.assistPenalty, 4) or 5
                         end
                     end
                     if self.tempOrder < 6 then rightCard = CD[self.tempOrder + 4] end
@@ -195,6 +207,7 @@ function Card:setActive(auto, key)
                         if not rightCard.active and rightCard.required or rightCard.active and not rightCard.required then --if not active and needed, activate. if active and not needed, deactivate. if active and needed, don't do anything. if not active and not needed, don't do anything.
                             rightCard.active = not rightCard.active
                             otherCardActivated = true
+                            rightCard.assistPenalty = rightCard.active and min(rightCard.assistPenalty, 4) or 5
                         end
                     end
                 end
@@ -202,12 +215,16 @@ function Card:setActive(auto, key)
         end
         if not self.active and self.required then --if not active and needed, activate. if active and not needed, deactivate. if active and needed, don't do anything. if not active and not needed, don't do anything.
             self.active = not self.active
+            self.assistPenalty = 0
         elseif self.active and not self.required then
             self.active = not self.active
+            self.assistPenalty = 5
         elseif self.active and self.required and (self.touchCount == 0 or M.NH == -1 and self.touchCount <= 1) then
             --don't deselect a correct card
+            self.assistPenalty = 0
         elseif not otherCardActivated then
             self.active = not self.active
+            self.assistPenalty = 5
             if not eNHBlocksFaults then
                 GAME.fault = true
             end
@@ -225,8 +242,11 @@ function Card:setActive(auto, key)
             end
             if self.touchCount == 1 then
                 if (self.required or self.required2) and not GAME.hardMode then
+                    GAME.addXP(M.VL == 1 and 2 or 1)
+                end
+                if (self.required or self.required2) then
                     -- Trevor Smithy
-                    GAME.addXP(M.VL == 1 and 2 or M.VL == -1 and 2 or 1)
+                    GAME.addXP(M.VL == -1 and 2 or 0)
                 end
             elseif not GAME.fault and not self.burn and not (eNHBlocksFaults) then
                 GAME.fault = true

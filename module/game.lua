@@ -321,7 +321,7 @@ function GAME.getComboZP(list)
     if m.AS then zp = zp * .85 elseif m.rAS then zp = zp * 1.1 elseif m.eAS then zp = zp * 0.8 end
     if m.DP then zp = zp * .95 elseif m.rDP then zp = zp * (m.rEX and 1.8 or 2.1) elseif m.eDP then zp = zp * 0.90 end
 
-    if GAME.enightcore or GAME.eglassCard then zp = zp * .9 elseif GAME.eslowmo then zp = zp * .825 elseif GAME.efastLeak then zp = zp * .75 end
+    if GAME.enightcore or GAME.eglassCard then zp = zp * .9 elseif GAME.eslowmo then zp = zp * .825 elseif GAME.efastLeak or GAME.ecloseCard then zp = zp * .75 end
 
     local hardCnt = table.concat(list):count('r')
     if m.EX then hardCnt = hardCnt + 1 end
@@ -1889,6 +1889,9 @@ function GAME.task_cancelAll(instant)
     for i = 1, #list do
         if needFlip[i] then
             list[i]:setActive(true)
+            --Closer card stuff Trevor Smithy
+            list[i].assistPenalty = 5
+            --
             if M.AS == 1 then
                 list[i].burn = false
             end
@@ -1994,6 +1997,13 @@ function GAME.commit(auto)
         if #hand == 7 and not TABLE.find(hand, 'DP') and M.EX == -1 and M.GV == -1 and M.IN == -1 then
             IssueAchv('trip_to_hell')
         end
+        local totalAssistPenalty = 0
+        for i = 1, #CD do
+            if CD[i].active then
+                totalAssistPenalty = totalAssistPenalty + CD[i].assistPenalty
+            end
+        end
+        MSG("bright", "totalAssistPenalty=".. totalAssistPenalty)
         if GAME.currentTask then
             GAME.incrementPrompt('pass')
             for i = 1, #hand do GAME.incrementPrompt('pass_' .. hand[i]) end
@@ -2237,9 +2247,23 @@ function GAME.commit(auto)
             GAME.spikeCounter < 8 and 1.26 or .8,
             6.2
         )
-        GAME.spikeCounter = GAME.spikeCounter + attack + surge
+        local baseAttack = attack
+        -- Closer Card assistPenalty
+        if GAME.ecloseCard then 
+            if totalAssistPenalty == 0 then
+                attack = attack * 1.26
+            elseif totalAssistPenalty <= 2 then
+                -- attack is just normal
+            else
+                attack = attack/((5/4)^((totalAssistPenalty-2)^1.6351896075))
+            end 
+        end
+        local roundedAttack = MATH.roundRnd(attack)
+        MSG("bright", "baseAttack:".. baseAttack .. " adjustedAttack:".. attack)
+        --
+        GAME.spikeCounter = GAME.spikeCounter + roundedAttack + surge
         GAME.maxSpike = max(GAME.maxSpike, GAME.spikeCounter)
-        GAME.spikeCounterWeak = GAME.spikeCounterWeak + attack
+        GAME.spikeCounterWeak = GAME.spikeCounterWeak + roundedAttack
         GAME.maxSpikeWeak = max(GAME.maxSpikeWeak, GAME.spikeCounterWeak)
         if GAME.spikeCounter >= 8 then TEXTS.spike:set(tostring(GAME.spikeCounter)) end
 
@@ -3106,6 +3130,9 @@ function GAME.finish(reason)
             SubmitAchv('restored_eden', GAME.roundHeight)
         elseif M.EX == -1 and M.NH == -1 and M.MS == 0 and M.GV == -1 and M.VL == -1 and M.DH == -1 and M.IN == -1 and ((M.AS == -1 and M.DP == 1) or (M.AS == 1 and M.DP == -1) or (M.AS == 1 and M.DP == 1)) then
             SubmitAchv('ggbw', GAME.achv_carriedH or GAME.roundHeight)
+            if ACHV['ggbw'] >= (GAME.achv_carriedH or GAME.roundHeight) then
+                MSG("dark", "The Biggest Fan Score: " .. (GAME.achv_carriedH or GAME.roundHeight) .. " meters", 60)
+            end
         end
         if M.EX < 2 and M.DP < 2 then
             SubmitAchv('speed_bonus', GAME.gigaCount + GAME.teraCount)
@@ -3266,7 +3293,11 @@ function GAME.update(dt)
     -- Timers
     -- Trevor Smithy
     local timerMulMod = 1
-    if GAME.eslowmo then timerMulMod = 0.75 end
+    if GAME.eslowmo then
+         timerMulMod = 0.75 
+    elseif GAME.ecloseCard then
+        timerMulMod = 2
+    end    
 
     GAME.time = GAME.time + dt * (GAME.timerMul * timerMulMod)
     local r = min(GAME.rank, 62)

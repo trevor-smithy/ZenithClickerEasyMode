@@ -358,6 +358,7 @@ ComboData = {
         { set = "eEX eNH eGV eVL eDH eIN AS eDP",            name = "Gamer Girl Bath Water"},
         -- Credit: Rejuvenating rack/Mikamiyu
         { set = "eEX eNH rMS eGV VL eDH eIN eAS",            name = "Goth Mommy Bath Water"},
+        -- Credit: FCSplayz
         { set = "eEX eNH eMS eGV rVL rDH eAS rDP",            name = "Shocking Bath With A Toaster"},
         -- ultras
         { set = "eEX rGV eDH eAS",      name = "But It Isn't One Of Mine" },
@@ -1264,6 +1265,19 @@ Fatigue = {
         { time = 540, event = { 'animDuration', 16 }, --[[42]]                             text = "" },
         { time = 570, event = { 'animDuration', 20 }, --[[62]]                             text = "" },
         { time = 600, event = { 'animDuration', 64 }, --[[126]]                            text = "" },
+        { time = 630, event = { 'extraQuestBase', .01 }, text = "YOU FEEL THE IMPENDING DOOM_",                 desc = "30 Seconds Remain",     duration = 12, color = 'lB', },
+        { time = 645, event = { 'extraQuestBase', .01 }, text = "DIE!",                 desc = "15 Seconds Remain",     duration = 4, color = 'lB', },
+        { time = 650, event = { 'extraQuestBase', .01 }, text = "DIE!",                 desc = "10 Seconds Remain",     duration = 0.5, color = 'lB', },
+        { time = 651, event = { 'extraQuestBase', .01 }, text = "DIE!",                 desc = "9 Seconds Remain",     duration = 0.5, color = 'lB', },
+        { time = 652, event = { 'extraQuestBase', .01 }, text = "DIE!",                 desc = "8 Seconds Remain",     duration = 0.5, color = 'lB', },
+        { time = 653, event = { 'extraQuestBase', .01 }, text = "DIE!",                 desc = "7 Seconds Remain",     duration = 0.5, color = 'lB', },
+        { time = 654, event = { 'extraQuestBase', .01 }, text = "DIE!",                 desc = "6 Seconds Remain",     duration = 0.5, color = 'lB', },
+        { time = 655, event = { 'extraQuestBase', .01 }, text = "DIE!",                 desc = "5 Seconds Remain",     duration = 0.5, color = 'lB', },
+        { time = 656, event = { 'extraQuestBase', .01 }, text = "DIE!",                 desc = "4 Seconds Remain",     duration = 0.5, color = 'lB', },
+        { time = 657, event = { 'extraQuestBase', .01 }, text = "DIE!",                 desc = "3 Seconds Remain",     duration = 0.5, color = 'lB', },
+        { time = 658, event = { 'extraQuestBase', .01 }, text = "DIE!",                 desc = "2 Seconds Remain",     duration = 0.5, color = 'lB', },
+        { time = 659, event = { 'extraQuestBase', .01 }, text = "DIE!",                 desc = "1 Second Remains",     duration = 0.5, color = 'lB', },
+        { time = 660, event = { 'dmgTimerMul', -0.499 }, text = "MWAHAHAHA!",                 desc = "CEASE!",     duration = 26, color = 'lR', },
         { time = 1e99 }, -- Total: dmgTimerMul-50%, Cycle-1, Wrong+2
     },
     rEX = {
@@ -1284,6 +1298,19 @@ Fatigue = {
         { time = 430, event = { 'dmgTimerMul', -.05 } },
         { time = 435, event = { 'dmgTimerMul', -.03 } },
         { time = 440, event = { 'dmgTimerMul', -.02 } },
+        { time = 570, event = { 'extraQuestBase', .01 }, text = "YOU FEEL THE IMPENDING DOOM_",                 desc = "30 Seconds Remain",     duration = 12, color = 'lB', },
+        { time = 585, event = { 'extraQuestBase', .01 }, text = "DIE!",                 desc = "15 Seconds Remain",     duration = 4, color = 'lB', },
+        { time = 590, event = { 'extraQuestBase', .01 }, text = "DIE!",                 desc = "10 Seconds Remain",     duration = 0.5, color = 'lB', },
+        { time = 591, event = { 'extraQuestBase', .01 }, text = "DIE!",                 desc = "9 Seconds Remain",     duration = 0.5, color = 'lB', },
+        { time = 592, event = { 'extraQuestBase', .01 }, text = "DIE!",                 desc = "8 Seconds Remain",     duration = 0.5, color = 'lB', },
+        { time = 593, event = { 'extraQuestBase', .01 }, text = "DIE!",                 desc = "7 Seconds Remain",     duration = 0.5, color = 'lB', },
+        { time = 594, event = { 'extraQuestBase', .01 }, text = "DIE!",                 desc = "6 Seconds Remain",     duration = 0.5, color = 'lB', },
+        { time = 595, event = { 'extraQuestBase', .01 }, text = "DIE!",                 desc = "5 Seconds Remain",     duration = 0.5, color = 'lB', },
+        { time = 596, event = { 'extraQuestBase', .01 }, text = "DIE!",                 desc = "4 Seconds Remain",     duration = 0.5, color = 'lB', },
+        { time = 597, event = { 'extraQuestBase', .01 }, text = "DIE!",                 desc = "3 Seconds Remain",     duration = 0.5, color = 'lB', },
+        { time = 598, event = { 'extraQuestBase', .01 }, text = "DIE!",                 desc = "2 Seconds Remain",     duration = 0.5, color = 'lB', },
+        { time = 599, event = { 'extraQuestBase', .01 }, text = "DIE!",                 desc = "1 Second Remains",     duration = 0.5, color = 'lB', },
+        { time = 600, event = { 'dmgTimerMul', -0.099 }, text = "MWAHAHAHA!",                 desc = "CEASE!",     duration = 26, color = 'lR', },
         { time = 1e99 }, -- Total: dmgTimerMul-90%, Cycle-1.5, Wrong+5
     },
     -- Trevor Smithy
@@ -1354,6 +1381,19 @@ Fatigue = {
         { time = 416, event = { 'dmgTimerMul', -.05 } },
         { time = 420, event = { 'dmgTimerMul', -.03 } },
         { time = 425, event = { 'dmgTimerMul', -.02 } },
+        { time = 570, event = { 'extraQuestBase', .01 }, text = "YOU FEEL THE IMPENDING DOOM_",                 desc = "30 Seconds Remain",     duration = 12, color = 'lB', },
+        { time = 585, event = { 'extraQuestBase', .01 }, text = "DIE!",                 desc = "15 Seconds Remain",     duration = 4, color = 'lB', },
+        { time = 590, event = { 'extraQuestBase', .01 }, text = "DIE!",                 desc = "10 Seconds Remain",     duration = 0.5, color = 'lB', },
+        { time = 591, event = { 'extraQuestBase', .01 }, text = "DIE!",                 desc = "9 Seconds Remain",     duration = 0.5, color = 'lB', },
+        { time = 592, event = { 'extraQuestBase', .01 }, text = "DIE!",                 desc = "8 Seconds Remain",     duration = 0.5, color = 'lB', },
+        { time = 593, event = { 'extraQuestBase', .01 }, text = "DIE!",                 desc = "7 Seconds Remain",     duration = 0.5, color = 'lB', },
+        { time = 594, event = { 'extraQuestBase', .01 }, text = "DIE!",                 desc = "6 Seconds Remain",     duration = 0.5, color = 'lB', },
+        { time = 595, event = { 'extraQuestBase', .01 }, text = "DIE!",                 desc = "5 Seconds Remain",     duration = 0.5, color = 'lB', },
+        { time = 596, event = { 'extraQuestBase', .01 }, text = "DIE!",                 desc = "4 Seconds Remain",     duration = 0.5, color = 'lB', },
+        { time = 597, event = { 'extraQuestBase', .01 }, text = "DIE!",                 desc = "3 Seconds Remain",     duration = 0.5, color = 'lB', },
+        { time = 598, event = { 'extraQuestBase', .01 }, text = "DIE!",                 desc = "2 Seconds Remain",     duration = 0.5, color = 'lB', },
+        { time = 599, event = { 'extraQuestBase', .01 }, text = "DIE!",                 desc = "1 Second Remains",     duration = 0.5, color = 'lB', },
+        { time = 600, event = { 'dmgTimerMul', -0.299 }, text = "MWAHAHAHA!",                 desc = "CEASE!",     duration = 26, color = 'lR', },
         { time = 1e99 }, -- Total: dmgTimerMul-70%
     },
     -- Trevor Smithy SCRAPPED?
