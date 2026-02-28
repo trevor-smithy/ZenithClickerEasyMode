@@ -412,7 +412,7 @@ TEXTURE = {
         overDev = assets 'achievements/verified-halfmod.png',
     },
 
-    logo = assets 'icon.png',
+    logo = assets 'iconZCEM.png',
     logo_old = assets 'icon_old.png',
     programmingsmithy = assets 'programmingsmithy.png'
 }
