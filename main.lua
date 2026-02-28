@@ -1,4 +1,4 @@
-love.window.setIcon(love.image.newImageData('assets/icon.png'))
+love.window.setIcon(love.image.newImageData('assets/iconZCEM.png'))
 
 require 'Zenitha'
 

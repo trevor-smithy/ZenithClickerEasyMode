@@ -364,6 +364,8 @@ ComboData = {
         { set = "rEX MS eIN",                               name = "Omniscence"},
         -- Credit: LovelyStar
         { set = "eEX MS VL eIN",                            name = "Stargazing"},
+        -- Credit: TheBestNoob
+        { set = "eEX NH MS GV VL DH IN AS",                 name = "Easy Swamp Water"},
         -- ultras
         { set = "eEX rGV eDH eAS",      name = "But It Isn't One Of Mine" },
 
