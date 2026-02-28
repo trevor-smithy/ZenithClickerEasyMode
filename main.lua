@@ -364,11 +364,11 @@ TEXTURE = {
             return_to_the_light = aq(5, 5),
             smooth_dismount = aq(4, 1),
             -- Trevor Smithy
-            programmer_gamer = aq(10, 4), -- TODO -- smithy ball
+            programmer_gamer = aq(10, 8), -- smithy ball
             one_of_mine = aq(10, 6),
-            ggbw = aq(3, 8), -- TODO -- fan
+            ggbw = aq(9, 8),  -- fan
             perfect_speedrun_plus = aq(15, 5),
-            perfectly_balanced = aq(8, 6), --TODO -- thanos knife
+            perfectly_balanced = aq(11, 8), -- thanos knife
             peasant_revolution = aq(15, 1),
             holy_ascention = aq(11, 1),
             stabilized_entropy = aq(12, 1),
@@ -378,8 +378,8 @@ TEXTURE = {
             solved_paradox = aq(13, 1),
             demystified_grimoire = aq(14, 1),
             restored_eden = aq(7, 7),
-            your_too_fast = aq(5, 2), --TODO --jackenstein
-            your_long = aq(6, 2), --TODO --wide jackenstein
+            your_too_fast = aq(13, 8), --scared jackenstein
+            your_long = aq(12, 8), --jackenstein
             cheat_death = aq(5, 5),
             trip_to_hell = aq(5, 7),
         },
