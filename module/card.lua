@@ -364,7 +364,7 @@ function Card:setActive(auto, key)
         if wasRev and not revOn then self:spin() end
         -- Trevor Smithy
         if self.id == 'EX' then
-            TWEEN.new(tween_expertOn):setDuration(M.EX > 0 and .26 or .1):run()
+            TWEEN.new(tween_expertOn):setDuration(M.EX ~= 0 and .26 or .1):run()
             TABLE.clear(HoldingButtons)
         elseif self.id == 'IN' then
             for _, C in ipairs(CD) do C:flip() end

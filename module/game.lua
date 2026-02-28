@@ -121,6 +121,7 @@ local ins, rem = table.insert, table.remove
 ---@field teraComplete boolean
 ---@field teraLostHeight number
 ---@field customUltraCombo boolean
+---@field anyChange boolean
 local GAME = {
     forfeitTimer = 0,
     exTimer = 0,
@@ -664,6 +665,8 @@ function GAME.anim_setMenuHide(t)
     w.stat:resetPos()
     w.achv.x = cLerp(60, -90, t * 1.5)
     w.achv:resetPos()
+    w.easy.x = cLerp(60, -90, t * 1.5)
+    w.easy:resetPos()
     w.conf.x = cLerp(-60, 90, t * 1.5 - .5)
     w.conf:resetPos()
     w.about.x = cLerp(-60, 90, t * 1.5)
@@ -1902,6 +1905,48 @@ function GAME.task_cancelAll(instant)
             --
             if M.AS == 1 then
                 list[i].burn = false
+            end
+            if interval then
+                SFX.play('card_slide_' .. rnd(4), .62)
+                TASK.yieldT(interval)
+            end
+        end
+    end
+end
+
+function GAME.toggleEasy()
+    TASK.removeTask_code(GAME.task_toggleEasy)
+    TASK.new(GAME.task_toggleEasy)
+end
+
+function GAME.task_toggleEasy()
+    if GAME.playing then return end
+    local list = TABLE.copy(CD, 0)
+    local needFlip = {}
+    --Trevor Smithy
+    local spinMode = not instant and (M.AS ~= 0)
+    for i = 1, #CD do
+        if (CD[i].upright or CD[i].easy) and CD[i].active then
+            needFlip[i] = true
+        else
+            needFlip[i] = false
+        end
+    end
+    local mnh = 0 -- mod no hold
+    if M.NH == -1 then mnh = 1.5 else mnh = M.NH end --if easy, don't be negative because then negative interval
+    local interval = .042 * (M.AS == 2 and .62 or 1) * (1 + 2 * mnh) * ((GAME.slowmo or GAME.eslowmo) and 2.6 or 1) * ((GAME.nightcore or GAME.enightcore) and 1 / 2.6 or 1)
+    for i = 1, #list do
+        if needFlip[i] then
+            GAME.anyChange = true
+            local isEasy = false
+            if list[i].easy then
+                isEasy = true
+            end
+            list[i]:setActive(true)
+            if isEasy then
+                list[i]:setActive(true)
+            else
+                list[i]:setActive(true, 3)
             end
             if interval then
                 SFX.play('card_slide_' .. rnd(4), .62)

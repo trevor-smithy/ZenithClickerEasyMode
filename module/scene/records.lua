@@ -404,6 +404,24 @@ function scene.keyDown(key, isRep)
         set.order = 'first'
         SFX.play('allclear')
         refresh()
+    elseif key == 'f14' then
+        local anyChange = false
+        for i = 1, #set.sel do 
+            if set.sel[i] == -1 then
+                set.sel[i] = 1 
+                anyChange = true
+            elseif set.sel[i] == 1 then
+                set.sel[i] = -1 
+                anyChange = true
+            end
+        end
+        if anyChange then
+            SFX.play('card_select', .8)
+            refresh()
+        else
+            SFX.play('no')
+            MSG("dark", "Select mods to make Easy first!")
+        end
     elseif key == 'tab' then
         set.mode =
             set.mode == 'altitude' and 'speedrun' or
@@ -556,6 +574,11 @@ function scene.draw()
     for i = 1, #CD do
         if set.sel[i] == 2 then
             gc_draw(TEXTURE.recRevLight, -120 + 100 * cardPos[i], 100 - 60)
+        end
+    end
+    for i = 1, #CD do
+        if set.sel[i] == -1 then
+            gc_draw(TEXTURE.recEasyLight, -120 + 100 * cardPos[i], 100 - 60)
         end
     end
 
@@ -864,6 +887,14 @@ table.insert(scene.widgetList, WIDGET.new {
     sound_hover = 'menutap',
     fontSize = 30, text = "    RESET", textColor = clr.btn2,
     onClick = function() love.keypressed('f13') end,
+})
+table.insert(scene.widgetList, WIDGET.new {
+    name = 'easy', type = 'button',
+    pos = { 0, 0 }, x = 60, y = 320, w = 160, h = 60,
+    color = { .15, .75, .15 },
+    sound_hover = 'menutap',
+    fontSize = 30, text = "    EASY", textColor = 'DG',
+    onClick = function() love.keypressed('f14') end,
 })
 
 -- Hint

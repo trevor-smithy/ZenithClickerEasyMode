@@ -206,6 +206,16 @@ local function keyTrigger(key)
             local W = scene.widgetList.about
             W._pressTime = W._pressTimeMax * 2
             W._hoverTime = W._hoverTimeMax
+        elseif key == 'f14' then
+            GAME.anyChange = false
+            GAME.toggleEasy()
+            if GAME.anyChange then
+                SFX.play('allclear')
+            else
+                SFX.play('no')
+                MSG("dark", "Select upright mods to make Easy first!")
+            end
+            GAME.anyChange = false
         end
     end
 end
@@ -359,7 +369,7 @@ function scene.touchDown(x, y, id)
         revHold[id] = true
         return
     end
-    if not GAME.playing and x1 <= 200 and MATH.between(y1, -600, -340) then -- was -600
+    if not GAME.playing and x1 <= 200 and MATH.between(y1, -500, -320) then -- was -600
         easyHold[id] = true
         return
     end
@@ -1729,6 +1739,15 @@ scene.widgetList = {
         fontSize = 30, text = "    ACHV", textColor = { COLOR.HEX '73E284' },
         onPress = function() love.keypressed('tab') end,
         onClick = function() love.keyreleased('tab') end,
+    },
+    WIDGET.new {
+        name = 'easy', type = 'button',
+        pos = { 0, 0 }, x = 60, y = 410, w = 160, h = 60,
+        color = { .15, .75, .15 },
+        sound_hover = 'menutap',
+        fontSize = 30, text = "    EASY", textColor = 'DG',
+        onPress = function() love.keypressed('f14') end,
+        onClick = function() love.keyreleased('f14') end,
     },
     WIDGET.new {
         name = 'conf', type = 'button',

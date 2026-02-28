@@ -501,6 +501,13 @@ TEXTURE.recRevLight = GC.initCanvas(165, 120, function()
     GC.blurCircle(-.6, 105, 60, 60)
 end)
 
+TEXTURE.recEasyLight = GC.initCanvas(165, 120, function()
+    GC.clear(1, .1, .1, 0)
+    GC.setColor(.1, 1, .1)
+    GC.blurCircle(-.2, 60, 60, 60)
+    GC.blurCircle(-.6, 105, 60, 60)
+end)
+
 
 
 FONT.load {
