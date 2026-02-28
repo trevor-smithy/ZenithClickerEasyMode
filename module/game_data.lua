@@ -354,12 +354,16 @@ ComboData = {
         { set = "eEX eNH eMS eGV eVL eDH eIN AS eDP",       name = "Magical Bath With A Friend"},
         -- Any non-messy combination with AS and/or DP = Gamer Girl Bath Water
         { set = "eEX eNH eGV eVL eDH eIN AS DP",            name = "Gamer Girl Bath Water"},
-        { set = "eEX eNH eGV eVL eDH eIN eAS DP",            name = "Gamer Girl Bath Water"},
-        { set = "eEX eNH eGV eVL eDH eIN AS eDP",            name = "Gamer Girl Bath Water"},
+        { set = "eEX eNH eGV eVL eDH eIN eAS DP",           name = "Gamer Girl Bath Water"},
+        { set = "eEX eNH eGV eVL eDH eIN AS eDP",           name = "Gamer Girl Bath Water"},
         -- Credit: Rejuvenating rack/Mikamiyu
-        { set = "eEX eNH rMS eGV VL eDH eIN eAS",            name = "Goth Mommy Bath Water"},
+        { set = "eEX eNH rMS eGV VL eDH eIN eAS",           name = "Goth Mommy Bath Water"},
         -- Credit: FCSplayz
-        { set = "eEX eNH eMS eGV rVL rDH eAS rDP",            name = "Shocking Bath With A Toaster"},
+        { set = "eEX eNH eMS eGV rVL rDH eAS rDP",          name = "Shocking Bath With A Toaster"},
+        -- Credit: Flowerling
+        { set = "rEX MS eIN",                               name = "Omniscence"},
+        -- Credit: LovelyStar
+        { set = "eEX MS VL eIN",                            name = "Stargazing"},
         -- ultras
         { set = "eEX rGV eDH eAS",      name = "But It Isn't One Of Mine" },
 

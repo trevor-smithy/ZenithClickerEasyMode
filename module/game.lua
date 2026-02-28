@@ -1587,7 +1587,9 @@ function GAME.refreshCurrentCombo()
         end
     else
         if uneasyMode then -- if Uneasy Mode
-            if comboName:count('EASY') == 1 then 
+            if comboName == 'EASY HOLDLESS ALL-SPIN' then
+                comboName = '"THE PIXEL ARTIST"' -- Credit: LovelyStar
+            elseif comboName:count('EASY') == 1 then 
                 comboName = comboName:gsub("EASY", "UNEASY", 1)
             elseif not GAME.playing then
                 if GAME.smithyMode then
@@ -3194,7 +3196,7 @@ function GAME.finish(reason)
             SubmitAchv('the_responsible_one', GAME.reviveCount)
             SubmitAchv('the_responsible_one_plus', GAME.reviveCount * GAME.comboMP)
             SubmitAchv('guardian_angel', GAME.achv_maxReviveH or 0)
-            SubmitAchv('carried', GAME.achv_carriedH or GAME.roundHeight)
+            if M.DP > 0 then SubmitAchv('carried', GAME.achv_carriedH or GAME.roundHeight) end
             if M.DP == 2 then
                 SubmitAchv('the_unreliable_one', GAME.killCount)
                 if GAME.floor < 10 and GAME.time >= 600 and GAME.fatigueSet == Fatigue.rDP then
