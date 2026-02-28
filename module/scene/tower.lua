@@ -365,11 +365,11 @@ function scene.touchDown(x, y, id)
     end
     if GAME.zenithTraveler then return end
     local x1, y1 = SCR.xOy_dl:inverseTransformPoint(SCR.xOy:transformPoint(x, y))
-    if not GAME.playing and x1 <= 200 and MATH.between(y1, -300, -40) then -- was -600
+    if not GAME.playing and x1 <= 200 and MATH.between(y1, -285, -40) then -- was -600
         revHold[id] = true
         return
     end
-    if not GAME.playing and x1 <= 200 and MATH.between(y1, -500, -320) then -- was -600
+    if not GAME.playing and x1 <= 200 and MATH.between(y1, -540, -295) then -- was -600
         easyHold[id] = true
         return
     end
@@ -1345,7 +1345,7 @@ function scene.overDraw()
             gc_setColor(COLOR.S)
             gc_setAlpha(next(revHold) and .42 or .26)
         end
-        gc_draw(TEXTURE.transition, -200 * GAME.uiHide, -40, 0, 200 / 128, -300)
+        gc_draw(TEXTURE.transition, -200 * GAME.uiHide, -40, 0, 200 / 128, -245)
     end
 
     -- Easy trigger for touchscreen Trevor Smithy
@@ -1353,7 +1353,7 @@ function scene.overDraw()
         gc_replaceTransform(SCR.xOy_dl)
         gc_setColor(0, 1, 0)
         gc_setAlpha(next(easyHold) and .42 or .26)
-        gc_draw(TEXTURE.transition, -200 * GAME.uiHide, -340, 0, 200 / 128, -560)
+        gc_draw(TEXTURE.transition, -200 * GAME.uiHide, -295, 0, 200 / 128, -245)
     end
 
     -- Cards
