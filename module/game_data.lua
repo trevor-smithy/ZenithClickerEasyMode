@@ -1304,11 +1304,11 @@ TrailerTexts = {
     }
 }
 
-local rate = 2
+local rate = 2 -- timer multiplier between events, base at 1 is 5 seconds, 2 is 10 seconds
 TrailerEvents = {
     -- Trailer stuff
     { t = 5*rate }, { text = 'start.begin' },
-    { t = 10*2 },
+    { t = 10*rate },
     {
         text = 'easy.EX',
         color = 'lO',

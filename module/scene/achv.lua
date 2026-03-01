@@ -213,90 +213,13 @@ function RefreshAchvList(canShuffle)
 end
 
 local function submit(id, score, silent, realSilent)
-    if SubmitAchv(id, score, silent, realSilent) then TASK.yieldT(0.1) end
+    return
 end
 local function issue(id, silent)
-    if IssueAchv(id, silent) then TASK.yieldT(0.1) end
+    return
 end
 local function refreshAchivement()
-    if not STAT.uid:match('^ANON[-_]') or STAT.aboutme ~= "Click the Zenith!" then issue('identity') end
-    if BEST.highScore.DP > 0 then issue('intended_glitch') end
-    if BEST.highScore.ASDHEXGVINMSNHVLrDP > Floors[9].top then issue('dusty_memories') end
-    local MD = ModData
-    local sw = {
-        'swamp_water_lite',
-        'swamp_water',
-        'swamp_water_pro',
-    }
-    local swFin
-    local maxMMP, maxZP = 0, 0
-    for setStr, h in next, BEST.highScore do
-        setStr = setStr:gsub('^u', '')
-        submit(setStr, h)
-        local revCount = STRING.count(setStr, 'r')
-        local easyCount = STRING.count(setStr, 'e')
-        local count = (#setStr - revCount - easyCount) / 2
-        local len_noDP = count - (setStr:find('DP') and not setStr:find('rDP') and 1 or 0)
-        if len_noDP >= 7 then
-            for i = len_noDP, 14, -1 do
-                if revCount > 0 and easyCount == 0 then swFin = SubmitAchv(sw[i - 6] .. '_plus', h, swFin) or swFin end
-                if easyCount == 0 then swFin = SubmitAchv(sw[i - 6], h, swFin) or swFin end
-            end
-        end
-        local mp = count + revCount - (easyCount * 2)
-        if revCount >= 2 and mp >= 8 and easyCount == 0 then
-            for m = mp, 8, -1 do
-                submit(RevSwampName[min(m, #RevSwampName)]:sub(2, -2):lower(), h, m < mp)
-            end
-        end
-        maxMMP = max(maxMMP, h * mp)
-        local l = {}
-        for m in setStr:gmatch('r?%w%w') do l[m] = true end
-        maxZP = max(maxZP, h * GAME.getComboZP(l))
-    end
-    submit('multitasker', maxMMP)
-    submit('effective', maxZP)
-    submit('zenith_explorer', BEST.highScore[''] or 0)
-    submit('zenith_explorer', BEST.highScore[''] or 0)
-    submit('zenith_speedrun', BEST.speedrun[''] or 2600)
-    submit('zenith_explorer_plus', TABLE.maxAll(BEST.highScore) or 0)
-    submit('zenith_speedrun_plus', TABLE.minAll(BEST.speedrun) or 2600)
-    submit('contender', STAT.totalGame, true, true)
-    submit('clicker', STAT.totalFlip, true, true)
-    submit('elegance', STAT.totalPerfect, true, true)
-    submit('garbage_offensive', STAT.totalAttack, true, true)
-    submit('tower_climber', STAT.totalHeight, true, true)
-    submit('speed_player', STAT.totalGiga, true, true)
-    local _t
-    _t = 0
-    for id in next, MD.name do _t = _t + min(BEST.speedrun[id], 2600) end
-    submit('zenith_speedrunner', _t, true)
-    _t = 0
-    for id in next, MD.name do _t = _t + min(BEST.speedrun['r' .. id], 2600) end
-    submit('divine_speedrunner', _t, true)
-    _t = 0
-    for id in next, MD.name do _t = _t + BEST.highScore[id] end
-    submit('zenith_challenger', _t, true)
-    _t = 0
-    for id in next, MD.name do _t = _t + BEST.highScore['r' .. id] end
-    submit('divine_challenger', _t, true)
-
-    if not ACHV.false_god and MATH.sumAll(GAME.completion) >= 2 * #MD.deck then issue('false_god', ACHV.subjugation) end
-
-    if not ACHV.the_harbinger then
-        local allRevF5 = true
-        for id in next, MD.name do
-            if BEST.highScore['r' .. id] < Floors[4].top then
-                allRevF5 = false
-                break
-            end
-        end
-        if allRevF5 then
-            issue('the_harbinger')
-        end
-    end
-
-    RefreshAchvList()
+    return
 end
 
 function scene.load()
@@ -404,7 +327,7 @@ local gc_stc_setComp, gc_stc_arc, gc_stc_stop = GC.stc_setComp, GC.stc_arc, GC.s
 local gc_setBlendMode = GC.setBlendMode
 function scene.draw()
     DrawBG(26)
-
+    whenItsReady = true
     FONT.set(30)
     if whenItsReady then
         gc_replaceTransform(SCR.xOy)
@@ -426,11 +349,11 @@ function scene.draw()
             -25 + 420 + 102, 435
         )
         gc_setColor(COLOR.D)
-        gc_print("MrZ", 444, 440)
+        gc_print(" TS ", 444, 440)
         gc_setColor(COLOR.lD)
-        gc_print("at 2025/3/18 (Tue)", 535, 440)
+        gc_print("at 03/01/2026 (Sun)", 535, 440)
         gc_setColor(COLOR.lS)
-        gc_print("When it's ready.", 482, 515)
+        gc_print("Haha no achievements with trailer, fool.", 482, 515)
     else
         -- Board
         gc_replaceTransform(SCR.xOy_m)
