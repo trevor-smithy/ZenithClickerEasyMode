@@ -1815,7 +1815,7 @@ RefreshDaily()
 TABLE.update(TextColor, BaseTextColor)
 TABLE.update(ShadeColor, BaseShadeColor)
 GAME.refreshCurrentCombo()
-TEXTS.version:set(SYSTEM .. (STAT.oldHitbox and " eT" or " eV") .. (require 'version'.verStr))
+TEXTS.version:set(SYSTEM .. (STAT.oldHitbox and " eT" or " V") .. (require 'version'.verStr))
 if SYSTEM == 'Web' then
     _G[('DiscordRPC')] = { update = NULL, setEnable = NULL }
 else

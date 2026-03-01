@@ -867,7 +867,7 @@ function scene.draw()
         gc_setColor(COLOR.dL)
         gc_mDraw(TEXTS.zpChange, 220, 93, 0, .626)
         -- Version Check for records
-        gc_mDraw(TEXTS.easyModeVersion, 220, 111, 0, .626)
+        --gc_mDraw(TEXTS.easyModeVersion, 220, 111, 0, .626)
     end
 
     -- Daily Challenge Button
@@ -1742,7 +1742,7 @@ scene.widgetList = {
     },
     WIDGET.new {
         name = 'easy', type = 'button',
-        pos = { 0, 0 }, x = 60, y = 410, w = 160, h = 60,
+        pos = { 0, 0 }, x = -90, y = 410, w = 160, h = 60,
         color = { .15, .75, .15 },
         sound_hover = 'menutap',
         fontSize = 30, text = "    EASY", textColor = 'DG',

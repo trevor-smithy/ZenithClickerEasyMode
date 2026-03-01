@@ -225,15 +225,15 @@ ModData = {
         rAS = "OMNI-SPIN",
         rDP = "PIERCING",
         -- Trevor Smithy
-        eEX = "EASY", -- 0 7 
-        eNH = "MODERATE", -- 4 3
-        eMS = "TIDY", -- 2 1
-        eGV = "LIFTED", -- 6 6
-        eVL = "TRANQUIL", -- 3 2
-        eDH = "SAVED", -- 5 4
-        eIN = "VISIBLE", -- 1 0
-        eAS = "SPUN", -- 8 5
-        eDP = "FRIENDLY", -- 7 8
+        eEX = "EASY",
+        eNH = "MODERATE",
+        eMS = "TIDY",
+        eGV = "LIFTED",
+        eVL = "TRANQUIL",
+        eDH = "SAVED",
+        eIN = "VISIBLE",
+        eAS = "SPUN",
+        eDP = "FRIENDLY",
     },
     noun = {
         EX = "EXPERT",
@@ -262,7 +262,7 @@ ModData = {
         eVL = "TRANQUILITY",
         eDH = "SALVATION",
         eIN = "VISIBLITY",
-        eAS = "SPIN", --8
+        eAS = "SPIN",
         eDP = "FRIEND",
     },
 }
@@ -1248,6 +1248,285 @@ for _, e in next, NegEvents do
         lastH = e.h
     else
         e.h = lastH
+    end
+end
+
+TrailerTexts = {
+    start = {
+        begin = [[Your struggle has been observed]],
+    },
+    easy = {
+        EX = [[Expert Mode has been replaced by Easy Mode]],
+        eEX = [[Easy Mode makes climbing easier but removes XP lock delay]]
+    },
+    moderation = {
+        NH = [[No Hold has been replaced by Moderate Hold]],
+        eNH = [[Moderate Hold grants protection and allows deselection with double clicks]]
+    },
+    tidiness = {
+        MS = [[Messiness has been replaced by Tidiness]],
+        eMS = [[Tidiness has reduced shuffling and damage as well as additional healing]]
+    },
+    lift = {
+        GV = [[Gravity has been replaced by Lift]],
+        eGV = [[Lift autocommits quests and has a more lenient timer]]
+    },
+    tranquility = {
+        VL = [[Volatility has been replaced by Tranquility]],
+        eVL = [[Tranquility grants more XP and no longer requires double clicks]]
+    },
+    salvation = {
+        DH = [[Double Hole has been replaced by Salvation]],
+        eDH = [[Salvation makes quests easier and more favorable]]
+    },
+    visibility = {
+        IN = [[Invisibility has been replaced by Visibility]],
+        eIN = [[Visibility restores color and highlights necessary cards]]
+    },
+    spin = {
+        AS = [[All-Spin has been replaced by Spin]],
+        eAS = [[Spin has no burn penalty and activates B2B chaining]]
+    },
+    friend = {
+        DP = [[Duo has been replaced by Friend]],
+        eDP = [[Friend makes revives easier and removes penalty when dead]]
+    },
+    effect = {
+        start = [[Easy variants also exist for pieces]],
+        closer = [[Closer Card assists with correct selection]],
+        nightcore = [[Nightcore+ speeds up climbing but not fatigue]],
+        slowmo = [[Slowmo+ slows down timers without slowing climbing]],
+        glass = [[Glass Card+ trades attack for boosted passive climb speed]],
+        slowleak = [[Slow Leak makes higher climb speeds easier to obtain]],
+        transparent = [[Transparent UI and Cards allow for less clutter]],
+        surprise = [[The Creator thinks maybe this is too easy]],
+        uneasy = [[You begin to feel very... UNEASY]],
+    }
+}
+
+local rate = 2
+TrailerEvents = {
+    -- Trailer stuff
+    { t = 5*rate }, { text = 'start.begin' },
+    { t = 10*2 },
+    {
+        text = 'easy.EX',
+        color = 'lO',
+        cond = function() return GAME.mod.EX ~= -1 end,
+        event = function()
+            GAME.mod.EX = -1
+            GAME.xpLockLevelMax = 0
+            GAME.fatigueSet = Fatigue['eEX']
+            GAME.refreshModIcon()
+            GAME.refreshRPC()
+            TEXTS.version:set(SYSTEM .. " eV1.00.00")
+        end,
+    },
+    { t = 15*rate }, { text = 'easy.eEX' },
+    { t = 20*rate },
+    {
+        text = 'moderation.NH',
+        color = 'lO',
+        cond = function() return GAME.mod.NH ~= -1 end,
+        event = function()
+            GAME.mod.NH = -1
+            GAME.xpLockLevelMax = 2
+            GAME.refreshModIcon()
+            GAME.refreshRPC()
+        end,
+    },
+    { t = 25*rate }, { text = 'moderation.eNH' },
+    { t = 30*rate },
+    {
+        text = 'tidiness.MS',
+        color = 'lO',
+        cond = function() return GAME.mod.MS ~= -1 end,
+        event = function()
+            GAME.mod.MS = -1
+            GAME.sortCards()
+            GAME.weakShuffleCards(0)
+            GAME.dmgHeal = GAME.dmgHeal + 1
+            GAME.dmgWrong = GAME.dmgWrong - 1
+            GAME.dmgTime = GAME.dmgTime - 1
+            GAME.refreshModIcon()
+            GAME.refreshRPC()
+        end,
+    },
+    { t = 35*rate }, { text = 'tidiness.eMS' },
+    { t = 40*rate },
+    {
+        text = 'lift.GV',
+        color = 'lO',
+        cond = function() return GAME.mod.GV ~= -1 end,
+        event = function()
+            GAME.mod.GV = -1
+            GAME.refreshModIcon()
+            GAME.refreshRPC()
+        end,
+    },
+    { t = 45*rate }, { text = 'lift.eGV' },
+    { t = 50*rate },
+    {
+        text = 'tranquility.VL',
+        color = 'lO',
+        cond = function() return GAME.mod.VL ~= -1 end,
+        event = function()
+            GAME.mod.VL = -1
+            GAME.refreshModIcon()
+            GAME.refreshRPC()
+        end,
+    },
+    { t = 55*rate }, { text = 'tranquility.eVL' },
+    { t = 60*rate },
+    {
+        text = 'salvation.DH',
+        color = 'lO',
+        cond = function() return GAME.mod.DH ~= -1 end,
+        event = function()
+            GAME.mod.DH = -1
+            GAME.extraQuestBase = GAME.extraQuestBase - 0.26
+            GAME.extraQuestVar = GAME.extraQuestVar - 0.826
+            GAME.refreshModIcon()
+            GAME.refreshRPC()
+        end,
+    },
+    { t = 65*rate }, { text = 'salvation.eDH' },
+    { t = 70*rate },
+    {
+        text = 'visibility.IN',
+        color = 'lO',
+        cond = function() return GAME.mod.IN ~= -1 end,
+        event = function()
+            GAME.mod.IN = -1
+            GAME.refreshModIcon()
+            GAME.refreshRPC()
+        end,
+    },
+    { t = 75*rate }, { text = 'visibility.eIN' },
+    { t = 80*rate },
+    {
+        text = 'spin.AS',
+        color = 'lO',
+        cond = function() return GAME.mod.AS ~= -1 end,
+        event = function()
+            GAME.mod.AS = -1
+            GAME.refreshModIcon()
+            GAME.refreshRPC()
+        end,
+    },
+    { t = 85*rate }, { text = 'spin.eAS' },
+    { t = 90*rate },
+    {
+        text = 'friend.DP',
+        color = 'lO',
+        cond = function() return GAME.mod.DP ~= -1 end,
+        event = function()
+            GAME.mod.DP = -1
+            GAME.refreshModIcon()
+            GAME.refreshRPC()
+        end,
+    },
+    { t = 95*rate }, { text = 'friend.eDP' },
+    { t = 100*rate }, { text = 'effect.start'},
+    { t = 105*rate },
+    {
+        text = 'effect.closer',
+        color = 'lC',
+        event = function()
+            GAME.ecloseCard = true
+        end,
+    },
+    { t = 110*rate },
+    {
+        text = 'effect.nightcore',
+        color = 'lR',
+        event = function()
+            GAME.enightcore = true
+            RefreshBGM()
+        end,
+    },
+    { t = 115*rate },
+    {
+        text = 'effect.slowmo',
+        color = 'lG',
+        event = function()
+            GAME.enightcore = false
+            GAME.eslowmo = true
+            GAME.xpLockLevelMax = GAME.xpLockLevelMax * 1.5
+            GAME.leakSpeed = GAME.leakSpeed / 1.5
+            RefreshBGM()
+        end,
+    },
+    { t = 120*rate },
+    {
+        text = 'effect.glass',
+        color = 'lB',
+        event = function()
+            GAME.eslowmo = false
+            GAME.eglassCard = true
+            GAME.xpLockLevelMax = GAME.xpLockLevelMax / 1.5
+            GAME.leakSpeed = GAME.leakSpeed * 1.5
+            GAME.attackMul = GAME.attackMul * 0.5
+            RefreshBGM()
+        end,
+    },
+    { t = 125*rate },
+    {
+        text = 'effect.slowleak',
+        color = 'lO',
+        event = function()
+            GAME.eglassCard = false
+            GAME.efastLeak = true
+            GAME.xpLockLevelMax = GAME.xpLockLevelMax + 5
+            GAME.leakSpeed = GAME.leakSpeed - 1.875
+            GAME.attackMul = GAME.attackMul / 0.5
+        end,
+    },
+    { t = 130*rate },
+    {
+        text = 'effect.transparent',
+        color = 'lM',
+        event = function()
+            GAME.efastLeak = false
+            GAME.einvisCard = true
+            GAME.einvisUI = true
+            GAME.xpLockLevelMax = GAME.xpLockLevelMax - 5
+            GAME.leakSpeed = GAME.leakSpeed + 1.875
+        end,
+    },
+    { t = 135*rate },
+    {
+        text = 'effect.surprise',
+        color = 'lY',
+        event = function()
+            GAME.einvisCard = false
+            GAME.einvisUI = false
+        end,
+    },
+    { t = 140*rate },
+    {
+        text = 'effect.uneasy',
+        color = 'R',
+        event = function()
+            GAME.ecloseCard = false
+            GAME.attackMul = GAME.attackMul / 3
+            URM = true
+            SFX.play('exchange')
+            GAME.time = 860
+        end,
+    },
+    { t = 1e99 },
+}
+local lastT = 0
+for _, e in next, TrailerEvents do
+    e.cond = e.cond or TRUE
+    e.text = e.text and TABLE.pathIndex(TrailerTexts, e.text) or e.text
+    e.text2 = e.text2 and TABLE.pathIndex(TrailerTexts, e.text2) or e.text2
+    if e.t then
+        assert(e.t >= lastT)
+        lastT = e.t
+    else
+        e.t = lastT
     end
 end
 

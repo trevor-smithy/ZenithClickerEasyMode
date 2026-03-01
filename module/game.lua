@@ -122,6 +122,7 @@ local ins, rem = table.insert, table.remove
 ---@field teraLostHeight number
 ---@field customUltraCombo boolean
 ---@field anyChange boolean
+---@field finished boolean
 local GAME = {
     forfeitTimer = 0,
     exTimer = 0,
@@ -665,8 +666,10 @@ function GAME.anim_setMenuHide(t)
     w.stat:resetPos()
     w.achv.x = cLerp(60, -90, t * 1.5)
     w.achv:resetPos()
-    w.easy.x = cLerp(60, -90, t * 1.5)
-    w.easy:resetPos()
+    if GAME.finished then 
+        w.easy.x = cLerp(60, -90, t * 1.5)
+        w.easy:resetPos()
+    end
     w.conf.x = cLerp(-60, 90, t * 1.5 - .5)
     w.conf:resetPos()
     w.about.x = cLerp(-60, 90, t * 1.5)
@@ -1415,6 +1418,36 @@ function GAME.nextNegEvent()
         SFX.play(e.sfx or sfx)
     end
     GAME.negEvent = GAME.negEvent + 1
+end
+
+function GAME.nextTrailerEvent()
+    local e = TrailerEvents[GAME.trailerEvent]
+    if e.cond() then
+        if type(e.event) == 'function' then
+            e.event()
+        elseif type(e.event) == 'table' then
+            for i = 1, #e.event, 2 do
+                if type(e.event[i + 1]) == 'number' then
+                    GAME[e.event[i]] = GAME[e.event[i]] + e.event[i + 1]
+                else
+                    GAME[e.event[i]] = e.event[i + 1]
+                end
+            end
+        end
+        local sfx
+        if e.text then
+            TEXT:add {
+                text = e.text,
+                x = 800, y = 490, fontSize = 30, k = 1.5 * (e.size or 1),
+                style = 'score', duration = e.duration or 5,
+                inPoint = .1, outPoint = .26,
+                color = e.color or 'lR',
+            }
+            sfx = 'counter'
+        end
+        SFX.play(e.sfx or sfx)
+    end
+    GAME.trailerEvent = GAME.trailerEvent + 1
 end
 
 local revLetter = setmetatable({
@@ -2518,6 +2551,7 @@ function GAME.start()
     GAME.omega = false
     GAME.negFloor = 1
     GAME.negEvent = 1
+    GAME.trailerEvent = 1
     GAME.timerMul = 1
     GAME.isUltraRun = GAME.anyUltra
     local attackMulMod = 1
@@ -2718,6 +2752,7 @@ end
 
 ---@param reason 'forfeit' | 'wrong' | 'time'
 function GAME.finish(reason)
+    GAME.finished = true
     SCN.scenes.tower.widgetList.help:setVisible(not GAME.zenithTraveler)
     SCN.scenes.tower.widgetList.help2:setVisible(not GAME.zenithTraveler)
     SCN.scenes.tower.widgetList.daily:setVisible(not GAME.zenithTraveler)
@@ -3487,6 +3522,7 @@ function GAME.update(dt)
         else
             GAME.height = GAME.height + GAME.rank / 4 * passiveClimbSpeedMod * dt * icLerp(1, 6, Floors[GAME.floor].top - GAME.height)
         end
+        if GAME.time >= TrailerEvents[GAME.trailerEvent].t then GAME.nextTrailerEvent() end
     end
 
     GAME.roundHeight = floor(GAME.height * 10) / 10
