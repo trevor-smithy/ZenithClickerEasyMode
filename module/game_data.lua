@@ -872,6 +872,8 @@ NegTexts = {
         begin = [[You find yourself in an unfamiliar place.]],
         noAS = [[You passed the security check without any prohibited items.]],
         ASoff = [[To prevent mech heart users from entering, the AS mod has been confiscated.]],
+        easyAS = [[A mysterious individual offers you a secret, magical way to experience this.]],
+        easyDP = [[Your friend takes your place and pulls you back to safety.]],
         -- egg = [[Garbo checks the imprisoned mech heart users here from time to time, except rtxtile, who kept escaping somehow?]],
     },
     b2 = { -- Zenith Restaurant
@@ -880,8 +882,10 @@ NegTexts = {
         effStart = [[Illusions dance before your eyes...]],
         noVL = [[You feel yourself getting weaker...]],
         VLoff = [[You feel your strength fading...]],
+        easyVL = [[Your sensation of tranquility persists...]],
         noIN = [[The illusion before your eyes hasn't entirely faded...]],
         INoff = [[Your mind is becoming clearer...]],
+        easyIN = [[Your keen eye allows you to bypass the illusions...]],
     },
     b3 = { -- Underground Parking
         desc = "A boundless parking lot for all of these visitors.",
@@ -890,6 +894,7 @@ NegTexts = {
         mid1 = [["Where am I?"]],
         noGV = [[You feel like you're not going fast enough...]],
         GVoff = [[You subconsciously quickened your pace...]],
+        easyGV = [[You feel your spirits lifted, so you pick up the pace...]],
         mid2 = [["Where am I going?"]],
     },
     b4 = { -- The Bunker
@@ -898,6 +903,7 @@ NegTexts = {
         effStart = [[The barren bunker begins to feel ghostly.]],
         noMS = [[It seems that luck was against you...]],
         MSoff = [[You organized your thoughts...]],
+        easyMS = [[You tidy your thoughts...]],
     },
     b5 = { -- The Infirmary
         desc = "The medical sector of the tower, filled with incomprehensible technology.\nThey look similar to the ones in the Laboratory...",
@@ -905,6 +911,7 @@ NegTexts = {
         effStart = [[One horrifying scene after another floods your vision.]],
         noDH = [[A sinister thought crosses your mind...]],
         DHoff = [[You shuddered while walking in this terrifying place.]],
+        easyDH = [[Your simplistic view overlooks this mystery.]],
     },
     b6 = { -- Decayed Catacombs
         desc = "A complex of the dead,\nnow decaying into an even more unsettling shell of itself.",
@@ -913,6 +920,7 @@ NegTexts = {
         mid = [[You begin to hear something calling your name...]],
         noNH = [[You cannot ignore the voice...]],
         NHoff = [[You overcome your fear.]],
+        easyNH = [[You overcome fear and temptation through diligent moderation.]]
     },
     b7 = { -- Sacreligious Ruins
         desc = "The remains of a previously sacred chapel, the spirits of those,\nwho worshipped the gods above linger on...",
@@ -966,10 +974,42 @@ NegEvents = {
             GAME.refreshRPC()
         end,
     },
-
+    {
+        text = 'b1.easyAS',
+        color = 'lO',
+        cond = function() return GAME.mod.AS == -1 end,
+        event = function()
+            GAME.attackMul = GAME.attackMul - .1
+            GAME.dmgTimerMul = GAME.dmgTimerMul + .01
+            --GAME.mod.AS = 0
+            --GAME.refreshModIcon()
+            --GAME.refreshRPC()
+        end,
+    },
+    { h = -36 },
+    {
+        text = 'b1.easyDP',
+        color = 'lO',
+        cond = function() return GAME.mod.DP == -1 end,
+        event = function()
+            GAME.heightBuffer = 86
+            GAME.rank = 8
+            GAME.mod.DP = 0
+            GAME.fullHealth = 20
+            GAME.refreshModIcon()
+            GAME.refreshRPC()
+        end,
+    },
     -- B2: Zenith Restaurant
     { h = -50 }, { event = { 'dmgDelay', -2 } },
     { event = { 'attackMul', -.1, 'timerMul', -.25 } },
+    { 
+        cond = function() return GAME.mod.NH == -1 or GAME.mod.MS == -1 or GAME.mod.GV == -1 or GAME.mod.VL == -1 or GAME.mod.DH == -1 or GAME.mod.IN == -1 or GAME.mod.AS == -1 end,
+        event = function() 
+            GAME.attackMul = GAME.attackMul - (GAME.mod.NH == -1 and 0.01 or 0) - (GAME.mod.MS == -1 and 0.01 or 0) - (GAME.mod.GV == -1 and 0.01 or 0) 
+            - (GAME.mod.VL == -1 and 0.01 or 0) - (GAME.mod.DH == -1 and 0.01 or 0) - (GAME.mod.IN == -1 and 0.01 or 0) - (GAME.mod.AS == -1 and 0.01 or 0)
+        end,
+    },
     { h = -55 }, { text = 'b2.begin' },
     { h = -60 },
     {
@@ -993,6 +1033,18 @@ NegEvents = {
             GAME.refreshRPC()
         end,
     },
+    {
+        text = 'b2.easyVL',
+        color = 'lO',
+        cond = function() return GAME.mod.VL == -1 end,
+        event = function()
+            GAME.attackMul = GAME.attackMul - .1
+            GAME.dmgTimerMul = GAME.dmgTimerMul + .01
+            --GAME.mod.VL = 0
+            --GAME.refreshModIcon()
+            --GAME.refreshRPC()
+        end,
+    },
     { h = -120 },
     { text = 'b2.noIN', color = 'lB', cond = function() return GAME.mod.IN == 0 end },
     {
@@ -1010,10 +1062,26 @@ NegEvents = {
             GAME.refreshRPC()
         end,
     },
+    {
+        text = 'b2.easyIN',
+        color = 'lO',
+        cond = function() return GAME.mod.IN == -1 end,
+        event = function()
+            GAME.dmgCycle = GAME.dmgCycle + 1
+            GAME.attackMul = GAME.attackMul - .1
+            GAME.dmgTimerMul = GAME.dmgTimerMul + .01
+            --GAME.mod.IN = 0
+            --RefreshBGM()
+            --for _, C in ipairs(Cards) do C:flip() end
+            --GAME.refreshModIcon()
+            --GAME.refreshRPC()
+        end,
+    },
     { h = -150 },
     {
         event = function()
             GAME.nightcore = false
+            GAME.enightcore = false
             RefreshBGM()
         end
     },
@@ -1022,14 +1090,106 @@ NegEvents = {
     -- B3: Underground Parking
     { h = -150 }, { event = { 'dmgDelay', -2, 'dmgCycle', -.5 } },
     { event = { 'attackMul', -.1, 'timerMul', -.15 } },
+    { 
+        cond = function() return GAME.mod.NH == -1 or GAME.mod.MS == -1 or GAME.mod.GV == -1 or GAME.mod.VL == -1 or GAME.mod.DH == -1 or GAME.mod.IN == -1 or GAME.mod.AS == -1 end,
+        event = function() 
+            GAME.attackMul = GAME.attackMul - (GAME.mod.NH == -1 and 0.01 or 0) - (GAME.mod.MS == -1 and 0.01 or 0) - (GAME.mod.GV == -1 and 0.01 or 0)  
+            - (GAME.mod.VL == -1 and 0.01 or 0) - (GAME.mod.DH == -1 and 0.01 or 0) - (GAME.mod.IN == -1 and 0.01 or 0) - (GAME.mod.AS == -1 and 0.01 or 0)
+        end,
+    },
+    { 
+        cond = function() return GAME.mod.NH == -1 and GAME.mod.MS == -1 and GAME.mod.GV == -1 and GAME.mod.VL == -1 and GAME.mod.DH == -1 and GAME.mod.IN == -1 and GAME.mod.AS == -1 end,
+        event = function() GAME.dmgWrong = math.min(GAME.dmgWrong, 2) 
+        end, 
+    },
     { h = -155 }, { text = 'b3.begin' },
     { h = -160 }, { text = 'b3.effStart' },
-    { h = -165 }, { event = { 'invisUI', true } },
-    { h = -170 }, { event = { 'invisUI', false } },
-    { h = -175 }, { event = { 'invisUI', true } },
+    { h = -165 }, 
+    { 
+        cond = function() return (((GAME.mod.NH == -1 and 1 or 0) + (GAME.mod.MS == -1 and 1 or 0) + (GAME.mod.GV == -1 and 1 or 0)  
+        + (GAME.mod.VL == -1 and 1 or 0) + (GAME.mod.DH == -1 and 1 or 0) + (GAME.mod.IN == -1 and 1 or 0) + (GAME.mod.AS == -1 and 1 or 0)) < 3)
+        end,
+        event = function()
+            GAME.invisUI = true
+        end,
+    },
+    { 
+        cond = function() return (((GAME.mod.NH == -1 and 1 or 0) + (GAME.mod.MS == -1 and 1 or 0) + (GAME.mod.GV == -1 and 1 or 0)  
+        + (GAME.mod.VL == -1 and 1 or 0) + (GAME.mod.DH == -1 and 1 or 0) + (GAME.mod.IN == -1 and 1 or 0) + (GAME.mod.AS == -1 and 1 or 0)) >= 3)
+        end,
+        event = function()
+            GAME.einvisUI = true
+        end,
+    },
+    { h = -170 }, 
+    { 
+        cond = function() return (((GAME.mod.NH == -1 and 1 or 0) + (GAME.mod.MS == -1 and 1 or 0) + (GAME.mod.GV == -1 and 1 or 0)  
+        + (GAME.mod.VL == -1 and 1 or 0) + (GAME.mod.DH == -1 and 1 or 0) + (GAME.mod.IN == -1 and 1 or 0) + (GAME.mod.AS == -1 and 1 or 0)) < 3)
+        end, 
+        event = function()
+            GAME.invisUI = false
+        end,
+    },
+    { 
+        cond = function() return (((GAME.mod.NH == -1 and 1 or 0) + (GAME.mod.MS == -1 and 1 or 0) + (GAME.mod.GV == -1 and 1 or 0)  
+        + (GAME.mod.VL == -1 and 1 or 0) + (GAME.mod.DH == -1 and 1 or 0) + (GAME.mod.IN == -1 and 1 or 0) + (GAME.mod.AS == -1 and 1 or 0)) >= 3)
+        end, 
+        event = function()
+            GAME.einvisUI = false
+        end,
+    },
+    { h = -175 }, 
+    { 
+        cond = function() return (((GAME.mod.NH == -1 and 1 or 0) + (GAME.mod.MS == -1 and 1 or 0) + (GAME.mod.GV == -1 and 1 or 0)  
+        + (GAME.mod.VL == -1 and 1 or 0) + (GAME.mod.DH == -1 and 1 or 0) + (GAME.mod.IN == -1 and 1 or 0) + (GAME.mod.AS == -1 and 1 or 0)) < 3)
+        end,
+        event = function()
+            GAME.invisUI = true
+        end, 
+    },
+    {
+        cond = function() return (((GAME.mod.NH == -1 and 1 or 0) + (GAME.mod.MS == -1 and 1 or 0) + (GAME.mod.GV == -1 and 1 or 0)  
+        + (GAME.mod.VL == -1 and 1 or 0) + (GAME.mod.DH == -1 and 1 or 0) + (GAME.mod.IN == -1 and 1 or 0) + (GAME.mod.AS == -1 and 1 or 0)) >= 3)
+        end,
+        event = function()
+            GAME.einvisUI = true
+        end, 
+    },
     { h = -180 }, { text = 'b3.mid1' },
-    { h = -185 }, { event = { 'invisUI', false } },
-    { h = -195 }, { event = { 'invisUI', true } },
+    { h = -185 },
+    { 
+        cond = function() return (((GAME.mod.NH == -1 and 1 or 0) + (GAME.mod.MS == -1 and 1 or 0) + (GAME.mod.GV == -1 and 1 or 0)  
+        + (GAME.mod.VL == -1 and 1 or 0) + (GAME.mod.DH == -1 and 1 or 0) + (GAME.mod.IN == -1 and 1 or 0) + (GAME.mod.AS == -1 and 1 or 0)) < 3)
+        end,
+        event = function()
+            GAME.invisUI = false
+        end,
+    },
+    { 
+        cond = function() return (((GAME.mod.NH == -1 and 1 or 0) + (GAME.mod.MS == -1 and 1 or 0) + (GAME.mod.GV == -1 and 1 or 0)  
+        + (GAME.mod.VL == -1 and 1 or 0) + (GAME.mod.DH == -1 and 1 or 0) + (GAME.mod.IN == -1 and 1 or 0) + (GAME.mod.AS == -1 and 1 or 0)) >= 3)
+        end,
+        event = function()
+            GAME.einvisUI = false
+        end, 
+    },
+    { h = -195 },
+    { 
+        cond = function() return (((GAME.mod.NH == -1 and 1 or 0) + (GAME.mod.MS == -1 and 1 or 0) + (GAME.mod.GV == -1 and 1 or 0)  
+        + (GAME.mod.VL == -1 and 1 or 0) + (GAME.mod.DH == -1 and 1 or 0) + (GAME.mod.IN == -1 and 1 or 0) + (GAME.mod.AS == -1 and 1 or 0)) < 3)
+        end,
+        event = function()
+            GAME.invisUI = true
+        end,
+    },
+    { 
+        cond = function() return (((GAME.mod.NH == -1 and 1 or 0) + (GAME.mod.MS == -1 and 1 or 0) + (GAME.mod.GV == -1 and 1 or 0)  
+        + (GAME.mod.VL == -1 and 1 or 0) + (GAME.mod.DH == -1 and 1 or 0) + (GAME.mod.IN == -1 and 1 or 0) + (GAME.mod.AS == -1 and 1 or 0)) >= 3)
+        end,
+        event = function()
+            GAME.einvisUI = true
+        end,
+    },
     { h = -200 },
     { text = 'b3.noGV', color = 'lB', cond = function() return GAME.mod.GV == 0 end },
     {
@@ -1046,12 +1206,106 @@ NegEvents = {
             RefreshBGM()
         end,
     },
-    { h = -200 }, { event = { 'invisUI', false } },
-    { h = -210 }, { event = { 'invisUI', true } },
+    {
+        text = 'b3.easyGV',
+        color = 'lO',
+        cond = function() return GAME.mod.GV == -1 end,
+        event = function()
+            GAME.dmgDelay = GAME.dmgDelay + 4
+            GAME.attackMul = GAME.attackMul - .1
+            GAME.dmgTimerMul = GAME.dmgTimerMul + .01
+            --GAME.mod.GV = 0
+            --GAME.refreshModIcon()
+            --GAME.refreshRPC()
+            --RefreshBGM()
+        end,
+    },
+    { h = -200 },
+    { 
+        cond = function() return (((GAME.mod.NH == -1 and 1 or 0) + (GAME.mod.MS == -1 and 1 or 0) + (GAME.mod.GV == -1 and 1 or 0)  
+        + (GAME.mod.VL == -1 and 1 or 0) + (GAME.mod.DH == -1 and 1 or 0) + (GAME.mod.IN == -1 and 1 or 0) + (GAME.mod.AS == -1 and 1 or 0)) < 3)
+        end,
+        event = function()
+            GAME.invisUI = false
+        end,
+    },
+    { 
+        cond = function() return (((GAME.mod.NH == -1 and 1 or 0) + (GAME.mod.MS == -1 and 1 or 0) + (GAME.mod.GV == -1 and 1 or 0)  
+        + (GAME.mod.VL == -1 and 1 or 0) + (GAME.mod.DH == -1 and 1 or 0) + (GAME.mod.IN == -1 and 1 or 0) + (GAME.mod.AS == -1 and 1 or 0)) >= 3)
+        end,
+        event = function()
+            GAME.einvisUI = false
+        end,
+    },
+    { h = -210 }, 
+    { 
+        cond = function() return (((GAME.mod.NH == -1 and 1 or 0) + (GAME.mod.MS == -1 and 1 or 0) + (GAME.mod.GV == -1 and 1 or 0)  
+        + (GAME.mod.VL == -1 and 1 or 0) + (GAME.mod.DH == -1 and 1 or 0) + (GAME.mod.IN == -1 and 1 or 0) + (GAME.mod.AS == -1 and 1 or 0)) < 3)
+        end,
+        event = function()
+            GAME.invisUI = true
+        end,
+    },
+    { 
+        cond = function() return (((GAME.mod.NH == -1 and 1 or 0) + (GAME.mod.MS == -1 and 1 or 0) + (GAME.mod.GV == -1 and 1 or 0)  
+        + (GAME.mod.VL == -1 and 1 or 0) + (GAME.mod.DH == -1 and 1 or 0) + (GAME.mod.IN == -1 and 1 or 0) + (GAME.mod.AS == -1 and 1 or 0)) >= 3)
+        end,
+        event = function()
+            GAME.einvisUI = true
+        end,
+    },
     { h = -220 }, { text = 'b3.mid2' },
-    { h = -250 }, { event = { 'invisUI', false } },
-    { h = -260 }, { event = { 'invisUI', true } },
-    { h = -280 }, { event = { 'invisUI', false } },
+    { h = -250 },
+    { 
+        cond = function() return (((GAME.mod.NH == -1 and 1 or 0) + (GAME.mod.MS == -1 and 1 or 0) + (GAME.mod.GV == -1 and 1 or 0)  
+        + (GAME.mod.VL == -1 and 1 or 0) + (GAME.mod.DH == -1 and 1 or 0) + (GAME.mod.IN == -1 and 1 or 0) + (GAME.mod.AS == -1 and 1 or 0)) < 3)
+        end,
+        event = function()
+            GAME.invisUI = false
+        end,
+    },
+    { 
+        cond = function() return (((GAME.mod.NH == -1 and 1 or 0) + (GAME.mod.MS == -1 and 1 or 0) + (GAME.mod.GV == -1 and 1 or 0)  
+        + (GAME.mod.VL == -1 and 1 or 0) + (GAME.mod.DH == -1 and 1 or 0) + (GAME.mod.IN == -1 and 1 or 0) + (GAME.mod.AS == -1 and 1 or 0)) >= 3)
+        end,
+        event = function()
+            GAME.einvisUI = false
+        end, 
+    },
+    { h = -260 },
+    { 
+        cond = function() return (((GAME.mod.NH == -1 and 1 or 0) + (GAME.mod.MS == -1 and 1 or 0) + (GAME.mod.GV == -1 and 1 or 0)  
+        + (GAME.mod.VL == -1 and 1 or 0) + (GAME.mod.DH == -1 and 1 or 0) + (GAME.mod.IN == -1 and 1 or 0) + (GAME.mod.AS == -1 and 1 or 0)) < 3)
+        end,
+        event = function()
+            GAME.invisUI = true
+        end,
+    },
+    { 
+        cond = function() return (((GAME.mod.NH == -1 and 1 or 0) + (GAME.mod.MS == -1 and 1 or 0) + (GAME.mod.GV == -1 and 1 or 0)  
+        + (GAME.mod.VL == -1 and 1 or 0) + (GAME.mod.DH == -1 and 1 or 0) + (GAME.mod.IN == -1 and 1 or 0) + (GAME.mod.AS == -1 and 1 or 0)) >= 3)
+        end,
+        event = function()
+            GAME.einvisUI = true
+        end,
+    },
+    { h = -280 },
+    { 
+        cond = function() return (((GAME.mod.NH == -1 and 1 or 0) + (GAME.mod.MS == -1 and 1 or 0) + (GAME.mod.GV == -1 and 1 or 0)  
+        + (GAME.mod.VL == -1 and 1 or 0) + (GAME.mod.DH == -1 and 1 or 0) + (GAME.mod.IN == -1 and 1 or 0) + (GAME.mod.AS == -1 and 1 or 0)) < 3)
+        end,
+        event = function()
+            GAME.invisUI = false
+        end,
+    },
+    { 
+        cond = function() return (((GAME.mod.NH == -1 and 1 or 0) + (GAME.mod.MS == -1 and 1 or 0) + (GAME.mod.GV == -1 and 1 or 0)  
+        + (GAME.mod.VL == -1 and 1 or 0) + (GAME.mod.DH == -1 and 1 or 0) + (GAME.mod.IN == -1 and 1 or 0) + (GAME.mod.AS == -1 and 1 or 0)) >= 3)
+        end,
+        event = function()
+            GAME.einvisUI = false
+        end, 
+    },
 
     -- B4: The Bunker
     { h = -300 }, { event = { 'dmgDelay', -1, 'dmgCycle', -.5 } },
@@ -1076,6 +1330,20 @@ NegEvents = {
             GAME.refreshRPC()
         end,
     },
+    {
+        text = 'b4.easyMS',
+        color = 'lO',
+        cond = function() return GAME.mod.MS == -1 end,
+        event = function()
+            GAME.extraQuestBase = GAME.extraQuestBase - .2
+            GAME.attackMul = GAME.attackMul - .1
+            GAME.dmgTimerMul = GAME.dmgTimerMul + .01
+            --GAME.mod.MS = 0
+            GAME.sortCards()
+            --GAME.refreshModIcon()
+            --GAME.refreshRPC()
+        end,
+    },
     { h = -450 }, { event = { 'glassCard', false } },
 
     -- B5: The Infirmary
@@ -1085,8 +1353,20 @@ NegEvents = {
     { h = -460 }, { text = 'b5.begin' },
     { h = -470 }, { text = 'b5.effStart' },
     {
+        cond = function() return (((GAME.mod.NH == -1 and 1 or 0) + (GAME.mod.MS == -1 and 1 or 0) + (GAME.mod.GV == -1 and 1 or 0)  
+        + (GAME.mod.VL == -1 and 1 or 0) + (GAME.mod.DH == -1 and 1 or 0) + (GAME.mod.IN == -1 and 1 or 0) + (GAME.mod.AS == -1 and 1 or 0)) < 4)
+        end,
         event = function()
             GAME.slowmo = true
+            RefreshBGM()
+        end
+    },
+    {
+        cond = function() return (((GAME.mod.NH == -1 and 1 or 0) + (GAME.mod.MS == -1 and 1 or 0) + (GAME.mod.GV == -1 and 1 or 0)  
+        + (GAME.mod.VL == -1 and 1 or 0) + (GAME.mod.DH == -1 and 1 or 0) + (GAME.mod.IN == -1 and 1 or 0) + (GAME.mod.AS == -1 and 1 or 0)) >= 4)
+        end,
+        event = function()
+            GAME.eslowmo = true
             RefreshBGM()
         end
     },
@@ -1105,10 +1385,24 @@ NegEvents = {
             GAME.refreshRPC()
         end,
     },
+    {
+        text = 'b5.easyDH',
+        color = 'lO',
+        cond = function() return GAME.mod.DH == -1 end,
+        event = function()
+            GAME.extraQuestVar = GAME.extraQuestVar - .2
+            GAME.attackMul = GAME.attackMul - .1
+            GAME.dmgTimerMul = GAME.dmgTimerMul + .01
+            --GAME.mod.DH = 0
+            --GAME.refreshModIcon()
+            --GAME.refreshRPC()
+        end,
+    },
     { h = -650 },
     {
         event = function()
             GAME.slowmo = false
+            GAME.eslowmo = false
             RefreshBGM()
         end
     },
@@ -1118,7 +1412,21 @@ NegEvents = {
     { event = { 'attackMul', -.1 } },
     { event = function() GAME.dmgWrong = math.min(GAME.dmgWrong, 2) end },
     { h = -660 }, { text = 'b6.begin' },
-    { h = -670 }, { text = 'b6.effStart', event = { 'invisCard', true } },
+    { h = -670 }, 
+    { 
+        text = 'b6.effStart', 
+        cond = function() return (((GAME.mod.NH == -1 and 1 or 0) + (GAME.mod.MS == -1 and 1 or 0) + (GAME.mod.GV == -1 and 1 or 0)  
+        + (GAME.mod.VL == -1 and 1 or 0) + (GAME.mod.DH == -1 and 1 or 0) + (GAME.mod.IN == -1 and 1 or 0) + (GAME.mod.AS == -1 and 1 or 0)) < 5)
+        end,
+        event = { 'invisCard', true }, 
+    },
+    { 
+        text = 'b6.effStart', 
+        cond = function() return (((GAME.mod.NH == -1 and 1 or 0) + (GAME.mod.MS == -1 and 1 or 0) + (GAME.mod.GV == -1 and 1 or 0)  
+        + (GAME.mod.VL == -1 and 1 or 0) + (GAME.mod.DH == -1 and 1 or 0) + (GAME.mod.IN == -1 and 1 or 0) + (GAME.mod.AS == -1 and 1 or 0)) >= 5)
+        end,
+        event = { 'einvisCard', true }, 
+    },
     { h = -720 },
     { text = 'b6.noNH', color = 'lB', cond = function() return GAME.mod.NH == 0 end },
     {
@@ -1136,7 +1444,22 @@ NegEvents = {
             GAME.refreshRPC()
         end,
     },
-    { h = -850 }, { event = { 'invisCard', false } },
+    {
+        text = 'b6.easyNH',
+        color = 'lO',
+        cond = function() return GAME.mod.NH == -1 end,
+        event = function()
+            GAME.dmgHeal = GAME.dmgHeal + 3
+            GAME.attackMul = GAME.attackMul - .1
+            GAME.dmgTimerMul = GAME.dmgTimerMul + .01
+            --GAME.mod.NH = 0
+            --GAME.maxQuestCount = 3
+            --GAME.xpLockLevelMax = 5
+            --GAME.refreshModIcon()
+            --GAME.refreshRPC()
+        end,
+    },
+    { h = -850 }, { event = { 'invisCard', false } }, { event = { 'einvisCard', false } },
 
     -- B7: Sacreligious Ruins
     { h = -850 }, { event = { 'dmgDelay', -1, 'dmgCycle', -.5 } },
@@ -1161,16 +1484,28 @@ NegEvents = {
     { h = -1197 }, { sfx = 'b2bcharge_distance_1' },
     { h = -1200 },
     {
+        cond = function() return (((GAME.mod.NH == -1 and 1 or 0) + (GAME.mod.MS == -1 and 1 or 0) + (GAME.mod.GV == -1 and 1 or 0)  
+        + (GAME.mod.VL == -1 and 1 or 0) + (GAME.mod.DH == -1 and 1 or 0) + (GAME.mod.IN == -1 and 1 or 0) + (GAME.mod.AS == -1 and 1 or 0)) < 7)
+        end,
         event = function()
             GAME.nightcore = true
             RefreshBGM()
         end
     },
-
+    {
+        cond = function() return (((GAME.mod.NH == -1 and 1 or 0) + (GAME.mod.MS == -1 and 1 or 0) + (GAME.mod.GV == -1 and 1 or 0)  
+        + (GAME.mod.VL == -1 and 1 or 0) + (GAME.mod.DH == -1 and 1 or 0) + (GAME.mod.IN == -1 and 1 or 0) + (GAME.mod.AS == -1 and 1 or 0)) >= 7)
+        end,
+        event = function()
+            GAME.enightcore = true
+            RefreshBGM()
+        end
+    },
     { h = -1350 },
     {
         event = function()
             GAME.nightcore = false
+            GAME.enightcore = false
             RefreshBGM()
         end
     },
@@ -1179,14 +1514,19 @@ NegEvents = {
     -- B9: Distorted Gateways
     { h = -1350 }, { event = { 'dmgDelay', -.5 } },
     { h = -1360 }, { text = 'b9.begin' },
-    { event = function() GAME.rankLimit = math.min(GAME.rankLimit, 10) end },
+    { 
+        event = function() 
+            GAME.rankLimit = math.min(GAME.rankLimit, 10 + 5 * ((GAME.mod.NH == -1 and 1 or 0) + (GAME.mod.MS == -1 and 1 or 0) + (GAME.mod.GV == -1 and 1 or 0)  
+        + (GAME.mod.VL == -1 and 1 or 0) + (GAME.mod.DH == -1 and 1 or 0) + (GAME.mod.IN == -1 and 1 or 0) + (GAME.mod.AS == -1 and 1 or 0))) end 
+    },
     {
         text = 'b9.mid',
         color = 'lR',
         size = 2.6,
         duration = 16,
         event = function()
-            GAME.time = math.max(GAME.time, 419)
+            GAME.time = math.max(GAME.time, 419 - 20 * ((GAME.mod.NH == -1 and 1 or 0) + (GAME.mod.MS == -1 and 1 or 0) + (GAME.mod.GV == -1 and 1 or 0)  
+            + (GAME.mod.VL == -1 and 1 or 0) + (GAME.mod.DH == -1 and 1 or 0) + (GAME.mod.IN == -1 and 1 or 0) + (GAME.mod.AS == -1 and 1 or 0)))
         end
     },
 
@@ -1204,14 +1544,16 @@ NegEvents = {
             GAME.attackMul = -1
             GAME.chain = 0
             GAME.maxQuestCount = 1
-            if GAME.rank > 8 then
+            if GAME.rank > 8 and ((GAME.mod.NH == -1 and 1 or 0) + (GAME.mod.MS == -1 and 1 or 0) + (GAME.mod.GV == -1 and 1 or 0)  
+            + (GAME.mod.VL == -1 and 1 or 0) + (GAME.mod.DH == -1 and 1 or 0) + (GAME.mod.IN == -1 and 1 or 0) + (GAME.mod.AS == -1 and 1 or 0)) == 0 then
                 GAME.rank = 8
                 GAME.xp = 32
             end
             GAME.xpLockLevelMax = 2600
             GAME.xpLockTimer = 2600
             GAME.xpLockLevel = 2600
-            GAME.rankLimit = 8
+            GAME.rankLimit = 8 + 4 * ((GAME.mod.NH == -1 and 1 or 0) + (GAME.mod.MS == -1 and 1 or 0) + (GAME.mod.GV == -1 and 1 or 0)  
+            + (GAME.mod.VL == -1 and 1 or 0) + (GAME.mod.DH == -1 and 1 or 0) + (GAME.mod.IN == -1 and 1 or 0) + (GAME.mod.AS == -1 and 1 or 0))
             TEXTS.rank:set("R-" .. GAME.rank)
 
             GAME.mod.EX = 0
