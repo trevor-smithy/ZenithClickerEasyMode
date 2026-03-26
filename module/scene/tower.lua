@@ -1213,6 +1213,7 @@ function scene.overDraw()
             end
 
             -- Surge Timer (?)
+            STAT.promotion = false -- temporarily forcibly disable promotion gauge with stacker
             if STAT.promotion then
                 gc_push('transform')
                 gc_translate(460, 290)

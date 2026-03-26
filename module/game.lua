@@ -2181,7 +2181,7 @@ function GAME.commit(auto, falseCommit)
                 end
             end
         end
-
+    end
     for _, id in next, GAME.lastCommit do CD[id].inLastCommit = false end
     GAME.lastCommit = TABLE.copy(hand)
     for _, id in next, GAME.lastCommit do CD[id].inLastCommit = true end
@@ -2342,11 +2342,16 @@ function GAME.commit(auto, falseCommit)
         rem(GAME.questStack, 1)
         GAME.cancelAll(true)
         GAME.cancelBurn()
-    elseif correct and not falseCommit then
+    elseif correct or falseCommit then
         --Trevor Smithy
-        if #hand == 7 and not TABLE.find(hand, 'DP') and M.EX == -1 and M.GV == -1 and M.IN == -1 then
-            IssueAchv('trip_to_hell')
+        if GAME.comboSFX > 3 then
+            SFX.play('combobreak')
         end
+        local comboMul = 1
+        if GAME.comboSFX > 0 then
+            comboMul = 1 + (GAME.comboSFX/4)
+        end
+        GAME.comboSFX = 0
         local totalAssistPenalty = 0
         for i = 1, #CD do
             if CD[i].active then
