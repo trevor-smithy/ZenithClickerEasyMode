@@ -113,6 +113,7 @@ local function keyTrigger(key)
         if C then
             if GAME.playing or not C.lock then
                 GAME.nixPrompt('keep_no_keyboard')
+                GAME.noKeyboardOrReset = false
                 FloatOnCard = bindID
                 SetMouseVisible(false)
                 MX, MY = C.x + math.random(-126, 126), C.y + math.random(-260, 260)
@@ -146,15 +147,19 @@ local function keyTrigger(key)
             W._hoverTime = W._hoverTimeMax
             SFX.play('menuclick')
             if M.AS == 0 then GAME.nixPrompt('keep_no_reset') end
+            GAME.noMouseOrSpin = false
+            GAME.noKeyboardOrReset = false
             GAME.cancelAll()
             if not GAME.achv_noKeyboardH then GAME.achv_noKeyboardH = GAME.roundHeight end
         elseif bindID == 21 or bindID == 22 then
             GAME.nixPrompt('keep_no_keyboard')
+            GAME.noKeyboardOrReset = false
             scene.mouseDown(MX, MY, bindID == 21 and 1 or 2)
             scene.mouseUp(MX, MY, bindID == 21 and 1 or 2)
             if not GAME.achv_noKeyboardH then GAME.achv_noKeyboardH = GAME.roundHeight end
         elseif bindID == 19 then
             GAME.nixPrompt('keep_no_keyboard')
+            GAME.noKeyboardOrReset = false
             local W = scene.widgetList.start
             W._pressTime = W._pressTimeMax * 2
             W._hoverTime = W._hoverTimeMax
@@ -329,6 +334,7 @@ function scene.mouseMove(x, y, _, dy)
         )
     else
         GAME.nixPrompt('keep_no_mouse')
+        GAME.noMouseOrSpin = false
         mouseMove(x, y)
     end
 end
@@ -360,7 +366,7 @@ function scene.mouseDown(x, y, k)
     if k == 3 then return true end
     HoldingButtons['mouse' .. k] = true
     GAME.nixPrompt('keep_no_mouse')
-
+    GAME.noMouseOrSpin = false
     -- Trevor Smithy
     --if getBtnPressed() > 1 + (URM and M.VL == 2 and 0 or floor(M.VL / 2)) then return true end
     if getBtnPressed() > 1 + (URM and M.VL == 2 and 0 or M.VL == -1 and 0 or floor(M.VL / 2)) then return true end
@@ -378,6 +384,7 @@ function scene.mouseUp(x, y, k)
     HoldingButtons['mouse' .. k] = nil
     if GAME.zenithTraveler then return end
     GAME.nixPrompt('keep_no_mouse')
+    GAME.noMouseOrSpin = false
     if k == 3 then return end
 
     --if getBtnPressed() > 1 + (URM and M.VL == 2 and 0 or floor(M.VL / 2)) then return end
@@ -824,7 +831,8 @@ function scene.draw()
                 gc_draw(TEXTURE.transition, 800 - 1586 / 2, panelH - 303, 1.5708, 26, 1586, 0, 1)
             end
         end
-
+    end
+    if not (GAME.invisUI or GAME.einvisUI) or GAME.uneasyModIconSelected and M.DP == -1 then
         gc_replaceTransform(SCR.xOy)
 
         -- Mod icons
@@ -844,7 +852,9 @@ function scene.draw()
                 gc_draw(GAME.modIB, 1490, y, M.AS * .026 * sin(t), 1)
             end
         end
-
+    end
+    if not (GAME.invisUI or GAME.einvisUI) then
+        local panelH = 697 + GAME.uiHide * (420 + GAME.height / 6.2)
         -- Card Panel
         gc_replaceTransform(SCR.xOy)
         gc_translate(0, DeckPress)
@@ -1202,6 +1212,48 @@ function scene.overDraw()
                 gc_pop()
             end
 
+            -- Surge Timer (?)
+            if STAT.promotion then
+                gc_push('transform')
+                gc_translate(460, 290)
+                gc_scale(GAME.uiHide)
+                local baseThickness = 6
+                local radius = 60
+                local colorList = {COLOR.R, COLOR.Y, COLOR.G, COLOR.B, COLOR.V, COLOR.lM }
+                local colorIndex = 1
+                local rank = GAME.rank
+                local xp = GAME.commit(false, true)
+                local newXP, newRank = GAME.addXP(xp, true)
+                local revolutions = newRank - rank + (newXP/(4*(newRank))) -- 1/360
+                local tempRevolutions = newRank - rank 
+                --MSG("bright", tempRevolutions)
+                --TASK.yieldT(0.2)
+                if revolutions > 1 then
+                    while radius > 2 and tempRevolutions > 0 do
+                        for i = 1, floor(revolutions) do
+                            gc_setColor(colorList[colorIndex])
+                            gc_circle('fill', 0, 0, radius)
+                            if colorIndex == 6 then
+                                colorIndex = 1
+                            else
+                                colorIndex = colorIndex + 1
+                            end
+                            tempRevolutions = tempRevolutions - 1
+                            radius = radius - (revolutions <= 10 and 6 or revolutions <= 12 and 5 or revolutions <= 15 and 4 or revolutions <= 20 and 3 or revolutions <= 30 and 2 or 1)
+                        end
+                    end
+                    gc_setColor(colorList[colorIndex])
+                else
+                    radius = radius - baseThickness
+                    gc_setColor(COLOR.DL)
+                end
+                gc_setAlpha(1/eTAlpha)
+                gc_arc('fill', 'pie', 0, 0, radius, 0, 6.2832 * (revolutions - floor(revolutions)))
+                gc_setColor(GAME.rank > 126 and COLOR.LL or COLOR.LD)
+                gc_setAlpha(1/eTAlpha)
+                gc_circle('line', 0, 0, 60)
+                gc_pop()
+            end
             -- Revive Task
             local task = GAME.currentTask
             if task then
@@ -1349,7 +1401,22 @@ function scene.overDraw()
         gc_mRect('fill', 800, 965, 420 * GAME.xp / (4 * rank), 3 * clamp(GAME.xpLockLevel, 1, 5))
 
         -- Height & Time
-        altitudeText[1] = ("%.1f"):format(GAME.roundHeight)
+        --local imperial = true
+        local height = GAME.height
+        local miles = 0
+        local feet = 0
+        if STAT.imperial then
+            altitudeText[3] = 'ft'
+            height = height * 3.2
+            if height >= 5280 then
+                miles = floor(height/5280)
+                feet = height%5280
+            end
+        else altitudeText[3] = 'm' end
+        altitudeText[1] = ("%.1f"):format(STAT.imperial and height or GAME.roundHeight)
+        if STAT.imperial and miles > 0 then
+            altitudeText[1] = miles .. 'mi ' .. ("%.1f"):format(feet)
+        end
         TEXTS.height:set(altitudeText)
         TEXTS.time:set(STRING.time_simp(GAME.time))
         gc_setColor(COLOR.D)
@@ -1739,6 +1806,8 @@ local function button_start()
 end
 local function button_reset()
     if M.AS == 0 then GAME.nixPrompt('keep_no_reset') end
+    GAME.noMouseOrSpin = false
+    GAME.noKeyboardOrReset = false
     GAME.cancelAll()
     if UsingTouch then
         FloatOnCard = nil
@@ -1928,6 +1997,9 @@ scene.widgetList = {
                 if PieceSFXID <= 14 then
                     local piece = ('zsjltoi'):sub(PieceSFXID, PieceSFXID)
                     SFX.play(piece, 1, 0, Tone(6))
+                    if PieceSFXID > 7 then
+                        SFX.play('combo_'..(PieceSFXID - 7)..'_power', 1, 0, Tone(0))
+                    end
                 else
                     SFX.play('allclear')
                 end
