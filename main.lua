@@ -84,7 +84,19 @@ TEXTURE = {
         eDP = q(0, 15, 225),
         eDH = q(0, 16, 225),
         eAS = q(0, 17, 225),
+        ueEX = q2(3303, 233, 225, 225),
         --
+    },
+    modQuad_uneasy_ig = {
+        eVL = q2(2178, 233, 225, 225),
+        eNH = q2(2178+225, 233, 225, 225),
+        eMS = q2(2178+225*2, 233, 225, 225),
+        eIN = q2(2178+225*3, 233, 225, 225),
+        eGV = q2(2178+225*4, 233, 225, 225),
+        eEX = q2(3303, 233, 225, 225),
+        eDP = q2(2178+225*6, 233, 225, 225),
+        eDH = q2(2178+225*7, 233, 225, 225),
+        eAS = q2(2178+225*8, 233, 225, 225),
     },
     modQuad_res = {
         VL = q(467, 0, 183),
@@ -115,6 +127,7 @@ TEXTURE = {
         eDP = q(467, 15, 183),
         eDH = q(467, 16, 183),
         eAS = q(467, 17, 183),
+        ueEX = q(650, 14, 183),
     },
     modQuad_ultra_res = {
         rVL = q(833, 0, 183),
@@ -382,6 +395,48 @@ TEXTURE = {
             your_long = aq(12, 8), --jackenstein
             cheat_death = aq(5, 5),
             trip_to_hell = aq(5, 7),
+            -- easy mods
+            eEX = aq(3, 3),
+            eNH = aq(7, 3),
+            eMS = aq(8, 3),
+            eGV = aq(6, 3),
+            eVL = aq(5, 3),
+            eDH = aq(4, 3),
+            eIN = aq(1, 4),
+            eAS = aq(2, 4),
+            eDP = aq(3, 4),
+            -- Uneasy Mods (v1.1) (No CR)
+            ueEX = aq(15, 1),
+            ueEXeNH = aq(11, 1),
+            ueEXeMS = aq(12, 1),
+            ueEXeGV = aq(10, 1),
+            ueEXeVL = aq(9, 1),
+            ueEXeDH = aq(16, 1),
+            ueEXeIN = aq(13, 1),
+            ueEXeAS = aq(14, 1),
+            ueEXeDP = aq(7, 7),
+            -- easy mode Easy Mode - Special (v1.1) (No CR)
+            humble_pupil = aq(6, 4),
+            overweight_gamer = aq(4, 6),
+            best_friends = aq(8, 5),
+            shameless_cashgrab = aq(4, 4),
+            clean_break = aq(5, 4),
+            emperor_development = aq(7, 4),
+            professional_cleaner = aq(8, 4),
+            rold_smythy = aq(1, 7),
+            quest_feast = aq(2, 7),
+            clean_gamer = aq(1, 5),
+            -- easy Easy Mode - Issued (v1.1) (No CR)
+            inefficiency = aq(7, 2),
+            could_you_not = aq(3, 2),
+            oh_no_you_dont = aq(10, 2),
+            --uneasy = aq(6, 2),
+            peta = aq(0, 0),
+            exa = aq(0, 0),
+            zetta = aq(0, 0),
+            yotta = aq(0, 0),
+            ronna = aq(0, 0),
+            quetta = aq(0, 0),
         },
         frame = {
             [0] = assets 'achievements/frames/none.png',
@@ -557,6 +612,36 @@ TEXTS = { -- Font size can only be 30 and 50 here !!!
         COLOR.K, "A", COLOR.G, "S", COLOR.J, "P",
         COLOR.C, "E", COLOR.S, "E", COLOR.B, "D",
     }),
+    petaspeed  = GC.newText(FONT.get(50), {
+        COLOR.R, "P", COLOR.O, "E", COLOR.Y, "T",
+        COLOR.K, "A", COLOR.G, "S", COLOR.J, "P",
+        COLOR.C, "E", COLOR.S, "E", COLOR.B, "D",
+    }),
+    exaspeed  = GC.newText(FONT.get(50), {
+        COLOR.R, "E", COLOR.O, "X", COLOR.Y, "A",
+        COLOR.G, "S", COLOR.J, "P",
+        COLOR.C, "E", COLOR.S, "E", COLOR.B, "D",
+    }),
+    zettaspeed  = GC.newText(FONT.get(50), {
+        COLOR.R, "Z", COLOR.O, "E", COLOR.Y, "T",
+        COLOR.K, "T", COLOR.G, "A", COLOR.J, "S",
+        COLOR.C, "P", COLOR.S, "E", COLOR.B, "E", COLOR.P, "D",
+    }),
+    yottaspeed  = GC.newText(FONT.get(50), {
+        COLOR.R, "Y", COLOR.O, "O", COLOR.Y, "T",
+        COLOR.K, "T", COLOR.G, "A", COLOR.J, "S",
+        COLOR.C, "P", COLOR.S, "E", COLOR.B, "E", COLOR.P, "D",
+    }),
+    ronnaspeed  = GC.newText(FONT.get(50), {
+        COLOR.R, "R", COLOR.O, "O", COLOR.Y, "N",
+        COLOR.K, "N", COLOR.G, "A", COLOR.J, "S",
+        COLOR.C, "P", COLOR.S, "E", COLOR.B, "E", COLOR.P, "D",
+    }),
+    quettaspeed  = GC.newText(FONT.get(50), {
+        COLOR.R, "Q", COLOR.O, "U", COLOR.Y, "E",
+        COLOR.K, "T", COLOR.G, "T", COLOR.J, "A",
+        COLOR.C, "S", COLOR.S, "P", COLOR.B, "E", COLOR.P, "E", COLOR.M, "D",
+    }),
     gigatime   = GC.newText(FONT.get(50)),
     floorTime  = GC.newText(FONT.get(30)),
     rankTime   = GC.newText(FONT.get(30)),
@@ -660,6 +745,10 @@ STAT = {
 
     autoMute = false,
     oldHitbox = false,
+    easyName = false,
+    imperial = false,
+    promotion = true,
+    rold = false,
 }
 
 ACHV = {}
@@ -934,7 +1023,7 @@ BgmSet = {
 ---@enum (key) ZC.bgmName
 BgmData = {
     f0 = { meta = '4|4  184 BPM  C Minor', bar = 4, bpm = 184, toneFix = 0, loop = { 0, 114.7826 } },
-    f1 = { meta = '4|4  184 BPM  C Minor', bar = 4, bpm = 184, toneFix = 0, loop = { 7.826, 91.304 }, introLen = 1.304, teleport = { -1, 7.826 } },
+    f1 = { meta = '4|4  184 BPM  C Minor', bar = 4, bpm = 184, toneFix = 0, loop = { 18.261, 91.304 }, introLen = 1.304, teleport = { -1, 7.826 } },
     f2 = { meta = '4|4  110 BPM  D Major & B Minor', bar = 4, bpm = 110, toneFix = -1, loop = { 26.181, 113.454 } },
     f2r = { meta = '4|4  110 BPM  D Major & B Minor', bar = 4, bpm = 110, toneFix = -1, loop = { 26.181, 113.454 } },
     f3 = { meta = '12|8  120 BPM  C Major & A Minor', bar = 4, bpm = 120, toneFix = -1, loop = { 56, 128 }, end1 = 128, end2 = 132 },
@@ -1070,12 +1159,16 @@ end
 function RefreshBGM(mode)
     if not BGM.isPlaying() then return end
     local pitch = M.GV < 0 and 2^(-1/2) or M.GV > 0 and 2 ^ ((URM and M.GV == 2 and 3 or M.GV) / 12) or 1
-    if GAME.slowmo then pitch = pitch / 2 end
-    if GAME.nightcore then pitch = pitch * 2 end
-    -- Trevor Smithy
-    if GAME.eslowmo then pitch = pitch * 2^(-1/2) end
-    if GAME.enightcore then pitch = pitch * 2 end
-    --
+    if not GAME.manualBGMPitch or GAME.height >= 1650 then
+        if GAME.slowmo then pitch = pitch / 2 end
+        if GAME.nightcore then pitch = pitch * 2 end
+        -- Trevor Smithy
+        if GAME.eslowmo then pitch = pitch * 2^(-1/2) end
+        if GAME.enightcore then pitch = pitch * 2 end
+        --
+    else
+        pitch = GAME.nightcore and GAME.manualBGMPitch or GAME.slowmo and 1/GAME.manualBGMPitch or pitch
+    end
     local justBegin = BGM.tell() < 1
     BGM.set('all', 'pitch', pitch, justBegin and 0 or .26)
     BGM.set('all', 'highgain', M.IN == 0 and 1 or M.IN == 1 and .8 or not URM and .626 or .55, justBegin and 0 or .626)

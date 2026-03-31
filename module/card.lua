@@ -130,7 +130,10 @@ function Card:setActive(auto, key)
     if not auto then
         GAME.lastFlip = self.id
     end
-
+    if not auto and not self.active and GAME.comboStr == 'eASeNH' and GAME.playing then
+        GAME.noManualActivate = false
+        --MSG("dark", "Manual activation")
+    end
     -- Trevor Smithy
     self.active = not self.active -- the main flip
     --Closer Card
@@ -681,6 +684,13 @@ function Card:draw()
                 if self.required or self.required2 then
                     if self.required then
                         r1, g1, b1 = 1, .26, 0
+                        if STAT.easyName then
+                            if not (URM and self.id == 'EX' and M.EX == -1 and M.NH < 2 and M.MS < 2 and M.GV < 2 and M.VL < 2 and M.DH < 2 and M.IN < 2 and M.AS < 2 and M.DP < 2) then
+                                r1, g1, b1 = 0, 1, 0          -- Green
+                            else
+                                r1, g1, b1 = 0.626, 0, 0      -- Dark Red (for Uneasy)
+                            end
+                        end
                         a1 = .6 + .4 * self.float
                     end
                     if self.required2 then

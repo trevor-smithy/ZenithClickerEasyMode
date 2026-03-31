@@ -53,7 +53,18 @@ local overallProgress = {
 local function nameSortLT(i1, i2) return i1.name < i2.name end
 local function nameSortGT(i1, i2) return i1.name > i2.name end
 
+local realHide = 0
+local SPACER = { hide = FALSE }
 function RefreshAchvList(canShuffle)
+
+    --[[for i = #Achievements, 1, -1 do
+        local achv = Achievements[i]
+        if achv.realHide and achv:realHide() then
+            table.remove(Achievements, i)
+            table.insert(Achievements, i, { id = ''})
+        end
+    end]]
+
     overallProgress.rank = TABLE.new(0, 5)
     overallProgress.rank[0] = 0
     overallProgress.wreath = TABLE.new(0, 6)
@@ -61,10 +72,11 @@ function RefreshAchvList(canShuffle)
     overallProgress.ptGet = 0
     overallProgress.ptAll = 0
     TABLE.clear(achvList)
-    local odCount, odCap = 0, 0
+    local odCount, odCap, countSinceLastTitle = 0, 0, 0
     for i = 1, #Achievements do
         local A = Achievements[i]
         if not A.id then
+            countSinceLastTitle = 0
             table.insert(achvList, { title = A.hide() and "???" or A.title and A.title:upper() })
         else
             local rank, score, progress, wreath, overDev
@@ -100,19 +112,28 @@ function RefreshAchvList(canShuffle)
             AchvText:set(A.desc)
             local hidden = A.hide() and not ACHV[A.id]
             local descWidth = hidden and 26 or AchvText:getWidth()
-            table.insert(achvList, {
-                id = A.id,
-                name = hidden and "???" or A.name:upper(),
-                desc = hidden and "???" or A.desc,
-                descWidth = descWidth,
-                rank = floor(rank),
-                wreath = wreath,
-                progress = progress,
-                score = score,
-                type = A.type,
-                hidden = A.hide ~= FALSE,
-                overDev = overDev,
-            })
+            if not hidden or not A.realHide() then 
+                countSinceLastTitle = countSinceLastTitle + 1
+                table.insert(achvList, {
+                    id = A.id,
+                    name = hidden and "???" or A.name:upper(),
+                    desc = hidden and "???" or A.desc,
+                    descWidth = descWidth,
+                    rank = floor(rank),
+                    wreath = wreath,
+                    progress = progress,
+                    score = score,
+                    type = A.type,
+                    hidden = A.hide ~= FALSE,
+                    overDev = overDev,
+                })
+            elseif countSinceLastTitle % 2 == 1 then
+                table.insert(achvList, {id = ''})
+                countSinceLastTitle = countSinceLastTitle + 1
+                if A.realHide() then realHide = realHide + 1 end
+            else
+                if A.realHide() then realHide = realHide + 1 end
+            end
             if overDev then
                 odCount = odCount + 1
             end
@@ -170,7 +191,7 @@ function RefreshAchvList(canShuffle)
         end
 
         local s, e
-        for i = 1, #achvList do
+        for i = 1, #achvList-realHide do
             if not s then
                 if achvList[i].id then
                     s = i
@@ -251,8 +272,10 @@ local function refreshAchivement()
         end
         maxMMP = max(maxMMP, h * mp)
         local l = {}
-        for m in setStr:gmatch('r?%w%w') do l[m] = true end
-        maxZP = max(maxZP, h * GAME.getComboZP(l))
+        for m in setStr:gmatch('[re]?%w%w') do l[m] = true end
+        if GAME.getComboZP(l) >= 1 and easyCount == 0 then 
+            maxZP = max(maxZP, h * GAME.getComboZP(l))
+        end
     end
     submit('multitasker', maxMMP)
     submit('effective', maxZP)
@@ -296,6 +319,61 @@ local function refreshAchivement()
         end
     end
 
+    if ACHV.roll and ACHV.programmer_gamer and (BEST.highScore.eDHeDPeGVeINeMSeNH > Floors[9].top) and not (STAT.rold or ACHV.rold_smythy) and not GAME.playing then
+        TASK.new(
+            function()
+                SubmitAchv('rold_smythy', 100)
+                TASK.yieldT(5)
+                MSG("bright","Secret Dev Commentary Available", 3.5)
+                SFX.play('combo_1',1,0,-2)
+                TASK.yieldT(0.25)
+                SFX.play('combo_1',1,0,0)
+                TASK.yieldT(0.25)
+                SFX.play('combo_1',1,0,3)
+                TASK.yieldT(0.25)
+                SFX.play('combo_1',1,0,0)
+                TASK.yieldT(0.25)
+                SFX.play('combo_1',1,0,0)
+                SFX.play('combo_1',1,0,3)
+                SFX.play('combo_1',1,0,7)
+                TASK.yieldT(0.75)
+                SFX.play('combo_1',1,0,0)
+                SFX.play('combo_1',1,0,3)
+                SFX.play('combo_1',1,0,7)
+                TASK.yieldT(0.75)
+                SFX.play('combo_1',1,0,-2)
+                SFX.play('combo_1',1,0,2)
+                SFX.play('combo_1',1,0,5)
+                TASK.yieldT(1)
+                if SCN.cur ~= 'about' then 
+                    SFX.play('social_invite')
+                    MSG("bright","Check ABOUT", 10) 
+                end
+                STAT.rold = true
+            end
+        )
+    elseif ACHV.roll and ACHV.programmer_gamer and BEST.highScore.eDHeDPeGVeINeMSeNH and not (STAT.rold or ACHV.rold_smythy) and not GAME.playing then
+        SubmitAchv('rold_smythy', 1)
+        TASK.new(
+            function()
+                TASK.yieldT(1)
+                MSG("bright", "Secret Achievement Available")
+                AchvNotice['rold_smythy'] = true
+                SFX.play('social_invite')
+                STAT.rold = true
+            end
+        )
+    elseif ACHV.roll and ACHV.programmer_gamer and not (STAT.rold or BEST.highScore.eDHeDPeGVeINeMSeNH > Floors[9].top or ACHV.rold_smythy) and not GAME.playing then
+        TASK.new(
+            function()
+                TASK.yieldT(1)
+                MSG("bright", "Secret Achievement Available")
+                AchvNotice['rold_smythy'] = true
+                SFX.play('social_invite')
+                STAT.rold = true
+            end
+        )
+    end
     RefreshAchvList()
 end
 
@@ -388,6 +466,17 @@ function scene.update(dt)
             )
         end
     end
+    for i = 1, 6 do
+        if TASK.lock('metricspeed_icon_' .. i, 0.26 / i^1.262) then
+            local name = MetricSpeedName[i]:sub(2, -2):lower()
+            local r = math.random(-10-i*2, 10+i*2)
+            local r2 = math.random(-i*2, i*2)
+            --(10 - 1) % 16 * 256, (4 - 1) % 16 * 256, 256, 256, 4096, 2048
+            TEXTURE.achievement.iconQuad[name]:setViewport(
+                (10 - 1) % 16 * 256 - r, (4 - 1) % 16 * 256 - r2, 256, 256, 4096, 2048
+            )
+        end
+    end
     if M.EX == 2 then scroll = min(scroll + .26, maxScroll) end
     local y0 = scroll1
     scroll1 = MATH.expApproach(scroll1, scroll, dt * 26)
@@ -456,6 +545,11 @@ function scene.draw()
                     if colorRev then
                         gc_print(a.title, 10, 134, 0, 1.8, -1.8)
                     else
+                        if a.title:sub(1, 4) == "EASY" then
+                            gc_setColor(COLOR.G)
+                        elseif a.title:sub(1, 6) == "UNEASY" then
+                            gc_setColor(COLOR.dR)
+                        end
                         gc_print(a.title, 10, 62, 0, 1.8)
                     end
                     gc_ucs_back()
@@ -469,7 +563,7 @@ function scene.draw()
                 else
                     gc_ucs_move(i % 2 == 1 and -626 or 26, floor((i - 1) / 2) * 140)
                 end
-
+                if a.id ~= '' then
                 -- Bottom rectangle
                 if hyper then
                     if overallProgress.countStart == 6 then
@@ -570,8 +664,15 @@ function scene.draw()
 
                 -- Dev
                 if a.overDev then
-                    if a.id == 'programmer_gamer' or a.id == 'one_of_mine' or a.id == 'ggbw' or a.id == 'perfect_speedrun_plus' or a.id == 'perfectly_balanced' or a.id == 'peasant_revolution' or a.id == 'holy_ascention' or a.id == 'stabilized_entropy' or a.id == 'restrained_collapse' or a.id == 'restored_volition' or a.id == 'disproven_blasphemy' or a.id == 'solved_paradox' or a.id == 'demystified_grimoire' or a.id == 'restored_eden' or a.id == 'your_too_fast' then
+                    if a.id == 'programmer_gamer' or a.id == 'one_of_mine' or a.id == 'ggbw' or a.id == 'perfect_speedrun_plus' or a.id == 'perfectly_balanced' or a.id == 'peasant_revolution' 
+                    or a.id == 'holy_ascention' or a.id == 'stabilized_entropy' or a.id == 'restrained_collapse' or a.id == 'restored_volition' or a.id == 'disproven_blasphemy' 
+                    or a.id == 'solved_paradox' or a.id == 'demystified_grimoire' or a.id == 'restored_eden' or a.id == 'your_too_fast' 
+                    or a.id == 'eEX' or a.id == 'eNH' or a.id == 'eMS' or a.id == 'eGV' or a.id == 'eVL' or a.id == 'eDH' or a.id == 'eIN' or a.id == 'eAS' or a.id == 'eDP'
+                    or a.id == 'emperor_development' or a.id == 'quest_feast' or a.id == 'best_friends' or a.id == 'humble_pupil' or a.id == 'shameless_cashgrab' 
+                    or a.id == 'overweight_gamer' or a.id == 'clean_gamer' or a.id == 'clean_break' or a.id == 'professional_cleaner' or a.id == 'rold_smythy' then
                         gc_setColor(0, 1, 0, .1)
+                    elseif a.id == 'ueEX' or a.id == 'ueEXeNH' or a.id == 'ueEXeMS' or a.id == 'ueEXeGV' or a.id == 'ueEXeVL' or a.id == 'ueEXeDH' or a.id == 'ueEXeIN' or a.id == 'ueEXeAS' or a.id == 'ueEXeDP' then
+                        gc_setColor(1, 0, 0, .2)
                     else
                         gc_setColor(1, 1, 1, .1)
                     end
@@ -597,7 +698,7 @@ function scene.draw()
                     gc_setAlpha(M.IN * (.3 + .1 * sin(ceil(i / 2) * 1.2 - t * 2.6)))
                     gc_rectangle('fill', 0, 0, 600, 130)
                 end
-
+                end
                 gc_ucs_back()
             end
         end
