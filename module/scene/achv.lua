@@ -38,7 +38,7 @@ local achvList = {}
 local scroll, scroll1 = 0, 0
 local maxScroll = 0
 local timer = 0
-local whenItsReady = false
+local whenItsReady = true --false
 local hyper
 local clearNotice
 local overallProgress = {
@@ -505,21 +505,21 @@ function scene.draw()
         gc_print("Zenith Clicker Achievement System When?", 420, 380)
         gc_setColor(COLOR.D)
         gc_rectangle('fill', 480, 435, 560, 50)
-        gc_setColor(COLOR.lS)
+        gc_setColor(0,1,0)
         gc_polygon('fill',
             25 + 420, 435,
             420, 435 + 25,
             25 + 420, 435 + 50,
-            -25 + 420 + 102, 435 + 50,
-            420 + 102, 435 + 25,
-            -25 + 420 + 102, 435
+            -25 + 420 + 232, 435 + 50,
+            420 + 232, 435 + 25,
+            -25 + 420 + 232, 435
         )
         gc_setColor(COLOR.D)
-        gc_print("MrZ", 444, 440)
+        gc_print("Trevor Smithy", 444, 440)
         gc_setColor(COLOR.lD)
-        gc_print("at 2025/3/18 (Tue)", 535, 440)
-        gc_setColor(COLOR.lS)
-        gc_print("When it's ready.", 482, 515)
+        gc_print("at 2026/4/1 (Wed)", 665, 440)
+        gc_setColor(0,1,0)
+        gc_print("NO MORE ACHIEVEMENTS, FOOL!", 482, 515)
     else
         -- Board
         gc_replaceTransform(SCR.xOy_m)

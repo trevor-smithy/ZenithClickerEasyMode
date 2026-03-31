@@ -115,7 +115,7 @@ ModData = {
     },
     -- Trevor Smithy
     easyName = {
-        EX = "< EASY MODE >",
+        EX = "< SUPER EASY MODE >",
         NH = "< MODERATE HOLD >",
         MS = "< TIDINESS >",
         GV = "< LIFT >",
@@ -126,7 +126,7 @@ ModData = {
         DP = "< FRIEND >",
     },
     easyDesc = {
-        EX = "A MORE LENIENT CHALLENGE",
+        EX = "EVEN LESS OF A CHALLENGE THAN NORMAL",
         NH = "CANCELING IS DIFFICULT, MUST CLICK TWICE",
         MS = "SHUFFLES SOME CARDS",
         GV = "AUTO COMMITS OCCUR",
@@ -137,7 +137,7 @@ ModData = {
         DP = "FLOOD THE TOWER WITH AN IMAGINARY FRIEND",
     },
     uneasyName = {
-        EX = "< UNEASY MODE >",
+        EX = "< SUPER ULTRA EASY MODE >",
         NH = "< MODERATE HOLD >",
         MS = "< TIDINESS >",
         GV = "< LIFT >",
@@ -148,7 +148,7 @@ ModData = {
         DP = "< FRIEND >",
     },
     uneasyDesc = {
-        EX = "THE WEIGHT OF REALITY PRESENTS ITS OWN CHALLENGE",
+        EX = "NO MORE LIMITS",
         NH = "CANCELING IS DIFFICULT, MUST CLICK TWICE",
         MS = "SHUFFLES SOME CARDS",
         GV = "AUTO COMMITS OCCUR",

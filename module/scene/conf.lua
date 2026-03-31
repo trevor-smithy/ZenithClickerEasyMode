@@ -46,6 +46,7 @@ local songList = {
     terae = "Trevor Smithy - Schnellfeuer BULLET Vocal Cover",
     teral = "Trevor Smithy - Schnellfeuer BULLET Lyric Cover",
     terael = "Trevor Smithy - Schnellfeuer BULLET Vocal & Lyric Cover",
+    teracircus = "Trevor Smithy - Schnellfeuer Bullet x Entry Of The Gladiators",
     fomg = "Ronezkj15 - Strained Endurance",
 }
 local bgmColors = {
@@ -159,9 +160,9 @@ function scene.keyDown(key, isRep)
         if key == 'pause' or key == 'break' or key == 't' then key = 'tera' end
         TASK.removeTask_code(Task_MusicEnd)
         if KBisDown('lshift', 'rshift') then key = key .. 'r' 
-        elseif KBisDown('lalt', 'ralt') and key == 'tera' then key = key .. 'e' end
-        if (key == 'terae' or key == 'tera') and (GAME.mod.EX == -1 and URM and GAME.mod.NH < 2 and GAME.mod.MS < 2 and GAME.mod.GV < 2 and GAME.mod.VL < 2 and GAME.mod.DH < 2 and GAME.mod.IN < 2 and GAME.mod.AS < 2 and GAME.mod.DP < 2) then
-            key = key .. 'l'
+        elseif KBisDown('lalt', 'ralt') and key == 'tera' then key = 'teracircus' --[[key .. 'e']] end
+        if (key == 'terae' or key == 'tera') and (GAME.mod.EX == -1 --[[and URM and GAME.mod.NH < 2 and GAME.mod.MS < 2 and GAME.mod.GV < 2 and GAME.mod.VL < 2 and GAME.mod.DH < 2 and GAME.mod.IN < 2 and GAME.mod.AS < 2 and GAME.mod.DP < 2]]) then
+            key = 'teracircus' --[[key .. 'l']]
         end
         PlayBGM(key, true)
         if not MusicPlayer then
@@ -310,7 +311,7 @@ function scene.draw()
 
         gc_setColor(clr.L)
         gc_rectangle('fill', 0, 46, len, 4)
-        if BgmPlaying == 'tera' or BgmPlaying == 'terar' or BgmPlaying == 'terae' or BgmPlaying == 'teral' or BgmPlaying == 'terael' then
+        if BgmPlaying == 'tera' or BgmPlaying == 'terar' or BgmPlaying == 'terae' or BgmPlaying == 'teral' or BgmPlaying == 'terael' or BgmPlaying == 'teracircus' then
             gc_setColor(COLOR.rainbow_light(2.6 * t))
             local height = 245
             local lenMod = 0

@@ -651,8 +651,8 @@ TEXTS = { -- Font size can only be 30 and 50 here !!!
     forfeit    = GC.newText(FONT.get(50), "KEEP HOLDING TO FORFEIT"),
     credit     = GC.newText(FONT.get(30), "Almost all assets from TETR.IO"),
     test       = GC.newText(FONT.get(50), "TEST"),
-    easyTitle  = GC.newText(FONT.get(50), "EASY QUICK PICK"),
-    uneasyTitle= GC.newText(FONT.get(50), "UNEASY QUICK PICK"),
+    easyTitle  = GC.newText(FONT.get(50), "SUPER EASY QUICK PICK"),
+    uneasyTitle= GC.newText(FONT.get(50), "SUPER ULTRA EASY QUICK PICK"),
     easyModeVersion = GC.newText(FONT.get(30)),
 }
 if not FontLoaded then
@@ -757,11 +757,11 @@ AchvNotice = {}
 
 TestMode = false
 
-function SaveBest() if not TestMode then love.filesystem.write('best.luaon', 'return' .. TABLE.dumpDeflate(BEST)) end end
+function SaveBest() --[[ if not TestMode then love.filesystem.write('best.luaon', 'return' .. TABLE.dumpDeflate(BEST)) end ]] MSG("dark","The Creator BLOCKED your Score from being saved...") end
 
-function SaveStat() if not TestMode then love.filesystem.write('stat.luaon', 'return' .. TABLE.dumpDeflate(STAT)) end end
+function SaveStat() --[[ if not TestMode then love.filesystem.write('stat.luaon', 'return' .. TABLE.dumpDeflate(STAT)) end ]] MSG("dark","The Creator BLOCKED your Stat from being saved...") end
 
-function SaveAchv() if not TestMode then love.filesystem.write('achv.luaon', 'return' .. TABLE.dumpDeflate(ACHV)) end end
+function SaveAchv() --[[ if not TestMode then love.filesystem.write('achv.luaon', 'return' .. TABLE.dumpDeflate(ACHV)) end ]] MSG("dark","The Creator BLOCKED your Achievement from being saved...") end
 
 MSG.setSafeY(75)
 MSG.addCategory('dark', COLOR.D, COLOR.L)
@@ -784,6 +784,10 @@ local bufferedMsg = {}
 
 local saveAchvTimer = false ---@type number | false
 function IssueAchv(id, silent)
+    if true then
+        --MSG("bright","IssueAchv Failed!")
+        return
+    end
     if TestMode then return end
     local A = Achievements[id]
     if not A or ACHV[id] then return end
@@ -818,6 +822,10 @@ local wreathName = {
 }
 ---@return true? success
 function SubmitAchv(id, score, silent, realSilent)
+    if true then
+        --MSG("bright","SubmitAchv Failed!")
+        return
+    end
     if TestMode then return end
     local A = Achievements[id]
     if not A then return end
@@ -1049,6 +1057,7 @@ BgmData = {
     terae = { meta = '4|4  240 BPM  C# Minor', bar = 4, bpm = 240, toneFix = 1, loop = { 76, 140 }, introLen = 2, teleport = { -1, 20 }, end1 = 140, end2 = 142, end3 = 144, end4 = 146 },
     teral = { meta = '4|4  240 BPM  C# Minor', bar = 4, bpm = 240, toneFix = 1, loop = { 76, 140 }, introLen = 2, teleport = { -1, 20 }, end1 = 140, end2 = 142, end3 = 144, end4 = 146 },
     terael = { meta = '4|4  240 BPM  C# Minor', bar = 4, bpm = 240, toneFix = 1, loop = { 76, 140 }, introLen = 2, teleport = { -1, 20 }, end1 = 140, end2 = 142, end3 = 144, end4 = 146 },
+    teracircus = { meta = '4|4  240 BPM  C# Minor', bar = 4, bpm = 240, toneFix = 0, loop = { 76, 140 }, end1 = 218.5},
 }
 
 BgmPlaying = false ---@type ZC.bgmName | false
@@ -1057,10 +1066,11 @@ BgmNeedSkip = false
 BgmNeedStop = false
 
 function RevMusicMode()
-    return
+    return false --[[
         URM and M.EX == 2 or                   -- uEX
         GAME.anyRev and GAME.comboZP >= 2.6 or -- rev run with 2.6x ZP
         GAME.anyUltra and GAME.comboZP >= 1.2  -- ultra run with 1.2x ZP
+        ]]
 end
 
 ---@param name ZC.bgmName
@@ -1095,7 +1105,7 @@ function PlayBGM(name, force)
         BgmNeedSkip[1] = start + BgmData.f1.introLen
         BGM.set('all', 'seek', start)
         RefreshBGM(name)
-    elseif name == 'tera' or name == 'terae' or name == 'teral' or name == 'terael'then
+    elseif name == 'tera' or name == 'terae' or name == 'teral' or name == 'terael' or name == 'teracircus' then
         BGM.play(name, '-sdin')
         local startFrom
         if last then
@@ -1103,9 +1113,13 @@ function PlayBGM(name, force)
             startFrom = tonumber(last:match("%d+"))
             if startFrom then startFrom = startFrom - 1 end
         end
-        local start = (GAME.playing and GAME.floor or startFrom or math.random(0, 9)) * BgmData.tera.introLen
-        BgmNeedSkip[1] = start + BgmData.tera.introLen
-        BGM.set('all', 'seek', start)
+        if not name == 'teracircus' then
+            local start = (GAME.playing and GAME.floor or startFrom or math.random(0, 9)) * BgmData.tera.introLen
+            BgmNeedSkip[1] = start + BgmData.tera.introLen
+            BGM.set('all', 'seek', start)
+        else
+            BGM.set('all', 'volume', 0.62)
+        end
         RefreshBGM()
     else
         if BGM.play(name, force and '' or '-sdin') then
@@ -1159,7 +1173,7 @@ end
 function RefreshBGM(mode)
     if not BGM.isPlaying() then return end
     local pitch = M.GV < 0 and 2^(-1/2) or M.GV > 0 and 2 ^ ((URM and M.GV == 2 and 3 or M.GV) / 12) or 1
-    if not GAME.manualBGMPitch or GAME.height >= 1650 then
+    if not GAME.manualBGMPitch --[[or GAME.height >= 1650]] then
         if GAME.slowmo then pitch = pitch / 2 end
         if GAME.nightcore then pitch = pitch * 2 end
         -- Trevor Smithy
@@ -1289,12 +1303,15 @@ function Task_MusicEnd(manual)
             outroStart = D.loop[2]
             BgmNeedStop = outroStart + 8 * 60 / D.bpm
         end
-    elseif BgmPlaying == 'tera' or 'terae' or 'teral' or 'terael' then
+    elseif BgmPlaying == 'tera' or BgmPlaying == 'terae' or BgmPlaying == 'teral' or BgmPlaying == 'terael' then
         outroStart = D.loop[2] + math.random(0, 3) * 8 * 60 / D.bpm
         BgmNeedStop = outroStart + 8 * 60 / D.bpm
     elseif BgmPlaying == 'terar' then
         outroStart = D.loop[2] + 96 * 60 / D.bpm
         BgmNeedStop = outroStart + 30 * 60 / D.bpm
+    elseif BgmPlaying == 'teracircus' then
+        outroStart = 218.5
+        BgmNeedStop = 221.7
     else
         BgmNeedStop = BGM.tell() + 4 * 60 / D.bpm
     end

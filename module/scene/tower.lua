@@ -315,6 +315,7 @@ function scene.load()
         applyCombo(PendingComboFromRecord)
         PendingComboFromRecord = nil
     end
+    Cards['EX']:setActive(true, 3)
 end
 
 function scene.unload()
@@ -924,7 +925,7 @@ function scene.draw()
         gc_setColor(COLOR.dL)
         gc_mDraw(TEXTS.zpChange, 220, 93, 0, .626)
         -- Version Check for records
-        gc_mDraw(TEXTS.easyModeVersion, 220, 111, 0, .626)
+        --gc_mDraw(TEXTS.easyModeVersion, 220, 111, 0, .626)
     end
 
     -- Daily Challenge Button

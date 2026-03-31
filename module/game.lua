@@ -341,7 +341,7 @@ function GAME.getComboZP(list)
     local zp = 1
     if m.EX then zp = zp * 1.4 elseif m.rEX then zp = zp * 2.6 elseif m.eEX then 
         if URM and table.concat(list):count('r') == 0 then
-            zp = zp * 2.7
+            zp = zp * 0.3
         else
            zp = zp * 0.9 
         end
@@ -358,7 +358,7 @@ function GAME.getComboZP(list)
     if GAME.enightcore or GAME.eglassCard then zp = zp * .9 elseif GAME.eslowmo then zp = zp * .825 elseif GAME.efastLeak then zp = zp * .75 
     elseif GAME.ecloseCard then
         local maxCardDistance = max(((m.rEX and URM) and 2 or (m.rEX or m.EX) and 1 or 0) - (m.rVL and 2 or (m.eVL or m.VL) and 1 or 0),0)
-        zp = zp * (1 - 0.25-maxCardDistance*0.214) * (m.rEX and not m.rVL and 0.9 or 1)
+        zp = zp * (m.eEX and URM and 0.1 or m.eEX and 0.2 or (1 - 0.25-maxCardDistance*0.214) * (m.rEX and not m.rVL and 0.9 or 1))
     end
 
     local hardCnt = table.concat(list):count('r')
@@ -1108,10 +1108,10 @@ function GAME.easyXPModifiers(xp)
     if M.VL == -1 then
         xp = xp + 1
     end
-    if M.EX == -1 and GAME.rank > 1 and (GAME.rank <= 126 or GAME.dunk or GAME.bigDunk) and not (URM and GAME.comboStr:count('r') == 0) then
+    if M.EX == -1 and GAME.rank > 1 and (GAME.rank <= 126 or GAME.dunk or GAME.bigDunk) and not (URM --[[and GAME.comboStr:count('r') == 0]]) then
         xp = xp * (1 + (GAME.rank - 1)/xpRankModifier)
-    elseif M.EX == -1 and GAME.rank > 1 and GAME.rank <= 126 then
-        xp = xp * (1 + (GAME.rank - 1)/(xpRankModifier*3))
+    elseif M.EX == -1 and GAME.rank > 1 --[[and GAME.rank <= 126]] then
+        xp = xp * (1 + (GAME.rank - 1)--[[/(xpRankModifier*3)]])
     end
     local oldXP = xp
     if GAME.ecloseCard then
@@ -1257,7 +1257,8 @@ function GAME.startTeraAnim()
     TASK.new(GAME.task_gigaspeed)
     SFX.play('zenith_speedrun_start')
     if not (GAME.petaspeed or GAME.exaspeed or GAME.zettaspeed or GAME.yottaspeed or GAME.ronnaspeed or GAME.quettaspeed) then
-        if GAME.smithyMode and M.EX == -1 and URM and GAME.comboStr:count('r') == 0 then --if smithyMode and ultra but no reversed and easy enabled
+        
+        --[[ if GAME.smithyMode and M.EX == -1 and URM and GAME.comboStr:count('r') == 0 then --if smithyMode and ultra but no reversed and easy enabled
             PlayBGM('terael', true)
         elseif GAME.smithyMode then
             PlayBGM('terae', true)
@@ -1269,6 +1270,11 @@ function GAME.startTeraAnim()
             end
         else
             PlayBGM('tera', true)
+        end]]
+        PlayBGM('teracircus', true)
+        if M.EX == -1 and URM and GAME.comboStr:count('r') == 0 and GAME.uneasyModIconSelected then
+            TASK.removeTask_code(GAME.task_uneasyTeraspeed)
+            TASK.new(GAME.task_uneasyTeraspeed)
         end
         if GAME.comboStr == 'eASeDHeEXrGV' and URM and GAME.enightcore then
             GAME.gravDelay = 1.6818
@@ -1459,7 +1465,7 @@ function GAME.upFloor()
                 SCN.scenes.achv.load() 
             end
 
-            if not GAME.smithyMode then 
+            if not GAME.smithyMode and BgmPlaying ~= 'teracircus' then 
                 -- don't stop my cover until we get to fomg
                 GAME.stopTeraspeed('f10')
             end
@@ -1876,7 +1882,7 @@ function GAME.refreshCurrentCombo()
             if comboName == 'EASY HOLDLESS ALL-SPIN' then
                 comboName = '"THE PIXEL ARTIST"' -- Credit: LovelyStar
             elseif comboName == '"BATH WATER"' or comboName == '"BATH WITH A FRIEND"' then
-                comboName = comboName:gsub("BATH", "HARD BATH", 1)
+                --comboName = comboName:gsub("BATH", "HARD BATH", 1)
             elseif comboName:count('BATH') == 1 then
                 if M.DP == 0 or comboName == '"GAMER GIRL BATH WATER"'then
                     comboName = comboName:gsub("WATER", "WATER?", 1)
@@ -1911,6 +1917,32 @@ function GAME.refreshCurrentCombo()
         end
         GAME.customUltraCombo = false    
     end
+    if not GAME.playing then
+        if M.EX == -1 then
+            if comboName:count('ULTRA ') > 0 then
+                comboName = comboName:gsub('ULTRA ', '', 1)
+            end
+        end
+        if GAME.smithyMode then
+            if URM then
+                comboName = comboName:gsub("UNEASY PRO G", "SUPER ULTIMATE PRO G", 1)
+            else
+                comboName = comboName:gsub("PRO G", "SUPER PRO G", 1)
+            end
+        elseif comboName:count('UNEASY') > 0 then
+            comboName = comboName:gsub("UNEASY", "SUPER ULTRA EASY", 1)
+        elseif comboName:count('EASY') > 0 then
+            comboName = comboName:gsub("EASY", "SUPER EASY", 1)
+        elseif M.EX == -1 and URM and comboName:count('"') > 0 then
+            comboName = comboName:gsub("([^\"])", "SUPER ULTRA EASY %1", 1)
+        elseif M.EX == -1 and comboName:count('"') > 0 then
+            comboName = comboName:gsub("([^\"])", "SUPER EASY %1", 1)
+        elseif M.EX == -1 and URM then
+            comboName = "SUPER ULTRA EASY " .. comboName
+        elseif M.EX == -1 then
+            comboName = "SUPER EASY " .. comboName
+        end
+    end
     TEXTS.mod:set(comboName)
     if not GAME.playing then
         GAME.comboMP = GAME.getComboMP(hand)
@@ -1939,8 +1971,13 @@ function GAME.refreshLayout()
     else
         mvl = M.VL
     end
-    local baseDist = 110 + (M.EX > 0 and (URM and M.EX == 2 and -30 or -10) or 0) + mvl * 20 + (GAME.closeCard and -30 or GAME.ecloseCard and -50 or 0)
+    local baseDist = 110 + (M.EX > 0 and (URM and M.EX == 2 and -30 or -10) or 0) + mvl * 20 + (GAME.closeCard and -30 or GAME.ecloseCard and (URM and M.EX == -1 and -100 or -50) or 0)
     --
+    if URM and M.EX == -1 then
+        PieceData[14].popup = { COLOR.lC, "eI - Closest Card" }
+    else
+        PieceData[14].popup = { COLOR.lC, "eI - Closer Card" }
+    end
     local baseL, baseR = 800 - 4 * baseDist - 70, 800 + 4 * baseDist + 70
     local baseY = 726 + (URM and M.GV == 2 and 50 or 15 * M.GV)
     if FloatOnCard then
@@ -2966,7 +3003,7 @@ function GAME.start()
     GAME.manualBGMPitch = nil
     local attackMulMod = 1
     if GAME.eglassCard then attackMulMod = 0.5 end
-    GAME.attackMul = (GAME.isUltraRun and .62 or (M.EX == -1 and URM and M.NH < 2 and M.MS < 2 and M.GV < 2 and M.VL < 2 and M.DH < 2 and M.IN < 2 and M.AS < 2 and M.DP < 2) and 0.33 or 1) * attackMulMod
+    GAME.attackMul = (GAME.isUltraRun and .62--[[ or (M.EX == -1 and URM and M.NH < 2 and M.MS < 2 and M.GV < 2 and M.VL < 2 and M.DH < 2 and M.IN < 2 and M.AS < 2 and M.DP < 2) and 0.33]] or 1) * attackMulMod
     -- Trevor Smithy
     GAME.bonusRecoveryHealth = 0
     local slowMo = 0
@@ -2975,13 +3012,13 @@ function GAME.start()
     end
     --GAME.xpLockLevelMax = URM and M.NH == 2 and 1 or 5
     --GAME.leakSpeed = ((M.EX > 0 or M.DP == 2) and 5 or 3) + (GAME.fastLeak and 8 or 0)
-    GAME.xpLockLevelMax = (((URM and M.NH == 2 and 1) or (M.EX == -1 and 0) or (5)) + (GAME.efastLeak and 5 or 0) + (M.NH == -1 and 2 or 0)) * (1 + slowMo)
+    GAME.xpLockLevelMax = (((URM and M.NH == 2 and 1) or --[[(M.EX == -1 and 0) or]] (5)) + (GAME.efastLeak and 5 or 0) + (M.NH == -1 and 2 or 0)) * (1 + slowMo)
     if GAME.xpLockLevelMax == 0 and GAME.eslowmo then
         GAME.xpLockLevelMax = 1.5
     end
     -- fast leak increases leakSpeed to 2.666 times normal rate, slow leak decreases leakSpeed to 1/2.666 times normal rate, eslowmo halves leak speed
     --GAME.leakSpeed = ((M.EX > 0 and 5 or 3) + (GAME.fastLeak and 8 or 0) + (M.EX == -1 and -1.2 or 0) + (GAME.efastLeak and -1.875 or 0) + (GAME.efastLeak and M.EX == -1 and (0.075 + 0.15) or 0)) / (1 + slowMo)
-    GAME.leakSpeed = (((M.EX > 0 or (M.DP == 2 and M.EX ~= -1)) and 5 or 3) + (GAME.fastLeak and 8 or GAME.efastLeak and -1.875 or 0)) / (1 + slowMo)
+    GAME.leakSpeed = (((M.EX > 0 or (M.DP == 2 and M.EX ~= -1)) and 5 or 3) + (M.EX == -1 and -1.2 or 0) + (GAME.fastLeak and 8 or GAME.efastLeak and -1.875 or 0)) / (1 + slowMo)
     --
     GAME.invincible = false
 
@@ -2991,6 +3028,11 @@ function GAME.start()
     SCN.scenes.tower.widgetList.help2:setVisible(false)
     SCN.scenes.tower.widgetList.daily:setVisible(false)
     MSG.clear()
+    if not STAT.easyName then
+        STAT.easyName = true
+        SFX.play('social_dm')
+        MSG('dark', "Easy Names In-Game: " .. (STAT.easyName and "ON" or "OFF"))
+    end
 
     SFX.play('menuconfirm', .8)
     SFX.play((M.DP ~= 0 or VALENTINE and not GAME.anyRev) and 'zenith_start_duo' or 'zenith_start', 1, 0, Tone(0))
@@ -3188,6 +3230,7 @@ function GAME.finish(reason)
     )
 
     TASK.removeTask_code(GAME.task_cancelAll)
+    TASK.removeTask_code(GAME.task_uneasyTeraspeed)
 
     GAME.sortCards()
     for _, C in ipairs(CD) do
@@ -3454,7 +3497,10 @@ function GAME.finish(reason)
         local resStr = {}
         --for i = 1, 7 do
         -- Trevor Smithy
-        if M.EX == -1 and GAME.comboStr:count('r') == 0 and URM then
+        if M.EX == -1 then
+            TABLE.append(resStr, {COLOR.lG, "S"})
+        end
+        if M.EX == -1 --[[and GAME.comboStr:count('r') == 0]] and URM then
             TABLE.append(resStr, {COLOR.DR, "U"})
         end
         for i = 1, 14 do 
@@ -3798,6 +3844,7 @@ function GAME.finish(reason)
         TASK.lock('cannotStart', 1)
         TASK.lock('cannotFlip', .626)
     end
+    Cards['EX']:setActive(true, 3)
     TASK.removeTask_code(Task_MusicEnd)
     TASK.new(Task_MusicEnd)
     collectgarbage()
@@ -4124,7 +4171,9 @@ function GAME.update(dt)
             GAME.omega = true
             GAME.showFloorText("Ω", Floors[11].name, 6.2)
             SFX.play('zenith_levelup_a', 1, 0, Tone(1))
-            PlayBGM('fomg', force)
+            if not BgmPlaying == 'teracircus' then
+                PlayBGM('fomg', force)
+            end
             ins(GAME.secTime, GAME.floorTime)
             GAME.refreshSectionTime()
             GAME.floorTime = 0

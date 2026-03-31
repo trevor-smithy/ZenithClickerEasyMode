@@ -76,6 +76,18 @@ function Card:setActive(auto, key)
         SFX.play('no')
         return
     end
+    if self.id == 'EX' and self.active and self.easy and not GAME.playing then
+        if self.charge == 0 and not auto then
+            local ultra = URM and " Ultra " or " "
+            MSG("dark","The Creator denies your request to disable Super" .. ultra .."Easy")
+            self.charge = self.charge + 4
+        end
+        if not auto then
+            self:flick()
+            SFX.play('no')
+        end
+        return
+    end
     if (M.VL == 1 and not self.active) or (M.NH == -1 and (GAME.playing or (M.VL == 2 and not GAME.playing)) and self.active) then
         if not auto then
             self.charge = self.charge + 1
@@ -149,6 +161,7 @@ function Card:setActive(auto, key)
         if M.VL == -1 then mvl = 1 else mvl = M.VL end
         --local baseDist = 110 + (M.EX > 0 and (URM and M.EX == 2 and -30 or -10) or 0) + mvl * 20 + (GAME.closeCard and -30 or GAME.ecloseCard and -50 or 0)
         local maxCardDistance = 1 + (M.EX == 2 and URM and 2 or M.EX == 2 and 1 or M.EX == 1 and 1 or 0) - mvl
+        if M.EX == -1 then maxCardDistance = 3 + (URM and 1 or 0) end
         local otherCardActivated = false
         if self.tempOrder > 1 then leftCard = CD[self.tempOrder - 1] end
         if leftCard then
