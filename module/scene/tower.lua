@@ -233,8 +233,19 @@ local function keyTrigger(key)
                     if M.NH == -1 and (GAME.life > 0 or GAME.life2 > 0) then
                         IssueAchv('cheat_death')
                         MSG("dark", "OH NO YOU DON'T!!!",10)
+                        local msgtext = STAT.easyName and "NICE JOB DISTRACTING THE CREATOR!" or 'WHAT ARE YOU DOING???'
+                        if STAT.easyName then 
+                            STAT.easyName = false 
+                            TASK.new(
+                                function()
+                                    TASK.yieldT(4)
+                                    MSG("bright", "Easy Names Disabled For Current Climb")
+                                    SFX.play('social_dm')
+                                end
+                            )
+                        end
                         TEXT:add {
-                            text = 'WHAT ARE YOU DOING???',
+                            text = msgtext,
                             x = 800, y = 265, fontSize = 30, k = 1.5,
                             style = 'score', duration = 5,
                             inPoint = .1, outPoint = .26,

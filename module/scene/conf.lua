@@ -782,12 +782,14 @@ scene.widgetList = {
                     end
                     refreshSongInfo()
                 elseif data == 'UseAltName' then
-                    UseAltName()
-                    SFX.play('social_dm')
+                    --UseAltName()
+                    MSG("dark","The Creator BLOCKED you from switching from Easy Names...")
+                    SFX.play('no')
                 elseif data == 'UseEasyName' or data == 'UseEasName' then
-                    STAT.easyName = not STAT.easyName
-                    SFX.play('social_dm')
-                    MSG('dark', "Easy Names In-Game: " .. (STAT.easyName and "ON" or "OFF"))
+                    --STAT.easyName = not STAT.easyName
+                    MSG("dark","The Creator BLOCKED you from switching from Easy Names...")
+                    SFX.play('no')
+                    --MSG('dark', "Easy Names In-Game: " .. (STAT.easyName and "ON" or "OFF"))
                 elseif data == 'imperial' or data == 'feet' then
                     STAT.imperial = not STAT.imperial
                     SFX.play('social_dm')
