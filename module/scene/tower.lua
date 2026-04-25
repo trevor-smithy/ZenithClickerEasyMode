@@ -105,6 +105,35 @@ local function mouseTrigger(x, y, k)
     end
 end
 
+local function ultraStateChange()
+    GAME.hardMode = M.EX > 0 or GAME.anyRev and not URM
+    GAME.refreshLayout()
+    GAME.refreshUltra()
+    GAME.refreshCurrentCombo()
+    GAME.refreshPBText()
+    RefreshBGM()
+    GAME.refreshRPC()
+    RefreshHelpText()
+end
+
+local function applyCombo(set)
+    local changed
+    for _, C in ipairs(Cards) do
+        local cur = C.active and (C.upright and 1 or (C.easy and -1 or 2)) or 0
+        local tar = TABLE.find(set, C.id) and 1 or TABLE.find(set, 'r' .. C.id) and 2 or TABLE.find(set, 'e' .. C.id) and -1 or 0
+        if cur ~= tar then
+            if cur ~= 0 then C:setActive(true) end
+            if tar ~= 0 then C:setActive(true, tar == -1 and 3 or tar == 2 and 2 or 1) end
+            changed = true
+        end
+    end
+    if set.ultra ~= nil and set.ultra ~= URM then
+        URM = set.ultra
+        ultraStateChange()
+    end
+    if changed then SFX.play('mmstart') end
+end
+
 local function keyTrigger(key)
     local bindID = TABLE.find(STAT.keybind, key)
     if bindID and bindID <= 18 and (M.AS ~= 0 or (not GAME.playing and (bindID == 8 or bindID == 17))) then
@@ -243,23 +272,79 @@ local function keyTrigger(key)
                     end
                 end
             else
+                local power = love.mouse.isDown('2') or M.EX == 2 or love.keyboard.isDown('lctrl', 'rctrl') or next(revHold)
                 local buttonRemoved = false
                 if combo == 0 then
                     SFX.play('no')
                 elseif combo < 16 then
-                    SFX.play('combo_' .. combo)
+                    SFX.play('combo_' .. combo .. (power and '_power' or ''))
                 else
-                    SFX.play('combo_16')
+                    SFX.play('combo_16' .. (power and '_power' or ''))
                     scene.widgetList.easy.x = -100
                     scene.widgetList.easy:resetPos()
-                    if ACHV.could_you_not then
+                    if power then
+                        scene.widgetList.stat.x = -100
+                        scene.widgetList.stat:resetPos()
+                        scene.widgetList.achv.x = -100
+                        scene.widgetList.achv:resetPos()
+                        scene.widgetList.zcem.x = 100
+                        scene.widgetList.zcem:resetPos()
+                        scene.widgetList.about.x = 100
+                        scene.widgetList.about:resetPos()
+                        scene.widgetList.conf.x = 100
+                        scene.widgetList.conf:resetPos()
+                        GAME.enightcore = true
+                        GAME.eslowmo = true
+                        GAME.eglassCard = true
+                        GAME.efastLeak = true
+                        GAME.einvisUI = true
+                        GAME.einvisCard = true
+                        GAME.ecloseCard = true
+                        GAME.nightcore = false
+                        GAME.slowmo = false
+                        GAME.glassCard = false
+                        GAME.fastLeak = false
+                        GAME.invisUI = false
+                        GAME.invisCard = false
+                        GAME.closeCard = false
+                        local set = {}
+                        set.ultra = true
+                        TABLE.insert(set, 'rEX')
+                        TABLE.insert(set, 'rNH')
+                        TABLE.insert(set, 'rMS')
+                        TABLE.insert(set, 'rGV')
+                        TABLE.insert(set, 'rVL')
+                        TABLE.insert(set, 'rDH')
+                        TABLE.insert(set, 'rIN')
+                        TABLE.insert(set, 'rAS')
+                        TABLE.insert(set, 'rDP')
+                        applyCombo(set)
+                        GAME.badTime = true
+                        GAME.badTimeStarted = false
+                        GAME.refreshCurrentCombo()
+                        TASK.new(function()
+                            TASK.yieldT(0.62)
+                            SFX.play('bombdetonate')
+                            end
+                        )
+                    elseif ACHV.could_you_not then
                         MSG("dark", "COULD YOU NOT?",10)
                     else
                         IssueAchv('could_you_not')
                     end
                     buttonRemoved = true
+                end                
+                if not buttonRemoved then 
+                    local str = "Select upright mods to make Easy first!"
+                    if power then
+                        MSG.clear()
+                        str = "WHAT DO YOU THINK YOU ARE DOING?"
+                        for i = 1, combo do
+                            str = str .. "?"
+                        end
+                    end
+                    MSG("dark", str, 3)
                 end
-                if not buttonRemoved then MSG("dark", "Select upright mods to make Easy first!", 3) end
                 combo = combo + 1
                 comboTimer = 3
             end
@@ -277,35 +362,6 @@ local function keyTrigger(key)
             W._hoverTime = W._hoverTimeMax
         end
     end
-end
-
-local function ultraStateChange()
-    GAME.hardMode = M.EX > 0 or GAME.anyRev and not URM
-    GAME.refreshLayout()
-    GAME.refreshUltra()
-    GAME.refreshCurrentCombo()
-    GAME.refreshPBText()
-    RefreshBGM()
-    GAME.refreshRPC()
-    RefreshHelpText()
-end
-
-local function applyCombo(set)
-    local changed
-    for _, C in ipairs(Cards) do
-        local cur = C.active and (C.upright and 1 or (C.easy and -1 or 2)) or 0
-        local tar = TABLE.find(set, C.id) and 1 or TABLE.find(set, 'r' .. C.id) and 2 or TABLE.find(set, 'e' .. C.id) and -1 or 0
-        if cur ~= tar then
-            if cur ~= 0 then C:setActive(true) end
-            if tar ~= 0 then C:setActive(true, tar == -1 and 3 or tar == 2 and 2 or 1) end
-            changed = true
-        end
-    end
-    if set.ultra ~= nil and set.ultra ~= URM then
-        URM = set.ultra
-        ultraStateChange()
-    end
-    if changed then SFX.play('mmstart') end
 end
 
 local function randomizeRNG()
@@ -1040,7 +1096,7 @@ function scene.overDraw()
                 local speedMod = ((GAME.enightcore or GAME.nightcore) and 2 or 1) * (GAME.eslowmo and 0.75 or 1) * (GAME.slowmo and 0.5 or 1)
                 local prMod = 1.08422
                 if not (GAME.peasantRevolution and floor(t * speedMod * prMod) % 2 == 1) then
-                    TEXTS.mod:setFont(FONT.get(60))
+                    TEXTS.mod:setFont(FONT.get(GAME.badTime and 90 or 60))
                     gc_setColor(COLOR.rainbow_light(2.6 * t * speedMod))
                 elseif GAME.peasantRevolution then
                     TEXTS.mod:setFont(FONT.get(30))
@@ -1057,7 +1113,7 @@ function scene.overDraw()
                 gc_setColor(TextColor)
             end
             if M.IN == 2 then gc_setAlpha(.42 + .26 * sin(t * 2.6)) end
-            gc_mDraw(TEXTS.mod, 800, 396, 0, min(1, 760 / TEXTS.mod:getWidth()))
+            gc_mDraw(TEXTS.mod, 800, GAME.badTime and 390 or 396, 0, min(1, 760 / TEXTS.mod:getWidth()))
         end
 
         -- Glow
@@ -1535,7 +1591,8 @@ function scene.overDraw()
         if GAME.attackMul < 1 then
             setFont(30)
             gc_setColor(1, 0, 0, t % .52 < .26 and .872/eTAlpha or .42/eTAlpha)
-            gc.print("x" .. GAME.attackMul, 1024, 926, 0, .7)
+            local attackMul = floor((GAME.attackMul / (GAME.badTime and 3 or 1)) * 1000)/1000
+            gc.print("x" .. attackMul, 1024, 926, 0, .7)
         end
 
         gc_ucs_back()
@@ -2075,7 +2132,7 @@ scene.widgetList = {
                 end
             end
         end,
-        visibleFunc = function() return not GAME.playing end,
+        visibleFunc = function() return not GAME.playing and not GAME.badTime end,
     },
     WIDGET.new {
         name = 'help2', type = 'hint',
@@ -2125,7 +2182,7 @@ scene.widgetList = {
                 })
             end
         end,
-        visibleFunc = function() return not GAME.playing and TABLE.countAll(GAME.completion, 0) < 9 end,
+        visibleFunc = function() return not GAME.playing and TABLE.countAll(GAME.completion, 0) < 9 and not GAME.badTime end,
     },
 }
 

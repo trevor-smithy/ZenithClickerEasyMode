@@ -73,7 +73,7 @@ function Card:setActive(auto, key)
         GAME.spinCheck = false
         GAME.rollCheck = false
     end
-    if TASK.getLock('cannotFlip') or GAME.playing and M.NH == 1 and not auto and self.active then
+    if TASK.getLock('cannotFlip') or GAME.playing and M.NH == 1 and not auto and self.active or (not GAME.playing and GAME.badTime) then
         self:flick()
         SFX.play('no')
         return

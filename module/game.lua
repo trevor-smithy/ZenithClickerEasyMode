@@ -151,6 +151,8 @@ local ins, rem = table.insert, table.remove
 ---@field achv_professionalCleanerQuest number
 ---@field achv_roldSmythyQuest number
 ---@field multiplePiecesActive boolean True if multiple pieces are active together. If so, disables achievements and record submission viability
+---@field badTime boolean? True if ZCEM basement is active
+---@field badTimeStarted boolean? True if ZCEM basement run has started
 local GAME = {
     forfeitTimer = 0,
     exTimer = 0,
@@ -1190,7 +1192,19 @@ function GAME.takeDamage(dmg, reason, toAlly)
             else
                 GAME.swapControl()
             end
-            GAME.startRevive()
+            if GAME.badTime then
+                local health = MATH.max(GAME[GAME.getLifeKey(not toAlly)], GAME[GAME.getLifeKey(toAlly)])
+                M.DP = 0
+                GAME.fullHealth = 20
+                GAME.DPlock = false
+                GAME.rankLimit = 26000
+                GAME.refreshModIcon()
+                GAME.refreshRPC()
+                RefreshBGM()
+                GAME.life = health + 5
+            else
+                GAME.startRevive()
+            end
             GAME.dmgWrongExtra = 0 -- Being tolerant!
         else
             GAME.finish(reason)
@@ -1985,6 +1999,13 @@ function GAME.refreshCurrentCombo()
             end
         elseif comboName == '"THE OVERWHELMED SMITHY"' then
             comboName = '"THE PARALYZED SMITHY"'
+        elseif GAME.badTime and not GAME.badTimeStarted then
+            SCN.scenes.tower.widgetList.reset:setVisible(false)
+            SCN.scenes.tower.widgetList.help:setVisible(false)
+            SCN.scenes.tower.widgetList.help2:setVisible(false)
+            SCN.scenes.tower.widgetList.daily:setVisible(false)
+            comboName = '"BAD TIME"'
+            GAME.customUltraCombo = true
         else
             GAME.customUltraCombo = false
             ---@cast comboName string
@@ -2892,7 +2913,7 @@ function GAME.commit(auto, falseCommit)
         end
 
         if GAME.DPlock then attack = min(attack, URM and oldAllyLife * 2.6 or oldAllyLife * 4) end
-        if attack > 0 and not falseCommit then GAME.addHeight(attack * GAME.attackMul) end
+        if attack > 0 and not falseCommit then GAME.addHeight(attack * GAME.attackMul / (GAME.badTime and 3 or 1)) end
         if not falseCommit then
             GAME.addXP(attack + xp)
         else
@@ -3106,6 +3127,12 @@ function GAME.start()
     GAME.isUltraRun = GAME.anyUltra
     GAME.uneasyModIconSelected = false
     GAME.manualBGMPitch = nil
+    
+    SCN.scenes.tower.widgetList.reset:setVisible(true)
+    if GAME.badTime then
+        GAME.badTimeStarted = true
+    end
+
     local attackMulMod = 1
     if GAME.eglassCard then attackMulMod = 0.5 end
     GAME.attackMul = (GAME.isUltraRun and .62 or (M.EX == -1 and URM and M.NH < 2 and M.MS < 2 and M.GV < 2 and M.VL < 2 and M.DH < 2 and M.IN < 2 and M.AS < 2 and M.DP < 2) and 0.33 or 1) * attackMulMod
@@ -3605,7 +3632,7 @@ function GAME.finish(reason)
         local resStr = {}
         --for i = 1, 7 do
         -- Trevor Smithy
-        if M.EX == -1 and GAME.comboStr:count('r') == 0 and URM then
+        if (M.EX == -1 and GAME.comboStr:count('r') == 0 and URM) or GAME.badTime then
             TABLE.append(resStr, {COLOR.DR, "U"})
         end
         for i = 1, #PieceData - 1 do
@@ -3912,7 +3939,7 @@ function GAME.finish(reason)
         GAME.resIB:clear()
     end
     ReleaseAchvBuffer()
-
+    GAME.badTime = false
     GAME.setGigaspeedAnim(false)
     GAME.stopTeraspeed('fin')
     TASK.removeTask_code(task_startSpin)
@@ -4197,6 +4224,10 @@ function GAME.update(dt)
         passiveClimbSpeedMod = passiveClimbSpeedMod * 1.26
     end
 
+    if GAME.badTime then
+        passiveClimbSpeedMod = -1 + (-1 * GAME.attackMul)
+    end
+
     local releaseHeight = GAME.heightBuffer
     GAME.heightBuffer = max(MATH.expApproach(GAME.heightBuffer, 0, dt * 6.3216), GAME.heightBuffer - 6000 * dt)
     releaseHeight = releaseHeight - GAME.heightBuffer
@@ -4233,6 +4264,10 @@ function GAME.update(dt)
         else
             GAME.height = GAME.height + GAME.rank / 4 * passiveClimbSpeedMod * dt * (GAME.einvisUI and 1 or icLerp(GAME.eglassCard and 0.5 or 1, GAME.eglassCard and 3 or 6, Floors[GAME.floor].top - GAME.height))
         end
+    end
+
+    if GAME.height < 0 and (M.NH == -1 or M.MS == -1 or M.GV == -1 or M.VL == -1 or M.DH == -1 or M.AS == -1 or M.DP == -1) then
+        GAME.height = 0
     end
 
     GAME.roundHeight = floor(GAME.height * 10) / 10
