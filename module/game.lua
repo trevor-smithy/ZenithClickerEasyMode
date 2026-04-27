@@ -2645,8 +2645,8 @@ function GAME.commit(auto, falseCommit)
         local comboAttackMul = 1
         local comboXPMul = 1
         if GAME.comboSFX > 0 then
-            comboAttackMul = 1 + (GAME.comboSFX*2)
-            comboXPMul = 1 + (GAME.comboSFX/2)
+            comboAttackMul = GAME.comboSFX/16 * 40 --40x height gain
+            comboXPMul = GAME.comboSFX/16 * 10 --10x XP gain
         end
         GAME.comboSFX = 0
         local totalAssistPenalty = 0
@@ -3774,6 +3774,9 @@ function GAME.finish(reason)
         local resStr = {}
         --for i = 1, 7 do
         -- Trevor Smithy
+        if STAT.stacker then
+            TABLE.append(resStr, {COLOR.dI, "S"})
+        end
         if (M.EX == -1 and GAME.comboStr:count('r') == 0 and URM) or GAME.badTime then
             TABLE.append(resStr, {COLOR.DR, "U"})
         end
