@@ -3,6 +3,7 @@ local scene = {}
 
 EndText = GC.newText(FONT.get(70))
 EndText2 = GC.newText(FONT.get(70), "ZENITH CLICKER!")
+EndText3 = GC.newText(FONT.get(70), "EASY MODE!")
 
 ---@param align? 'left' | 'center' | 'right'
 local function addText(text, x, y, scale, align, wraplimit)
@@ -22,6 +23,9 @@ addText("ZENITH  CLICKER", 0, 260)
 addText("A TETR.IO Fangame from TETR.IO Community", 0, 360, .42)
 
 local h = 520
+
+addText("Easy Mode", -26, h-80, .42, 'right')
+addText("Trevor Smithy", 26, h-80, .42, 'left')
 
 addText("Design", -26, h, .42, 'right')
 addText("MrZ", 26, h, .42, 'left')
@@ -251,14 +255,19 @@ function scene.draw()
         FONT.set(70)
         GC.setColor(.9, .1, .2)
         for i = 0, 26 do
+            GC.setColor(.9, .1, .2)
             GC.mDraw(EndText2, 6 * math.cos(i * MATH.tau / 26), 6 * math.sin(i * MATH.tau / 26), 0, 1.626)
+            GC.setColor(.1, .9, .1)
+            GC.mDraw(EndText3, 6 * math.cos(i * MATH.tau / 26), 6 * math.sin(i * MATH.tau / 26) + 120, 0, 1.626)
         end
         GC.setColor(.1, .1, .1)
         for i = 0, 11 do
             GC.mDraw(EndText2, 2 * math.cos(i * MATH.tau / 11), 2 * math.sin(i * MATH.tau / 11), 0, 1.626)
+            GC.mDraw(EndText3, 2 * math.cos(i * MATH.tau / 11), 2 * math.sin(i * MATH.tau / 11) + 120, 0, 1.626)
         end
         GC.setColor(COLOR.L)
         GC.mDraw(EndText2, 0, 0, 0, 1.626)
+        GC.mDraw(EndText3, 0, 120, 0, 1.626)
     end
 end
 

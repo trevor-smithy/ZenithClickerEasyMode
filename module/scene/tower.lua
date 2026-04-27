@@ -18,7 +18,7 @@ HoldingButtons = {}
 local HoldingButtons = HoldingButtons
 
 URM = false
-RevUnlocked = false
+RevUnlocked = STAT.unlockAll --false
 UsingTouch = MOBILE
 local usingTouch = UsingTouch
 local revHold = {}
@@ -105,6 +105,35 @@ local function mouseTrigger(x, y, k)
     end
 end
 
+local function ultraStateChange()
+    GAME.hardMode = M.EX > 0 or GAME.anyRev and not URM
+    GAME.refreshLayout()
+    GAME.refreshUltra()
+    GAME.refreshCurrentCombo()
+    GAME.refreshPBText()
+    RefreshBGM()
+    GAME.refreshRPC()
+    RefreshHelpText()
+end
+
+local function applyCombo(set)
+    local changed
+    for _, C in ipairs(Cards) do
+        local cur = C.active and (C.upright and 1 or (C.easy and -1 or 2)) or 0
+        local tar = TABLE.find(set, C.id) and 1 or TABLE.find(set, 'r' .. C.id) and 2 or TABLE.find(set, 'e' .. C.id) and -1 or 0
+        if cur ~= tar then
+            if cur ~= 0 then C:setActive(true) end
+            if tar ~= 0 then C:setActive(true, tar == -1 and 3 or tar == 2 and 2 or 1) end
+            changed = true
+        end
+    end
+    if set.ultra ~= nil and set.ultra ~= URM then
+        URM = set.ultra
+        ultraStateChange()
+    end
+    if changed then SFX.play('mmstart') end
+end
+
 local function keyTrigger(key)
     local bindID = TABLE.find(STAT.keybind, key)
     if bindID and bindID <= 18 and (M.AS ~= 0 or (not GAME.playing and (bindID == 8 or bindID == 17))) then
@@ -170,7 +199,7 @@ local function keyTrigger(key)
                 GAME.start()
             end
         elseif key == '`' then
-            if GAME.playing then
+            if GAME.playing or GAME.badTime then
                 SFX.play('no')
             else
                 if URM and M.VL == 2 and not UltraVlCheck('stat') then return end
@@ -181,7 +210,7 @@ local function keyTrigger(key)
             W._pressTime = W._pressTimeMax * 2
             W._hoverTime = W._hoverTimeMax
         elseif key == 'tab' then
-            if GAME.playing then
+            if GAME.playing or GAME.badTime then
                 SFX.play('no')
             else
                 if URM and M.VL == 2 and not UltraVlCheck('achv') then return end
@@ -192,7 +221,7 @@ local function keyTrigger(key)
             W._pressTime = W._pressTimeMax * 2
             W._hoverTime = W._hoverTimeMax
         elseif key == 'f1' then
-            if GAME.playing then
+            if GAME.playing or GAME.badTime then
                 SFX.play('no')
             else
                 if URM and M.VL == 2 and not UltraVlCheck('conf') then return end
@@ -203,7 +232,7 @@ local function keyTrigger(key)
             W._pressTime = W._pressTimeMax * 2
             W._hoverTime = W._hoverTimeMax
         elseif key == 'f2' then
-            if GAME.playing then
+            if GAME.playing or GAME.badTime then
                 SFX.play('no')
             else
                 if URM and M.VL == 2 and not UltraVlCheck('reset') then return end
@@ -243,58 +272,182 @@ local function keyTrigger(key)
                     end
                 end
             else
+                local power = love.mouse.isDown('2') or M.EX == 2 or love.keyboard.isDown('lctrl', 'rctrl') or next(revHold)
                 local buttonRemoved = false
                 if combo == 0 then
                     SFX.play('no')
                 elseif combo < 16 then
-                    SFX.play('combo_' .. combo)
+                    SFX.play('combo_' .. combo .. (power and '_power' or ''), 1, 0, Tone((power and (combo-1)/5 or 0)))
                 else
-                    SFX.play('combo_16')
+                    SFX.play('combo_16' .. (power and '_power' or ''), 1, 0, Tone((power and (combo-1)/5 or 0)))
                     scene.widgetList.easy.x = -100
                     scene.widgetList.easy:resetPos()
-                    if ACHV.could_you_not then
+                    if power then
+                        GAME.fallout = true
+                        scene.widgetList.stat.x = -100
+                        scene.widgetList.stat:resetPos()
+                        scene.widgetList.achv.x = -100
+                        scene.widgetList.achv:resetPos()
+                        scene.widgetList.zcem.x = 100
+                        scene.widgetList.zcem:resetPos()
+                        scene.widgetList.about.x = 100
+                        scene.widgetList.about:resetPos()
+                        scene.widgetList.conf.x = 100
+                        scene.widgetList.conf:resetPos()
+                        GAME.multiplePiecesActive = false
+                        GAME.enightcore = true
+                        GAME.eslowmo = true
+                        GAME.eglassCard = true
+                        GAME.efastLeak = true
+                        GAME.einvisUI = true
+                        GAME.einvisCard = true
+                        GAME.ecloseCard = true
+                        GAME.nightcore = false
+                        GAME.slowmo = false
+                        GAME.glassCard = false
+                        GAME.fastLeak = false
+                        GAME.invisUI = false
+                        GAME.invisCard = false
+                        GAME.closeCard = false
+                        local set = {}
+                        applyCombo(set)
+                        set.ultra = true
+                        TABLE.insert(set, 'rEX')
+                        TABLE.insert(set, 'rNH')
+                        TABLE.insert(set, 'rMS')
+                        TABLE.insert(set, 'rGV')
+                        TABLE.insert(set, 'rVL')
+                        TABLE.insert(set, 'rDH')
+                        TABLE.insert(set, 'rIN')
+                        TABLE.insert(set, 'rAS')
+                        TABLE.insert(set, 'rDP')
+                        applyCombo(set)
+                        GAME.badTime = true
+                        GAME.badTimeStarted = false
+                        GAME.refreshCurrentCombo()
+                        TASK.new(function()
+                            TASK.yieldT(0.62)
+                            SFX.play('bombdetonate')
+                            end
+                        )
+                        if not ACHV.could_you_not then IssueAchv('could_you_not', true) end
+                        MSG.clear()
+                        if ACHV.what_have_you_done then
+                            MSG("dark", "WHAT HAVE YOU DONE!?", 0.26)
+                        else
+                            IssueAchv('what_have_you_done', true)
+                            local A = Achievements['what_have_you_done']
+                            local msg = { 'achv_badTime', {
+                                COLOR.L, A.name .. "\n",
+                                COLOR.dL, "You feel like you're going to have a-",
+                            }, 1 }
+                            MSG { msg[1], msg[2], time = .26, last = true, alpha = .75 }
+                            SFX.play('hyperalert')
+                            SaveAchv()
+                        end
+                    elseif ACHV.could_you_not then
                         MSG("dark", "COULD YOU NOT?",10)
                     else
                         IssueAchv('could_you_not')
                     end
                     buttonRemoved = true
+                end                
+                if not buttonRemoved then 
+                    local str = "Select upright mods to make Easy first!"
+                    if power then
+                        MSG.clear()
+                        if combo == 0 then str = "?" elseif combo > 7 then str = "WHAT DO YOU THINK YOU ARE DOING" else str = "What do you think you are doing" end
+                        for i = 1, combo do
+                            str = str .. (i%2 == 0 and "!" or "?")
+                        end
+                    end
+                    MSG("dark", str, 3)
                 end
-                if not buttonRemoved then MSG("dark", "Select upright mods to make Easy first!", 3) end
                 combo = combo + 1
                 comboTimer = 3
             end
             GAME.anyChange = false
+        elseif key == 'f15' then
+            if GAME.playing then
+                SFX.play('no')
+            else
+                if URM and M.VL == 2 and not UltraVlCheck('reset') then return end
+                SFX.play('menuhit1')
+                SCN.go('zcem', 'none')
+            end
+            local W = scene.widgetList.zcem
+            W._pressTime = W._pressTimeMax * 2
+            W._hoverTime = W._hoverTimeMax
         end
     end
 end
 
-local function ultraStateChange()
-    GAME.hardMode = M.EX > 0 or GAME.anyRev and not URM
-    GAME.refreshLayout()
-    GAME.refreshUltra()
-    GAME.refreshCurrentCombo()
-    GAME.refreshPBText()
-    RefreshBGM()
-    GAME.refreshRPC()
-    RefreshHelpText()
-end
-
-local function applyCombo(set)
-    local changed
-    for _, C in ipairs(Cards) do
-        local cur = C.active and (C.upright and 1 or 2) or 0
-        local tar = TABLE.find(set, C.id) and 1 or TABLE.find(set, 'r' .. C.id) and 2 or 0
-        if cur ~= tar then
-            if cur > 0 then C:setActive(true) end
-            if tar > 0 then C:setActive(true, tar == 2 and 2 or 1) end
-            changed = true
+local function randomizeRNG()
+    local x, y = love.mouse.getPosition()
+    local randX, randY = x%2, y%2
+    for i = 1, randX do
+        for i = 1, randY do
+            math.random(20)
         end
     end
-    if set.ultra ~= nil and set.ultra ~= URM then
-        URM = set.ultra
-        ultraStateChange()
+end
+
+---@return table { _: string, ultra: boolean}
+---@author: Trevor Smithy
+local function generateRandomCombo()
+    local set = {}
+    local smithyMode = math.random(40) == 40
+    --local freq = { 3, 3, 2, 5, 3, 5, 4, 4, 2 }
+    if not smithyMode then
+        local specialCombo = math.random(20) > 17
+        if not specialCombo then
+            local EX = math.random(20) -- roll a d20
+            TABLE.insert(set, 1, EX > 10 and 'eEX' or EX > 7 and 'EX' or EX > 5 and 'rEX' or '')
+            local NH = math.random(20) -- roll a d20
+            TABLE.insert(set, 1, NH > 16 and 'eNH' or NH > 13 and 'NH' or NH > 11 and 'rNH' or '')
+            local MS = math.random(20) -- roll a d20
+            TABLE.insert(set, 1, MS > 17 and 'eMS' or MS > 15 and 'MS' or MS > 14 and 'rMS' or '')
+            local GV = math.random(20) -- roll a d20
+            TABLE.insert(set, 1, GV > 14 and 'eGV' or GV > 9 and 'GV' or GV > 5 and 'rGV' or '')
+            local VL = math.random(20) -- roll a d20
+            TABLE.insert(set, 1, VL > 16 and 'eVL' or VL > 13 and 'VL' or VL > 11 and 'rVL' or '')
+            local DH = math.random(20) -- roll a d20
+            TABLE.insert(set, 1, DH > 14 and 'eDH' or DH > 9 and 'DH' or DH > 6 and 'rDH' or '')
+            local IN = math.random(20) -- roll a d20
+            TABLE.insert(set, 1, IN > 15 and 'eIN' or IN > 11 and 'IN' or IN > 8 and 'rIN' or '')
+            local AS = math.random(20) -- roll a d20
+            TABLE.insert(set, 1, AS > 15 and 'eAS' or AS > 11 and 'AS' or AS > 8 and 'rAS' or '')
+            local DP = math.random(20) -- roll a d20
+            TABLE.insert(set, 1, DP > 17 and 'eDP' or DP > 15 and 'DP' or DP > 14 and 'rDP' or '')
+            local anyRev = TABLE.find(set, 'rEX') or TABLE.find(set, 'rNH') or TABLE.find(set, 'rMS') or TABLE.find(set, 'rGV') or TABLE.find(set, 'rVL') or TABLE.find(set, 'rDH') or TABLE.find(set, 'rIN') or TABLE.find(set, 'rAS') or TABLE.find(set, 'rDP')
+            local easy = TABLE.find(set, 'eEX')
+            set.ultra = (math.random(20) > (easy and not anyRev and -5 or 0) + 15) and (easy or anyRev) --d20
+        else
+            local index = math.random(45, #ComboData.menu)
+            local comboSet = ComboData.menu[index].set
+            local tempSet = STRING.split(comboSet, ' ')
+            for i = 1, #tempSet do
+                TABLE.insert(set, tempSet[i])
+            end
+            if index <= 54 then
+                set.ultra = true
+            else
+                local anyRev = TABLE.find(set, 'rEX') or TABLE.find(set, 'rNH') or TABLE.find(set, 'rMS') or TABLE.find(set, 'rGV') or TABLE.find(set, 'rVL') or TABLE.find(set, 'rDH') or TABLE.find(set, 'rIN') or TABLE.find(set, 'rAS') or TABLE.find(set, 'rDP')
+                local easy = TABLE.find(set, 'eEX')
+                set.ultra = (math.random(20) > (easy and not anyRev and -5 or 0) + 15) and (easy or anyRev) --d20 and a set where URM would do anything
+            end
+        end
+    elseif not TABLE.equal(GAME.getHand(true),{'eEX','eVL','eAS'}) then
+        TABLE.insert(set, 'eEX'); TABLE.insert(set, 'eVL'); TABLE.insert(set, 'eAS')
+        set.ultra = math.random(2) == 2
+        SFX.play(set.ultra and 'zenith_split_missed' or 'zenith_split_cleared')
+    else
+        TABLE.insert(set, 'eEX'); TABLE.insert(set, 'eVL'); TABLE.insert(set, 'eAS')
+        set.ultra = not URM
+        SFX.play(set.ultra and 'zenith_split_missed' or 'zenith_split_cleared')
     end
-    if changed then SFX.play('mmstart') end
+    if smithyMode then IssueAchv('biased') end
+    return set
 end
 
 function scene.load()
@@ -303,7 +456,7 @@ function scene.load()
             "[WARNING]\nThe web version is for trial purposes only.\nPlease note that your progress may be lost without warning, and this cannot be fixed.\nDownload the desktop version to keep playing in the future, with far better performance.\nThank you for your support!",
             12.6)
     end
-    RevUnlocked = TABLE.countAll(GAME.completion, 0) < 9
+    RevUnlocked = TABLE.countAll(GAME.completion, 0) < 9 or STAT.unlockAll
 
     for i = 1, #MD.deck do ShortCut[i]:set(STAT.keybind[i]:upper()) end
 
@@ -493,6 +646,7 @@ end
 local KBIsDown, MSIsDown = love.keyboard.isDown, love.mouse.isDown
 local expApproach = MATH.expApproach
 function scene.update(dt)
+    if not GAME.playing then randomizeRNG() end
     comboTimer = comboTimer - dt
     if comboTimer <= 0 then
         combo = 0
@@ -559,7 +713,7 @@ function scene.update(dt)
             GAME.refreshDailyChallengeText()
             timeRemain = timeRemain + 86400
         end
-        TEXTS.dcTimer:set(os.date("!%H:%M:%S", timeRemain))
+        --TEXTS.dcTimer:set(os.date("!%H:%M:%S", timeRemain))
     end
 end
 
@@ -853,33 +1007,35 @@ function scene.draw()
             end
         end
     end
-    if not (GAME.invisUI or GAME.einvisUI) then
+    if not GAME.invisUI then
         local panelH = 697 + GAME.uiHide * (420 + GAME.height / 6.2)
         -- Card Panel
         gc_replaceTransform(SCR.xOy)
         gc_translate(0, DeckPress)
-        gc_setColor(ShadeColor)
-        gc_draw(TEXTURE.transition, 800 - 1586 / 2, panelH - 303, 1.5708, 6.26, 1586, 0, 1)
-        if GAME.revDeckSkin then
-            gc_setColor(1, 1, 1, GAME.revTimer)
-            gc_mDraw(TEXTURE.panel.glass_a, 800, panelH)
-            gc_mDraw(TEXTURE.panel.glass_b, 800, panelH)
-            gc_setColor(1, 1, 1, ThrobAlpha.bg1)
-            gc_mDraw(TEXTURE.panel.throb_a, 800, panelH)
-            gc_setColor(1, 1, 1, ThrobAlpha.bg2)
-            gc_mDraw(TEXTURE.panel.throb_b, 800, panelH)
+        if not GAME.einvisUI then
+            gc_setColor(ShadeColor)
+            gc_draw(TEXTURE.transition, 800 - 1586 / 2, panelH - 303, 1.5708, 6.26, 1586, 0, 1)
+            if GAME.revDeckSkin then
+                gc_setColor(1, 1, 1, GAME.revTimer)
+                gc_mDraw(TEXTURE.panel.glass_a, 800, panelH)
+                gc_mDraw(TEXTURE.panel.glass_b, 800, panelH)
+                gc_setColor(1, 1, 1, ThrobAlpha.bg1)
+                gc_mDraw(TEXTURE.panel.throb_a, 800, panelH)
+                gc_setColor(1, 1, 1, ThrobAlpha.bg2)
+                gc_mDraw(TEXTURE.panel.throb_b, 800, panelH)
+            end
+            gc_setColor(ShadeColor)
+            gc_draw(TEXTURE.transition, 800 - 1586 / 2, panelH - 303, 1.5708, 12.6, -3, 0, 1)
+            gc_draw(TEXTURE.transition, 800 + 1586 / 2, panelH - 303, 1.5708, 12.6, 3, 0, 1)
+            gc_setColor(TextColor)
+            gc_setAlpha(.626)
+            gc_mRect('fill', 800, panelH - 303, 1586 + 6, -3)
         end
-        gc_setColor(ShadeColor)
-        gc_draw(TEXTURE.transition, 800 - 1586 / 2, panelH - 303, 1.5708, 12.6, -3, 0, 1)
-        gc_draw(TEXTURE.transition, 800 + 1586 / 2, panelH - 303, 1.5708, 12.6, 3, 0, 1)
-        gc_setColor(TextColor)
-        gc_setAlpha(.626)
-        gc_mRect('fill', 800, panelH - 303, 1586 + 6, -3)
 
         -- MP & ZP Preview
-        if not GAME.playing and STAT.maxFloor >= 10 then
+        if not GAME.playing and STAT.maxFloor >= 10 and not GAME.badTime then
             gc_setColor(TextColor)
-            gc_setAlpha(.12 + abs(math.log(GAME.comboZP)) * 2)
+            gc_setAlpha(.12 + abs(math.log(GAME.comboZP)) * (GAME.einvisUI and 1 or 2))
             gc_draw(TEXTS.zpPreview, 1370, 275, 0, 1, 1, TEXTS.zpPreview:getWidth())
             if GAME.comboMP >= 6 or GAME.comboMP <= -3 then
                 local tempComboMP = GAME.comboMP
@@ -956,9 +1112,18 @@ function scene.overDraw()
         -- Current combo
         if not GAME.playing or M.IN < 2 then
             if GAME.customUltraCombo then
-                local speedMod = (GAME.enightcore or GAME.nightcore) and 2 or GAME.eslowmo and 0.75 or GAME.slowmo and 0.5 or 1
-                TEXTS.mod:setFont(FONT.get(60))
-                gc_setColor(COLOR.rainbow_light(2.6 * t * speedMod))
+                local speedMod = ((GAME.enightcore or GAME.nightcore) and 2 or 1) * (GAME.eslowmo and 0.75 or 1) * (GAME.slowmo and 0.5 or 1)
+                local prMod = 1.08422
+                if not (GAME.peasantRevolution and floor(t * speedMod * prMod) % 2 == 1) then
+                    TEXTS.mod:setFont(FONT.get(GAME.badTime and 90 or 60))
+                    gc_setColor(COLOR.rainbow_light(2.6 * t * speedMod))
+                elseif GAME.peasantRevolution then
+                    TEXTS.mod:setFont(FONT.get(30))
+                    gc_setColor(TextColor)
+                    BGM.set('all', 'highgain', 1, 0.626/speedMod)
+                end
+                if GAME.peasantRevolution and floor(t * speedMod * prMod) % 2 == 1 then TEXTS.mod:set('"ULTRA HARD BATH WATER"') end
+                if GAME.peasantRevolution and floor(t * speedMod * prMod) % 2 == 0 then TEXTS.mod:set('"PEASANT REVOLUTION"') end
             elseif GAME.smithyMode then
                 TEXTS.mod:setFont(FONT.get(50))
                 gc_setColor(0,1,0)
@@ -967,7 +1132,7 @@ function scene.overDraw()
                 gc_setColor(TextColor)
             end
             if M.IN == 2 then gc_setAlpha(.42 + .26 * sin(t * 2.6)) end
-            gc_mDraw(TEXTS.mod, 800, 396, 0, min(1, 760 / TEXTS.mod:getWidth()))
+            gc_mDraw(TEXTS.mod, 800, GAME.badTime and 390 or 396, 0, min(1, 760 / TEXTS.mod:getWidth()))
         end
 
         -- Glow
@@ -1007,7 +1172,9 @@ function scene.overDraw()
             end
             if GigaSpeed.isTera then
                 for p = -10, 10, 3 do
-                    gc_mDraw(TEXTS.teraspeed, 800 + (GigaSpeed.textTimer + p * .01) ^ 5 * 2600, 355, 0, 2.6)
+                    gc_mDraw(GAME.quettaspeed and TEXTS.quettaspeed or GAME.ronnaspeed and TEXTS.ronnaspeed or GAME.yottaspeed and TEXTS.yottaspeed or 
+                    GAME.zettaspeed and TEXTS.zettaspeed or GAME.exaspeed and TEXTS.exaspeed or GAME.petaspeed and TEXTS.petaspeed or 
+                    TEXTS.teraspeed, 800 + (GigaSpeed.textTimer + p * .01) ^ 5 * 2600, 355, 0, 2.6)
                 end
             else
                 for p = -10, 10, 3 do
@@ -1223,7 +1390,7 @@ function scene.overDraw()
                 local colorList = {COLOR.R, COLOR.Y, COLOR.G, COLOR.B, COLOR.V, COLOR.lM }
                 local colorIndex = 1
                 local rank = GAME.rank
-                local xp = GAME.commit(false, true)
+                local xp = (M.VL == 2 and URM) and (5+GAME.chain) or GAME.commit(false, true)
                 local newXP, newRank = GAME.addXP(xp, true)
                 local revolutions = newRank - rank + (newXP/(4*(newRank))) -- 1/360
                 local tempRevolutions = newRank - rank 
@@ -1444,7 +1611,8 @@ function scene.overDraw()
         if GAME.attackMul < 1 then
             setFont(30)
             gc_setColor(1, 0, 0, t % .52 < .26 and .872/eTAlpha or .42/eTAlpha)
-            gc.print("x" .. GAME.attackMul, 1024, 926, 0, .7)
+            local attackMul = floor((GAME.attackMul / (GAME.badTime and 3 or 1)) * 1000)/1000
+            gc.print("x" .. attackMul, 1024, 926, 0, .7)
         end
 
         gc_ucs_back()
@@ -1511,7 +1679,7 @@ function scene.overDraw()
         end
 
         -- UI
-        if GAME.uiHide < 1 then
+        if GAME.uiHide < 1 and not GAME.badTime then
             local exT = GAME.exTimer
             local revT = GAME.revTimer
             local d = GAME.uiHide * 70
@@ -1885,6 +2053,15 @@ scene.widgetList = {
         onClick = function() love.keyreleased('f2') end,
     },
     WIDGET.new {
+        name = 'zcem', type = 'button',
+        pos = { 1, 0 }, x = -60, y = 410, w = 160, h = 60,
+        color = 'DG',
+        sound_hover = 'menutap',
+        fontSize = 30, text = "ZCEM   ", textColor = { .15, .75, .15 },
+        onPress = function() love.keypressed('f15') end,
+        onClick = function() love.keyreleased('f15') end,
+    },
+    WIDGET.new {
         name = 'start', type = 'button',
         pos = { .5, .5 }, y = -170, w = 800, h = 200,
         color = { .35, .12, .05 },
@@ -1934,15 +2111,21 @@ scene.widgetList = {
         name = 'daily', type = 'hint',
         pos = { 1, 0 }, x = -200, y = 126, w = 200, h = 80, cornerR = 40,
         color = TextColor,
-        fontSize = 30, text = "Daily Chall.",
+        fontSize = 30, text = "Random Set",
         sound_hover = 'menutap',
         labelPos = 'leftBottom',
         floatFontSize = 30,
         floatCornerR = 26,
         floatText = "NO DATA",
         onPress = function()
-            if not DailyAvailable then return end
-            applyCombo(DAILY)
+            --if not DailyAvailable then return end
+            --applyCombo(DAILY)
+            applyCombo(generateRandomCombo())
+            if TABLE.equal(GAME.getHand(true),{'eEX','rGV','eDH','eAS'}) then -- but it isn't one of mine check
+                GAME.enightcore = true
+                RefreshBGM()
+                GAME.refreshCurrentCombo()
+            end
         end,
     },
     WIDGET.new {
@@ -1969,7 +2152,7 @@ scene.widgetList = {
                 end
             end
         end,
-        visibleFunc = function() return not GAME.playing end,
+        visibleFunc = function() return not GAME.playing and not GAME.badTime end,
     },
     WIDGET.new {
         name = 'help2', type = 'hint',
@@ -1991,11 +2174,8 @@ scene.widgetList = {
                     SFX.play('no')
                 end
             else
-                -- Trevor Smithy
-                --PieceSFXID = (PieceSFXID or 0) % 8 + 1
-                --if PieceSFXID <= 7 then
-                PieceSFXID = (PieceSFXID or 0) % 15 + 1
-                if PieceSFXID <= 14 then
+                PieceSFXID = (PieceSFXID or 0) % #PieceData + 1
+                if PieceSFXID < #PieceData then
                     local piece = ('zsjltoi'):sub(PieceSFXID, PieceSFXID)
                     SFX.play(piece, 1, 0, Tone(6))
                     if PieceSFXID > 7 then
@@ -2005,9 +2185,7 @@ scene.widgetList = {
                     SFX.play('allclear')
                 end
 
-                --for i = 1, 7 do
-                -- Trevor Smithy
-                for i = 1, 14 do
+                for i = 1, #PieceData - 1 do
                     GAME[PieceData[i].id] = PieceSFXID == i
                 end
 
@@ -2016,6 +2194,7 @@ scene.widgetList = {
                 GAME.refreshRPC()
                 -- Trevor Smithy
                 GAME.refreshCurrentCombo()
+                GAME.multiplePiecesActive = false
                 MSG({
                     cat = 'dark',
                     str = PieceData[PieceSFXID].popup,
@@ -2023,7 +2202,7 @@ scene.widgetList = {
                 })
             end
         end,
-        visibleFunc = function() return not GAME.playing and TABLE.countAll(GAME.completion, 0) < 9 end,
+        visibleFunc = function() return not GAME.playing and TABLE.countAll(GAME.completion, 0) < 9 and not GAME.badTime end,
     },
 }
 

@@ -10,18 +10,17 @@ local M = GAME.mod
 local CD = Cards
 
 ---@class Card
----@field burn false | number
+---@field burn number?
 local Card = {}
 Card.__index = Card
 function Card.new(d)
-    ---@class Card
     local obj = setmetatable({
         initOrder = d.initOrder,
         tempOrder = d.initOrder,
         id = d.id,
         lockfull = d.lockfull,
 
-        lock = true,
+        lock = STAT.unlockAll and false or true,
         active = false,
         front = true,
         upright = true,
@@ -65,13 +64,16 @@ local function task_refreshBGM()
     TASK.yieldT(.1)
     RefreshBGM()
 end
+---@param self Card 
+---@param auto boolean i.e. was not manually selected
+---@param key number? 1 or nil = active/inactive 2 = reverse 3 = easy
 function Card:setActive(auto, key)
     local eNHBlocksFaults = M.NH == -1 and true or false
     if not auto then
         GAME.spinCheck = false
         GAME.rollCheck = false
     end
-    if TASK.getLock('cannotFlip') or GAME.playing and M.NH == 1 and not auto and self.active then
+    if TASK.getLock('cannotFlip') or GAME.playing and M.NH == 1 and not auto and self.active or (not GAME.playing and GAME.badTime) then
         self:flick()
         SFX.play('no')
         return
@@ -337,7 +339,7 @@ function Card:setActive(auto, key)
         easyOn = self.active and (key == 3 or KBIsDown('lalt', 'ralt'))
         --
         revOn = self.active and (key == 2 or KBIsDown('lctrl', 'rctrl'))
-        if revOn and completion[self.id] == 0 then
+        if revOn and completion[self.id] == 0 and not STAT.unlockAll then
             revOn = false
             noSpin = true
             self.active = false
@@ -421,7 +423,14 @@ function Card:setActive(auto, key)
                 end)
             end
         else
-            SFX.play(toneName, toneVol, 0, Tone(0))
+            if M.EX == -1 and URM and not GAME.anyRev and self.easy and not GAME.playing then
+                TASK.new(function()
+                    SFX.play(toneName, toneVol*.8, 0, Tone(-3))
+                    SFX.play(toneName, toneVol*.8, 0, Tone(-0))
+                end)
+            else
+                SFX.play(toneName, toneVol, 0, Tone(0))
+            end
         end
         if revOn then
             self:revJump()
@@ -528,7 +537,7 @@ function Card:revJump()
                     b = (color[3] - .26) * .8,
                     x = self.x,
                     y = self.y,
-                    t = 1,
+                    t = GAME.fallout and 2.6 or 1,
                 })
                 GAME.revDeckSkin = true
                 GAME.bgXdir = MATH.coin(-1, 1)
@@ -768,7 +777,7 @@ function Card:draw()
         end
     end
 
-    if GAME.glassCard or GAME.eglassCard then
+    if (GAME.glassCard or GAME.eglassCard) and not (GAME.einvisCard) then
         local w, h = 240, 330
         gc_setColor((faceUp and ModData.textColor or ModData.color)[self.id])
         gc_setAlpha((STAT.cardBrightness / 100) ^ 2 * .872)
@@ -812,7 +821,7 @@ function Card:draw()
         end
     else
         -- Card
-        if not GAME.invisCard then
+        if not GAME.invisCard and not (GAME.glassCard or GAME.eglassCard) then
             if self.burn then
                 if URM and M.AS == 2 then
                     gc_setColor(1, .42, .26)
@@ -828,41 +837,141 @@ function Card:draw()
                 gc_setColor(b, b, b)
             end
             if GAME.einvisCard then
-                gc_setColor(1,1,1,0.26)
+                local b = STAT.cardBrightness / 100
+                gc_setColor(b,b,b,(STAT.cardBrightness / 100) ^ 2 * 0.26)
             end
             gc_draw(img, -img:getWidth() / 2, -img:getHeight() / 2)
             if img2 then
                 gc_draw(img2, -img2:getWidth() / 2, -img2:getHeight() / 2)
             end
+        elseif GAME.glassCard or GAME.eglassCard then
+            local w, h = 240, 330
+            gc_setColor((faceUp and ModData.textColor or ModData.color)[self.id])
+            gc_setAlpha((STAT.cardBrightness / 100) ^ 2 * .26)
+            gc_mRect('fill', 0, 0, w * 2, h * 2, 26)
+
+            if self.burn then
+                if URM and M.AS == 2 then
+                    gc_setColor(1, .42, .26)
+                else
+                    gc_setColor(GAME.time % .16 < .08 and COLOR.lF or COLOR.Y)
+                end
+            else
+                gc_setColor(1, 1, 1)
+            end
+
+            FONT.set(50)
+            if faceUp then
+                GC.scale(2.6)
+                GC.mStr(self.id, 0, -42)
+                GC.scale(1 / 2.6)
+            else
+                GC.scale(2)
+                GC.mStr("TETR.IO", 0, -42)
+                GC.scale(1 / 2)
+            end
         end
 
         -- Outline (draw)
-        if GAME.einvisCard then
-            gc_setLineWidth(20)
-            local temp = M.IN == 1 and 2 or M.IN == 2 and not URM and 3 or URM and 4 or 1
-            if self.required then 
-                gc_setColor(ModData.textColor[self.id]) 
-                if M.IN > 0 then
-                    gc_setAlpha(1.26/temp + sin(love.timer.getTime() * 5.2/temp)/temp)
+        if STAT.oldTransparentCard then
+            if GAME.einvisCard then
+                gc_setLineWidth(20)
+                local temp = M.IN == 1 and 2 or M.IN == 2 and not URM and 3 or M.IN == 2 and URM and 4 or 1
+                if self.required then 
+                    gc_setColor(ModData.textColor[self.id]) 
+                    if M.IN > 0 then
+                        gc_setAlpha(1.26/temp + sin(love.timer.getTime() * 5.2/temp)/temp)
+                    end
+                    if STAT.oldHitbox and MOBILE then
+                        gc_circle('fill', 0, 0, 40)
+                    end
+                else
+                    gc_setColor(1,1,1)
+                    gc_setAlpha(0.26/temp)
                 end
-                if STAT.oldHitbox and MOBILE then
-                    gc_circle('fill', 0, 0, 40)
-                end
-            else
-                gc_setColor(1,1,1)
-                gc_setAlpha(0.26/temp)
+                gc_mRect('line', 0, 0, 240 * 2 + 10, 330 * 2 + 10, 10)
             end
-            gc_mRect('line', 0, 0, 240 * 2 + 10, 330 * 2 + 10, 10)
+            if a1 then
+                gc_setColor(r1, g1, b1, a1)
+                gc_draw(activeFrame, 0, 0, 0, sign(self.kx), 1, frame1W, frame1H)
+            end
+            if a2 then
+                gc_setColor(r2, g2, b2, a2)
+                gc_draw(activeFrame2, 0, 0, 0, sign(self.kx), 1, frame2W, frame2H)
+            end
+        else
+            if GAME.einvisCard then
+                local temp = M.IN == 1 and 2 or M.IN == 2 and not URM and 3 or M.IN == 2 and URM and 4 or 1
+                local width = 40
+                local hand = TABLE.sort(GAME.getHand(false))
+                local q1 = GAME.quests[1] and TABLE.sort(GAME.quests[1].combo)
+                local q2 = M.DP ~= 0 and GAME.quests[2] and TABLE.sort(GAME.quests[2].combo)
+                local q3 = M.DP == -1 and GAME.quests[3] and TABLE.sort(GAME.quests[3].combo)
+                if self.required then 
+                    gc_setColor(ModData.textColor[self.id]) 
+                    if not self.active then
+                        gc_setAlpha(1.26/temp + sin(love.timer.getTime() * 5.2/temp)/temp)
+                        width = (9-temp)*5
+                    end
+                    if self.active and GAME.playing then
+                        if (q1 and TABLE.equal(hand, q1))then
+                            gc_setColor(0.26,1,0)
+                        else
+                            gc_setColor(1,1,0)
+                        end
+                        gc_setAlpha(min(1, 2/temp))
+                        width = (9-temp)*5
+                    end
+                    if STAT.oldHitbox and MOBILE then
+                        gc_circle('fill', 0, 0, 40)
+                    end
+                    gc_setLineWidth(width)
+                    gc_mRect('line', 0, 0, 240 * 2 + width/2, 330 * 2 + width/2, width)
+                elseif not self.required and self.active and GAME.playing and not ((q2 and TABLE.equal(hand, q2)) or (q3 and TABLE.equal(hand, q3))) then               
+                    gc_setColor(1,0,0)
+                    gc_setAlpha(min(1, 2/temp))
+                    width = (9-temp)*5
+                    gc_setLineWidth(width)
+                    gc_mRect('line', 0, 0, 240 * 2 + width/2, 330 * 2 + width/2, width)
+                end
+                if self.required2 then
+                    gc_setColor(1, 0.62, 0.9) 
+                    if not self.active then
+                        gc_setAlpha(1.26/temp + sin(love.timer.getTime() * 5.2/temp)/(2*temp))
+                    end
+                    if self.active and GAME.playing then
+                        if (q2 and TABLE.equal(hand, q2)) or (M.DP == -1 and GAME[GAME.getLifeKey(true)] > 0 and q3 and q1 and TABLE.equal(hand, q3) and TABLE.equal(hand, q1)) then
+                            gc_setColor(0.13,1,0)
+                        else
+                            gc_setColor(1,1,0)
+                        end
+                        gc_setAlpha(min(1, 3/temp))
+                    elseif GAME.playing and (M.DP == -1 and GAME[GAME.getLifeKey(true)] > 0 and q3 and q1 and TABLE.equal(hand, q3) and TABLE.equal(hand, q1)) then
+                        gc_setColor(0.13,1,0)
+                    end
+                    gc_setLineWidth(width/2)
+                    gc_mRect('line', 0, 0, 240 * 2 - width-2, 330 * 2 - width-2, width/2-2)
+                end
+                if q3 and TABLE.find(q3, self.id) and self.active and GAME.playing then
+                    if (q3 and TABLE.equal(hand, q3)) then
+                        gc_setColor(0, 1, 0)
+                    else
+                        gc_setColor(1, 1, 0)
+                    end
+                    gc_setAlpha(min(1, 2/temp))
+                    gc_setLineWidth(width/2)
+                    gc_mRect('line', 0, 0, 240 * 2 - width*2-4, 330 * 2 - width*2-4, width/2-4)
+                end
+            end
+            if a1 and not (GAME.einvisCard and GAME.playing) then
+                gc_setColor(r1, g1, b1, a1)
+                gc_draw(activeFrame, 0, 0, 0, sign(self.kx), 1, frame1W, frame1H)
+            end
+            if a2 and not (GAME.einvisCard and GAME.playing) then
+                gc_setColor(r2, g2, b2, a2)
+                gc_draw(activeFrame2, 0, 0, 0, sign(self.kx), 1, frame2W, frame2H)
+            end
         end
-        if a1 then
-            gc_setColor(r1, g1, b1, a1)
-            gc_draw(activeFrame, 0, 0, 0, sign(self.kx), 1, frame1W, frame1H)
-        end
-        if a2 then
-            gc_setColor(r2, g2, b2, a2)
-            gc_draw(activeFrame2, 0, 0, 0, sign(self.kx), 1, frame2W, frame2H)
-        end
-
         -- Menu UI
         if not playing then
             gc_push('transform')

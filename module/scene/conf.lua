@@ -739,6 +739,7 @@ scene.widgetList = {
         onClick = function()
             -- MSG.clear()
             local data = CLIPBOARD.get():filterASCII():trim()
+            local anyPieceActive = GAME.nightcore or GAME.enightcore or GAME.slowmo or GAME.eslowmo or GAME.glassCard or GAME.eglassCard or GAME.fastLeak or GAME.efastLeak or GAME.invisUI or GAME.einvisUI or GAME.invisCard or GAME.einvisCard or GAME.closeCard or GAME.ecloseCard
             if #data <= 26 then
                 if data == '' then
                     MSG('dark', "No data in clipboard")
@@ -795,6 +796,96 @@ scene.widgetList = {
                     STAT.promotion = not STAT.promotion
                     SFX.play('social_dm')
                     MSG('dark', "Rank Promotion Gauge: " .. (STAT.promotion and "ON" or "OFF"))
+                elseif data == 'old_transparent_card' or data == 'oldTransparentCard' or data == 'oldtransparentcard' or data == 'oldeO' then
+                    STAT.oldTransparentCard = not STAT.oldTransparentCard
+                    SFX.play('social_dm')
+                    MSG('dark', "Transparent Card: " .. (STAT.oldTransparentCard and "V1.0/1.1" or "V1.2+"))
+                elseif data == 'eZ' or data == 'ez' then
+                    if not GAME.enightcore and anyPieceActive then 
+                        SFX.play('damage_alert')
+                        MSG('dark', "WARNING: MULTIPLE PIECES ENABLED DISABLES SCORING AND MAY CAUSE ISSUES. DO NOT REPORT!")
+                        GAME.multiplePiecesActive = true
+                    else
+                        SFX.play('social_dm')
+                    end
+                    GAME.enightcore = not GAME.enightcore
+                    MSG('dark', "eZ: " .. (GAME.enightcore and "ON" or "OFF"))
+                    GAME.refreshLayout()
+                    RefreshBGM()
+                    GAME.refreshCurrentCombo()
+                elseif data == 'eS' or data == 'es' then
+                    if not GAME.eslowmo and anyPieceActive then 
+                        SFX.play('damage_alert')
+                        MSG('dark', "WARNING: MULTIPLE PIECES ENABLED DISABLES SCORING AND MAY CAUSE ISSUES. DO NOT REPORT!")
+                        GAME.multiplePiecesActive = true
+                    else
+                        SFX.play('social_dm')
+                    end
+                    GAME.eslowmo = not GAME.eslowmo
+                    MSG('dark', "eS: " .. (GAME.eslowmo and "ON" or "OFF"))
+                    GAME.refreshLayout()
+                    RefreshBGM()
+                    GAME.refreshCurrentCombo()
+                elseif data == 'eJ' or data == 'ej' then
+                    if not GAME.eglassCard and anyPieceActive then 
+                        SFX.play('damage_alert')
+                        MSG('dark', "WARNING: MULTIPLE PIECES ENABLED DISABLES SCORING AND MAY CAUSE ISSUES. DO NOT REPORT!")
+                        GAME.multiplePiecesActive = true
+                    else
+                        SFX.play('social_dm')
+                    end
+                    GAME.eglassCard = not GAME.eglassCard
+                    MSG('dark', "eJ: " .. (GAME.eglassCard and "ON" or "OFF"))
+                    GAME.refreshLayout()
+                    GAME.refreshCurrentCombo()
+                elseif data == 'eL' or data == 'el' then
+                    if not GAME.efastLeak and anyPieceActive then 
+                        SFX.play('damage_alert')
+                        MSG('dark', "WARNING: MULTIPLE PIECES ENABLED DISABLES SCORING AND MAY CAUSE ISSUES. DO NOT REPORT!")
+                        GAME.multiplePiecesActive = true
+                    else
+                        SFX.play('social_dm')
+                    end
+                    GAME.efastLeak = not GAME.efastLeak
+                    MSG('dark', "eL: " .. (GAME.efastLeak and "ON" or "OFF"))
+                    GAME.refreshLayout()
+                    GAME.refreshCurrentCombo()
+                elseif data == 'eT' or data == 'et' then
+                    if not GAME.einvisUI and anyPieceActive then 
+                        SFX.play('damage_alert')
+                        MSG('dark', "WARNING: MULTIPLE PIECES ENABLED DISABLES SCORING AND MAY CAUSE ISSUES. DO NOT REPORT!")
+                        GAME.multiplePiecesActive = true
+                    else
+                        SFX.play('social_dm')
+                    end
+                    GAME.einvisUI = not GAME.einvisUI
+                    MSG('dark', "eT: " .. (GAME.einvisUI and "ON" or "OFF"))
+                    GAME.refreshLayout()
+                    GAME.refreshCurrentCombo()
+                elseif data == 'eO' or data == 'eo' then
+                    if not GAME.einvisCard and anyPieceActive then 
+                        SFX.play('damage_alert')
+                        MSG('dark', "WARNING: MULTIPLE PIECES ENABLED DISABLES SCORING AND MAY CAUSE ISSUES. DO NOT REPORT!")
+                        GAME.multiplePiecesActive = true
+                    else
+                        SFX.play('social_dm')
+                    end
+                    GAME.einvisCard = not GAME.einvisCard
+                    MSG('dark', "eO: " .. (GAME.einvisCard and "ON" or "OFF"))
+                    GAME.refreshLayout()
+                    GAME.refreshCurrentCombo()
+                elseif data == 'eI' or data == 'ei' then
+                    if not GAME.ecloseCard and anyPieceActive then 
+                        SFX.play('damage_alert')
+                        MSG('dark', "WARNING: MULTIPLE PIECES ENABLED DISABLES SCORING AND MAY CAUSE ISSUES. DO NOT REPORT!")
+                        GAME.multiplePiecesActive = true
+                    else
+                        SFX.play('social_dm')
+                    end
+                    GAME.ecloseCard = not GAME.ecloseCard
+                    MSG('dark', "eI: " .. (GAME.ecloseCard and "ON" or "OFF"))
+                    GAME.refreshLayout()
+                    GAME.refreshCurrentCombo()
                 elseif data == 'resubmit' then
                     if DAILYCMD then
                         ASYNC.runCmd('submitDaily', DAILYCMD)
@@ -854,12 +945,13 @@ scene.widgetList = {
                 MSG('error', "Cannot import data from future versions\nPlease update your game first!")
                 SFX.play('staffwarning')
                 return
-            elseif res1.mod and res1.mod ~= 'vanilla' then
+            elseif res1.mod and res1.mod ~= 'vanilla' and res1.mod ~= 'easyMode' then
                 MSG('dark', "Cannot import data from modded version")
                 SFX.play('staffwarning')
                 return
             end
             TABLE.update(STAT, res1)
+            STAT.mod = 'easyMode'
             BEST, ACHV = res2, res3
             setmetatable(BEST.highScore, Metatable.best_highscore)
             GAME.refreshLockState()
@@ -869,7 +961,7 @@ scene.widgetList = {
                 IssueAchv('zenith_relocation')
             end
             Initialize(true)
-            if TestMode then
+            if TestMode or GAME.multiplePiecesActive then
                 MSG('dark', "Progress imported, but won't be saved.")
             else
                 MSG('dark', "Progress imported!")

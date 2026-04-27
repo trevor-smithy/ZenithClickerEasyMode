@@ -40,20 +40,20 @@ local function issuedScore()
 end
 
 ---@class Achievement
----@field title? string
----@field ex? true Extended by Zenith Clicker
----@field id? string
----@field name? string
----@field desc? string
----@field quote? string
----@field credit? string
----@field comp? '<' | '>' | fun(newScore, oldScore):boolean
----@field noScore? number
----@field scoreSimp? fun(score):string
----@field scoreFull? fun(score):string
----@field rank? 'floor' | fun(score):number
----@field type? 'competitive' | 'unranked' | 'issued' | 'event'
----@field hide? fun():boolean
+---@field title string?
+---@field ex boolean? Extended by Zenith Clicker
+---@field id string?
+---@field name string?
+---@field desc string?
+---@field quote string?
+---@field credit string?
+---@field comp ('<' | '>' | fun(newScore, oldScore):boolean)?
+---@field noScore number?
+---@field scoreSimp fun(score):string?
+---@field scoreFull fun(score):string?
+---@field rank ('floor' | fun(score):number)?
+---@field type ('competitive' | 'unranked' | 'issued' | 'event')?
+---@field hide fun():boolean?
 
 ---@type Map<Achievement>
 Achievements = {
@@ -1484,7 +1484,7 @@ Achievements = {
         ex = true,
         id = 'programmer_gamer',
         name = "Programmer & Pro Gamer",
-        desc = [[Reach F10 while maintaining TERASPEED WU eEX, eVL, and eAS]],
+        desc = [[HAR with TERASPEED active or completed WU eEX, eVL, and eAS]],
         quote = [["WAH-BAAM!"]],
         credit = "@TrevorSmithy",
         rank = floorRank(1, 3, 5, 7, 9, 10, 6200),
@@ -1493,7 +1493,7 @@ Achievements = {
     { -- one_of_mine
         id = 'one_of_mine',
         name = "But It Isn't One Of Mine",
-        desc = [[Reach F10 while maintaining TERASPEED and not manually committing WU eEX, uGV, eDH, and eAS +eZ]],
+        desc = [[HAR without manual commits with TERASPEED active or completed WU eEX, uGV, eDH, and eAS +eZ]],
         quote = [["Ain't nobody got time for that!"]],
         credit = "@TrevorSmithy",
         rank = floorRank(1, 3, 5, 7, 9, 10, 6200),
@@ -1613,7 +1613,7 @@ Achievements = {
     { -- your_too_fast
         id = 'your_too_fast',
         name = "YOUR TOO FAST",
-        desc = [[Surpass (climb speed) rank 126]],
+        desc = [[Highest (climb speed) rank reached (Max Badge is Rank 127)]],
         quote = [["MAMA MIA!"]],
         credit = "@TrevorSmithy",
         scoreSimp = function(rank) return "Rank " .. rank end,
@@ -1726,7 +1726,7 @@ Achievements = {
         credit = "@TrevorSmithy",
         comp = '<',
         scoreSimp = function(time) return string.format("%.2fs", time) end,
-        scoreFull = function(time) return string.format("%.2f quests/s", 75 / time) end,
+        scoreFull = function(time) return string.format("%.2f m/s", 1650 / time) end,
         rank = numberRankRev(600, 540, 480, 420, 360, 300, 240),
         hide = function() return not ACHV.uneasy or not ACHV.eEX end,
         type = 'unranked',
@@ -1735,11 +1735,11 @@ Achievements = {
         id = 'ueEXeNH',
         name = "Profligacy",
         desc = [[Fastest time to Floor 10 with ueEX, eNH + J]],
-        quote = [[TODO]],
+        quote = [[Your wasteful actions make it clear you have no sense of moderation...]],
         credit = "@TrevorSmithy",
         comp = '<',
         scoreSimp = function(time) return string.format("%.2fs", time) end,
-        scoreFull = function(time) return string.format("%.2f quests/s", 75 / time) end,
+        scoreFull = function(time) return string.format("%.2f m/s", 1650 / time) end,
         rank = numberRankRev(600, 540, 480, 420, 360, 300, 240),
         hide = function() return not ACHV.uneasy or not ACHV.eNH end,
         type = 'unranked',
@@ -1748,11 +1748,11 @@ Achievements = {
         id = 'ueEXeMS',
         name = "Diogenes Syndrome",
         desc = [[Fastest time to Floor 10 with ueEX, eMS + S]],
-        quote = [[TODO]],
+        quote = [[Hoarder much? This place is a mess...]],
         credit = "@TrevorSmithy",
         comp = '<',
         scoreSimp = function(time) return string.format("%.2fs", time) end,
-        scoreFull = function(time) return string.format("%.2f quests/s", 75 / time) end,
+        scoreFull = function(time) return string.format("%.2f m/s", 1650 / time) end,
         rank = numberRankRev(600, 540, 480, 420, 360, 300, 240),
         hide = function() return not ACHV.uneasy or not ACHV.eMS end,
         type = 'unranked',
@@ -1761,11 +1761,11 @@ Achievements = {
         id = 'ueEXeGV',
         name = "Dysania",
         desc = [[Fastest time to Floor 10 with ueEX, eGV + S]],
-        quote = [[TODO]],
+        quote = [[When you just cannot get out of bed...]],
         credit = "@TrevorSmithy",
         comp = '<',
         scoreSimp = function(time) return string.format("%.2fs", time) end,
-        scoreFull = function(time) return string.format("%.2f quests/s", 75 / time) end,
+        scoreFull = function(time) return string.format("%.2f m/s", 1650 / time) end,
         rank = numberRankRev(600, 540, 480, 420, 360, 300, 240),
         hide = function() return not ACHV.uneasy or not ACHV.eGV end,
         type = 'unranked',
@@ -1774,11 +1774,11 @@ Achievements = {
         id = 'ueEXeVL',
         name = "Subluxation",
         desc = [[Fastest time to Floor 10 with ueEX, eVL + I]],
-        quote = [[TODO]],
+        quote = [[Great, you pushed yourself too hard and dislocated your arm...]],
         credit = "@TrevorSmithy",
         comp = '<',
         scoreSimp = function(time) return string.format("%.2fs", time) end,
-        scoreFull = function(time) return string.format("%.2f quests/s", 75 / time) end,
+        scoreFull = function(time) return string.format("%.2f m/s", 1650 / time) end,
         rank = numberRankRev(600, 540, 480, 420, 360, 300, 240),
         hide = function() return not ACHV.uneasy or not ACHV.eVL end,
         type = 'unranked',
@@ -1791,7 +1791,7 @@ Achievements = {
         credit = "@TrevorSmithy",
         comp = '<',
         scoreSimp = function(time) return string.format("%.2fs", time) end,
-        scoreFull = function(time) return string.format("%.2f quests/s", 75 / time) end,
+        scoreFull = function(time) return string.format("%.2f m/s", 1650 / time) end,
         rank = numberRankRev(720, 660, 600, 540, 480, 420, 360),
         hide = function() return not ACHV.uneasy or not ACHV.eDH end,
         type = 'unranked',
@@ -1800,11 +1800,11 @@ Achievements = {
         id = 'ueEXeIN',
         name = "Presbyopia",
         desc = [[Fastest time to Floor 10 with ueEX, eIN + O]],
-        quote = [[TODO]],
+        quote = [[How many fingers am I holding up? 2? No. 6? No. Can't you tell?]],
         credit = "@TrevorSmithy",
         comp = '<',
         scoreSimp = function(time) return string.format("%.2fs", time) end,
-        scoreFull = function(time) return string.format("%.2f quests/s", 75 / time) end,
+        scoreFull = function(time) return string.format("%.2f m/s", 1650 / time) end,
         rank = numberRankRev(600, 540, 480, 420, 360, 300, 240),
         hide = function() return not ACHV.uneasy or not ACHV.eIN end,
         type = 'unranked',
@@ -1813,11 +1813,11 @@ Achievements = {
         id = 'ueEXeAS',
         name = "Carpal Tunnel",
         desc = [[Fastest time to Floor 10 with ueEX, eAS + L]],
-        quote = [[TODO]],
+        quote = [[For the sake of your wrists, repeated successive attempts not advised...]],
         credit = "@TrevorSmithy",
         comp = '<',
         scoreSimp = function(time) return string.format("%.2fs", time) end,
-        scoreFull = function(time) return string.format("%.2f quests/s", 75 / time) end,
+        scoreFull = function(time) return string.format("%.2f m/s", 1650 / time) end,
         rank = numberRankRev(600, 540, 480, 420, 360, 300, 240),
         hide = function() return not ACHV.uneasy or not ACHV.eAS end,
         type = 'unranked',
@@ -1826,11 +1826,11 @@ Achievements = {
         id = 'ueEXeDP',
         name = "Prosopagnosia",
         desc = [[Fastest time to Floor 10 with ueEX, eDP + T]],
-        quote = [[TODO]],
+        quote = [["I'm your best friend, what do you mean you don't recognize me?"]],
         credit = "@TrevorSmithy",
         comp = '<',
         scoreSimp = function(time) return string.format("%.2fs", time) end,
-        scoreFull = function(time) return string.format("%.2f quests/s", 75 / time) end,
+        scoreFull = function(time) return string.format("%.2f m/s", 1650 / time) end,
         rank = numberRankRev(600, 540, 480, 420, 360, 300, 240),
         hide = function() return not ACHV.uneasy or not ACHV.eDP end,
         type = 'unranked',
@@ -1935,6 +1935,70 @@ Achievements = {
         realHide = function() return (not ACHV.roll) or (not ACHV.programmer_gamer) end,
         type = 'unranked',
     },
+    { title = "Easy Mode - Why (v1.1) (No CR)", hide = function() return TABLE.countAll(GAME.completion, 0) >= 8 end},
+    { -- -3
+        id = '-3',
+        name = "Respite",
+        desc = [[HFD with -3 mod points]],
+        quote = [[You catch your breath, if but for a moment]],
+        rank = floorRank(10, 2600, 2600*2, 2600*3, 2600*4, 2600*5, 2600*10),
+        hide = function() return TABLE.countAll(GAME.completion, 0) > 7 end,
+        type = 'unranked',
+    },
+    { -- -4
+        id = '-4',
+        name = "Break",
+        desc = [[HFD with -4 mod points]],
+        quote = [[You look like you need a break]],
+        rank = floorRank(10, 2600*2, 2600*2*2, 2600*3*2, 2600*4*2, 2600*5*2, 2600*20),
+        hide = function() return TABLE.countAll(GAME.completion, 0) > 7 end,
+        type = 'unranked',
+    },
+    { -- -5
+        id = '-5',
+        name = "Hiatus",
+        desc = [[HFD with -5 mod points]],
+        quote = [[A well earned time off]],
+        rank = floorRank(10, 2600*3, 2600*2*3, 2600*3*3, 2600*4*3, 2600*5*3, 2600*30),
+        hide = function() return TABLE.countAll(GAME.completion, 0) > 7 end,
+        type = 'unranked',
+    },
+    { -- -6
+        id = '-6',
+        name = "Nap",
+        desc = [[HFD with -6 mod points]],
+        quote = [[Take a nap]],
+        rank = floorRank(10, 2600*4, 2600*2*4, 2600*3*4, 2600*4*4, 2600*5*4, 2600*40),
+        hide = function() return TABLE.countAll(GAME.completion, 0) > 7 end,
+        type = 'unranked',
+    },
+    { -- -7
+        id = '-7',
+        name = "Rest",
+        desc = [[HFD with -7 mod points]],
+        quote = [[It's okay to doze off here]],
+        rank = floorRank(10, 2600*5, 2600*2*5, 2600*3*5, 2600*4*5, 2600*5*5, 2600*50),
+        hide = function() return TABLE.countAll(GAME.completion, 0) > 7 end,
+        type = 'unranked',
+    },
+    { -- -8
+        id = '-8',
+        name = "Bathtime",
+        desc = [[HFD with -8 mod points]],
+        quote = [[Have a nice warm bath]],
+        rank = floorRank(10, 2600*6, 2600*2*6, 2600*3*6, 2600*4*6, 2600*5*6, 2600*60),
+        hide = function() return TABLE.countAll(GAME.completion, 0) > 7 end,
+        type = 'unranked',
+    },
+    { -- -9
+        id = '-9',
+        name = "Spa Day",
+        desc = [[HFD with -9 mod points]],
+        quote = [[Enjoy the spa with all its ammenities]],
+        rank = floorRank(10, 2600*7, 2600*2*7, 2600*3*7, 2600*4*7, 2600*5*7, 2600*70),
+        hide = function() return TABLE.countAll(GAME.completion, 0) > 7 end,
+        type = 'unranked',
+    },
     { title = "Easy Mode - Issued (v1.1) (No CR)" },
     { -- www
         id = 'www',
@@ -2008,6 +2072,118 @@ Achievements = {
         type = 'issued',
         hide = TRUE,
     },
+    { -- petaspeed
+        id = 'peta',
+        name = "Mach Speed!",
+        desc = [[Reach F10 while maintaining PETASPEED]],
+        quote = [["What happened where are they?" "They must have hyperjets on that thing!"]],
+        credit = "@Trevor Smithy",
+        hide = TRUE,
+        realHide = function() return not ACHV.blazing_speed end,
+        type = 'issued',
+    },
+    { -- exaspeed
+        id = 'exa',
+        name = "Warp Speed!!",
+        desc = [[Reach F10 while maintaining EXASPEED]],
+        quote = [["And what do we got on this thing? A Cuisinart?" "No sir!"]],
+        credit = "@Trevor Smithy",
+        hide = TRUE,
+        realHide = function() return not ACHV.peta end,
+        type = 'issued',
+    },
+    { -- zettaspeed
+        id = 'zetta',
+        name = "Light Speed!!!",
+        desc = [[Reach F10 while maintaining ZETTASPEED]],
+        quote = [["Well find them! Catch them!" "Yes sir! Prepare ship for light speed!"]],
+        credit = "@Trevor Smithy",
+        hide = TRUE,
+        realHide = function() return not ACHV.exa end,
+        type = 'issued',
+    },
+    { -- yottaspeed
+        id = 'yotta',
+        name = "Ridiculous Speed!!!!",
+        desc = [[Reach F10 while maintaining YOTTASPEED]],
+        quote = [["No no no, light speed is too slow!" "Light speed too slow?"]],
+        credit = "@Trevor Smithy",
+        hide = TRUE,
+        realHide = function() return not ACHV.zetta end,
+        type = 'issued',
+    },
+    { -- ronnaspeed
+        id = 'ronna',
+        name = "Ludicrous Speed!!!!!",
+        desc = [[Reach F10 while maintaining RONNASPEED]],
+        quote = [["We're going to have to go right to ... LUDICROUS SPEED!"]],
+        credit = "@Trevor Smithy",
+        hide = TRUE,
+        realHide = function() return not ACHV.yotta end,
+        type = 'issued',
+    },
+    { -- quettaspeed
+        id = 'quetta',
+        name = [["THEY'VE GONE TO PLAID!!!!!!"]],
+        desc = [[Reach F10 while maintaining QUETTASPEED]],
+        quote = [["Sir, we've never gone that fast before, I don't know if the ship can take it!"]],
+        credit = "@Trevor Smithy",
+        hide = TRUE,
+        realHide = function() return not ACHV.ronna end,
+        type = 'issued',
+    },
+    { title = "Easy Mode - Issued (v1.2) (No CR)" },
+    { -- multiple_pieces (1.1.1)
+        id = 'multiple_pieces',
+        name = "Multiple Pieces???",
+        desc = [[Finish a run with multiple pieces without MULTIPLE PIECES!!! appearing]],
+        quote = [["YOU THINK YOU'RE CLEVER? JUST BECAUSE I CAN'T SEE DOWN THERE? FINE."]],
+        credit = "@TrevorSmithy",
+        type = 'issued',
+    },
+    { -- music_man (1.1.2)
+        id = 'music_man',
+        name = "Music Man!!!",
+        desc = [[Enable the Music Player in ZCEM]],
+        quote = [["Wait, why is "GAME PLAY" a button? Also, isn't it just one word?"]],
+        credit = "@TrevorSmithy",
+        hide = TRUE,
+        type = 'issued',
+    },
+    { -- easy_name (1.1.3)
+        id = 'easy_name',
+        name = "Easy Names",
+        desc = [[Finish a run with Use Easy Names and rDH]],
+        quote = [["Please, I spent 5 straight nights writing these combos :sob:"]],
+        credit = "@TrevorSmithy",
+        type = 'issued',
+    },
+    { -- biased (1.1.3)
+        id = 'biased',
+        name = "Biased",
+        desc = [[Select "The (Uneasy) Pro G(r)am(m)ing Smithy" via the Random Set button.]],
+        quote = [["Weighted random? You don't say..."]],
+        credit = "@TrevorSmithy",
+        type = 'issued',
+        hide = TRUE,
+    },
+    { -- lazy_bastard (1.1.4)
+        id = 'lazy_bastard',
+        name = "Lazy Bastard",
+        desc = [[Unlock all mods by spamming the "CLEAR PIECES" button]],
+        quote = [["Fine, okay, everything is unlocked now."]],
+        credit = "@TrevorSmithy",
+        type = 'issued',
+    },
+    { -- what_have_you_done (1.1.5)
+        id = 'what_have_you_done',
+        name = "WHAT HAVE YOU DONE!?",
+        desc = [[Activate BAD TIME]],
+        quote = [[You feel like you're going to have a bad time.]],
+        credit = "@TrevorSmithy",
+        type = 'issued',
+        hide = TRUE,
+    },
 }
 
 local compFunc = {
@@ -2074,4 +2250,5 @@ for i = 1, #Achievements do
         assert(achv.scoreFull == nil or type(achv.scoreFull) == 'function', "Invalid field 'scoreFull' - " .. id)
     end
     achv.hide = achv.hide or FALSE
+    achv.realHide = achv.realHide or FALSE
 end

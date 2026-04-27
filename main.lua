@@ -27,7 +27,7 @@ for _, v in next, {
 } do love.filesystem.createDirectory(v) end
 
 
----@return love.Texture
+---@return any love.Texture
 local function assets(path) return FILE.exist('customAssets/' .. path) and 'customAssets/' .. path or 'assets/' .. path end
 local function q(oy, n, size)
     return GC.newQuad(
@@ -415,7 +415,7 @@ TEXTURE = {
             ueEXeIN = aq(13, 1),
             ueEXeAS = aq(14, 1),
             ueEXeDP = aq(7, 7),
-            -- easy mode Easy Mode - Special (v1.1) (No CR)
+            -- Easy Mode - Special (v1.1) (No CR)
             humble_pupil = aq(6, 4),
             overweight_gamer = aq(4, 6),
             best_friends = aq(8, 5),
@@ -426,11 +426,29 @@ TEXTURE = {
             rold_smythy = aq(1, 7),
             quest_feast = aq(2, 7),
             clean_gamer = aq(1, 5),
-            -- easy Easy Mode - Issued (v1.1) (No CR)
-            inefficiency = aq(7, 2),
+            -- Easy Mode - Why (v1.1) (No CR)
+            ["-3"] = aq(0,0),
+            ["-4"] = aq(0,0),
+            ["-5"] = aq(0,0),
+            ["-6"] = aq(0,0),
+            ["-7"] = aq(0,0),
+            ["-8"] = aq(0,0),
+            ["-9"] = aq(0,0),
+            -- Easy Mode - Issued (v1.1) (No CR)
+            inefficiency = aq(15, 6),
             could_you_not = aq(3, 2),
             oh_no_you_dont = aq(10, 2),
-            --uneasy = aq(6, 2),
+            uneasy = aq(6, 5),
+            roll = aq(9,4),
+            alleyoop = aq(15,7),
+            slamdunk = aq(15,7),
+            www = aq(16,7),
+            peta = aq(0, 0),
+            exa = aq(0, 0),
+            zetta = aq(0, 0),
+            yotta = aq(0, 0),
+            ronna = aq(0, 0),
+            quetta = aq(0, 0),
         },
         frame = {
             [0] = assets 'achievements/frames/none.png',
@@ -606,6 +624,36 @@ TEXTS = { -- Font size can only be 30 and 50 here !!!
         COLOR.K, "A", COLOR.G, "S", COLOR.J, "P",
         COLOR.C, "E", COLOR.S, "E", COLOR.B, "D",
     }),
+    petaspeed  = GC.newText(FONT.get(50), {
+        COLOR.R, "P", COLOR.O, "E", COLOR.Y, "T",
+        COLOR.K, "A", COLOR.G, "S", COLOR.J, "P",
+        COLOR.C, "E", COLOR.S, "E", COLOR.B, "D",
+    }),
+    exaspeed  = GC.newText(FONT.get(50), {
+        COLOR.R, "E", COLOR.O, "X", COLOR.Y, "A",
+        COLOR.G, "S", COLOR.J, "P",
+        COLOR.C, "E", COLOR.S, "E", COLOR.B, "D",
+    }),
+    zettaspeed  = GC.newText(FONT.get(50), {
+        COLOR.R, "Z", COLOR.O, "E", COLOR.Y, "T",
+        COLOR.K, "T", COLOR.G, "A", COLOR.J, "S",
+        COLOR.C, "P", COLOR.S, "E", COLOR.B, "E", COLOR.P, "D",
+    }),
+    yottaspeed  = GC.newText(FONT.get(50), {
+        COLOR.R, "Y", COLOR.O, "O", COLOR.Y, "T",
+        COLOR.K, "T", COLOR.G, "A", COLOR.J, "S",
+        COLOR.C, "P", COLOR.S, "E", COLOR.B, "E", COLOR.P, "D",
+    }),
+    ronnaspeed  = GC.newText(FONT.get(50), {
+        COLOR.R, "R", COLOR.O, "O", COLOR.Y, "N",
+        COLOR.K, "N", COLOR.G, "A", COLOR.J, "S",
+        COLOR.C, "P", COLOR.S, "E", COLOR.B, "E", COLOR.P, "D",
+    }),
+    quettaspeed  = GC.newText(FONT.get(50), {
+        COLOR.R, "Q", COLOR.O, "U", COLOR.Y, "E",
+        COLOR.K, "T", COLOR.G, "T", COLOR.J, "A",
+        COLOR.C, "S", COLOR.S, "P", COLOR.B, "E", COLOR.P, "E", COLOR.M, "D",
+    }),
     gigatime   = GC.newText(FONT.get(50)),
     floorTime  = GC.newText(FONT.get(30)),
     rankTime   = GC.newText(FONT.get(30)),
@@ -713,6 +761,9 @@ STAT = {
     imperial = false,
     promotion = true,
     rold = false,
+    oldTransparentCard = false,
+    unlockAll = false,
+    easyModeClicker = false,
 }
 
 ACHV = {}
@@ -721,11 +772,11 @@ AchvNotice = {}
 
 TestMode = false
 
-function SaveBest() if not TestMode then love.filesystem.write('best.luaon', 'return' .. TABLE.dumpDeflate(BEST)) end end
+function SaveBest() if not TestMode or GAME.multiplePiecesActive then love.filesystem.write('best.luaon', 'return' .. TABLE.dumpDeflate(BEST)) end end
 
-function SaveStat() if not TestMode then love.filesystem.write('stat.luaon', 'return' .. TABLE.dumpDeflate(STAT)) end end
+function SaveStat() if not TestMode or GAME.multiplePiecesActive then love.filesystem.write('stat.luaon', 'return' .. TABLE.dumpDeflate(STAT)) end end
 
-function SaveAchv() if not TestMode then love.filesystem.write('achv.luaon', 'return' .. TABLE.dumpDeflate(ACHV)) end end
+function SaveAchv() if not TestMode or GAME.multiplePiecesActive then love.filesystem.write('achv.luaon', 'return' .. TABLE.dumpDeflate(ACHV)) end end
 
 MSG.setSafeY(75)
 MSG.addCategory('dark', COLOR.D, COLOR.L)
@@ -742,13 +793,14 @@ AchvData = {
 }
 for i = 0, 6 do MSG.addCategory(AchvData[i].id, AchvData[i].bg, COLOR.L, TEXTURE.achievement.frame[i]) end
 for i = 1, 6 do MSG.addCategory("wreath_" .. i, AchvData[5].bg, COLOR.L, GC.load { w = 256, { 'draw', TEXTURE.achievement.frame[5] }, { 'draw', TEXTURE.achievement.wreath[i] } }) end
+MSG.addCategory('achv_badTime', {.126, 0, 0}, COLOR.L, TEXTURE.achievement.frame[6])
 
 local msgTime = 0
 local bufferedMsg = {}
 
 local saveAchvTimer = false ---@type number | false
 function IssueAchv(id, silent)
-    if TestMode then return end
+    if TestMode or GAME.multiplePiecesActive then return end
     local A = Achievements[id]
     if not A or ACHV[id] then return end
 
@@ -780,9 +832,9 @@ local wreathName = {
     [5] = "T5-",
     [6] = "T3-",
 }
----@return true? success
+---@return boolean? true = success
 function SubmitAchv(id, score, silent, realSilent)
-    if TestMode then return end
+    if TestMode or GAME.multiplePiecesActive then return end
     local A = Achievements[id]
     if not A then return end
     local oldScore = ACHV[id] or A.noScore or 0
@@ -827,7 +879,7 @@ function IssueSecret(id, silent)
 end
 
 function ReleaseAchvBuffer()
-    if TestMode then return end
+    if TestMode or GAME.multiplePiecesActive then return end
     for i = 1, #bufferedMsg do
         local msg = bufferedMsg[i]
         msgTime = TASK.lock('achv_bulk', 1) and 6.2 or msgTime + 2.6
@@ -923,6 +975,7 @@ SCN.add('records', require 'module/scene/records')
 SCN.add('achv', require 'module/scene/achv')
 SCN.add('conf', require 'module/scene/conf')
 SCN.add('about', require 'module/scene/about')
+SCN.add('zcem', require 'module/scene/zcem')
 SCN.add('ending', require 'module/scene/ending')
 ZENITHA.setFirstScene('joining')
 
@@ -1027,7 +1080,7 @@ function RevMusicMode()
         GAME.anyUltra and GAME.comboZP >= 1.2  -- ultra run with 1.2x ZP
 end
 
----@param name ZC.bgmName
+---@param name string ZC.bgmName
 ---@param force? boolean speedrun or music player
 function PlayBGM(name, force)
     if GAME.teramusic and not force then return end
@@ -1122,8 +1175,15 @@ end
 
 function RefreshBGM(mode)
     if not BGM.isPlaying() then return end
-    local pitch = M.GV < 0 and 2^(-1/2) or M.GV > 0 and 2 ^ ((URM and M.GV == 2 and 3 or M.GV) / 12) or 1
-    if not GAME.manualBGMPitch or GAME.height >= 1650 then
+    local zp = GAME.getComboZP(GAME.getHand(not GAME.playing))
+    local modifiedZP = (((zp >= 1.95 and zp or 0) * (GAME.mod.AS > 0 and 1.41 or 1)--[[ * (GAME.mod.DP > 0 and 1.26 or 1)]]))/10.1
+    local uneasy = (URM and M.EX == -1 and M.NH < 2 and M.MS < 2 and M.GV < 2 and M.VL < 2 and M.DH < 2 and M.IN < 2 and M.AS < 2 and M.DP < 2) and not GAME.anyRev and not GAME.playing
+    local uneasyMusic = uneasy and modifiedZP > 0
+    local pitch = M.GV < 0 and 2^(-1/2) or M.GV > 0 and 2 ^ ((URM and M.GV == 2 and 3 or M.GV) / 12) or 1 
+    if uneasy then
+        pitch = pitch * 1.0145
+    end
+    if not GAME.manualBGMPitch or GAME.height >= 1650 or not GAME.playing or not GAME.uneasyModIconSelected or not GAME.teramusic then
         if GAME.slowmo then pitch = pitch / 2 end
         if GAME.nightcore then pitch = pitch * 2 end
         -- Trevor Smithy
@@ -1135,18 +1195,18 @@ function RefreshBGM(mode)
     end
     local justBegin = BGM.tell() < 1
     BGM.set('all', 'pitch', pitch, justBegin and 0 or .26)
-    BGM.set('all', 'highgain', M.IN == 0 and 1 or M.IN == 1 and .8 or not URM and .626 or .55, justBegin and 0 or .626)
+    BGM.set('all', 'highgain', (M.IN == 0 or GAME.fallout) and 1 or (M.IN == 1 or M.IN == -1) and .8 or not URM and .626 or .55, justBegin and 0 or .626)
     if BgmPlaying == 'f0' then
         local revMode = mode == 'f0r' or RevMusicMode()
-        BGM.set('all', 'volume', revMode and 0 or 1, 2.6)
+        BGM.set('all', 'volume', revMode and 0 or uneasyMusic and MATH.max(MATH.min((1-(modifiedZP/0.7)), 1),0) or 1, 2.6)
         -- Trevor Smithy > to ~=
-        BGM.set('expert', 'volume', M.EX > 0 and 1 or (URM and M.EX == -1 and M.NH < 2 and M.MS < 2 and M.GV < 2 and M.VL < 2 and M.DH < 2 and M.IN < 2 and M.AS < 2 and M.DP < 2) and 0.5 or 0, .26)
-        BGM.set('piano', 'volume', M.NH == 0 and 1 or M.NH == 1 and .26 or 0)
+        BGM.set('expert', 'volume', M.EX > 0 and 1 or uneasyMusic and MATH.max(MATH.min(modifiedZP/0.7, 1),0) or 0, .26)
+        BGM.set('piano', 'volume', (M.NH == 0 or GAME.fallout) and 1 or (M.NH == 1 or M.NH == -1) and .26 or 0)
         BGM.set('piano2', 'pitch', 2 * pitch, 0)
         BGM.set('piano2', 'volume', (M.DP ~= 0 or VALENTINE and not revMode) and .626 or 0, .26)
         BGM.set('violin', 'volume', M.DP == 2 and 1 or 0, .26)
         BGM.set('violin2', 'volume', M.DP == 2 and 1 or 0, .26)
-        BGM.set('rev', 'volume', revMode and (M.DP ~= 0 and .5 or .7) or 0, revMode and 1.6 or 2.6)
+        BGM.set('rev', 'volume', revMode and (M.DP ~= 0 and .5 or .7) or uneasyMusic and MATH.max(MATH.min(modifiedZP, 1),0) or 0, revMode and 1.6 or 2.6)
     elseif BgmPlaying == 'f1' then
         local revMode = mode == 'f1r' or RevMusicMode()
         BGM.set('f1', 'volume', 1)
@@ -1253,7 +1313,7 @@ function Task_MusicEnd(manual)
             outroStart = D.loop[2]
             BgmNeedStop = outroStart + 8 * 60 / D.bpm
         end
-    elseif BgmPlaying == 'tera' or 'terae' or 'teral' or 'terael' then
+    elseif BgmPlaying == 'tera' or BgmPlaying == 'terae' or BgmPlaying == 'teral' or BgmPlaying == 'terael' then
         outroStart = D.loop[2] + math.random(0, 3) * 8 * 60 / D.bpm
         BgmNeedStop = outroStart + 8 * 60 / D.bpm
     elseif BgmPlaying == 'terar' then
@@ -1301,6 +1361,7 @@ function ReloadTexts()
     for _, W in next, SCN.scenes.conf.widgetList do W:reset() end
     for _, W in next, SCN.scenes.about.widgetList do W:reset() end
     for _, W in next, SCN.scenes.records.widgetList do W:reset() end
+    for _, W in next, SCN.scenes.zcem.widgetList do W:reset() end
     AchvText:setFont(FONT.get(30))
     AboutText:setFont(FONT.get(70))
     DevNoteText:setFont(FONT.get(30))
