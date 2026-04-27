@@ -1379,8 +1379,13 @@ function scene.overDraw()
                 gc_pop()
             end
 
-            -- Surge Timer (?)
-            STAT.promotion = false -- temporarily forcibly disable promotion gauge with stacker
+            -- Promotion Gauge
+            if STAT.stacker and STAT.promotion then 
+                STAT.promotion = false -- forcibly disable promotion gauge with stacker
+                SaveStat()
+                SFX.play('warning')
+                MSG('dark', "STACKER and PROMOTION GAUGE are MUTUALLY EXCLUSIVE! \nPROMOTION GAUGE has been disabled!")
+            end
             if STAT.promotion then
                 gc_push('transform')
                 gc_translate(460, 290)
@@ -1484,6 +1489,28 @@ function scene.overDraw()
                 a = clamp(
                     a * (1 - (GAME.questTime - .26) * (GAME.floor + .62) * .26 * k),
                     GAME.faultWrong and not URM and i * .26 or 0, 1
+                )
+            end
+            if a > 0 then
+                a = a * Q.a
+                gc_setColor(.2 * a, .2 * a, .2 * a, a)
+                gc_mDraw(text, 800, Q.y + 5, 0, kx, ky)
+                gc_setColor(1, 1, 1, a)
+                gc_mDraw(text, 800, Q.y, 0, kx, ky)
+            end
+        end
+        if STAT.stacker and GAME.questStack[1] then
+            local Q = GAME.questStack[1]
+            local text = Q.name
+            local kx = min(Q.k, 800 / text:getWidth())
+            local ky = max(kx, Q.k)
+            local a = 1
+            if M.IN == 2 then
+                -- Trevor Smithy
+                local k = M.DP ~= 0 and 1 or 1 ^ -2
+                a = clamp(
+                    a * (1 - (GAME.questTime - .26) * (GAME.floor + .62) * .26 * k),
+                    GAME.faultWrong and not URM and 1 * .26 or 0, 1
                 )
             end
             if a > 0 then

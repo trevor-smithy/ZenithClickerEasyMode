@@ -760,6 +760,7 @@ STAT = {
     easyName = false,
     imperial = false,
     promotion = true,
+    stacker = false,
     rold = false,
     oldTransparentCard = false,
     unlockAll = false,
@@ -1889,7 +1890,7 @@ function Daemon_Fast()
                     changed = true
                 end
             end
-            if changed then
+            if changed and not (GAME.playing and STAT.stacker) then
                 local W = SCN.scenes.tower.widgetList.start
                 W.text = startBtnTexts[startBtnPtr]
                 W:reset()

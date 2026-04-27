@@ -139,6 +139,10 @@ function scene.load()
             C[1], C[3] = C[3], C[1]
         end
     end
+    if STAT.stacker and STAT.promotion then
+        MSG("achv_badTime", "WARNING: PROMOTION and STACKER are MUTUALLY EXCLUSIVE!\nDISABLE ONE NOW OR IT WILL BE DONE AUTOMATICALLY!")
+        SFX.play('hyperalert')
+    end
     refreshWidgets()
 end
 
@@ -430,8 +434,14 @@ scene.widgetList = {
             local multiple = GAME.multiplePiecesActive
             MSG.clear()
             STAT.promotion = not STAT.promotion
-            SFX.play('social_dm')
             MSG('dark', "Rank Promotion Gauge: " .. (STAT.promotion and "ON" or "OFF"))
+            if STAT.stacker and STAT.promotion then
+                STAT.stacker = false
+                MSG('dark', "STACKER and PROMOTION GAUGE are MUTUALLY EXCLUSIVE!")
+                SFX.play('no')
+            else
+                SFX.play('social_dm')
+            end
             GAME.multiplePiecesActive = false
             SaveStat()
             if multiple then GAME.multiplePiecesActive = true end
@@ -442,7 +452,7 @@ scene.widgetList = {
         fillColor = clr.cbFill,
         frameColor = clr.cbFrame,
         textColor = clr.T, text = "IMPERIAL UNITS",
-        x = baseX + 500, y = baseY + 60 + 80,
+        x = baseX + 500, y = baseY + 60 + 240,
         disp = function() return STAT.imperial end,
         code = function()
             local multiple = GAME.multiplePiecesActive
@@ -514,19 +524,24 @@ scene.widgetList = {
         fillColor = clr.cbFill,
         frameColor = clr.cbFrame,
         textColor = clr.T, text = "STACKER MODE",
-        x = baseX + 500, y = baseY + 60 + 240,
-        disp = function() return false end,
+        x = baseX + 500, y = baseY + 60 + 80,
+        disp = function() return STAT.stacker end,
         code = function()
             local multiple = GAME.multiplePiecesActive
             MSG.clear()
-            --[[STAT.imperial = not STAT.imperial
-            SFX.play('social_dm')
-            MSG('dark', "Imperial Units: " .. (STAT.imperial and "ON" or "OFF"))
+            STAT.stacker = not STAT.stacker
+            MSG('dark', "Stacker Mode: " .. (STAT.stacker and "ON" or "OFF"))
+            if STAT.stacker and STAT.promotion then
+                STAT.promotion = false
+                SFX.play('no')
+                MSG('dark', "STACKER and PROMOTION GAUGE are MUTUALLY EXCLUSIVE!")
+            else
+                SFX.play('social_dm')
+            end
             GAME.multiplePiecesActive = false
             SaveStat()
-            if multiple then GAME.multiplePiecesActive = true end]]
-            SFX.play('no')
-            MSG('dark', "STACKER NOT IMPLEMENTED IN THIS VERSION OF THE GAME!")
+            if multiple then GAME.multiplePiecesActive = true end
+            MSG('dark', "STACKER ONLY PARTIALLY IMPLEMENTED IN THIS VERSION OF THE GAME!")
         end,
     },
     -- MUSIC PLAYER OPTIONS

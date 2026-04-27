@@ -966,10 +966,8 @@ function GAME.genQuest()
 
         if #GAME.questStack then
             for i = 1, #GAME.questStack do
-                local stackQ = GAME.questStack[i]
-                for j = 1, #stackQ do
-                    pool[stackQ[j]] = pool[stackQ[j]] - 0.9*pool[stackQ[j]]
-                    --MSG("dark", "Mod/Weight:" .. stackQ[j] .. "/" .. pool[stackQ[j]])
+                for j = 1, #GAME.questStack[i].combo do
+                    pool[GAME.questStack[i].combo[j]] = pool[GAME.questStack[i].combo[j]] - 0.9*pool[GAME.questStack[i].combo[j]]
                 end
             end
         end
@@ -2475,7 +2473,7 @@ function GAME.commit(auto, falseCommit)
 
     local stackQuest 
     if GAME.questStack[1] then
-        stackQuest = GAME.questStack[1]
+        stackQuest = TABLE.sort(GAME.questStack[1].combo)
     end
     local q1 = TABLE.sort(GAME.quests[1].combo)
     local q2 = M.DP ~= 0 and GAME.quests[2] and TABLE.sort(GAME.quests[2].combo)
@@ -2545,10 +2543,10 @@ function GAME.commit(auto, falseCommit)
             correct = 1
             dblCorrect = q2 and TABLE.equal(hand, q2)
             eDPCorrect = q3 and TABLE.equal(hand, q3)
-        elseif q2 and TABLE.equal(hand, q2) and not falseCommit then
+        elseif q2 and TABLE.equal(hand, q2) and not falseCommit and not TABLE.equal(hand, stackQuest) then
             correct = 2
             GAME.incrementPrompt('pass_second')
-        elseif q3 and TABLE.equal(hand, q3) and not falseCommit then
+        elseif q3 and TABLE.equal(hand, q3) and not falseCommit and not TABLE.equal(hand, stackQuest) then
             correct = 3
             eDPCorrect = 1
         elseif TABLE.equal(hand, stackQuest) and not falseCommit then
@@ -2594,16 +2592,23 @@ function GAME.commit(auto, falseCommit)
         if GAME.comboSFX == 16 then
             attack = 3
             xp = 3
+            GAME.heal(3)
+            GAME.dmgTimer = GAME.dmgTimer + 0.3
         elseif GAME.comboSFX > 5 then
             attack = 2
             xp = 2
+            GAME.heal(2)
+            GAME.dmgTimer = GAME.dmgTimer + 0.2
         elseif GAME.comboSFX > 1 then
             attack = 1
             xp = 1
+            GAME.heal(1)
+            GAME.dmgTimer = GAME.dmgTimer + 0.1
         else
             attack = 0
             xp = 0
         end
+        if GAME.dmgTimer > GAME.dmgDelay then GAME.dmgTimer = GAME.dmgDelay end
         -- Spike
         if GAME.spikeTimer <= 0 then
             GAME.spikeTimer = 0
@@ -2631,14 +2636,17 @@ function GAME.commit(auto, falseCommit)
         rem(GAME.questStack, 1)
         GAME.cancelAll(true)
         GAME.cancelBurn()
+        GAME.fault = true
     elseif correct or falseCommit then
         --Trevor Smithy
         if GAME.comboSFX > 3 then
             SFX.play('combobreak')
         end
-        local comboMul = 1
+        local comboAttackMul = 1
+        local comboXPMul = 1
         if GAME.comboSFX > 0 then
-            comboMul = 1 + (GAME.comboSFX/4)
+            comboAttackMul = 1 + (GAME.comboSFX*2)
+            comboXPMul = 1 + (GAME.comboSFX/2)
         end
         GAME.comboSFX = 0
         local totalAssistPenalty = 0
@@ -3009,9 +3017,9 @@ function GAME.commit(auto, falseCommit)
         end
 
         if GAME.DPlock then attack = min(attack, URM and oldAllyLife * 2.6 or oldAllyLife * 4) end
-        if attack > 0 and not falseCommit then GAME.addHeight(attack * GAME.attackMul * comboMul / (1 + (#GAME.questStack)/4) / (GAME.badTime and 3 or 1)) end
+        if attack > 0 and not falseCommit then GAME.addHeight(attack * GAME.attackMul * comboAttackMul / (1 + (#GAME.questStack)/4) / (GAME.badTime and 3 or 1)) end
         if not falseCommit then
-            GAME.addXP((attack + xp)* comboMul)
+            GAME.addXP((attack + xp)* comboXPMul)
         else
             return attack + xp
         end
@@ -3147,11 +3155,11 @@ function GAME.commit(auto, falseCommit)
         end
         -- Stacker Mode - push to stack
         if #hand == 0 then
-            ins(GAME.questStack, 1, q1)
-            rem(GAME.quests, 1).name:release()
+            ins(GAME.questStack, 1, {combo = GAME.quests[1].combo, name = GC.newText(FONT.get(70), GAME.getComboName(TABLE.copy(GAME.quests[1].combo), 'ingame')), y = 330, k = 1, a = 1,})
+            rem(GAME.quests, 1)
             GAME.genQuest()
-            MSG.clear()
-            MSG("bright", GAME.questStack[1])
+            --MSG.clear()
+            --MSG("bright", GAME.questStack[1].combo)
             SFX.play("hold")
             return
         end
@@ -3175,10 +3183,10 @@ function GAME.commit(auto, falseCommit)
             GAME.cancelBurn()
         end
     end
-    MSG.clear()
+    --[[MSG.clear()
     if GAME.questStack[1] then
-        MSG("bright", GAME.questStack[1])
-    end
+        MSG("bright", GAME.questStack[1].combo)
+    end]]
 end
 
 local function task_startSpin()
@@ -3246,6 +3254,10 @@ function GAME.start()
     if GAME.badTime then
         GAME.badTimeStarted = true
         GAME.fallout = false
+    end
+    if STAT.stacker then
+        SCN.scenes.tower.widgetList.start.text = ''
+        SCN.scenes.tower.widgetList.start:reset()
     end
 
     local attackMulMod = 1
@@ -3491,6 +3503,12 @@ function GAME.finish(reason)
     end
     FloatOnCard = nil
     GAME.refreshLayout()
+
+    if STAT.stacker then
+        local W = SCN.scenes.tower.widgetList.start
+        W.text = M.DH ~= 0 and "COMMENCE" or "START"
+        W:reset()
+    end
 
     if GAME.smithyMode and (GAME.teramusic or GAME.teraLostHeight or GAME.teraComplete) then
         local smithyModeHeight = GAME.roundHeight
