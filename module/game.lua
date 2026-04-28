@@ -3154,7 +3154,7 @@ function GAME.commit(auto, falseCommit)
             end
         end
         -- Stacker Mode - push to stack
-        if #hand == 0 then
+        if #hand == 0 and STAT.stacker and not auto then
             ins(GAME.questStack, 1, {combo = GAME.quests[1].combo, name = GC.newText(FONT.get(70), GAME.getComboName(TABLE.copy(GAME.quests[1].combo), 'ingame')), y = 330, k = 1, a = 1,})
             rem(GAME.quests, 1)
             GAME.genQuest()
