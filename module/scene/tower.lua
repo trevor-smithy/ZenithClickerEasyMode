@@ -1049,7 +1049,7 @@ function scene.draw()
     end
 
     -- Result
-    if GAME.uiHide < 1 then
+    if GAME.uiHide < 1 and not GAME.badTime then
         gc_replaceTransform(SCR.xOy_u)
         gc_translate(0, -224 * GAME.uiHide)
         gc_setColor(1, 1, 1)
@@ -1095,8 +1095,6 @@ function scene.draw()
         end
     end
 end
-
--- TODO einvisUI stuff here
 
 local gvTimerColor1 = { 1, .942, .872, 0 }
 local gvTimerColor2 = { 0, 0, 0, 0 }
