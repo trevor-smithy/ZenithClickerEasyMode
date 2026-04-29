@@ -2592,18 +2592,18 @@ function GAME.commit(auto, falseCommit)
         if GAME.comboSFX == 16 then
             attack = 3
             xp = 3
-            GAME.heal(3)
-            GAME.dmgTimer = GAME.dmgTimer + 0.3
+            GAME.heal(GAME.dmgHeal)
+            GAME.dmgTimer = GAME.dmgTimer + 3 / 5 * #hand
         elseif GAME.comboSFX > 5 then
             attack = 2
             xp = 2
-            GAME.heal(2)
-            GAME.dmgTimer = GAME.dmgTimer + 0.2
+            GAME.heal(GAME.dmgHeal * 2/3)
+            GAME.dmgTimer = GAME.dmgTimer + 2 / 5 * #hand
         elseif GAME.comboSFX > 1 then
             attack = 1
             xp = 1
-            GAME.heal(1)
-            GAME.dmgTimer = GAME.dmgTimer + 0.1
+            GAME.heal(GAME.dmgHeal * 1/3)
+            GAME.dmgTimer = GAME.dmgTimer + 1 / 5 * #hand
         else
             attack = 0
             xp = 0
@@ -2637,6 +2637,7 @@ function GAME.commit(auto, falseCommit)
         GAME.cancelAll(true)
         GAME.cancelBurn()
         GAME.fault = true
+        GAME.questTime = 0
     elseif correct or falseCommit then
         --Trevor Smithy
         if GAME.comboSFX > 3 then
