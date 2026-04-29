@@ -16,6 +16,40 @@ local mode = ''
 local comboTimer = 0
 local combo = 0
 local leftx, rightx, leftbx, rightbx = 40, 500, 220, 685
+local descriptionIndex = 0
+local descriptionTable = {
+    [0] = "Press to cycle through options' descriptions.",
+    "GAME PLAY: Press to switch to Music Player mode. Also switches to BPM.",
+    "SPEED: Press to switch to BPM. Shows timer speed, affected by Z/eS/eI.",
+    "Promotion Gauge: A colored indicator of maximum XP if surge is broken.", 
+    "Stacker Mode: Commit NOTHING to add to the stack, clear for big burst!",
+    "Old Transparent Card: Old version of eO. Worse with DP, but no ZP nerf.",
+    "Old Hitbox: Hitboxes are based on center of cards instead of visible area.",
+    "Use Easy Names: Mods use their Easy variants in-game, even with rDH!",
+    "Imperial Units: Feet and Miles used instead of Meters. No records allowed!"
+}
+local mpDescriptionTable = {
+    [0] = "Press to cycle through options' descriptions.",
+    "MUSIC PLAY: Press to switch to Gameplay mode. Doesn't switch from BPM.",
+    "BPM: Shows current song's BPM, affected by Z/S/eZ/eS/all GVs/ueEX.",
+    "PREV TRACK: Selects previous floor's track. Doesn't include TERASPEED.",
+    "NEXT TRACK: Selects next floor's track. Doesn't include TERASPEED.",
+    "TERASPEED: Enables TERASPEED theme, required for UNEASY and SMITHY.",
+    "REVERSE: Enables REVERSE variant, disables UNEASY and SMITHY.",
+    "UNEASY: Enables lyrics. Requires TERASPEED. Check CONF to see lyrics.",
+    "SMITHY: Enables vocals. Requires TERASPEED. Enabled with eEX+eVL+eAS.",
+}
+local pieceDescriptionTable = {
+    [0] = "Press to cycle through options' descriptions.",
+    "eZ: Passive climb speed x2, Gravity Timer x2, normal damage/fatigue timer.",
+    "eS: Damage, fatigue, gravity timers and XP loss x0.75, normal climb speed.",
+    "eJ: Attack x0.5, passive climb speed x8 (x4.8 with rEX or uEX)",
+    "eL: XP lock increased by 5 seconds, XP leak speed x0.375",
+    "eT: 20% UI element opacity, stuck in Floor 1 (easier quests, timers, etc.)",
+    "eO: 26% card opacity, adds a colored outline if card is required.",
+    "eI: Assist Mode, stronger the closer cards are (excluding Close Card).",
+    "Ultra Reverse: Upgrades Reversed mods to Ultra Reversed, or Easy to Uneasy."
+}
 local startHour = os.date('%H')
 local startMin = os.date('%M')
 local startSec = os.date('%S')
@@ -109,16 +143,18 @@ local function refreshWidgets()
                 W:resetPos()
             end
             if GAME.eglassCard then
-                if #W.name > 2 and W.type ~= "button" and W.name ~= "urm" then
+                if #W.name > 2 and W.type ~= "button" and W.type ~= "hint" and W.name ~= "urm" then
                     W.textColor = COLOR.L
                 end
             else
-                if #W.name > 2 and W.type ~= "button" and W.name ~= "urm" then
+                if #W.name > 2 and W.type ~= "button" and W.type ~= "hint" and W.name ~= "urm" then
                     W.textColor = clr.T
                 end
             end
         end
     end
+    scene.widgetList.description.floatText = MusicPlayer and mpDescriptionTable[descriptionIndex] or descriptionTable[descriptionIndex]
+    scene.widgetList.description:reset()
 end
 
 local function anyPieceActive()
@@ -1033,6 +1069,23 @@ scene.widgetList = {
                 time = 1.2
             })
         end,
+    },
+    WIDGET.new {
+        name = 'description', type = 'hint',
+        pos = { 0.777, 1 }, x = 0, y = -25, w = 45, cornerR = 20,
+        color = clr.L, textColor = clr.L,
+        fontSize = 40, text = "?", -- Dynamic text
+        sound_hover = 'menutap',
+        labelPos = 'left',
+        floatFontSize = 20,
+        floatText = MusicPlayer and mpDescriptionTable[descriptionIndex] or descriptionTable[descriptionIndex], -- Dynamic text
+        onPress = function()
+            local piece = love.mouse.isDown('2') or love.keyboard.isDown('lctrl', 'rctrl')
+            descriptionIndex = descriptionIndex + 1
+            if descriptionIndex > #descriptionTable then descriptionIndex = 1 end
+            scene.widgetList.description.floatText = piece and pieceDescriptionTable[descriptionIndex] or MusicPlayer and mpDescriptionTable[descriptionIndex] or descriptionTable[descriptionIndex]
+            scene.widgetList.description:reset()
+        end
     },
     
     WIDGET.new {
