@@ -279,7 +279,7 @@ return {
     ]],
     ['rNH MS rGV AS'] = STRING.trimIndent [[
         Autoplay is Awesome, an original combo from ZC community.
-        This achievement replaced "Patience is a Virtual" with mods specified, which makes it plays much better.
+        This achievement replaced "Patience is a Virtue" with mods specified, which makes it plays much better.
         Well, it does in vanilla, but here I (Trevor), kept it as is due to "But It Isn't One Of Mine"
     ]],
     ['DH AS DP'] = STRING.trimIndent [[
@@ -391,8 +391,7 @@ return {
     ['eEX uGV eDH eAS'] = STRING.trimIndent [[
         But It Isn't One Of Mine, the Easy Mode counterpart to the Patience Is A Virtue achievement.
         Kinda like a rhythm game of sorts, which I quite enjoy.
-    ]], --[[While this message will display even if Nightcore+ is not enabled,
-        in order to get the achievement with the same name it is required.]]
+    ]],
     --ggbw
     ['eEX eNH eGV eVL eDH eIN AS eDP'] = STRING.trimIndent [[
         One of 3 variants of Gamer Girl Bath Water, this is the one that I believe is 

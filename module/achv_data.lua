@@ -777,15 +777,14 @@ Achievements = {
         rank = floorRank(1, 3, 5, 7, 9, 10, 1800),
         hide = function() return GAME.completion.IN == 0 end,
     },
-    { -- autoplay_is_awesome
+    { -- patience_is_a_virtue
         ex = true,
-        id = 'autoplay_is_awesome',
-        name = "Autoplay is Awesome",
-        desc = [[HFD without manually committing, with rNH MS rGV AS]],
-        quote = [["All the words, of a melody of rain. Resonating within ripples, Dreams of human remain."]],
-        credit = "@obsidian",
-        rank = floorRank(1, 3, 5, 6, 7, 8, 1500),
-        hide = function() return GAME.completion.NH == 0 or GAME.completion.GV == 0 end,
+        id = 'patience_is_a_virtue',
+        name = "Patience is a Virtue",
+        desc = [[HFD without manually committing]],
+        quote = [[Opportunities always favor those who are prepared and wait.]],
+        credit = "@The_111thBlitzer",
+        rank = floorRank(1, 3, 5, 7, 9, 10, 2000),
     },
     { -- spotless
         ex = true,
