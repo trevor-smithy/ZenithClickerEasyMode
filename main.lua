@@ -300,7 +300,6 @@ TEXTURE = {
             the_artist_trinity = aq(1, 5),
             fel_magic = aq(9, 7),
             empurple = aq(13, 7),
-            faltered = aq(15, 6),
             patience_is_a_virtue = aq(10, 6),
             spotless = aq(16, 4),
             a_mutual_agreement = aq(13, 4),

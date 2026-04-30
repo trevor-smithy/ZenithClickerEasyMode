@@ -3859,8 +3859,6 @@ function GAME.finish(reason)
             SubmitAchv('the_masterful_juggler', GAME.achv_maxChain)
         elseif GAME.comboStr == 'DHVLrIN' then
             SubmitAchv('empurple', GAME.achv_noChargeH or GAME.roundHeight)
-        elseif GAME.comboStr == 'EXMSNHVLrAS' then
-            SubmitAchv('faltered', GAME.achv_noChargeH or GAME.roundHeight)
         elseif GAME.comboStr == 'ASDHDP' then
             SubmitAchv('a_mutual_agreement', GAME.achv_shareModH or GAME.roundHeight)
         elseif GAME.comboStr == 'ASDPVL' then

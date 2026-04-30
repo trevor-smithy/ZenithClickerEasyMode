@@ -282,11 +282,6 @@ return {
         This achievement replaced "Patience is a Virtual" with mods specified, which makes it plays much better.
         Well, it does in vanilla, but here I (Trevor), kept it as is due to "But It Isn't One Of Mine"
     ]],
-    ['EX NH MS VL rAS'] = STRING.trimIndent [[
-        Faltered, an original combo from ZC community.
-        This is actually a multitask challenge. No surge forces imperfect passes, which send 0 with rAS.
-        So you just count to 4 while finding cards in shuffled deck.
-    ]],
     ['DH AS DP'] = STRING.trimIndent [[
         A Mutual Agreement, an original combo from ZC community.
         This was changed from "Honeymoon" with a better title, it had same target but without mods limit.
