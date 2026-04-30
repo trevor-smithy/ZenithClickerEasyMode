@@ -332,7 +332,7 @@ You gain ZP after a run, with `ZP = altitude * multiplier`, which `multiplier` i
 | Reversed |  2.6  | 1.4+.05*(M-1) |  1.7  |  1.2 | 1.2+.02*(M-1) | 1.6 |  1.6   |  1.0  |  2.1 |
 *Note: Uneasy is 2.7x instead of 0.9x
 
-This is then further multiplied by:
+**Special Modifiers**
 1.1 if rMS and rGV
 1.2 if rEX and rVL
 1.4 if rDH and rIN
@@ -357,7 +357,7 @@ If Closer Card:
 
 > M = [Total Mod Count] -1  
 > `Hard Mode Decay` = 0.99, applies `number_of_EX_or_Rev - 1` times  
-> `multiplier` is capped at `100x`
+> `multiplier` forced to `100x` for all revs *(99.99x Originally)*
 
 Total ZP is soft-capped by your skill:
 

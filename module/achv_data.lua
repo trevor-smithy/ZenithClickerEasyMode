@@ -747,6 +747,16 @@ Achievements = {
         scoreSimp = function(quest) return floor(quest) .. " Quests" end,
         rank = numberRank(0, 10, 26, 40, 60, 80, 100),
     },
+    { -- the_artist_trinity
+        ex = true,
+        id = 'the_artist_trinity',
+        name = "The Artist Trinity",
+        desc = [[HFD while every quest triggers wound using EX NH MS VL DH rAS]],
+        quote = [[All forms of creativity through restraint, deceit, and evasion.]],
+        credit = "@The_111thBlitzer",
+        rank = numberRank(0, 50, 100, 150, 200, 260, 420),
+        hide = function() return GAME.completion.AS == 0 end,
+    },
     { -- fel_magic
         ex = true,
         id = 'fel_magic',
