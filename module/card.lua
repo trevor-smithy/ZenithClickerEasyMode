@@ -150,7 +150,7 @@ function Card:setActive(auto, key)
         local mvl
         if M.VL == -1 then mvl = 1 else mvl = M.VL end
         --local baseDist = 110 + (M.EX > 0 and (URM and M.EX == 2 and -30 or -10) or 0) + mvl * 20 + (GAME.closeCard and -30 or GAME.ecloseCard and -50 or 0)
-        local maxCardDistance = 1 + (M.EX == 2 and URM and 2 or M.EX == 2 and 1 or M.EX == 1 and 1 or 0) - mvl
+        local maxCardDistance = 1 + (M.EX == 2 and URM and 2 or M.EX == 2 and 1 or M.EX == 1 and 1 or 0) - mvl + (GAME.closeCard and 1 or 0)
         local otherCardActivated = false
         if self.tempOrder > 1 then leftCard = CD[self.tempOrder - 1] end
         if leftCard then

@@ -1,5 +1,5 @@
 local max, min = math.max, math.min
-local floor, ceil = math.floor, math.ceil
+local floor = math.floor
 local abs, rnd = math.abs, math.random
 local roundUnit = MATH.roundUnit
 local expApproach = MATH.expApproach
@@ -155,6 +155,7 @@ local ins, rem = table.insert, table.remove
 ---@field badTime boolean? True if ZCEM basement is active
 ---@field badTimeStarted boolean? True if ZCEM basement run has started
 ---@field fallout boolean? for card effect
+---@field lifeLeakMessage number?
 local GAME = {
     forfeitTimer = 0,
     exTimer = 0,
@@ -257,6 +258,7 @@ local GAME = {
     achv_escapeQuest = nil,
     achv_felMagicBurnt = nil,
     achv_felMagicQuest = nil,
+    achv_artistTrinityH = nil,
     achv_resetCount = nil,
     achv_noResetH = nil,
     achv_obliviousQuest = nil,
@@ -269,6 +271,7 @@ local GAME = {
 GAME.playing = false
 GAME.finishTime = -2600
 GAME.fullHealth = 20
+GAME.startingHealth = 20
 GAME.life = 0
 GAME.life2 = 0
 GAME.time = 0
@@ -369,7 +372,7 @@ function GAME.getComboZP(list)
     if m.rDH and m.rIN then zp = zp * 1.4 elseif m.rDH and m.eIN then zp = zp * 0.9 end
     if (m.rEX or m.eEX) and m.rDP then zp = zp * 0.84 end
 
-    if m.eMS and (m.eAS or m.AS or m.rAS) and not m.EIN then zp = zp * 1.06875 end
+    if m.eMS and (m.eAS or m.AS or m.rAS) and not m.eIN then zp = zp * 1.06875 end
     if m.eDP and m.eDH then zp = zp * 17/18 end
 
     if GAME.enightcore then zp = zp * .9 end
@@ -381,8 +384,8 @@ function GAME.getComboZP(list)
         zp = zp * ((m.rDH and 0.9 or 1) * ((URM and m.rIN) and 0.95 or (not URM and m.rIN) and 0.9 or m.IN and 0.875 or m.eIN and 0.83 or 0.85) * (m.eDP and 0.9 or (m.DP or m.rDP) and 0.95 or 1))
     end
     if GAME.ecloseCard then
-        local maxCardDistance = max(((m.rEX and URM) and 2 or (m.rEX or m.EX) and 1 or 0) - (m.rVL and 2 or (m.eVL or m.VL) and 1 or 0),0)
-        zp = zp * (1 - 0.25-maxCardDistance*0.214) * (m.rEX and not m.rVL and 0.9 or 1) 
+        local MCD = max(((m.rEX and URM) and 2 or (m.rEX or m.EX) and 1 or 0) - (m.rVL and 2 or (m.eVL or m.VL) and 1 or 0) + (GAME.closeCard and 1 or 0),0)
+        zp = zp * (MCD == 3 and 0 or (-0.01855*MCD^2 - 0.19407*MCD + 0.75)) --(maxCardDistance == 0 and 0.75 or maxCardDistance == 1 and 0.5357 or maxCardDistance == 2 and 0.2885)--(1 - 0.25-maxCardDistance*0.214) * (maxCardDistance == 2 and 0.9 or 1) 
     end
 
     local hardCnt = table.concat(list):count('r')
@@ -1213,6 +1216,7 @@ function GAME.takeDamage(dmg, reason, toAlly)
                 local health = MATH.max(GAME[GAME.getLifeKey(not toAlly)], GAME[GAME.getLifeKey(toAlly)])
                 M.DP = 0
                 GAME.fullHealth = 20
+                GAME.startingHealth = 20
                 GAME.DPlock = false
                 GAME.rankLimit = 26000
                 GAME.refreshModIcon()
@@ -2931,6 +2935,10 @@ function GAME.commit(auto, falseCommit)
             if GAME.achv_escapeBurnt then
                 GAME.achv_escapeBurnt = false
                 GAME.achv_escapeQuest = GAME.achv_escapeQuest + 1
+            else
+                if GAME.comboStr == 'DHEXMSNHVLrAS' and not GAME.achv_artistTrinityH then
+                    GAME.achv_artistTrinityH = GAME.roundHeight
+                end
             end
             if GAME.achv_felMagicBurnt then
                 GAME.achv_felMagicBurnt = false
@@ -3057,6 +3065,7 @@ function GAME.commit(auto, falseCommit)
         GAME.cancelBurn()
         GAME.dmgTimer = min(GAME.dmgTimer + max(2.6, GAME.dmgDelay / 2), GAME.dmgDelay)
 
+        GAME.achv_artistTrinityBurnt = false
         for i = dblCorrect and 2 or 1, 1, -1 do
             local p = dblCorrect and i or correct
             if eDPCorrect and correct == 1 then
@@ -3260,6 +3269,7 @@ function GAME.start()
         SCN.scenes.tower.widgetList.start.text = ''
         SCN.scenes.tower.widgetList.start:reset()
     end
+    GAME.lifeLeakMessage = 1
 
     local attackMulMod = 1
     if GAME.eglassCard then attackMulMod = 0.5 end
@@ -3348,10 +3358,12 @@ function GAME.start()
     GAME.dmgTimerMul = 1
     GAME.dmgDelay = 15
     GAME.dmgCycle = 5
+    GAME.lifeLeak = 0
 
     -- Player
-    GAME.life = 20
-    GAME.fullHealth = 20
+    GAME.fullHealth = M.DP > 0 and 15 or 20
+    GAME.startingHealth = GAME.fullHealth
+    GAME.life = GAME.fullHealth
     GAME.dmgTimer = GAME.dmgDelay
     GAME.chain = 0
     GAME.gigaspeed = false
@@ -3387,7 +3399,7 @@ function GAME.start()
 
     -- rDP
     GAME.onAlly = false
-    GAME.life2 = 20
+    GAME.life2 = GAME.fullHealth
     GAME.rankLimit = 26000
     GAME.reviveCount = 0
     GAME.reviveDifficulty = 0
@@ -3404,12 +3416,6 @@ function GAME.start()
     elseif M.DP == 2 then
         GAME.rankLimit = 16
         GAME.dmgHeal = 4
-    end
-
-    if M.DP ~= 0 then
-        GAME.life = 15
-        GAME.life2 = 15
-        GAME.fullHealth = 15
     end
 
     GAME.refreshLifeState()
@@ -3461,10 +3467,12 @@ function GAME.start()
     GAME.achv_escapeQuest = 0
     GAME.achv_felMagicBurnt = false
     GAME.achv_felMagicQuest = 0
+    GAME.achv_artistTrinityH = nil
+    GAME.achv_artistTrinityBurnt = false
     GAME.achv_resetCount = 0
     GAME.achv_obliviousQuest = 0
     GAME.achv_doublePass = 0
-    GAME.achv_level19capH = false
+    GAME.achv_level19capH = nil
     GAME.achv_totalResetCount = 0
     GAME.achv_altFromSurge = 0
     if M.DP > 0 then IssueAchv('intended_glitch') end
@@ -3972,6 +3980,8 @@ function GAME.finish(reason)
             SubmitAchv('clutch_main', GAME.achv_clutchQuest)
         elseif GAME.comboStr == 'ASDHMS' then
             SubmitAchv('the_escape_artist', GAME.achv_escapeQuest)
+        elseif GAME.comboStr == 'DHEXMSNHVLrAS' then
+            SubmitAchv('the_artist_trinity', GAME.achv_artistTrinityH or GAME.roundHeight)
         elseif GAME.comboStr == 'ASDHrIN' then
             SubmitAchv('the_oblivious_artist', GAME.achv_obliviousQuest)
         elseif GAME.comboStr == 'rGV' then
@@ -3985,8 +3995,6 @@ function GAME.finish(reason)
             SubmitAchv('the_masterful_juggler', GAME.achv_maxChain)
         elseif GAME.comboStr == 'DHVLrIN' then
             SubmitAchv('empurple', GAME.achv_noChargeH or GAME.roundHeight)
-        elseif GAME.comboStr == 'EXMSNHVLrAS' then
-            SubmitAchv('faltered', GAME.achv_noChargeH or GAME.roundHeight)
         elseif GAME.comboStr == 'ASDHDP' then
             SubmitAchv('a_mutual_agreement', GAME.achv_shareModH or GAME.roundHeight)
         elseif GAME.comboStr == 'ASDPVL' then
@@ -4158,6 +4166,37 @@ function GAME.submitTimedAchievements()
         SubmitAchv('professional_cleaner', GAME.achv_professionalCleanerQuest or 0)
     elseif GAME.comboStr == 'eDHeDPeGVeINeMSeNH' then
         SubmitAchv('rold_smythy', max(GAME.achv_roldSmythyQuest, GAME.chain))
+    end
+end
+
+---@author: Trevor Smithy 2026-04-29 23:22:58
+---@field timeRemaining number Number of seconds remaining until death via lifeLeak
+function GAME.nextLifeLeak(timeRemaining)
+    while timeRemaining < (LifeLeakMessages[GAME.lifeLeakMessage].time - 1) and GAME.lifeLeakMessage < #LifeLeakMessages do
+        GAME.lifeLeakMessage = GAME.lifeLeakMessage + 1
+    end
+    if GAME.lifeLeakMessage > #LifeLeakMessages then return end
+    local stage = LifeLeakMessages[GAME.lifeLeakMessage]
+    if stage.time == -1 then return end
+    if stage.text then
+        TEXT:add {
+            text = stage.text,
+            x = 800, y = 265, fontSize = 30, k = 1.5,
+            style = 'score', duration = stage.duration or 5,
+            inPoint = .1, outPoint = .26,
+            color = stage.color or 'lB',
+        }
+        if stage.desc then
+            TEXT:add {
+                text = stage.desc,
+                x = 800, y = 300, fontSize = 30,
+                style = 'score', duration = stage.duration or 5,
+                inPoint = .26, outPoint = .1,
+                color = stage.color or 'lB',
+            }
+        end
+        TASK.new(GAME.task_fatigueWarn)
+        GAME.lifeLeakMessage = GAME.lifeLeakMessage + 1
     end
 end
 
@@ -4556,6 +4595,20 @@ function GAME.update(dt)
     if GAME.dmgTimer <= 0 then
         GAME.dmgTimer = GAME.dmgCycle
         GAME.takeDamage(GAME.dmgTime, 'time')
+    end
+
+    -- Life leak
+    if GAME.lifeLeak > 0 and GAME.height > NegFloors[9].bottom then
+        local leakMod = GAME.badTime and 1 or ((M.DP == 0 and 1 or 0.5) * (GAME.eslowmo and 3/4 or 1) * (GAME.ecloseCard and 2 or 1))
+        local timeMod = 1/leakMod / (GAME.nightcore and 2.6 or 1)
+        local timeRemaining = GAME.fullHealth/GAME.lifeLeak * timeMod
+        if timeRemaining <= LifeLeakMessages[GAME.lifeLeakMessage].time then GAME.nextLifeLeak(timeRemaining) end
+        GAME.fullHealth = GAME.fullHealth - dt * GAME.timerMul * GAME.lifeLeak * leakMod
+        GAME.life = min(GAME.life, GAME.fullHealth)
+        GAME.life2 = min(GAME.life2, GAME.fullHealth)
+        if GAME.life <= 0 then
+            GAME.takeDamage(1e99, 'wrong')
+        end
     end
 end
 

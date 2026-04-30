@@ -309,8 +309,9 @@ ComboData = {
         { set = "rEX rDP",          name = "Tyrannical Dyarchy" },
         { set = "rEX MS rDH IN",    name = "Sisyphean Monarchy" },
         { set = "MS rDH rIN AS",    name = "Kitsune Trickery" },
+        { set = "EX NH MS VL DH rAS", name = "The Artist Trinity" },
         { set = "VL DH rIN",        name = "Empurple" },
-        { set = "EX NH MS VL rAS",  name = "Faltered" },
+        { set = "rNH MS rGV AS",    name = "Autoplay is Awesome" },
         { set = "DH AS DP",         name = "A Mutual Agreement" },
         { set = "VL AS DP",         name = "The Cheaters" },
         { set = "NH rGV",           name = "Clutch Main" },
@@ -619,7 +620,7 @@ ComboData = {
         { set = "EX MS DH AS",    name = "Imprisonment" },
         { set = "EX MS DH DP",    name = "Checkmate" },
         { set = "EX MS IN AS",    name = "The Mathematician" },
-        { set = "EX MS IN DP",    name = "Transcendental Number" },
+        { set = "EX MS IN DP",    name = "Rulers in the Dark" },
         { set = "EX MS AS DP",    name = "Double Cancelling" },
         { set = "EX GV VL DH",    name = "The Autocrat" },
         { set = "EX GV VL IN",    name = "Lateness" },
@@ -693,7 +694,7 @@ ComboData = {
         { set = "MS VL IN DP",    name = "Lovestruck" },
         { set = "MS VL AS DP",    name = "Entangled Cheater" },
         { set = "MS DH IN AS",    name = "Nascent" },
-        { set = "MS DH IN DP",    name = "Air Miners" },
+        { set = "MS DH IN DP",    name = "The Unseen Depths" },
         { set = "MS DH AS DP",    name = "Partners in Crime" },
         { set = "MS IN AS DP",    name = "Inception" },
         { set = "GV VL DH IN",    name = "Nightmare" },
@@ -796,6 +797,8 @@ ComboData = {
         { set = "NH GV DH AS DP", name = "Just Dance" },
         { set = "NH GV IN AS DP", name = "Latent Lifeline" },
         { set = "NH VL DH IN AS", name = "Magic" },
+        { set = "NH VL DH IN DP", name = "Spill on the Dinner" },
+        { set = "NH VL DH AS DP", name = "Neo Cosmos" },
         { set = "NH VL IN AS DP", name = "Expelled" },
         { set = "NH DH IN AS DP", name = "The Trinity of Blindness" },
         { set = "MS GV VL DH IN", name = "Slaughterhouse" },
@@ -807,10 +810,13 @@ ComboData = {
         { set = "MS GV DH IN DP", name = "Tipsy Twosome" },
         { set = "MS GV DH AS DP", name = "Four Dimensional Golf" },
         { set = "MS VL DH IN AS", name = "Beethoven" },
-        { set = "MS VL DH AS DP", name = "Blue Heart" },
+        { set = "MS VL DH IN DP", name = "The Incomprehensible Spirit" },
+        { set = "MS VL DH AS DP", name = "Chaotic Resonance" },
+        { set = "MS VL IN AS DP", name = "Couple of Creativity" },
+        { set = "MS DH IN AS DP", name = "Crazy Personalities" },
         { set = "GV VL DH IN AS", name = "Lost Genius" },
         { set = "GV VL DH IN DP", name = "Haunting Hallucinations" },
-        { set = "GV VL DH AS DP", name = "Disqualification" },
+        { set = "GV VL DH AS DP", name = "Dual System Failure" },
         { set = "GV VL IN AS DP", name = "Hardships" },
         { set = "GV DH IN AS DP", name = "Sleepy Pilots" },
         { set = "VL DH IN AS DP", name = "The Duel of Geniuses" },
@@ -1834,25 +1840,13 @@ Fatigue = {
         { time = 430, event = { 'dmgTimerMul', -.05 } },
         { time = 480, event = { 'atkBufferCap', 6, 'animDuration', 1, 'maxQuestSize', 1 }, text = "FAREWELL.",                 desc = "QuestDifficulty++++++",     duration = 26, color = 'lB', },
         { time = 485, event = { 'atkBufferCap', 6, 'animDuration', 3, 'extraQuestVar', 1 } },
-        { time = 490, event = { 'atkBufferCap', 6, 'animDuration', 5 } },
-        { time = 510, event = { 'animDuration', 11 }, --[[26]]                             text = "" },
-        { time = 540, event = { 'animDuration', 16 }, --[[42]]                             text = "" },
-        { time = 570, event = { 'animDuration', 20 }, --[[62]]                             text = "" },
-        { time = 600, event = { 'animDuration', 64 }, --[[126]]                            text = "" },
-        { time = 630, event = { 'extraQuestBase', .01 }, text = "YOU FEEL THE IMPENDING DOOM_",                 desc = "30 Seconds Remain",     duration = 12, color = 'lB', },
-        { time = 645, event = { 'extraQuestBase', .01 }, text = "DIE!",                 desc = "15 Seconds Remain",     duration = 4, color = 'lB', },
-        { time = 650, event = { 'extraQuestBase', .01 }, text = "DIE!",                 desc = "10 Seconds Remain",     duration = 0.5, color = 'lB', },
-        { time = 651, event = { 'extraQuestBase', .01 }, text = "DIE!",                 desc = "9 Seconds Remain",     duration = 0.5, color = 'lB', },
-        { time = 652, event = { 'extraQuestBase', .01 }, text = "DIE!",                 desc = "8 Seconds Remain",     duration = 0.5, color = 'lB', },
-        { time = 653, event = { 'extraQuestBase', .01 }, text = "DIE!",                 desc = "7 Seconds Remain",     duration = 0.5, color = 'lB', },
-        { time = 654, event = { 'extraQuestBase', .01 }, text = "DIE!",                 desc = "6 Seconds Remain",     duration = 0.5, color = 'lB', },
-        { time = 655, event = { 'extraQuestBase', .01 }, text = "DIE!",                 desc = "5 Seconds Remain",     duration = 0.5, color = 'lB', },
-        { time = 656, event = { 'extraQuestBase', .01 }, text = "DIE!",                 desc = "4 Seconds Remain",     duration = 0.5, color = 'lB', },
-        { time = 657, event = { 'extraQuestBase', .01 }, text = "DIE!",                 desc = "3 Seconds Remain",     duration = 0.5, color = 'lB', },
-        { time = 658, event = { 'extraQuestBase', .01 }, text = "DIE!",                 desc = "2 Seconds Remain",     duration = 0.5, color = 'lB', },
-        { time = 659, event = { 'extraQuestBase', .01 }, text = "DIE!",                 desc = "1 Second Remains",     duration = 0.5, color = 'lB', },
-        { time = 660, event = { 'dmgTimerMul', -0.499 }, text = "MWAHAHAHA!",                 desc = "CEASE!",     duration = 26, color = 'lR', },
-        { time = 1e99 }, -- Total: dmgTimerMul-50%, Cycle-1, Wrong+2
+        { time = 490, event = { 'atkBufferCap', 6, 'animDuration', 4 } },
+        { time = 500, event = { 'animDuration', 5 }, --[[21]] },
+        { time = 510, event = { 'animDuration', 5 }, --[[26]]                              text = "" },
+        { time = 520, event = { 'animDuration', 10, 'lifeLeak', .2 }, --[[36]]             text = "ANGINA.",                   desc = "HP leak",                   color = 'DR' },
+        { time = 540, event = { 'animDuration', 12 }, --[[48]] },
+        { time = 560, event = { 'animDuration', 14 }, --[[62]]                             text = "" },
+        { time = 1e99 }, -- Total: dmgTimerMul-50%, Cycle-1, Wrong+2, killscreen at 520+100(200)s
     },
     rEX = {
         { time = 90,  event = { 'extraQuestBase', .2, 'animDuration', .5 } },
@@ -1871,21 +1865,8 @@ Fatigue = {
         { time = 426, event = { 'dmgTimerMul', -.05 } },
         { time = 430, event = { 'dmgTimerMul', -.05 } },
         { time = 435, event = { 'dmgTimerMul', -.03 } },
-        { time = 440, event = { 'dmgTimerMul', -.02 } },
-        { time = 570, event = { 'extraQuestBase', .01 }, text = "YOU FEEL THE IMPENDING DOOM_",                 desc = "30 Seconds Remain",     duration = 12, color = 'lB', },
-        { time = 585, event = { 'extraQuestBase', .01 }, text = "DIE!",                 desc = "15 Seconds Remain",     duration = 4, color = 'lB', },
-        { time = 590, event = { 'extraQuestBase', .01 }, text = "DIE!",                 desc = "10 Seconds Remain",     duration = 0.5, color = 'lB', },
-        { time = 591, event = { 'extraQuestBase', .01 }, text = "DIE!",                 desc = "9 Seconds Remain",     duration = 0.5, color = 'lB', },
-        { time = 592, event = { 'extraQuestBase', .01 }, text = "DIE!",                 desc = "8 Seconds Remain",     duration = 0.5, color = 'lB', },
-        { time = 593, event = { 'extraQuestBase', .01 }, text = "DIE!",                 desc = "7 Seconds Remain",     duration = 0.5, color = 'lB', },
-        { time = 594, event = { 'extraQuestBase', .01 }, text = "DIE!",                 desc = "6 Seconds Remain",     duration = 0.5, color = 'lB', },
-        { time = 595, event = { 'extraQuestBase', .01 }, text = "DIE!",                 desc = "5 Seconds Remain",     duration = 0.5, color = 'lB', },
-        { time = 596, event = { 'extraQuestBase', .01 }, text = "DIE!",                 desc = "4 Seconds Remain",     duration = 0.5, color = 'lB', },
-        { time = 597, event = { 'extraQuestBase', .01 }, text = "DIE!",                 desc = "3 Seconds Remain",     duration = 0.5, color = 'lB', },
-        { time = 598, event = { 'extraQuestBase', .01 }, text = "DIE!",                 desc = "2 Seconds Remain",     duration = 0.5, color = 'lB', },
-        { time = 599, event = { 'extraQuestBase', .01 }, text = "DIE!",                 desc = "1 Second Remains",     duration = 0.5, color = 'lB', },
-        { time = 600, event = { 'dmgTimerMul', -0.099 }, text = "MWAHAHAHA!",                 desc = "CEASE!",     duration = 26, color = 'lR', },
-        { time = 1e99 }, -- Total: dmgTimerMul-90%, Cycle-1.5, Wrong+5
+        { time = 440, event = { 'dmgTimerMul', -.02, 'lifeLeak', .5 },                  text = "BLACK OUT.",                      desc = "HP leak",                color = 'DR' },
+        { time = 1e99 }, -- Total: dmgTimerMul-90%, Cycle-1.5, Wrong+5, killscreen at 440+40(60)s
     },
     -- Trevor Smithy
     eEX = {
@@ -1955,20 +1936,8 @@ Fatigue = {
         { time = 416, event = { 'dmgTimerMul', -.05 } },
         { time = 420, event = { 'dmgTimerMul', -.03 } },
         { time = 425, event = { 'dmgTimerMul', -.02 } },
-        { time = 570, event = { 'extraQuestBase', .01 }, text = "YOU FEEL THE IMPENDING DOOM_",                 desc = "30 Seconds Remain",     duration = 12, color = 'lB', },
-        { time = 585, event = { 'extraQuestBase', .01 }, text = "DIE!",                 desc = "15 Seconds Remain",     duration = 4, color = 'lB', },
-        { time = 590, event = { 'extraQuestBase', .01 }, text = "DIE!",                 desc = "10 Seconds Remain",     duration = 0.5, color = 'lB', },
-        { time = 591, event = { 'extraQuestBase', .01 }, text = "DIE!",                 desc = "9 Seconds Remain",     duration = 0.5, color = 'lB', },
-        { time = 592, event = { 'extraQuestBase', .01 }, text = "DIE!",                 desc = "8 Seconds Remain",     duration = 0.5, color = 'lB', },
-        { time = 593, event = { 'extraQuestBase', .01 }, text = "DIE!",                 desc = "7 Seconds Remain",     duration = 0.5, color = 'lB', },
-        { time = 594, event = { 'extraQuestBase', .01 }, text = "DIE!",                 desc = "6 Seconds Remain",     duration = 0.5, color = 'lB', },
-        { time = 595, event = { 'extraQuestBase', .01 }, text = "DIE!",                 desc = "5 Seconds Remain",     duration = 0.5, color = 'lB', },
-        { time = 596, event = { 'extraQuestBase', .01 }, text = "DIE!",                 desc = "4 Seconds Remain",     duration = 0.5, color = 'lB', },
-        { time = 597, event = { 'extraQuestBase', .01 }, text = "DIE!",                 desc = "3 Seconds Remain",     duration = 0.5, color = 'lB', },
-        { time = 598, event = { 'extraQuestBase', .01 }, text = "DIE!",                 desc = "2 Seconds Remain",     duration = 0.5, color = 'lB', },
-        { time = 599, event = { 'extraQuestBase', .01 }, text = "DIE!",                 desc = "1 Second Remains",     duration = 0.5, color = 'lB', },
-        { time = 600, event = { 'dmgTimerMul', -0.299 }, text = "MWAHAHAHA!",                 desc = "CEASE!",     duration = 26, color = 'lR', },
-        { time = 1e99 }, -- Total: dmgTimerMul-70%
+        { time = 476, event = { 'lifeLeak', .2 },                                text = "CARDIAC RUPTURE.",                           desc = "HP leak",        color = 'DR' },
+        { time = 1e99 }, -- Total: dmgTimerMul-50%, killscreen at 476+150s
     },
 }
 -- My formatter doesn't work if there's "…" inside
@@ -2221,7 +2190,9 @@ for i = 1, #BadgeData do
     BadgeData[bd.id] = bd
 end
 
-DevScore = {speed_bonus=10,arrogance=772.74,scarcity_mindset=57,detail_oriented=0,psychokinesis=1692,divine_rejection=1649.9,moon_struck=0,lovers_promise=10598.95,identity=0,love_hotel=2.597011165,financially_responsible=5.898309714,unfair_battle=4.344901018,museum_heist=2.4841288230001,workaholic=2.3799148589999,human_experiment=2.733007991,thermal_anomaly=0.467,ultra_dash=0.496,perfect_speedrun=23.747579831,the_perfectionist=8310.52,cruise_control=23,dazed=16,drag_racing=29,space_race=209,fickle_fuel=851.3,the_spike_of_all_time_plus=498,blight=7733.35,desolation=6284.45,havoc=3656.14,pandemonium=3481.3,inferno=2875.1,purgatory=1840,perdition=1624.7,cataclysm=1395.49,annihilation=777.19,armageddon=423.31,abyss=196.02,cut_off=0,worn_out=0,the_harbinger=0,final_defiance=0,speedrun_speedrunning=0,abyss_weaver=0,royal_resistance=0,lovers_stand=0,romantic_homicide=0,benevolent_ambition=0,blazing_speed=0,dusty_memories=0,its_kinda_rare=0,fruitless_effort=0,false_god=0,respectful=0,zenith_relocation=0,intended_glitch=0,lucky_coincidence=0,zenith_traveler=0,dark_force=0,return_to_the_light=true,smooth_dismount=0,clicker=1119097,swamp_water_lite_plus=4878.84,ASMSrDHrIN=848.9,INMSrDHrEX=1244.64,MS=6326.3,NH=10586.4,VL=11377.6,hardcore_beginning=13.88,swamp_water_plus=2714.92,talentless=7817.15,quest_rationing=631.02,the_responsible_one=18,the_unreliable_one=14,empurple=2919.81,fel_magic=107,rDP=3980.74,level_19_cap=7207.94,carried=5528.27,guardian_angel=6061.19,the_responsible_one_plus=144,contender=10107,elegance=434052,garbage_offensive=2192223,tower_climber=6513225.6,tower_regular=31303,speed_player=6586,plonk=148.99,zenith_explorer=10666.27,zenith_explorer_plus=18681.62,clicker_speedrun=15.466656532,naga_eyes=26.456631063,supercharged=288,supercharged_plus=447,multitasker=61866.8,effective=41446.887071386,zenith_speedrun=48.891,zenith_speedrun_plus=28.87,zenith_challenger=97361.9,divine_challenger=53702.1,zenith_speedrunner=480.712,divine_speedrunner=691.846,the_spike_of_all_time=437,the_spike_of_all_time_minus=192,clock_out=853,vip_list=119,GVIN=9358.41,ASNH=14508.3,DPEX=5417.82,GVNH=8373.29,DHMSNH=7020.5,DHEXNH=6784.1,DHEXMSVL=2766.57,ASEXVL=4432.7,swamp_water_lite=4878.84,swamp_water=2985.03,rGVrIN=6076.5,EXNHrAS=5891.7,INrASrDHrNH=2711.9,DHEXrGV=6096.52,EXGVNHrMS=2860.57,ASDPGVrMSrNH=2005.6,DHrEXrVL=1664.66,ASGVrDPrMS=1853.87,NHVLrDPrGV=2178.42,VLrEXrIN=1688.17,rDPrEX=2279.1,IN=10929.7,GV=10604.39,EX=8612.63,DP=10598.95,DH=9644.52,AS=18681.62,rVL=6036.9,rNH=6282.1,rMS=3982.7,rIN=5503.13,rGV=8520,rEX=2807.73,the_escape_artist=132,rDH=4273.85,rAS=12315.11,faltered=1854.3,patience_is_a_virtue=2627.37,spotless=2916.6,a_mutual_agreement=3620.9,the_cheaters=1786.5,overprotection=1986.85,clutch_main=191,sunk_cost=4278.1,wax_wings=2412.74,the_masterful_juggler=122,the_oblivious_artist=172,zero_to_sixty=5.4,
+DevScore = {worn_out=0,the_harbinger=0,final_defiance=0,speedrun_speedrunning=0,abyss_weaver=0,royal_resistance=0,lovers_stand=0,romantic_homicide=0,benevolent_ambition=0,blazing_speed=0,dusty_memories=0,its_kinda_rare=0,fruitless_effort=0,false_god=0,respectful=0,zenith_relocation=0,intended_glitch=0,lucky_coincidence=0,zenith_traveler=0,quest_rationing=631.02,return_to_the_light=true,smooth_dismount=0,the_responsible_one_plus=144,guardian_angel=6061.19,carried=5528.27,level_19_cap=7207.94,the_escape_artist=132,the_artist_trinity=503.8,fel_magic=107,empurple=2919.81,autoplay_is_awesome=1658.4,spotless=2916.6,a_mutual_agreement=3620.9,the_cheaters=1786.5,overprotection=1986.85,clutch_main=191,sunk_cost=4278.1,wax_wings=2412.74,the_masterful_juggler=122,the_oblivious_artist=172,zero_to_sixty=5.4,speed_bonus=10,arrogance=772.74,scarcity_mindset=57,detail_oriented=0,psychokinesis=1692,divine_rejection=1649.9,moon_struck=0,lovers_promise=10598.95,hardcore_beginning=13.88,love_hotel=2.597011165,financially_responsible=5.898309714,unfair_battle=4.344901018,museum_heist=2.4841288230001,workaholic=2.3799148589999,human_experiment=2.733007991,thermal_anomaly=0.467,ultra_dash=0.496,perfect_speedrun=23.747579831,the_perfectionist=8310.52,cruise_control=23,dazed=16,drag_racing=29,space_race=209,fickle_fuel=851.3,the_spike_of_all_time_plus=498,blight=7733.35,desolation=6284.45,havoc=3656.14,pandemonium=3481.3,inferno=2875.1,purgatory=1840,perdition=1624.7,cataclysm=1395.49,contender=10213,elegance=439643,garbage_offensive=2220357,tower_climber=6584216,tower_regular=31671,speed_player=6690,plonk=148.99,zenith_explorer=10666.27,zenith_explorer_plus=18681.62,clicker_speedrun=15.466656532,naga_eyes=26.456631063,supercharged=288,supercharged_plus=447,multitasker=61866.8,effective=41446.887071386,zenith_speedrun=48.891,zenith_speedrun_plus=28.87,zenith_challenger=97361.9,divine_challenger=53702.1,zenith_speedrunner=480.712,divine_speedrunner=691.846,the_spike_of_all_time=437,the_spike_of_all_time_minus=192,clock_out=869,vip_list=123,GVIN=9358.41,ASNH=14508.3,DPEX=5417.82,GVNH=8373.29,DHMSNH=7020.5,DHEXNH=6784.1,DHEXMSVL=2766.57,ASEXVL=4432.7,swamp_water_lite=4878.84,swamp_water=2985.03,rGVrIN=6076.5,EXNHrAS=5891.7,INrASrDHrNH=2711.9,DHEXrGV=6096.52,EXGVNHrMS=2860.57,ASDPGVrMSrNH=2005.6,DHrEXrVL=1664.66,ASGVrDPrMS=1853.87,NHVLrDPrGV=2178.42,VLrEXrIN=1688.17,rDPrEX=2279.1,INMSrDHrEX=1244.64,ASMSrDHrIN=848.9,swamp_water_lite_plus=4878.84,swamp_water_plus=2714.92,talentless=7817.15,the_unreliable_one=14,identity=0,armageddon=423.31,annihilation=777.19,clicker=1133186,dark_force=0,the_responsible_one=18,VL=11377.6,NH=10586.4,MS=6326.3,IN=10929.7,GV=10604.39,EX=8612.63,DP=10598.95,DH=9644.52,AS=18681.62,rVL=6036.9,rNH=6282.1,rMS=3982.7,rIN=5503.13,rGV=8520,rEX=2807.73,rDP=3980.74,rDH=4273.85,rAS=12315.11,abyss=196.02,cut_off=0,
+    --deleted MrZ score
+    patience_is_a_virtue=2627.37,
 -- Trevor Smithy Dev scores
     --Easy Mode (v1.0) (No CR)
     programmer_gamer=42909.0,one_of_mine=26856.9,ggbw=69085.8,perfect_speedrun_plus=361.02,perfectly_balanced=10783.0,peasant_revolution=15511.8,holy_ascention=4814.9,stabilized_entropy=3115.4,restrained_collapse=17205.3,restored_volition=8606.7,disproven_blasphemy=5223.9,solved_paradox=4103.1,demystified_grimoire=17952.5,restored_eden=2650.3,your_too_fast=187,
@@ -2250,3 +2221,20 @@ DevScore.tower_regular = 2e4
 DevScore.speed_player = 2600
 DevScore.clock_out = 420
 DevScore.vip_list = 42
+
+LifeLeakMessages = {
+    {time = 30, text = "YOU FEEL THE IMPENDING DOOM", desc = "30 Seconds Remain", duration = 12},
+    {time = 15, text = "DIE!", desc = "15 Seconds Remain", duration = 4},
+    {time = 10, text = "DIE!", desc = "10 Seconds Remain", duration = 0.5},
+    {time = 9,  text = "DIE!", desc = "9 Seconds Remain",  duration = 0.5},
+    {time = 8,  text = "DIE!", desc = "8 Seconds Remain",  duration = 0.5},
+    {time = 7,  text = "DIE!", desc = "7 Seconds Remain",  duration = 0.5},
+    {time = 6,  text = "DIE!", desc = "6 Seconds Remain",  duration = 0.5},
+    {time = 5,  text = "DIE!", desc = "5 Seconds Remain",  duration = 0.5},
+    {time = 4,  text = "DIE!", desc = "4 Seconds Remain",  duration = 0.5},
+    {time = 3,  text = "DIE!", desc = "3 Seconds Remain",  duration = 0.5},
+    {time = 2,  text = "DIE!", desc = "2 Seconds Remain",  duration = 0.5},
+    {time = 1,  text = "DIE!", desc = "1 Seconds Remain",  duration = 0.5},
+    {time = 0.1,  text = "MWAHAHAHA!", desc = "CEASE!",  duration = 26, color = 'lR'},
+    {time = -1},
+}

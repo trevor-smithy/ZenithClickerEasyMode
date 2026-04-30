@@ -325,14 +325,39 @@ For the exact formula, see function `calculateRating()` in this [file](/module/s
 
 You gain ZP after a run, with `ZP = altitude * multiplier`, which `multiplier` is taken from:
 
-|   Mod    |  EX   |  NH   |  MS   |    GV     |    VL     |      DH      |  IN   |  AS   |     DP      |
-| :------: | :---: | :---: | :---: | :-------: | :-------: | :----------: | :---: | :---: | :---------: |
-| Upright  |  1.4  |  1.1  |  1.2  |    1.1    |    1.1    |     1.2      |  1.2  | 0.85  |    0.95     |
-| Reversed |  2.6  |  1.8  |  2.0  | 1.2+.02*M | 1.2+.02*M | 1.62+.58*rIN | 1.55  | 1.06  | 2.1-.35*rEX |
+|   Mod    |  EX   |      NH       |   MS  |  GV  |       VL      | DH  |  IN    |   AS  |  DP  |
+| :------: | :---: | :-----------: | :---: | :--: | :-----------: | :-: | :---:  | :---: | :--: |
+| Easy     |  0.9* |      0.9      | 1.111 | 0.85 |      0.9      | 0.8 | 0.98^M |  0.8  |  0.9 |
+| Upright  |  1.4  |      1.1      |  1.2  |  1.1 |      1.1      | 1.2 |  1.2   | 0.85  | 0.95 |
+| Reversed |  2.6  | 1.4+.05*(M-1) |  1.7  |  1.2 | 1.2+.02*(M-1) | 1.6 |  1.6   |  1.0  |  2.1 |
+*Note: Uneasy is 2.7x instead of 0.9x
+
+**Special Modifiers**
+1.1 if rMS and rGV
+1.2 if rEX and rVL
+1.4 if rDH and rIN
+0.9 if rDH and eIN
+0.84 if (rEX or eEX) and rDP
+1.06875 if eMS and any AS and not eIN
+0.94444 if eDH and eDP
+
+0.9 if Nightcore+
+0.826 if Slowmo+
+0.9 if Glass Card+
+0.75 if Slow Leak
+0.826 if Transparent UI
+If Old Transparent Card is not enabled and Transparent Card:
+    0.9 if rDH
+    0.95 if uIN, 0.9 if rIN, 0.875 if IN, 0.85 if no IN, 0.83 if eIN
+    0.95 if DP or rDP, 0.9 if eDP
+    0.83 if none, 0.6723 if rDH, eIN, eDP
+If Closer Card:
+    Additional Adjacency: +2 if uEX, +1 if rEX/EX, -2 if uVL/rVL, -1 if VL/eVL, +1 if Close Card is also enabled
+    If AA = 0: 0.75, 1 = 0.5357, 2 = 0.2885, 3 = 0
 
 > M = [Total Mod Count] -1  
 > `Hard Mode Decay` = 0.99, applies `number_of_EX_or_Rev - 1` times  
-> `multiplier` is capped at `100x` *(101.22x if not capped)*
+> `multiplier` forced to `100x` for all revs *(99.99x Originally)*
 
 Total ZP is soft-capped by your skill:
 

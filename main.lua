@@ -297,9 +297,9 @@ TEXTURE = {
             carried = aq(3, 8),
             level_19_cap = aq(16, 2),
             the_escape_artist = aq(1, 5),
+            the_artist_trinity = aq(1, 5),
             fel_magic = aq(9, 7),
             empurple = aq(13, 7),
-            faltered = aq(15, 6),
             patience_is_a_virtue = aq(10, 6),
             spotless = aq(16, 4),
             a_mutual_agreement = aq(13, 4),
@@ -1141,7 +1141,7 @@ local normalHelp = {
 local ultraHelp = {
     COLOR.LL, "Welcome to ", COLOR.LR, "Zenith Clicker: ", COLOR.R, "Ultra Reverse", COLOR.LL, ". Activate a reversed mod to start ", COLOR.lR, "suffering.\n",
     COLOR.LL, "The higher you go in the tower, the more likely you are to ", COLOR.R, "die.\n",
-    COLOR.LL, "There's no more achievements, and ", COLOR.lR, "you are not expected to go very high up.\n",
+    COLOR.LL, "There are no more achievements, and ", COLOR.lR, "you are not expected to go very high up.\n",
     COLOR.R, "Give Up: ", COLOR.LL, "ESC    ", COLOR.R, "Forfeit: ", COLOR.LL, "ESC    ", COLOR.R, "Quit: ", COLOR.LL, "ESC"
 }
 function RefreshHelpText()

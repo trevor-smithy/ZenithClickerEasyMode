@@ -167,6 +167,10 @@ return {
         QP2 made the target "garbage lines dig with spin", so I changed it to "quests with wound triggered".
         Hmm it's not that matching? But anyway it plays not bad lol
     ]],
+    ['EX NH MS VL DH rAS'] = STRING.trimIndent [[
+        The Artist Trinity, an original combo from ZC community.
+        A combination of all three "artist" combos! So cool but also so hard, glhf on challenging this!
+    ]],
     ['GV IN'] = STRING.trimIndent [[
         The Grandmaster, a combo ported from QP2, and it's not very worth talking about.
         IN gameplay but need a bit more concentrating.
@@ -273,10 +277,10 @@ return {
         Empurple, an original combo from ZC community.
         Main difficulty should come from "hard mode" of reverse mod, reducing XP you could get.
     ]],
-    ['EX NH MS VL rAS'] = STRING.trimIndent [[
-        Faltered, an original combo from ZC community.
-        This is actually a multitask challenge. No surge forces imperfect passes, which send 0 with rAS.
-        So you just count to 4 while finding cards in shuffled deck.
+    ['rNH MS rGV AS'] = STRING.trimIndent [[
+        Autoplay is Awesome, an original combo from ZC community.
+        This achievement replaced "Patience is a Virtue" with mods specified, which makes it plays much better.
+        Well, it does in vanilla, but here I (Trevor), kept it as is due to "But It Isn't One Of Mine"
     ]],
     ['DH AS DP'] = STRING.trimIndent [[
         A Mutual Agreement, an original combo from ZC community.
@@ -387,8 +391,7 @@ return {
     ['eEX uGV eDH eAS'] = STRING.trimIndent [[
         But It Isn't One Of Mine, the Easy Mode counterpart to the Patience Is A Virtue achievement.
         Kinda like a rhythm game of sorts, which I quite enjoy.
-    ]], --[[While this message will display even if Nightcore+ is not enabled,
-        in order to get the achievement with the same name it is required.]]
+    ]],
     --ggbw
     ['eEX eNH eGV eVL eDH eIN AS eDP'] = STRING.trimIndent [[
         One of 3 variants of Gamer Girl Bath Water, this is the one that I believe is 
