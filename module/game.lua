@@ -1991,6 +1991,9 @@ function GAME.refreshCurrentCombo()
                 GAME.peasantRevolution = true
                 GAME.customUltraCombo = true
             end
+        elseif comboName == '"BATH WITH AN EX"' then
+            comboName = '"BATH WITH A STALKER"'
+            GAME.customUltraCombo = false
         elseif comboName == 'VISIBLE TIDY MODERATE SAVED LIFTED FRIENDLY TYRANNICAL SPIN' and GAME.ecloseCard then
             comboName = '"ULTRA HARD CRAMPED BATH WITH A FRIEND"'
             GAME.customUltraCombo = false
