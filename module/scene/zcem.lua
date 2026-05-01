@@ -577,7 +577,6 @@ scene.widgetList = {
             GAME.multiplePiecesActive = false
             SaveStat()
             if multiple then GAME.multiplePiecesActive = true end
-            MSG('dark', "STACKER ONLY PARTIALLY IMPLEMENTED IN THIS VERSION OF THE GAME!")
         end,
     },
     -- MUSIC PLAYER OPTIONS
