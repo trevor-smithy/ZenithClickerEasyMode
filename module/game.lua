@@ -3739,7 +3739,6 @@ function GAME.finish(reason)
 
         STAT.zp = newZP
         STAT.peakZP = max(STAT.peakZP, STAT.zp)
-        SaveStat()
 
         -- Best
         local hand = GAME.getHand(true)
@@ -4082,9 +4081,11 @@ function GAME.finish(reason)
         end
         SubmitAchv('zenith_explorer_plus', GAME.roundHeight)
         SubmitAchv('supercharged_plus', GAME.achv_maxChain)
+        -- TODO if GAME.fullHealth <= 5 then IssueSecret('cardiac_arrest') end
         if GAME.time <= 600 then
             GAME.submitTimedAchievements()
         end
+        SaveStat()
     else
         TEXTS.endHeight:set("")
         TEXTS.endFloor:set("")
