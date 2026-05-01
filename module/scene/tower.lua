@@ -243,6 +243,7 @@ local function keyTrigger(key)
             W._pressTime = W._pressTimeMax * 2
             W._hoverTime = W._hoverTimeMax
         elseif key == 'f14' then
+            if URM and M.VL == 2 and not UltraVlCheck('easy') then return end
             GAME.anyChange = false
             GAME.toggleEasy()
             if GAME.anyChange then
@@ -368,10 +369,10 @@ local function keyTrigger(key)
             end
             GAME.anyChange = false
         elseif key == 'f15' then
-            if GAME.playing then
+            if GAME.playing or GAME.badTime then
                 SFX.play('no')
             else
-                if URM and M.VL == 2 and not UltraVlCheck('reset') then return end
+                if URM and M.VL == 2 and not UltraVlCheck('zcem') then return end
                 SFX.play('menuhit1')
                 SCN.go('zcem', 'none')
             end
