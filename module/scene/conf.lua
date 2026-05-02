@@ -946,7 +946,12 @@ scene.widgetList = {
                 SFX.play('staffwarning')
                 return
             elseif res1.mod and res1.mod ~= 'vanilla' and res1.mod ~= 'easyMode' then
-                MSG('dark', "Cannot import data from modded version")
+                local modText = "Cannot import data from a different modded version"
+                if res1.mod == "A Fool's Mod" then modText = "The Creator thinks you're foolish for trying to use that here"
+                elseif res1.mod == "evilvile" then modText = "The Creator wants nothing to do with something that evil"
+                elseif res1.mod == "shimmer" then modText = "The Creator asks you to keep your sparkling water away from his creation"
+                elseif res1.mod == "unabstracted" then modText = "The Creator prefers his work abstract" end
+                MSG('dark', modText)
                 SFX.play('staffwarning')
                 return
             end
