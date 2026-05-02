@@ -279,7 +279,7 @@ return {
     ]],
     ['rNH MS rGV AS'] = STRING.trimIndent [[
         Autoplay is Awesome, an original combo from ZC community.
-        This achievement replaced "Patience is a Virtue" with mods specified, which makes it plays much better.
+        This achievement replaced "Patience is a Virtue" with mods specified, which makes it play much better.
         Well, it does in vanilla, but here I (Trevor), kept it as is due to "But It Isn't One Of Mine"
     ]],
     ['DH AS DP'] = STRING.trimIndent [[
