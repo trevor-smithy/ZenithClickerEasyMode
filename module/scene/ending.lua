@@ -25,10 +25,8 @@ addText("A TETR.IO Fangame from TETR.IO Community", 0, 360, .42)
 
 local h = 520
 
-if badTime then
-    addText("Easy Mode", -26, h-80, .42, 'right')
-    addText("Trevor Smithy", 26, h-80, .42, 'left')
-end
+addText("Easy Mode", -26, h-80, .42, 'right')
+addText("Trevor Smithy", 26, h-80, .42, 'left')
 
 addText("Design", -26, h, .42, 'right')
 addText("MrZ", 26, h, .42, 'left')
