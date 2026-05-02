@@ -772,11 +772,11 @@ AchvNotice = {}
 
 TestMode = false
 
-function SaveBest() if not TestMode or GAME.multiplePiecesActive then love.filesystem.write('best.luaon', 'return' .. TABLE.dumpDeflate(BEST)) end end
+function SaveBest() if not (TestMode or GAME.multiplePiecesActive) then love.filesystem.write('best.luaon', 'return' .. TABLE.dumpDeflate(BEST)) end end
 
-function SaveStat() if not TestMode or GAME.multiplePiecesActive then love.filesystem.write('stat.luaon', 'return' .. TABLE.dumpDeflate(STAT)) end end
+function SaveStat() if not (TestMode or GAME.multiplePiecesActive) then love.filesystem.write('stat.luaon', 'return' .. TABLE.dumpDeflate(STAT)) end end
 
-function SaveAchv() if not TestMode or GAME.multiplePiecesActive then love.filesystem.write('achv.luaon', 'return' .. TABLE.dumpDeflate(ACHV)) end end
+function SaveAchv() if not (TestMode or GAME.multiplePiecesActive) then love.filesystem.write('achv.luaon', 'return' .. TABLE.dumpDeflate(ACHV)) end end
 
 MSG.setSafeY(75)
 MSG.addCategory('dark', COLOR.D, COLOR.L)
