@@ -19,7 +19,9 @@ function scene.update(dt)
             BGM.setMaxSources(42)
             BGM.load(FILE.load('module/bgm_data.lua', '-luaon'))
             SFX.load('assets/sfx.ogg', FILE.load('module/sfx_data.lua', '-luaon'))
-            SFX.load('garbagewindup_5', 'assets/windup_5.ogg')
+            for i = 1, 9 do
+                SFX.load('garbagewindup_'..i, 'assets/windup_'..i..'.ogg')
+            end
             TASK.new(Daemon_Slow)
             TASK.new(Daemon_Fast)
             ---@diagnostic disable-next-line

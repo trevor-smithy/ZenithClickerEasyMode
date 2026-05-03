@@ -220,6 +220,7 @@ local GAME = {
     yottaFloor = {},
     ronnaFloor = {},
     quettaFloor = {},
+    windupAnim = {}, ---@type Windup[]
 
     zenithTraveler = false,
     nightcore = false,
@@ -1027,7 +1028,11 @@ function GAME.genQuest()
         if #combo >= 4 then
             local pwr = #combo * 2 - 7
             if TABLE.find(combo, 'DH') then pwr = pwr + 1 end
-            SFX.play('garbagewindup_' .. MATH.clamp(pwr, 1, 5), 1, 0)
+            if #combo >= 7 then
+                pwr = #combo
+            end
+            SFX.play('garbagewindup_' .. MATH.clamp(pwr, 1, 9), 1, 0)
+            GAME.showWindup(pwr)
         end
 
         ins(GAME.quests, {
@@ -1048,6 +1053,13 @@ function GAME.genQuest()
     for _, C in ipairs(CD) do C.touchCount, C.required, C.required2 = 0, false, false end
     for _, v in next, GAME.quests[1].combo do CD[v].required = true end
     if M.DP ~= 0 and GAME.quests[2] then for _, v in next, GAME.quests[2].combo do CD[v].required2 = true end end
+end
+local windupTest = 0
+function GAME.testWindup()
+    windupTest = windupTest + 1
+    if windupTest > 9 then windupTest = 1 end
+    SFX.play('garbagewindup_' .. windupTest, 1, 0)
+    GAME.showWindup(windupTest)
 end
 
 function GAME.startRevive()
@@ -1480,6 +1492,35 @@ function GAME.showFloorText(f, name, duration)
         x = 200, y = 350, k = 1.2, fontSize = 30,
         color = 'LY', duration = duration,
     }
+end
+
+function GAME.showWindup(lv)
+    local attempt = 0
+    local x, y
+    while true do
+        x, y = (62 + 26 * attempt) * MATH.rand(-1, 1), MATH.rand(-20, 20)
+        for i = 1, #GAME.windupAnim do
+            local w = GAME.windupAnim[i]
+            if MATH.distance(x, y, w.x, w.y) < 62 then
+                x = nil
+                break
+            end
+        end
+        if x then break end
+        attempt = attempt + 1
+    end
+    ---@class Windup
+    local w = {
+        lv = 1,
+        lvFin = lv,
+        time = 0,
+        bumpTime = .25,
+        totalTime = 2 + .5 * (lv - 1),
+        alpha = 1,
+        x = x,
+        y = y,
+    }
+    ins(GAME.windupAnim, w)
 end
 
 function GAME.upFloor()
@@ -2422,7 +2463,8 @@ function GAME.task_toggleEasy()
     GAME.rollCheck = GAME.spinCheck --if last was spin, then set roll, otherwise no
     local mnh = 0 -- mod no hold
     if M.NH == -1 then mnh = 1.5 else mnh = M.NH end --if easy, don't be negative because then negative interval
-    local interval = .042 * (M.AS == 2 and .62 or 1) * (1 + 2 * mnh) * ((GAME.slowmo or GAME.eslowmo) and 2.6 or 1) * ((GAME.nightcore or GAME.enightcore) and 1 / 2.6 or 1)
+    local pitch = M.GV < 0 and 2^(-1/2) or M.GV > 0 and 2 ^ ((URM and M.GV == 2 and 3 or M.GV) / 12) or 1
+    local interval = 0.2 / pitch
     for i = 1, #list do
         if needFlip[i] then
             GAME.anyChange = true
@@ -4206,9 +4248,26 @@ end
 
 local KBisDown = love.keyboard.isDown
 local damned = false
-function GAME.update(dt)
+function GAME.update(dt,realDT)
     GAME.spikeTimer = GAME.spikeTimer - dt
+    for i = #GAME.windupAnim, 1, -1 do
+        local w = GAME.windupAnim[i]
+        w.bumpTime = w.bumpTime - realDT
+        if w.lv < w.lvFin then
+            if w.bumpTime <= 0 then
+                w.lv = w.lv + 1
+                if w.lv <= w.lvFin then
+                    w.bumpTime = .25
+                end
+            end
+        end
+        w.time = w.time + realDT
+        w.alpha = min((w.totalTime - w.time) * 5, 1)
+        if w.time > w.totalTime then rem(GAME.windupAnim, i) end
+    end
+
     if not GAME.playing then return end
+
     if TestMode then
         if KBisDown(']') then
             GAME.addXP(dt * GAME.rank * 8)
@@ -4587,20 +4646,6 @@ function GAME.update(dt)
         end
     end
 
-    -- Damage
-    -- Trevor Smithy
-    local dmgTimerMulMod = 1
-    if M.GV == -1 and GAME.eslowmo then 
-        dmgTimerMulMod = 1.5
-    elseif M.GV == -1 or GAME.eslowmo then
-        dmgTimerMulMod = 1.25
-    end
-    GAME.dmgTimer = GAME.dmgTimer - dt / (GAME.dmgTimerMul * dmgTimerMulMod)
-    if GAME.dmgTimer <= 0 then
-        GAME.dmgTimer = GAME.dmgCycle
-        GAME.takeDamage(GAME.dmgTime, 'time')
-    end
-
     -- Life leak
     if GAME.lifeLeak > 0 and GAME.height > NegFloors[9].bottom then
         local leakMod = GAME.badTime and 1 or ((M.DP == 0 and 1 or 0.5) * (GAME.eslowmo and 3/4 or 1) * (GAME.ecloseCard and 2 or 1))
@@ -4613,6 +4658,20 @@ function GAME.update(dt)
         if GAME.life <= 0 then
             GAME.takeDamage(1e99, 'wrong')
         end
+    end
+
+    -- Damage
+    -- Trevor Smithy
+    local dmgTimerMulMod = 1
+    if M.GV == -1 and GAME.eslowmo then 
+        dmgTimerMulMod = 1.5
+    elseif M.GV == -1 or GAME.eslowmo then
+        dmgTimerMulMod = 1.25
+    end
+    GAME.dmgTimer = GAME.dmgTimer - dt / (GAME.dmgTimerMul * dmgTimerMulMod)
+    if GAME.dmgTimer <= 0 then
+        GAME.dmgTimer = GAME.dmgCycle
+        GAME.takeDamage(GAME.dmgTime, 'time')
     end
 end
 

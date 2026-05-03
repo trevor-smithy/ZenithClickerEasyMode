@@ -1,7 +1,7 @@
 local next = next
 local max, min = math.max, math.min
 local sin, cos = math.sin, math.cos
-local floor, abs = math.floor, math.abs
+local floor, ceil, abs = math.floor, math.ceil, math.abs
 
 local distance, clamp = MATH.distance, MATH.clamp
 local interpolate, clampInterpolate = MATH.interpolate, MATH.clampInterpolate
@@ -244,11 +244,18 @@ local function keyTrigger(key)
             W._hoverTime = W._hoverTimeMax
         elseif key == 'f14' then
             if URM and M.VL == 2 and not UltraVlCheck('easy') then return end
+            if love.keyboard.isDown('w') then 
+                GAME.testWindup() 
+                return
+            end
             GAME.anyChange = false
             GAME.toggleEasy()
             if GAME.anyChange then
                 if not GAME.playing then
-                    SFX.play('allclear')
+                    local hand = GAME.getHand(true)
+                    local revCount = table.concat(hand):count('r')
+                    SFX.play('garbagewindup_' .. #hand-revCount, 1, 0, Tone(0))
+                    --SFX.play('allclear')
                 else
                     SFX.play('staffwarning')
                     if M.DP ~= 0 then
@@ -652,6 +659,7 @@ function scene.update(dt)
     if comboTimer <= 0 then
         combo = 0
     end
+    local realDT=dt
     if kbIsDown('left', 'right', 'up', 'down') then
         local spd = ZENITHA._cursor.speed * dt * (kbIsDown('lctrl', 'rctrl') and .6 or 1)
         if kbIsDown('left') then MX = MX - spd end
@@ -666,7 +674,7 @@ function scene.update(dt)
         GAME.height = max(GAME.height - dt * (f * (f + 1) + 10) * (M.VL >= 0 and M.VL + 1 or 1), 0)
     end
     if dt > .26 then dt = .26 end
-    GAME.update(dt)
+    GAME.update(dt,realDT)
     GAME.lifeShow = expApproach(GAME.lifeShow, GAME.life, dt * 10)
     GAME.lifeShow2 = expApproach(GAME.lifeShow2, GAME.life2, dt * 10)
     GAME.bgH = expApproach(GAME.bgH, GAME.height, dt * 2.6)
@@ -1101,6 +1109,18 @@ end
 local gvTimerColor1 = { 1, .942, .872, 0 }
 local gvTimerColor2 = { 0, 0, 0, 0 }
 local altitudeText = { 0, COLOR.dL, "m" }
+local windupColor = {
+    { COLOR.HEX "F5BE3FFF" },
+    { COLOR.HEX "ED7F2EFF" },
+    { COLOR.HEX "E74322FF" },
+    { COLOR.HEX "E63676FF" },
+    { COLOR.HEX "E83AD5FF" },
+    { COLOR.HEX "9E2DF6FF" },
+    { COLOR.HEX "002FF5FF" },
+    { COLOR.HEX "4295F8FF" },
+    { COLOR.HEX "79FA52FF" },
+    { COLOR.HEX "C6FC4FFF" },
+}
 function scene.overDraw()
     local t = love.timer.getTime()
     local eTAlpha = GAME.einvisUI and 5 or 1
@@ -1960,6 +1980,23 @@ function scene.overDraw()
         end
     end
     --
+
+    -- Windup animation
+    gc_replaceTransform(SCR.xOy_m)
+    gc_translate(0, -170)
+    for i = 1, #GAME.windupAnim do
+        local w = GAME.windupAnim[i]
+        local k = MATH.clampInterpolate(.25, 1, .15, .8, w.bumpTime) * w.alpha
+        local r = MATH.between(w.time, 1, w.totalTime - .5) and 42 * (.5 - w.time % .5) ^ 4.2 or 0
+        windupColor[w.lv][4] = w.alpha
+        gc_setColor(windupColor[w.lv])
+        if w.lv == 9 then gc_setColor(COLOR.rainbow_light(2 * t)) end
+        gc_mDraw(TEXTURE.windup, w.x, w.y, r, k)
+        gc_setColor(1, 1, 1, r / (42 * .5 ^ 4.2))
+        gc_mDraw(TEXTURE.windup, w.x, w.y, r, k)
+        gc_setColor(1, 1, 1, w.alpha)
+        gc_mDraw(TEXTURE.windupText[ceil(w.lv / 2)], w.x, w.y, 0, k)
+    end
 
     -- Test
     if TestMode then
