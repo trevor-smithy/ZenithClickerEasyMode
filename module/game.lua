@@ -1051,7 +1051,11 @@ function GAME.genQuest()
     GAME.gravTimer = false
     GAME.achv_resetCount = 0
     for _, C in ipairs(CD) do C.touchCount, C.required, C.required2 = 0, false, false end
-    for _, v in next, GAME.quests[1].combo do CD[v].required = true end
+    if STAT.stacker and GAME.questStack[1] then
+        for _, v in next, GAME.questStack[1].combo do CD[v].required = true end
+    else
+        for _, v in next, GAME.quests[1].combo do CD[v].required = true end
+    end
     if M.DP ~= 0 and GAME.quests[2] then for _, v in next, GAME.quests[2].combo do CD[v].required2 = true end end
 end
 local windupTest = 0
@@ -1498,7 +1502,7 @@ function GAME.showWindup(lv)
     local attempt = 0
     local x, y
     while true do
-        x, y = (62 + 26 * attempt) * MATH.rand(-1, 1), MATH.rand(-20, 20)
+        x, y = (62 + 26 * attempt) * MATH.rand(-1, 1), MATH.rand(-20, 20) - (STAT.stacker and GAME.questStack[1] and 70 or 0)
         for i = 1, #GAME.windupAnim do
             local w = GAME.windupAnim[i]
             if MATH.distance(x, y, w.x, w.y) < 62 then
@@ -2687,6 +2691,13 @@ function GAME.commit(auto, falseCommit)
         GAME.cancelBurn()
         GAME.fault = true
         GAME.questTime = 0
+        for _, C in ipairs(CD) do C.touchCount, C.required, C.required2 = 0, false, false end
+        if STAT.stacker and GAME.questStack[1] then
+            for _, v in next, GAME.questStack[1].combo do CD[v].required = true end
+        else
+            for _, v in next, GAME.quests[1].combo do CD[v].required = true end
+        end
+        if M.DP ~= 0 and GAME.quests[2] then for _, v in next, GAME.quests[2].combo do CD[v].required2 = true end end
     elseif correct or falseCommit then
         --Trevor Smithy
         if GAME.comboSFX > 3 then

@@ -937,6 +937,40 @@ local function drawPBline(h, pb, spd, textObj)
     gc_rectangle('fill', -1.26 * (obj:getWidth() + 12), y - 2, -2600, 4)
 end
 
+local function stackerStartButtonColor()
+    --Stacker Start Button Color
+    local red, green, blue = .35, .12, 0.05
+    local maxStack = false
+    local W = scene.widgetList.start
+    if GAME.playing then
+        local combo = 0
+        local stack = 0
+        if GAME.comboSFX then
+            combo = min(GAME.comboSFX,16)
+        end
+        if GAME.questStack then
+            stack = min(#GAME.questStack, 16 - combo)
+        end
+        local both = combo + stack
+        if stack == 16 then maxStack = true end
+        -- full combo: 0.12, 0.35, 0.05
+        -- full stack: 0.12, 0.05, 0.35
+        red   = 0.12 + (16 - both )/16 * 0.23
+        green = 0.05 + (16 - stack)/16 * 0.07 + combo * 0.23/16
+        blue  = 0.05 + stack * 0.23/16
+        --LOG("Red:"..W.color[1].. " Green:"..W.color[2].." Blue:"..W.color[3])
+    end
+    W.color[1] = red
+    W.color[2] = green
+    W.color[3] = blue
+    if maxStack then
+        W.color[1] = 1
+        W.color[2] = 0.05
+        W.color[3] = 0.35
+    end
+    W:reset()
+end
+
 function scene.draw()
     local t = love.timer.getTime()
     if GAME.zenithTraveler then
@@ -1104,6 +1138,8 @@ function scene.draw()
             gc_mRect('fill', -200, 126, 200, 80, 40)
         end
     end
+
+    if STAT.stacker then stackerStartButtonColor() end
 end
 
 local gvTimerColor1 = { 1, .942, .872, 0 }
@@ -1489,9 +1525,9 @@ function scene.overDraw()
 
                 -- Short Text & Panel
                 gc_setColor(.3, .1, 0, .62/eTAlpha)
-                gc_mRect('fill', 800, 330, GAME.currentTask.shortObj:getWidth() * 1.6 + 50, 75, 20)
+                gc_mRect('fill', 800, 330 - (STAT.stacker and GAME.questStack[1] and 60 or 0), GAME.currentTask.shortObj:getWidth() * 1.6 + 50, 75, 20)
                 gc_setColor(1, 1, 1)
-                gc_mDraw(GAME.currentTask.shortObj, 800, 330, 0, 1.6)
+                gc_mDraw(GAME.currentTask.shortObj, 800, 330 - (STAT.stacker and GAME.questStack[1] and 60 or 0), 0, 1.6)
             end
         end
 
@@ -1541,40 +1577,6 @@ function scene.overDraw()
                 gc_mDraw(text, 800, Q.y, 0, kx, ky)
             end
         end
-    end
-
-    --Stacker Start Button Color
-    if STAT.stacker then
-        local red, green, blue = .35, .12, 0.05
-        local maxStack = false
-        local W = scene.widgetList.start
-        if GAME.playing then
-            local combo = 0
-            local stack = 0
-            if GAME.comboSFX then
-                combo = min(GAME.comboSFX,16)
-            end
-            if GAME.questStack then
-                stack = min(#GAME.questStack, 16 - combo)
-            end
-            local both = combo + stack
-            if stack == 16 then maxStack = true end
-            -- full combo: 0.12, 0.35, 0.05
-            -- full stack: 0.12, 0.05, 0.35
-            red   = 0.12 + (16 - both )/16 * 0.23
-            green = 0.05 + (16 - stack)/16 * 0.07 + combo * 0.23/16
-            blue  = 0.05 + stack * 0.23/16
-            --LOG("Red:"..W.color[1].. " Green:"..W.color[2].." Blue:"..W.color[3])
-        end
-        W.color[1] = red
-        W.color[2] = green
-        W.color[3] = blue
-        if maxStack then
-            W.color[1] = 1
-            W.color[2] = 0.05
-            W.color[3] = 0.35
-        end
-        W:reset()
     end
 
     -- Debug

@@ -64,6 +64,18 @@ local function task_refreshBGM()
     TASK.yieldT(.1)
     RefreshBGM()
 end
+
+---@param card Card
+local function fixCard(card)
+    local otherCardActivated
+    if not card.active and card.required or card.active and not card.required then --if not active and needed, activate. if active and not needed, deactivate. if active and needed, don't do anything. if not active and not needed, don't do anything.
+        card.active = not card.active
+        otherCardActivated = true
+        card.assistPenalty = card.active and min(card.assistPenalty, 1) or 5
+    end
+    return otherCardActivated
+end
+
 ---@param self Card 
 ---@param auto boolean i.e. was not manually selected
 ---@param key number? 1 or nil = active/inactive 2 = reverse 3 = easy
@@ -152,74 +164,14 @@ function Card:setActive(auto, key)
         --local baseDist = 110 + (M.EX > 0 and (URM and M.EX == 2 and -30 or -10) or 0) + mvl * 20 + (GAME.closeCard and -30 or GAME.ecloseCard and -50 or 0)
         local maxCardDistance = 1 + (M.EX == 2 and URM and 2 or M.EX == 2 and 1 or M.EX == 1 and 1 or 0) - mvl + (GAME.closeCard and 1 or 0)
         local otherCardActivated = false
-        if self.tempOrder > 1 then leftCard = CD[self.tempOrder - 1] end
-        if leftCard then
-            if not leftCard.active and leftCard.required or leftCard.active and not leftCard.required then --if not active and needed, activate. if active and not needed, deactivate. if active and needed, don't do anything. if not active and not needed, don't do anything.
-                leftCard.active = not leftCard.active
-                otherCardActivated = true
-                leftCard.assistPenalty = leftCard.active and min(leftCard.assistPenalty, 1) or 5
-            end
-        end
-        if self.tempOrder < 9 then rightCard = CD[self.tempOrder + 1] end
-        if rightCard then
-            if not rightCard.active and rightCard.required or rightCard.active and not rightCard.required then --if not active and needed, activate. if active and not needed, deactivate. if active and needed, don't do anything. if not active and not needed, don't do anything.
-                rightCard.active = not rightCard.active
-                otherCardActivated = true
-                rightCard.assistPenalty = rightCard.active and min(rightCard.assistPenalty, 1) or 5
-            end
-        end
-        if maxCardDistance >= 2 then
-            if self.tempOrder > 2 then leftCard = CD[self.tempOrder - 2] end
+        for i = 1, maxCardDistance do
+            if self.tempOrder > i then leftCard = CD[self.tempOrder - i] end
             if leftCard then
-                if not leftCard.active and leftCard.required or leftCard.active and not leftCard.required then --if not active and needed, activate. if active and not needed, deactivate. if active and needed, don't do anything. if not active and not needed, don't do anything.
-                    leftCard.active = not leftCard.active
-                    otherCardActivated = true
-                    leftCard.assistPenalty = leftCard.active and min(leftCard.assistPenalty, 2) or 5
-                end
+                if fixCard(leftCard) then otherCardActivated = true end
             end
-            if self.tempOrder < 8 then rightCard = CD[self.tempOrder + 2] end
+            if self.tempOrder < 10-i then rightCard = CD[self.tempOrder + i] end
             if rightCard then
-                if not rightCard.active and rightCard.required or rightCard.active and not rightCard.required then --if not active and needed, activate. if active and not needed, deactivate. if active and needed, don't do anything. if not active and not needed, don't do anything.
-                    rightCard.active = not rightCard.active
-                    otherCardActivated = true
-                    rightCard.assistPenalty = rightCard.active and min(rightCard.assistPenalty, 2) or 5
-                end
-            end
-            if maxCardDistance >= 3 then
-                if self.tempOrder > 3 then leftCard = CD[self.tempOrder - 3] end
-                if leftCard then
-                    if not leftCard.active and leftCard.required or leftCard.active and not leftCard.required then --if not active and needed, activate. if active and not needed, deactivate. if active and needed, don't do anything. if not active and not needed, don't do anything.
-                        leftCard.active = not leftCard.active
-                        otherCardActivated = true
-                        leftCard.assistPenalty = leftCard.active and min(leftCard.assistPenalty, 3) or 5
-                    end
-                end
-                if self.tempOrder < 7 then rightCard = CD[self.tempOrder + 3] end
-                if rightCard then
-                    if not rightCard.active and rightCard.required or rightCard.active and not rightCard.required then --if not active and needed, activate. if active and not needed, deactivate. if active and needed, don't do anything. if not active and not needed, don't do anything.
-                        rightCard.active = not rightCard.active
-                        otherCardActivated = true
-                        rightCard.assistPenalty = rightCard.active and min(rightCard.assistPenalty, 3) or 5
-                    end
-                end
-                if maxCardDistance == 4 then
-                    if self.tempOrder > 4 then leftCard = CD[self.tempOrder - 4] end
-                    if leftCard then
-                        if not leftCard.active and leftCard.required or leftCard.active and not leftCard.required then --if not active and needed, activate. if active and not needed, deactivate. if active and needed, don't do anything. if not active and not needed, don't do anything.
-                            leftCard.active = not leftCard.active
-                            otherCardActivated = true
-                            leftCard.assistPenalty = leftCard.active and min(leftCard.assistPenalty, 4) or 5
-                        end
-                    end
-                    if self.tempOrder < 6 then rightCard = CD[self.tempOrder + 4] end
-                    if rightCard then
-                        if not rightCard.active and rightCard.required or rightCard.active and not rightCard.required then --if not active and needed, activate. if active and not needed, deactivate. if active and needed, don't do anything. if not active and not needed, don't do anything.
-                            rightCard.active = not rightCard.active
-                            otherCardActivated = true
-                            rightCard.assistPenalty = rightCard.active and min(rightCard.assistPenalty, 4) or 5
-                        end
-                    end
-                end
+                if fixCard(rightCard) then otherCardActivated = true end
             end
         end
         if not self.active and self.required then --if not active and needed, activate. if active and not needed, deactivate. if active and needed, don't do anything. if not active and not needed, don't do anything.
