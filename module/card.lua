@@ -856,6 +856,7 @@ function Card:draw()
                 local temp = M.IN == 1 and 2 or M.IN == 2 and not URM and 3 or M.IN == 2 and URM and 4 or 1
                 local width = 40
                 local hand = TABLE.sort(GAME.getHand(false))
+                local stackQuest = GAME.questStack[1] and TABLE.sort(GAME.questStack[1].combo)
                 local q1 = GAME.quests[1] and TABLE.sort(GAME.quests[1].combo)
                 local q2 = M.DP ~= 0 and GAME.quests[2] and TABLE.sort(GAME.quests[2].combo)
                 local q3 = M.DP == -1 and GAME.quests[3] and TABLE.sort(GAME.quests[3].combo)
@@ -866,7 +867,7 @@ function Card:draw()
                         width = (9-temp)*5
                     end
                     if self.active and GAME.playing then
-                        if (q1 and TABLE.equal(hand, q1))then
+                        if (stackQuest and TABLE.equal(hand, stackQuest)) or (not stackQuest and q1 and TABLE.equal(hand, q1)) then
                             gc_setColor(0.26,1,0)
                         else
                             gc_setColor(1,1,0)

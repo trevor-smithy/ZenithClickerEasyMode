@@ -2691,6 +2691,7 @@ function GAME.commit(auto, falseCommit)
         GAME.cancelBurn()
         GAME.fault = true
         GAME.questTime = 0
+        GAME.gravTimer = GAME.gravDelay
         for _, C in ipairs(CD) do C.touchCount, C.required, C.required2 = 0, false, false end
         if STAT.stacker and GAME.questStack[1] then
             for _, v in next, GAME.questStack[1].combo do CD[v].required = true end
@@ -3224,8 +3225,6 @@ function GAME.commit(auto, falseCommit)
             ins(GAME.questStack, 1, {combo = GAME.quests[1].combo, name = GC.newText(FONT.get(70), GAME.getComboName(TABLE.copy(GAME.quests[1].combo), 'ingame')), y = 330, k = 1, a = 1,})
             rem(GAME.quests, 1)
             GAME.genQuest()
-            --MSG.clear()
-            --MSG("bright", GAME.questStack[1].combo)
             SFX.play("hold")
             return
         end
@@ -3249,10 +3248,6 @@ function GAME.commit(auto, falseCommit)
             GAME.cancelBurn()
         end
     end
-    --[[MSG.clear()
-    if GAME.questStack[1] then
-        MSG("bright", GAME.questStack[1].combo)
-    end]]
 end
 
 local function task_startSpin()
@@ -4604,8 +4599,9 @@ function GAME.update(dt,realDT)
 
     --Trevor Smithy
     local q1 = TABLE.sort(GAME.quests[1].combo)
+    local stackQuest = GAME.questStack[1] and TABLE.sort(GAME.questStack[1].combo)
     local hand = TABLE.sort(GAME.getHand(false))
-    if M.GV == -1 and TABLE.equal(hand, q1) then
+    if M.GV == -1 and (TABLE.equal(hand, q1) or (stackQuest and TABLE.equal(hand, stackQuest))) then
         GAME.commit(true)
     end
 
