@@ -1613,6 +1613,7 @@ function GAME.upFloor()
     -- End game
     if GAME.floor >= 10 then
         local roundTime = roundUnit(GAME.time, .001)
+        if GAME.gigaspeed and #GAME.getHand(true) == 0 and GAME.pieceCount() == 0 and GAME.totalQuest <= 7 then IssueAchv('hyperplonk') end
         if GAME.gigaspeed or GAME.smithyMode then
             if GAME.time < STAT.minTime then
                 STAT.minTime = roundTime
@@ -1655,7 +1656,6 @@ function GAME.upFloor()
                 SCN.scenes.achv.unload()
                 SCN.scenes.achv.load() 
             end
-            if GAME.gigaspeed and #GAME.getHand(true) == 0 and GAME.pieceCount() == 0 then IssueAchv('hyperplonk') end
             if not GAME.smithyMode then 
                 -- don't stop my cover until we get to fomg
                 GAME.stopTeraspeed('f10')
