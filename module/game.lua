@@ -2328,7 +2328,7 @@ function GAME.refreshLifeState()
     if hp == GAME.fullHealth then
         newState = 'safe'
     else
-        local dangerDmg = max(GAME.dmgWrong + GAME.dmgWrongExtra, GAME.dmgTime)
+        local dangerDmg = max(GAME.dmgWrong + GAME.dmgWrongExtra, GAME.dmgTime, STAT.stacker and GAME.dmgWrong * (#GAME.questStack-25)/10 or 0)
         newState = hp <= dangerDmg and 'danger' or 'safe'
     end
     if oldState ~= newState then
@@ -2710,6 +2710,9 @@ function GAME.commit(auto, falseCommit)
             comboAttackMul = GAME.comboSFX/16 * 40 --40x height gain
             comboXPMul = GAME.comboSFX/16 * 10 --10x XP gain
         end
+        if #GAME.questStack > 16 and GAME.comboSFX == 0 then
+            comboXPMul = max(0, 1 - (#GAME.questStack - 16)/4) -- anything beyond a 20 stack has no XP gain
+        end
         GAME.comboSFX = 0
         local totalAssistPenalty = 0
         for i = 1, #CD do
@@ -3028,7 +3031,7 @@ function GAME.commit(auto, falseCommit)
                 attack = attack/((5/4)^((totalAssistPenalty-2)^1.6351896075))
             end 
         end
-        local roundedAttack = MATH.roundRnd(attack)
+        local roundedAttack = MATH.roundRnd(attack * GAME.attackMul * comboAttackMul / (1 + (#GAME.questStack)/4) / (GAME.badTime and 3 or 1))
         if not falseCommit then
             GAME.spikeCounter = GAME.spikeCounter + roundedAttack + surge
             GAME.maxSpike = max(GAME.maxSpike, GAME.spikeCounter)
@@ -3085,7 +3088,7 @@ function GAME.commit(auto, falseCommit)
         if GAME.DPlock then attack = min(attack, URM and oldAllyLife * 2.6 or oldAllyLife * 4) end
         if attack > 0 and not falseCommit then GAME.addHeight(attack * GAME.attackMul * comboAttackMul / (1 + (#GAME.questStack)/4) / (GAME.badTime and 3 or 1)) end
         if not falseCommit then
-            GAME.addXP((attack + xp)* comboXPMul)
+            GAME.addXP((attack + xp) * comboXPMul)
         else
             return attack + xp
         end
@@ -3226,6 +3229,9 @@ function GAME.commit(auto, falseCommit)
             rem(GAME.quests, 1)
             GAME.genQuest()
             SFX.play("hold")
+            if #GAME.questStack > 26 then
+                GAME.takeDamage(GAME.dmgWrong * (#GAME.questStack-26)/10)
+            end
             return
         end
 
