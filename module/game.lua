@@ -1527,6 +1527,10 @@ function GAME.showWindup(lv)
     ins(GAME.windupAnim, w)
 end
 
+function GAME.pieceCount()
+    return ((GAME.nightcore and 1 or 0) + (GAME.enightcore and 1 or 0) + (GAME.slowmo and 1 or 0) + (GAME.eslowmo and 1 or 0) + (GAME.glassCard and 1 or 0) + (GAME.eglassCard and 1 or 0) + (GAME.fastLeak and 1 or 0) + (GAME.efastLeak and 1 or 0) + (GAME.invisUI and 1 or 0) + (GAME.einvisUI and 1 or 0) + (GAME.invisCard and 1 or 0) + (GAME.einvisCard and 1 or 0) + (GAME.closeCard and 1 or 0) + (GAME.ecloseCard and 1 or 0))
+end
+
 function GAME.upFloor()
     local roundFloorTime = roundUnit(GAME.floorTime, .001)
     if GAME.floor == 1 then
@@ -1651,7 +1655,7 @@ function GAME.upFloor()
                 SCN.scenes.achv.unload()
                 SCN.scenes.achv.load() 
             end
-
+            if GAME.gigaspeed and #GAME.getHand(true) == 0 and GAME.pieceCount() == 0 then IssueAchv('hyperplonk') end
             if not GAME.smithyMode then 
                 -- don't stop my cover until we get to fomg
                 GAME.stopTeraspeed('f10')
@@ -3626,8 +3630,8 @@ function GAME.finish(reason)
             end
         )
     end
-
-    if not GAME.multiplePiecesActive and ((GAME.nightcore and 1 or 0) + (GAME.enightcore and 1 or 0) + (GAME.slowmo and 1 or 0) + (GAME.eslowmo and 1 or 0) + (GAME.glassCard and 1 or 0) + (GAME.eglassCard and 1 or 0) + (GAME.fastLeak and 1 or 0) + (GAME.efastLeak and 1 or 0) + (GAME.invisUI and 1 or 0) + (GAME.einvisUI and 1 or 0) + (GAME.invisCard and 1 or 0) + (GAME.einvisCard and 1 or 0) + (GAME.closeCard and 1 or 0) + (GAME.ecloseCard and 1 or 0)) > 1 then
+    
+    if not GAME.multiplePiecesActive and GAME.pieceCount() > 1 then
         IssueAchv('multiple_pieces')
     end
 

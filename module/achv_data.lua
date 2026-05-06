@@ -2184,6 +2184,14 @@ Achievements = {
         type = 'issued',
         hide = TRUE,
     },
+    { -- hyperplonk
+        id = 'hyperplonk',
+        name = "Hyperplonk",
+        desc = [[Reach Floor 10 with GIGASPEED within the first 7 quests with no mods or pieces]],
+        quote = [["Haha Smithy Cannon go brrrrrrrrr"]],
+        credit = "@TrevorSmithy",
+        type = 'issued',
+    },
 }
 
 local compFunc = {

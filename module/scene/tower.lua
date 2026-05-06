@@ -410,7 +410,7 @@ local function generateRandomCombo()
         local specialCombo = math.random(20) > 17
         if not specialCombo then
             local EX = math.random(20) -- roll a d20
-            TABLE.insert(set, 1, EX > 10 and 'eEX' or EX > 7 and 'EX' or EX > 5 and 'rEX' or '')
+            if not Cards.EX.lock then TABLE.insert(set, 1, EX > 10 and 'eEX' or EX > 7 and 'EX' or EX > 5 and 'rEX' or '') end
             local NH = math.random(20) -- roll a d20
             TABLE.insert(set, 1, NH > 16 and 'eNH' or NH > 13 and 'NH' or NH > 11 and 'rNH' or '')
             local MS = math.random(20) -- roll a d20
@@ -448,13 +448,40 @@ local function generateRandomCombo()
     elseif not TABLE.equal(GAME.getHand(true),{'eEX','eVL','eAS'}) then
         TABLE.insert(set, 'eEX'); TABLE.insert(set, 'eVL'); TABLE.insert(set, 'eAS')
         set.ultra = math.random(2) == 2
-        SFX.play(set.ultra and 'zenith_split_missed' or 'zenith_split_cleared')
     else
         TABLE.insert(set, 'eEX'); TABLE.insert(set, 'eVL'); TABLE.insert(set, 'eAS')
         set.ultra = not URM
+    end
+    for i = #set, 1, -1 do
+        if STAT.unlockAll then break end
+        local v = set[i]
+        if v:find('r') then
+            if GAME.completion[v:sub(2)] == 0 then
+                TABLE.remove(set, i)
+            end
+        else
+            local index
+            if v == 'EX' or v == 'eEX' then index = 1
+            elseif v == 'NH' or v == 'eNH' then index = 2
+            elseif v == 'MS' or v == 'eMS' then index = 3
+            elseif v == 'GV' or v == 'eGV' then index = 4
+            elseif v == 'VL' or v == 'eVL' then index = 5
+            elseif v == 'DH' or v == 'eDH' then index = 6
+            elseif v == 'IN' or v == 'eIN' then index = 7
+            elseif v == 'AS' or v == 'eAS' then index = 8
+            else index = 9 end
+            if Cards[index].lock then
+                TABLE.remove(set, i)
+            end
+        end
+    end
+    if TABLE.equal(GAME.getHand(true),{'eEX','eVL','eAS'}) then
+        IssueAchv('biased')
         SFX.play(set.ultra and 'zenith_split_missed' or 'zenith_split_cleared')
     end
-    if smithyMode then IssueAchv('biased') end
+    if #set == 0 then
+        SFX.play('no')
+    end
     return set
 end
 
