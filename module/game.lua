@@ -1032,6 +1032,7 @@ function GAME.genQuest()
                 pwr = #combo
             end
             SFX.play('garbagewindup_' .. MATH.clamp(pwr, 1, 9), 1, 0)
+            if pwr == 9 then IssueAchv("the_windup") end
             GAME.showWindup(pwr)
         end
 
@@ -1063,6 +1064,12 @@ function GAME.testWindup()
     windupTest = windupTest + 1
     if windupTest > 9 then windupTest = 1 end
     SFX.play('garbagewindup_' .. windupTest, 1, 0)
+    if windupTest == 9 and not ACHV.the_windup then 
+        TASK.new(function()
+            TASK.yieldT(2.6)
+            IssueAchv("the_windup")
+        end)
+    end
     GAME.showWindup(windupTest)
 end
 
@@ -2031,6 +2038,7 @@ end
 --------------------------------------------------------------
 
 function GAME.refreshCurrentCombo()
+    GAME.forceRev = false
     local hand = GAME.getHand(not GAME.playing)
     local comboName = GAME.getComboName(hand, 'button')
     if not GAME.playing and (M.EX == -1 and M.VL == -1 and M.AS == -1 and (M.NH == 0 and M.MS == 0 and M.GV == 0 and M.DH == 0 and M.IN == 0 and M.DP == 0)) then GAME.smithyMode = true else 
@@ -2038,6 +2046,7 @@ function GAME.refreshCurrentCombo()
     end
     local uneasyMode = (M.EX == -1 and URM and M.NH < 2 and M.MS < 2 and M.GV < 2 and M.VL < 2 and M.DH < 2 and M.IN < 2 and M.AS < 2 and M.DP < 2)
     GAME.peasantRevolution = false
+    -- SECRET COMBOS
     if comboName == "EASY BELIEVED DECEPTIVE TRANQUIL ASCENDANT DAMNED COLLAPSED PIERCING SPIN" then
         comboName = '"THE OVERWHELMED SMITHY"'
     elseif comboName == "EASY INVISIBLE MESSY TRANQUIL HOLDLESS DOUBLE HOLE GRAVITY SPUN DUO" then
@@ -2059,9 +2068,6 @@ function GAME.refreshCurrentCombo()
         elseif comboName == '"BATH WITH AN EX"' then
             comboName = '"BATH WITH A STALKER"'
             GAME.customUltraCombo = false
-        elseif comboName == 'VISIBLE TIDY MODERATE SAVED LIFTED FRIENDLY TYRANNICAL SPIN' and GAME.ecloseCard then
-            comboName = '"ULTRA HARD CRAMPED BATH WITH A FRIEND"'
-            GAME.customUltraCombo = false
         elseif comboName == '"PATIENCE IS A VIRTUE"' then
             if GAME.enightcore then
                 comboName = [["BUT IT ISN'T ONE OF MINE"]]
@@ -2078,6 +2084,26 @@ function GAME.refreshCurrentCombo()
             SCN.scenes.tower.widgetList.help2:setVisible(false)
             SCN.scenes.tower.widgetList.daily:setVisible(false)
             comboName = '"BAD TIME"'
+            GAME.customUltraCombo = true
+        -- SECRET ULTRA COMBOS (i.e. no Rev equivalent)
+        elseif comboName == 'VISIBLE TIDY MODERATE SAVED LIFTED FRIENDLY TYRANNICAL SPIN' and GAME.ecloseCard then
+            comboName = '"ULTRA HARD CRAMPED BATH WITH A FRIEND"'
+            GAME.customUltraCombo = false
+        elseif comboName == 'EASY VISIBLE TIDY ASCENDANT DAMNED LIFT' then
+            comboName = '"BLASPHEMOUS ASCENSION"'
+            GAME.customUltraCombo = true
+        elseif comboName == 'EASY BELIEVED DECEPTIVE MODERATE FRIENDLY SPIN' then
+            comboName = '"PARADOXICAL ENTROPY"'
+            GAME.forceRev = GAME.pieceCount() < 2
+            RefreshBGM()
+            GAME.customUltraCombo = true
+        elseif comboName == 'EASY TRANQUIL MODERATE OMNI-SPIN COLLAPSED FRIEND' then
+            comboName = '"DEPRAVED GALAXY"'
+            GAME.forceRev = GAME.pieceCount() < 2
+            RefreshBGM()
+            GAME.customUltraCombo = true
+        elseif comboName == 'EASY TIDY DESPERATE SAVED LIFTED HEARTACHE' then
+            comboName = '"SEVERED VOLITION"'
             GAME.customUltraCombo = true
         else
             GAME.customUltraCombo = false
@@ -3637,6 +3663,10 @@ function GAME.finish(reason)
 
     if M.DH == 2 and STAT.easyName then
         IssueAchv('easy_name')
+    end
+
+    if GAME.height >= 825000 and STAT.imperial then
+        IssueAchv('im_gonna_be')
     end
 
     GAME.playing = false

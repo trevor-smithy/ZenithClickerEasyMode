@@ -2192,6 +2192,24 @@ Achievements = {
         credit = "@TrevorSmithy",
         type = 'issued',
     },
+    { -- the_windup
+        id = 'the_windup',
+        name = "The Wind-Up",
+        desc = [[Experience the final windup animation]],
+        quote = [["WHY DO I HEAR BOSS MUSIC?!?!?"]],
+        credit = "@TrevorSmithy",
+        type = 'issued',
+        hide = TRUE,
+    },
+    { -- im_gonna_be
+        id = 'im_gonna_be',
+        name = "I'm Gonna Be",
+        desc = [[Reach 825,000 meters in a run with Imperial Units]],
+        quote = [["But I would walk 500 miles, and I would walk 12.631 more"]],
+        credit = "@TrevorSmithy",
+        type = 'issued',
+        hide = TRUE,
+    },
 }
 
 local compFunc = {
