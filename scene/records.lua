@@ -205,8 +205,6 @@ local function query()
 
                 -- mp check
                 if not (set.mpComp == '>' and set.mp == -9 or set.mpComp == '<' and set.mp == 18) then
-                    --local mp = (#setStr - (ultra and 1 or 0) + setStr:count('r')) / 2
-                    -- add each r, subtract each e twice (once to cancel, another to make negative), EX NH MS GV VL DH IN AS DP add two letters each so half them
                     local mp = setStr:count('r') - setStr:count('e')*2 + setStr:count('[A-Z]')/2
                     if
                         set.mpComp == '>' and mp < set.mp or
@@ -328,24 +326,14 @@ function scene.unload()
 end
 
 function scene.mouseMove(_, _, _, dy)
-    local mvl
-    if M.VL == -1 then
-        mvl = 1
-    else
-        mvl = M.VL
-    end
+    local mvl = M.VL == -1 and 1 or M.VL
     if love.mouse.isDown(1, 2) then
         scroll = clamp(scroll - dy * (1 + mvl), 0, maxScroll)
     end
 end
 
 function scene.touchMove(_, _, _, dy)
-    local mvl
-    if M.VL == -1 then
-        mvl = 1
-    else
-        mvl = M.VL
-    end
+    local mvl = M.VL == -1 and 1 or M.VL
     scroll = clamp(scroll - dy * (1 + mvl), 0, maxScroll)
 end
 
@@ -496,12 +484,7 @@ function scene.keyDown(key, isRep)
 end
 
 function scene.wheelMove(_, dy)
-    local mvl
-    if M.VL == -1 then
-        mvl = 1
-    else
-        mvl = M.VL
-    end
+    local mvl = M.VL == -1 and 1 or M.VL
     scroll = clamp(scroll - dy * 100 * (1 + mvl), 0, maxScroll)
 end
 

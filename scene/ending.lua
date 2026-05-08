@@ -1,6 +1,6 @@
 ---@type Zenitha.Scene
 local scene = {}
-local badTime = false
+local badTime = nil
 
 EndText = GC.newText(FONT.get(70))
 EndText2 = GC.newText(FONT.get(70), "ZENITH CLICKER!")
@@ -202,7 +202,7 @@ function scene.unload()
     TEXTS.endHeight:set(badTime and "Thanks for playing my mod!" or "Thanks for playing!")
     if badTime then TEXTS.endFloor:set("WAH-BAAM!") end
     badTime = false
-    GAME.badTime = false
+    GAME.badTime = nil
     TASK.new(function()
         for i = 1, 100 do
             TASK.yieldT(.01)

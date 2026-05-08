@@ -10,9 +10,8 @@ local lerp, iLerp, cLerp, icLerp, lLerp = MATH.lerp, MATH.iLerp, MATH.cLerp, MAT
 local GAME = GAME
 local M = GAME.mod
 local MD = ModData
-ShortCut = {}
-local ShortCut = ShortCut
-for i = 1, #MD.deck do ShortCut[i] = GC.newText(FONT.get(50)) end
+CardHintText = {}
+for i = 1, #MD.deck do CardHintText[i] = GC.newText(FONT.get(50)) end
 
 HoldingButtons = {}
 local HoldingButtons = HoldingButtons
@@ -431,13 +430,13 @@ local function generateRandomCombo()
             local easy = TABLE.find(set, 'eEX')
             set.ultra = (math.random(20) > (easy and not anyRev and -5 or 0) + 15) and (easy or anyRev) --d20
         else
-            local index = math.random(45, #ComboData.menu)
+            local index = math.random(47, #ComboData.menu)
             local comboSet = ComboData.menu[index].set
             local tempSet = STRING.split(comboSet, ' ')
             for i = 1, #tempSet do
                 TABLE.insert(set, tempSet[i])
             end
-            if index <= 54 then
+            if index <= 57 then
                 set.ultra = true
             else
                 local anyRev = TABLE.find(set, 'rEX') or TABLE.find(set, 'rNH') or TABLE.find(set, 'rMS') or TABLE.find(set, 'rGV') or TABLE.find(set, 'rVL') or TABLE.find(set, 'rDH') or TABLE.find(set, 'rIN') or TABLE.find(set, 'rAS') or TABLE.find(set, 'rDP')
@@ -493,7 +492,7 @@ function scene.load()
     end
     RevUnlocked = TABLE.countAll(GAME.completion, 0) < 9 or STAT.unlockAll
 
-    for i = 1, #MD.deck do ShortCut[i]:set(STAT.keybind[i]:upper()) end
+    for i = 1, #MD.deck do CardHintText[i]:set(STAT.keybind[i]:upper()) end
 
     GAME.refreshDailyChallengeText()
     TASK.unlock('sure_quit')
@@ -556,7 +555,6 @@ function scene.mouseDown(x, y, k)
     GAME.nixPrompt('keep_no_mouse')
     GAME.noMouseOrSpin = false
     -- Trevor Smithy
-    --if getBtnPressed() > 1 + (URM and M.VL == 2 and 0 or floor(M.VL / 2)) then return true end
     if getBtnPressed() > 1 + (URM and M.VL == 2 and 0 or M.VL == -1 and 0 or floor(M.VL / 2)) then return true end
     if M.EX <= 0 then
         SFX.play('move')
@@ -681,12 +679,12 @@ end
 local KBIsDown, MSIsDown = love.keyboard.isDown, love.mouse.isDown
 local expApproach = MATH.expApproach
 function scene.update(dt)
+    if dt > .26 then dt = .26 end
     if not GAME.playing then randomizeRNG() end
     comboTimer = comboTimer - dt
     if comboTimer <= 0 then
         combo = 0
     end
-    local realDT=dt
     if kbIsDown('left', 'right', 'up', 'down') then
         local spd = ZENITHA._cursor.speed * dt * (kbIsDown('lctrl', 'rctrl') and .6 or 1)
         if kbIsDown('left') then MX = MX - spd end
@@ -700,8 +698,7 @@ function scene.update(dt)
         local f = GAME.calculateFloor(GAME.bgH)
         GAME.height = max(GAME.height - dt * (f * (f + 1) + 10) * (M.VL >= 0 and M.VL + 1 or 1), 0)
     end
-    if dt > .26 then dt = .26 end
-    GAME.update(dt,realDT)
+    GAME.update(dt)
     GAME.lifeShow = expApproach(GAME.lifeShow, GAME.life, dt * 10)
     GAME.lifeShow2 = expApproach(GAME.lifeShow2, GAME.life2, dt * 10)
     GAME.bgH = expApproach(GAME.bgH, GAME.height, dt * 2.6)
@@ -808,29 +805,37 @@ local gc_blurCircle, gc_strokePrint = GC.blurCircle, GC.strokePrint
 local gc_setColorMask = GC.setColorMask
 local setFont = FONT.set
 
-local chargeIcon = GC.load {
-    w = 512, h = 512,
-    { 'move',   256,  256 },
-    { 'fCirc',  0,    0,  180, 4 },
-    { 'rotate', .5236 },
-    { 'fCirc',  0,    0,  180, 4 },
-    { 'rotate', .5236 },
-    { 'fCirc',  0,    0,  180, 4 },
-}
-
 local TEXTURE = TEXTURE
 local Cards = Cards
 local TextColor = TextColor
 local ShadeColor = ShadeColor
 local bgQuad = GC.newQuad(0, 0, 0, 0, 0, 0)
 local rulerQuad = GC.newQuad(0, 0, 32, 300, TEXTURE.ruler)
-local reviveQuad = {
-    GC.newQuad(0, 0, 1042, 296, TEXTURE.revive.norm),
-    GC.newQuad(0, 355, 1042, 342, TEXTURE.revive.norm),
-    GC.newQuad(0, 740, 1042, 354, TEXTURE.revive.norm),
+
+local reviveInfo = {
+    quad = {
+        GC.newQuad(0, 0, 1042, 296, TEXTURE.revive.norm),
+        GC.newQuad(0, 355, 1042, 342, TEXTURE.revive.norm),
+        GC.newQuad(0, 740, 1042, 354, TEXTURE.revive.norm),
+    },
+    move = { -155, -147, -154 },
+    rotation = { -.095, .15, -.17 },
 }
-local reviveMove = { -155, -147, -154 }
-local reviveRot = { -.095, .15, -.17 }
+local gvTimerColor1 = { 1, .942, .872, 0 }
+local gvTimerColor2 = { 0, 0, 0, 0 }
+local altitudeText = { 0, COLOR.dL, "m" }
+local windupColor = {
+    { COLOR.HEX "F5BE3FFF" },
+    { COLOR.HEX "ED7F2EFF" },
+    { COLOR.HEX "E74322FF" },
+    { COLOR.HEX "E63676FF" },
+    { COLOR.HEX "E83AD5FF" },
+    { COLOR.HEX "9E2DF6FF" },
+    { COLOR.HEX "002FF5FF" },
+    { COLOR.HEX "4295F8FF" },
+    { COLOR.HEX "79FA52FF" },
+    { COLOR.HEX "C6FC4FFF" },
+}
 
 function DrawBG(brightness, showRuler)
     gc_replaceTransform(SCR.origin)
@@ -1169,21 +1174,6 @@ function scene.draw()
     if STAT.stacker then stackerStartButtonColor() end
 end
 
-local gvTimerColor1 = { 1, .942, .872, 0 }
-local gvTimerColor2 = { 0, 0, 0, 0 }
-local altitudeText = { 0, COLOR.dL, "m" }
-local windupColor = {
-    { COLOR.HEX "F5BE3FFF" },
-    { COLOR.HEX "ED7F2EFF" },
-    { COLOR.HEX "E74322FF" },
-    { COLOR.HEX "E63676FF" },
-    { COLOR.HEX "E83AD5FF" },
-    { COLOR.HEX "9E2DF6FF" },
-    { COLOR.HEX "002FF5FF" },
-    { COLOR.HEX "4295F8FF" },
-    { COLOR.HEX "79FA52FF" },
-    { COLOR.HEX "C6FC4FFF" },
-}
 function scene.overDraw()
     local t = love.timer.getTime()
     local eTAlpha = GAME.einvisUI and 5 or 1
@@ -1311,6 +1301,7 @@ function scene.overDraw()
         gc_setAlpha(.42 + .26 * sin(t * 2.6))
         gc_mDraw(TEXTS.mod, 800, 396, 0, min(1, 760 / TEXTS.mod:getWidth()))
     end
+
     if GAME.playing then
         if not GAME.invisUI then
             -- Achievement state mark
@@ -1367,7 +1358,7 @@ function scene.overDraw()
                     )
                     gc_setColor(0, 0, 0)
                     gc_setAlpha(1/eTAlpha)
-                    gc_mDraw(chargeIcon, 326, 270, GAME.time * 2.6, .25 * k * bk)
+                    gc_mDraw(TEXTURE.surgeIcon, 326, 270, GAME.time * 2.6, .25 * k * bk)
                 end
 
                 if URM and M.NH == 2 then
@@ -1377,7 +1368,7 @@ function scene.overDraw()
                 -- Spike ball
                 gc_setColor(r, g, b, a/eTAlpha)
                 gc_blurCircle(-.26, 326, 270, 100 * k)
-                gc_mDraw(chargeIcon, 326, 270, GAME.time * 2.6, .25 * k * bk)
+                gc_mDraw(TEXTURE.surgeIcon, 326, 270, GAME.time * 2.6, .25 * k * bk)
 
                 -- Spark
                 if not (URM and M.NH == 2) then
@@ -1482,8 +1473,6 @@ function scene.overDraw()
                 local newXP, newRank = GAME.addXP(xp, true)
                 local revolutions = newRank - rank + (newXP/(4*(newRank))) -- 1/360
                 local tempRevolutions = newRank - rank 
-                --MSG("bright", tempRevolutions)
-                --TASK.yieldT(0.2)
                 if revolutions > 1 then
                     while radius > 2 and tempRevolutions > 0 do
                         for i = 1, floor(revolutions) do
@@ -1522,7 +1511,7 @@ function scene.overDraw()
                 local texture = TEXTURE.revive[M.DP < 2 and 'norm' or allyDie and 'rev_right' or 'rev_left']
                 local taskID
                 for i = #GAME.reviveTasks, 1, -1 do
-                    gc_mDrawQ(texture, reviveQuad[i], 0, 0, 0, .4)
+                    gc_mDrawQ(texture, reviveInfo.quad[i], 0, 0, 0, .4)
                     if GAME.reviveTasks[i] == GAME.currentTask then
                         taskID = i
                         break
@@ -1530,8 +1519,8 @@ function scene.overDraw()
                 end
 
                 -- Text
-                gc_rotate(reviveRot[taskID])
-                gc_translate(reviveMove[taskID], 0)
+                gc_rotate(reviveInfo.rotation[taskID])
+                gc_translate(reviveInfo.move[taskID], 0)
                 local txt = task.textObj
                 local w, h = txt:getDimensions()
                 local ky = h < 40 and 1 or .7
@@ -1604,6 +1593,7 @@ function scene.overDraw()
                 gc_mDraw(text, 800, Q.y, 0, kx, ky)
             end
         end
+
     end
 
     -- Debug
@@ -1620,7 +1610,6 @@ function scene.overDraw()
         -- Thruster (XP bar)
         local rank = GAME.rank
         gc_setColor(rankColor[rank - 1] or COLOR.dL)
-        gc_setAlpha(1/eTAlpha)
         if GAME.DPlock then gc_setAlpha(.26/eTAlpha) end
         gc_setLineWidth(26 / (GAME.leakSpeed + 2))
         gc_setAlpha(1/eTAlpha)
@@ -1673,12 +1662,9 @@ function scene.overDraw()
         elseif GAME.DPlock then
             gc_setAlpha(.26/eTAlpha)
         end
-        --gc_mRect('fill', 800, 965, 420 * GAME.xp / (4 * rank), 3 * min(GAME.xpLockLevel, 5))
-        -- change this to:
         gc_mRect('fill', 800, 965, 420 * GAME.xp / (4 * rank), 3 * clamp(GAME.xpLockLevel, 1, 5))
 
         -- Height & Time
-        --local imperial = true
         local height = GAME.height
         local miles = 0
         local feet = 0
@@ -1763,8 +1749,9 @@ function scene.overDraw()
     if not GAME.invisUI then
         -- Allspin keyboard hint Trevor Smithy (any AS and eEX or no EX)
         if M.AS ~= 0 and M.EX <= 0 then
+            local texts = CardHintText
             for i = 1, #Cards do
-                local obj = ShortCut[i]
+                local obj = texts[i]
                 local x, y = Cards[i].x + 90, Cards[i].y + 155
                 local k = min(60 / obj:getWidth(), 1)
                 gc_setColor(ShadeColor)
@@ -1950,6 +1937,12 @@ function scene.overDraw()
             gc_line(0, 0, 420 * cos(a), 420 * sin(a))
         end
     end
+
+    -- Piece Data
+    gc_replaceTransform(SCR.xOy_m)
+    GC.setColor(1, 1, 1, .26 * GAME.uiHide)
+    local w, h = GAME.pieceFstrObj:getDimensions()
+    GC.draw(GAME.pieceFstrObj, 0, -170 - (STAT.stacker and GAME.questStack[1] and 60 or 0), 0, min(4.2, 740 / w) * (STAT.stacker and GAME.questStack[1] and 0.62 or 1), nil, w / 2, h * .57)
 
     -- Trevor Smithy
     local gravityMod = 1

@@ -277,10 +277,19 @@ return {
         Empurple, an original combo from ZC community.
         Main difficulty should come from "hard mode" of reverse mod, reducing XP you could get.
     ]],
+    ['rMS rGV rIN'] = STRING.trimIndent [[
+        The Masterful Juggler, an original combo from ZC community.
+        Combined with the target "Highest B2B chain reached", this makes more sense.
+    ]],
     ['rNH MS rGV AS'] = STRING.trimIndent [[
         Autoplay is Awesome, an original combo from ZC community.
         This achievement replaced "Patience is a Virtue" with mods specified, which makes it play much better.
         Well, it does in vanilla, but here I (Trevor), kept it as is due to "But It Isn't One Of Mine"
+    ]],
+    ['EX NH MS VL rAS'] = STRING.trimIndent [[
+        Faltered, an original combo from ZC community.
+        This is actually a multitask challenge. No surge forces imperfect passes, which send 0 with rAS.
+        So you just count to 4 while finding cards in shuffled deck.
     ]],
     ['DH AS DP'] = STRING.trimIndent [[
         A Mutual Agreement, an original combo from ZC community.
@@ -301,10 +310,6 @@ return {
         Playing "without losing a rank" with EX VL fits so well with the community combo "Icarus"'s myth story.
         It's so unbelievable that it successfully combines mod combo & rank system & texts and plays interesting.
     ]],
-    ['rMS rGV rIN'] = STRING.trimIndent [[
-        The Masterful Juggler, an original combo from ZC community.
-        Combined with the target "Highest B2B chain reached", this makes more sense.
-    ]],
     ['DH rIN AS'] = STRING.trimIndent [[
         The Oblivious Artist, an original combo from ZC community.
         This one was "doing the inverse first", but I felt it sounds too forcing, so it got changed to this.
@@ -312,6 +317,10 @@ return {
     ['NH rVL AS'] = STRING.trimIndent [[
         Zero-to-sixty, an original combo from ZC community.
         Though this combo includes AS, it's actually easier to play with mouse lol
+    ]],
+    ['VL IN AS'] = STRING.trimIndent [[
+        Under The Radar, an original combo from ZC community.
+        "What's the exact condition of entering Gigaspeed?"
     ]],
     ['rNH MS DP'] = STRING.trimIndent [[
         Scarcity Mindset, an original combo from ZC community.
@@ -494,7 +503,7 @@ return {
         *silence* 
         - Looking for a game to capture -
     ]],
-    -- Future achievement update
+    -- v1.1
     -- Easy Mods
     ['eEX'] = STRING.trimIndent [[
         Easy Mode, aka "Easy", originally softlocked the game in 0.2.0 if you tried to select it. 0.3.0's release made it the 4th eMod
@@ -558,7 +567,6 @@ return {
     ]],
     -- Profligacy ueEX, eNH+J, fastest time to floor 10
     -- Diogenes Syndrome ueEX, eMS+eJ, fastest time to floor 10
-    -- Dysania ueEX, eGV+S, fastest time to floor 10
     ['ueEX eGV'] = STRING.trimIndent [[
         "You're up early." "HEY, BUDDY. HOW'S IT GOING?" "Woah! Yo what?" 
         "WHAT?" "Why is your voice so deep?" "OH IT'S JUST A LITTLE DEEPER IN THE MORNING. YOURS DOESN'T DO THAT?"

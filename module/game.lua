@@ -176,6 +176,8 @@ local GAME = {
     comboZP = 1,
     isUltraRun = false,
     endFloorFstr = {},
+    pieceFstr = {},
+    pieceFstrObj = GC.newText(FONT.get(70, 'symbol')),
 
     completion = { -- 0=not mastered, 1=mastered, 2=rev mastered
         EX = 0,
@@ -260,7 +262,6 @@ local GAME = {
     achv_felMagicBurnt = nil,
     achv_felMagicQuest = nil,
     achv_artistTrinityH = nil,
-    achv_resetCount = nil,
     achv_noResetH = nil,
     achv_obliviousQuest = nil,
     achv_doublePass = nil,
@@ -306,18 +307,6 @@ function GAME.getHand(real)
         if M.IN ~= 0 then ins(list, M.IN == 1 and 'IN' or M.IN == -1 and 'eIN' or 'rIN') end
         if M.AS ~= 0 then ins(list, M.AS == 1 and 'AS' or M.AS == -1 and 'eAS' or 'rAS') end
         if M.DP ~= 0 then ins(list, M.DP == 1 and 'DP' or M.DP == -1 and 'eDP' or 'rDP') end
-        -- Trevor Smithy
-        --if M.EX == -1 then ins(list, 'eEX') end
-        --if M.NH == -1 then ins(list, 'eNH') end
-        --if M.MS == -1 then ins(list, 'eMS') end
-        --if M.GV == -1 then ins(list, 'eGV') end
-        --if M.VL == -1 then ins(list, 'eVL') end
-        --if M.DH == -1 then ins(list, 'eDH') end
-        --if M.IN == -1 then ins(list, 'eIN') end
-        --if M.AS == -1 then ins(list, 'eAS') end
-        --if M.DP == -1 then ins(list, 'eDP') end
-        --
-
         -- for i = 1, #MD.deck do
         --     local D = MD.deck[i]
         --     local level = M[D.id]
@@ -353,13 +342,7 @@ end
 function GAME.getComboZP(list)
     local m = TABLE.getValueSet(list)
     local zp = 1
-    if m.EX then zp = zp * 1.4 elseif m.rEX then zp = zp * 2.6 elseif m.eEX then 
-        if URM and table.concat(list):count('r') == 0 then
-            zp = zp * 2.7
-        else
-           zp = zp * 0.9 
-        end
-    end
+    if m.EX then zp = zp * 1.4 elseif m.rEX then zp = zp * 2.6 elseif m.eEX then zp = zp * ((URM and table.concat(list):count('r') == 0) and 2.7 or 0.9) end
     if m.NH then zp = zp * 1.1 elseif m.rNH then zp = zp * (1.4 + .05 * (#list - 1))    elseif m.eNH then zp = zp * 0.90 end
     if m.MS then zp = zp * 1.2 elseif m.rMS then zp = zp * 1.7                          elseif m.eMS then zp = zp * 10/9 end
     if m.GV then zp = zp * 1.1 elseif m.rGV then zp = zp * 1.2                          elseif m.eGV then zp = zp * 0.85 end
@@ -398,6 +381,7 @@ function GAME.getComboZP(list)
 end
 
 local function modNameSorter(a, b) return MD.prio_name[a] < MD.prio_name[b] end
+local function modCardSorter(a, b) return MD.prio_card[a] < MD.prio_card[b] end
 local function trimR(s) return s:sub(2) end
 
 ---@param list string[] WILL BE SORTED!!!
@@ -490,6 +474,8 @@ function GAME.getComboName(list, mode)
                 list[r1], list[r2] = list[r2], list[r1]
             end
         end
+
+        -- https://www.nationalchurchillmuseum.org/never-give-in-never-never-never.html#:~:text=You%20cannot%20tell,of%20the%20enemy.
         local colorModNumber = 1
         local messyText = ""
         for i = 1, len - 1 do
@@ -688,77 +674,6 @@ function GAME.getComboName(list, mode)
             if len_noDP >= 7 and not STAT.easyName then
                 return len_noDP == 7 and [["SWAMP WATER LITE"]] or [["SWAMP WATER"]]
             end
-            --[[if #easyList == 4 and STAT.easyName and M.DH == 2 then --display for helping name 4 mod easyName combos
-                MSG.clear()
-                local alist1, alist2, blist1, blist2, clist1, clist2, dlist1, dlist2, elist1, elist2, flist1, flist2, glist1, glist2 = {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}
-                local a1, a2, b1, b2, c1, c2, d1, d2, e1, e2, f1, f2, g1, g2 = {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {} 
-                ins(alist1, list[1]); ins(alist2, list[2]); ins(alist2, list[3]); ins(alist2, list[4])
-                a1 = GAME.getComboName(alist1, 'ingame'); a2 = GAME.getComboName(alist2, 'ingame')
-                for _, v in ipairs(a2) do
-                    table.insert(a1, v)
-                end
-                MSG("dark", a1, 300)
-
-                ins(blist1, list[2]); ins(blist2, list[1]); ins(blist2, list[3]); ins(blist2, list[4])
-                b1 = GAME.getComboName(blist1, 'ingame'); b2 = GAME.getComboName(blist2, 'ingame')
-                for _, v in ipairs(b2) do
-                    table.insert(b1, v)
-                end
-                MSG("dark", b1, 300)
-
-                ins(clist1, list[3]); ins(clist2, list[1]); ins(clist2, list[2]); ins(clist2, list[4])
-                c1 = GAME.getComboName(clist1, 'ingame'); c2 = GAME.getComboName(clist2, 'ingame')
-                for _, v in ipairs(c2) do
-                    table.insert(c1, v)
-                end
-                MSG("dark", c1, 300)
-
-                ins(dlist1, list[4]); ins(dlist2, list[1]); ins(dlist2, list[2]); ins(dlist2, list[3])
-                d1 = GAME.getComboName(dlist1, 'ingame'); d2 = GAME.getComboName(dlist2, 'ingame')
-                for _, v in ipairs(d2) do
-                    table.insert(d1, v)
-                end
-                MSG("dark", d1, 300)
-
-                ins(elist1, list[1]); ins(elist1, list[2]); ins(elist2, list[3]); ins(elist2, list[4])
-                e1 = GAME.getComboName(elist1, 'ingame'); e2 = GAME.getComboName(elist2, 'ingame')
-                for _, v in ipairs(e2) do
-                    table.insert(e1, v)
-                end
-                MSG("dark", e1, 300)
-
-                ins(flist1, list[1]); ins(flist1, list[3]); ins(flist2, list[2]); ins(flist2, list[4])
-                f1 = GAME.getComboName(flist1, 'ingame'); f2 = GAME.getComboName(flist2, 'ingame')
-                for _, v in ipairs(f2) do
-                    table.insert(f1, v)
-                end
-                MSG("dark", f1, 300)
-
-                ins(glist1, list[1]); ins(glist1, list[4]); ins(glist2, list[2]); ins(glist2, list[3])
-                g1 = GAME.getComboName(glist1, 'ingame'); g2 = GAME.getComboName(glist2, 'ingame')
-                for _, v in ipairs(g2) do
-                    table.insert(g1, v)
-                end
-                MSG("dark", g1, 300)
-            end]]
-            --[[if #easyList == 5 and STAT.easyName and M.DH == 2 then
-                local sets = {{{1},{2, 3, 4, 5}},{{2},{1, 3, 4, 5}},{{3},{1, 2, 4, 5}},{{4},{1, 2, 3, 5}},{{5},{1, 2, 3, 4}},{{1, 2},{3, 4, 5}},{{1, 3},{2, 4, 5}},
-                {{1, 4},{2, 3, 5}},{{1, 5},{2, 3, 4}},{{2, 3},{1, 4, 5}},{{2, 4},{1, 3, 5}},{{2, 5},{1, 3, 4}},{{3, 4},{1, 2, 5}},{{3, 5},{1, 2, 4}},{{4, 5},{1, 2, 3}}}
-                MSG.clear()
-                for i = 1, #sets do
-                    local endList1, endList2, list1, list2 = {}, {},{},{}
-                    for j = 1, #sets[i] do
-                        for k = 1, #sets[i][j] do
-                            ins(j == 1 and list1 or list2, list[ sets[i][j][k] ])
-                        end
-                    end
-                    endList1 = GAME.getComboName(list1, 'ingame'); endList2 = GAME.getComboName(list2, 'ingame')
-                    for _, v in ipairs(endList2) do
-                        table.insert(endList1, v)
-                    end
-                    MSG("dark", endList1, 300)
-                end
-            end]]
         else
             local cmbID = table.concat(list)
             if cmbID:count('r') >= 2 then
@@ -953,6 +868,7 @@ function GAME.genQuest()
     end
     GAME.atkBuffer = clamp(GAME.atkBuffer - (max(floor / 3, GAME.atkBufferCap / 4) + MATH.rand(-.62, .62)), 0, GAME.atkBufferCap)
     if M.DP > 0 then r = r * (GAME[GAME.getLifeKey(true)] == 0 and 1.26 or 1.1) end
+    
     if M.DH == -1 then r = r * 5/8 end
         local pool = TABLE.copyAll(MD.weight)
 
@@ -1013,6 +929,7 @@ function GAME.genQuest()
                         end
                     end
                 end
+
                 ins(combo, mod)
             else
                 combo = {'EX','NH','MS','GV','VL','DH','IN','AS','DP'} -- ALL THE MODS
@@ -1031,7 +948,11 @@ function GAME.genQuest()
             if #combo >= 7 then
                 pwr = #combo
             end
-            SFX.play('garbagewindup_' .. MATH.clamp(pwr, 1, 9), 1, 0)
+            local tone = GAME.nightcore and 12 or 0
+            if GAME.slowmo then tone = tone - 12 end
+            for i = 1, tone == 0 and 1 or 2 do
+                SFX.play('garbagewindup_' .. MATH.clamp(pwr, 1, 9), 1 / i, 0, tone)
+            end
             if pwr == 9 then IssueAchv("the_windup") end
             GAME.showWindup(pwr)
         end
@@ -1050,7 +971,7 @@ function GAME.genQuest()
     GAME.faultWrong = false
     GAME.dmgWrongExtra = 0
     GAME.gravTimer = false
-    GAME.achv_resetCount = 0
+    GAME.resetCount = 0
     for _, C in ipairs(CD) do C.touchCount, C.required, C.required2 = 0, false, false end
     if STAT.stacker and GAME.questStack[1] then
         for _, v in next, GAME.questStack[1].combo do CD[v].required = true end
@@ -1540,6 +1461,7 @@ end
 
 function GAME.upFloor()
     local roundFloorTime = roundUnit(GAME.floorTime, .001)
+    local roundTime = roundUnit(GAME.time, .001)
     if GAME.floor == 1 then
         if GAME.comboStr == 'rEXrNHrVL' then SubmitAchv('hardcore_beginning', roundFloorTime) end
     elseif GAME.floor == 2 then
@@ -1550,6 +1472,7 @@ function GAME.upFloor()
         if GAME.comboStr == 'EXrDPrVL' then SubmitAchv('unfair_battle', roundFloorTime) end
     elseif GAME.floor == 5 then
         if GAME.comboStr == 'DHDP' then SubmitAchv('museum_heist', roundFloorTime) end
+        if GAME.comboStr == 'ASINVL' and GAME.gigaCount == 0 then SubmitAchv('under_the_radar', roundTime) end
     elseif GAME.floor == 6 then
         if GAME.comboStr == 'EXVLrGV' then SubmitAchv('workaholic', roundFloorTime) end
     elseif GAME.floor == 7 then
@@ -1619,7 +1542,6 @@ function GAME.upFloor()
 
     -- End game
     if GAME.floor >= 10 then
-        local roundTime = roundUnit(GAME.time, .001)
         if GAME.gigaspeed and #GAME.getHand(true) == 0 and GAME.pieceCount() == 0 and GAME.totalQuest <= 7 then IssueAchv('hyperplonk') end
         if GAME.gigaspeed or GAME.smithyMode then
             if GAME.time < STAT.minTime then
@@ -1689,9 +1611,7 @@ function GAME.upFloor()
             end
             if GAME.time <= 76.2 then IssueSecret('subluminal') end
             if GAME.time <= 42 then IssueSecret('superluminal') end
-            if GAME.gigaspeed then
-                if GAME.time - GAME.gigaspeedEntered >= 300 then IssueAchv('worn_out') end
-            end
+            if GAME.time - GAME.gigaspeedEntered >= 300 then IssueAchv('worn_out') end
             if GAME.closeCard and GAME.comboStr == 'rEX' then IssueSecret('true_expert') end
             if GAME.nightcore and GAME.comboStr == 'rGV' then IssueSecret('true_master') end
             if GAME.fastLeak and GAME.comboStr == 'rVL' then IssueSecret('true_strength') end
@@ -1807,7 +1727,7 @@ function GAME.downFloor()
             - GAME.floor * 3
         )
     -- Trevor Smithy
-    if M.GV == -1 then GAME.gravDelay = GravityTimer[3][GAME.negFloor] end
+    if M.GV == -1 then GAME.gravDelay = GravityTimer[3][GAME.negFloor] end -- not possible but kept here just in case
     if M.GV > 0 then GAME.gravDelay = GravityTimer[M.GV][GAME.negFloor] end
 
     -- Text & SFX
@@ -1922,14 +1842,14 @@ function GAME.refreshModIcon()
             if hand[i] == 'eEX' then hand[i] = 'ueEX' end
         end
     end
-    if #hand == 1 then --if one mod
+    if #hand == 1 then
         quad = URM and TEXTURE.modQuad_ultra[hand[1]] or TEXTURE.modQuad_ig[hand[1]]
         _, _, w = quad:getViewport()
         GAME.modIB:add(
             quad, 0, 0,
             0, .62, nil, w * .5, w * .5
         )
-    elseif #hand == 2 then --if two mods
+    elseif #hand == 2 then
         quad = URM and TEXTURE.modQuad_ultra[hand[2]] or TEXTURE.modQuad_ig[hand[2]]
         _, _, w = quad:getViewport()
         GAME.modIB:add(
@@ -1942,7 +1862,7 @@ function GAME.refreshModIcon()
             quad, -35, 0,
             0, .5, nil, w * .5, w * .5
         )
-    else --if 3+ mods
+    else
         local r = 35
         for x = 4, 2, -1 do
             for i = #hand, 1, -1 do
@@ -2161,13 +2081,7 @@ function GAME.refreshCurrentCombo()
     if not GAME.playing then
         GAME.comboMP = GAME.getComboMP(hand)
         GAME.comboZP = GAME.getComboZP(hand)
-        mp = GAME.comboMP
-        if GAME.comboMP < 0 then
-            mp = mp * -1
-            TEXTS.mpPreview:set("-" .. mp .. " MP")
-        else
-            TEXTS.mpPreview:set(GAME.comboMP .. " MP")
-        end
+        TEXTS.mpPreview:set(GAME.comboMP .. " MP")
         TEXTS.zpPreview:set(("%.2fx ZP"):format(GAME.comboZP))
         DailyActived =
             #GAME.getHand(true) == #DAILY and
@@ -2179,14 +2093,8 @@ end
 
 function GAME.refreshLayout()
     -- Trevor Smithy
-    local mvl
-    if M.VL == -1 then
-        mvl = 1
-    else
-        mvl = M.VL
-    end
+    local mvl = M.VL == -1 and 1 or M.VL
     local baseDist = 110 + (M.EX > 0 and (URM and M.EX == 2 and -30 or -10) or 0) + mvl * 20 + (GAME.closeCard and -30 or 0) + (GAME.ecloseCard and -50 or 0)
-    --
     local baseL, baseR = 800 - 4 * baseDist - 70, 800 + 4 * baseDist + 70
     local baseY = 726 + (URM and M.GV == 2 and 50 or 15 * M.GV)
     if FloatOnCard then
@@ -2242,6 +2150,8 @@ function GAME.refreshLockState()
     CD.DP.lock = not ACHV.intended_glitch and not STAT.unlockAll
 end
 
+---@author: Trevor Smithy
+---Unlocks all mods
 function GAME.unlockAll()
     RevUnlocked = true
     STAT.unlockAll = true
@@ -2376,7 +2286,7 @@ function GAME.refreshDailyChallengeText()
         or ""
     )
     DailyAvailable = false --true
-    for _, v in next, DAILY do
+    --[[for _, v in next, DAILY do
         if v:find('r') then
             if GAME.completion[v:sub(2)] == 0 then
                 DailyAvailable = false
@@ -2388,7 +2298,7 @@ function GAME.refreshDailyChallengeText()
                 break
             end
         end
-    end
+    end]]
     local str
     if DailyAvailable then
         local sortedDaily = TABLE.copy(DAILY)
@@ -2412,6 +2322,14 @@ function GAME.refreshDailyChallengeText()
     SCN.scenes.tower.widgetList.daily:reset()
 end
 
+function GAME.refreshPieceFstr()
+    TABLE.clear(GAME.pieceFstr)
+    for i = 1, #PieceData - 1 do
+        if GAME[PieceData[i].id] then TABLE.append(GAME.pieceFstr, PieceData[i].piece) end
+    end
+    GAME.pieceFstrObj:set(GAME.pieceFstr)
+end
+
 function GAME.swapControl()
     if GAME[GAME.getLifeKey(true)] > 0 then
         GAME.onAlly = not GAME.onAlly
@@ -2425,15 +2343,15 @@ function GAME.cancelAll(instant)
 
     TASK.removeTask_code(GAME.task_cancelAll)
     TASK.new(GAME.task_cancelAll, instant)
-    if GAME.gravTimer and (not (URM and M.GV == 2) and GAME.achv_resetCount < 15) then GAME.gravTimer = GAME.gravDelay end
+    if GAME.gravTimer and GAME.resetCount < 15 and not (URM and M.GV == 2) then GAME.gravTimer = GAME.gravDelay end
 end
 
 function GAME.task_cancelAll(instant)
     if GAME.playing and not instant then
-        if GAME.achv_resetCount == 0 then
+        if GAME.resetCount == 0 then
             GAME.achv_noResetH = GAME.roundHeight
         end
-        GAME.achv_resetCount = GAME.achv_resetCount + 1
+        GAME.resetCount = GAME.resetCount + 1
         -- if GAME.achv_totalResetCount == 0 then
         --     if GAME.comboStr == 'ASDHNHVL' then
         --         SubmitAchv('minimalism', GAME.achv_maxChain)
@@ -2532,6 +2450,7 @@ function GAME.commit(auto, falseCommit)
 
     local hand = TABLE.sort(GAME.getHand(false))
     local allyWasDead = GAME[GAME.getLifeKey(true)] == 0
+
     if not falseCommit then
         if #hand == 0 and GAME.questTime < .1 then return SFX.play('no') end
 
@@ -2550,6 +2469,7 @@ function GAME.commit(auto, falseCommit)
             end
         end
     end
+    
     for _, id in next, GAME.lastCommit do CD[id].inLastCommit = false end
     GAME.lastCommit = TABLE.copy(hand)
     for _, id in next, GAME.lastCommit do CD[id].inLastCommit = true end
@@ -2755,6 +2675,7 @@ function GAME.commit(auto, falseCommit)
             if GAME.currentTask then
                 GAME.incrementPrompt('pass')
                 for i = 1, #hand do GAME.incrementPrompt('pass_' .. hand[i]) end
+
                 if #hand >= 4 then
                     GAME.incrementPrompt('pass_windup')
                     if #hand >= 5 then
@@ -2762,6 +2683,7 @@ function GAME.commit(auto, falseCommit)
                     end
                 end
             end
+
             if #hand == 7 and not TABLE.find(hand, 'DP') and M.EX == -1 and M.GV == -1 and M.IN == -1 then
                 IssueAchv('trip_to_hell')
             end
@@ -2793,7 +2715,8 @@ function GAME.commit(auto, falseCommit)
             end
             GAME.heal(((dblCorrect or (eDPCorrect and correct == 1)) and 3 or 1) * GAME.dmgHeal + GAME.bonusRecoveryHealth)
             if MATH.between(Floors[GAME.floor].top - (GAME.height + GAME.heightBuffer), 0, GAME.eglassCard and 4 or 2) then GAME.addHeight(GAME.eglassCard and 5 or 3, true) end
-        end    
+        end
+
         local dp = TABLE.find(hand, 'DP')
         local attack = 3
         local surge = 0
@@ -3019,6 +2942,7 @@ function GAME.commit(auto, falseCommit)
                 SubmitAchv('perfect_speedrun_plus', GAME.time)
             end
         end
+
         if not falseCommit then
             SFX.play(dp and 'zenith_start_duo' or 'zenith_start', .626, 0, Tone(12))
 
@@ -3028,13 +2952,14 @@ function GAME.commit(auto, falseCommit)
             else
                 if GAME.comboStr == 'DHEXMSNHVLrAS' and not GAME.achv_artistTrinityH then
                     GAME.achv_artistTrinityH = GAME.roundHeight
+                    if GAME.totalQuest >= 6 then SFX.play('btb_break') end
                 end
             end
             if GAME.achv_felMagicBurnt then
                 GAME.achv_felMagicBurnt = false
                 GAME.achv_felMagicQuest = GAME.achv_felMagicQuest + 1
             end
-            if GAME.achv_resetCount % 2 == 1 then
+            if GAME.resetCount % 2 == 1 then
                 GAME.achv_obliviousQuest = GAME.achv_obliviousQuest + 1
             end
 
@@ -3061,6 +2986,7 @@ function GAME.commit(auto, falseCommit)
                 attack = attack/((5/4)^((totalAssistPenalty-2)^1.6351896075))
             end 
         end
+
         local roundedAttack = MATH.roundRnd(attack * GAME.attackMul * comboAttackMul / (1 + (#GAME.questStack)/4) / (GAME.badTime and 3 or 1))
         if not falseCommit then
             GAME.spikeCounter = GAME.spikeCounter + roundedAttack + surge
@@ -3069,6 +2995,7 @@ function GAME.commit(auto, falseCommit)
             GAME.maxSpikeWeak = max(GAME.maxSpikeWeak, GAME.spikeCounterWeak)
             if GAME.spikeCounter >= 8 then TEXTS.spike:set(tostring(GAME.spikeCounter)) end
         end
+
         if URM and M.NH == 2 then
             xp = xp + surge
             surge = 0
@@ -3109,6 +3036,7 @@ function GAME.commit(auto, falseCommit)
         end
 
         attack = MATH.roundRnd(attack)
+
         if not falseCommit then
             GAME.incrementPrompt('send', attack)
             GAME.totalAttack = GAME.totalAttack + attack
@@ -3267,15 +3195,12 @@ function GAME.commit(auto, falseCommit)
 
         GAME.fault = true
         GAME.faultWrong = true
-        local minimumDmgWrong = 1
-        if M.MS == -1 and (#hand ~= 0 or GAME[GAME.getLifeKey(true)] == 0) --[[and M.DP == 0]] then --just because there are quests that require taking damage
-            minimumDmgWrong = 0 -- NO, instead eMS should just disable those revive tasks! (done)
-        end -- but if the player really WANTS to kill themselves to start revive, then commit NOTHING still takes at least 1 damage if ally is alive
+
+        local minimumDmgWrong = (M.MS == -1 and (#hand ~= 0 or GAME[GAME.getLifeKey(true)] == 0)) and 0 or 1
         GAME.takeDamage(max(GAME.dmgWrong + GAME.dmgWrongExtra, minimumDmgWrong), 'wrong')
         if not GAME.playing then return end
-        if M.MS ~= -1 then
-            GAME.dmgWrongExtra = GAME.dmgWrongExtra + .5
-        end
+        if M.MS ~= -1 then GAME.dmgWrongExtra = GAME.dmgWrongExtra + .5 end
+
         -- Trevor Smithy
         if M.GV ~= 0 then GAME.gravTimer = GAME.gravDelay end
         if M.EX > 0 then
@@ -3317,14 +3242,20 @@ function GAME.start()
     end
     if URM and M.VL == 2 and not UltraVlCheck('start') then return end
     TASK.removeTask_code(Task_MusicEnd)
-    TASK.removeTask_code(GAME.task_uneasyTeraspeed)
     MusicPlayer = false
+
+    GAME.omega = false
+    GAME.negFloor = 1
+    GAME.negEvent = 1
+    GAME.timerMul = 1
+    GAME.isUltraRun = GAME.anyUltra
+
+    TASK.removeTask_code(GAME.task_uneasyTeraspeed)
     GAME.smithyMode = false
     GAME.OSPActivated = false
     GAME.finalFatigueOSPActivated = false
     GAME.teraComplete = false
     GAME.teraLostHeight = 0
-
     GAME.achv_bestFriendQuest = 0
     GAME.achv_shamelessCashgrabQuest = 0
     GAME.achv_overweightGamerQuest = 0
@@ -3332,18 +3263,12 @@ function GAME.start()
     GAME.achv_cleanBreakQuest = 0
     GAME.achv_professionalCleanerQuest = 0
     GAME.achv_roldSmythyQuest = 0
-
     GAME.noManualActivate = true
     GAME.noMouseOrSpin = true
     GAME.noKeyboardOrReset = true
     GAME.setupCheck = false
     GAME.dunk = false
     GAME.bigDunk = false
-    GAME.omega = false
-    GAME.negFloor = 1
-    GAME.negEvent = 1
-    GAME.timerMul = 1
-    GAME.isUltraRun = GAME.anyUltra
     GAME.uneasyModIconSelected = false
     GAME.manualBGMPitch = nil
     
@@ -3363,20 +3288,11 @@ function GAME.start()
     GAME.attackMul = (GAME.isUltraRun and .62 or (M.EX == -1 and URM and M.NH < 2 and M.MS < 2 and M.GV < 2 and M.VL < 2 and M.DH < 2 and M.IN < 2 and M.AS < 2 and M.DP < 2) and 0.33 or 1) * attackMulMod
     -- Trevor Smithy
     GAME.bonusRecoveryHealth = 0
-    local slowMo = 0
-    if GAME.eslowmo then
-        slowMo = 0.5
-    end
-    --GAME.xpLockLevelMax = URM and M.NH == 2 and 1 or 5
-    --GAME.leakSpeed = ((M.EX > 0 or M.DP == 2) and 5 or 3) + (GAME.fastLeak and 8 or 0)
-    GAME.xpLockLevelMax = (((URM and M.NH == 2 and 1) or (M.EX == -1 and 0) or (5)) + (GAME.efastLeak and 5 or 0) + (M.NH == -1 and 2 or 0)) * (1 + slowMo)
-    if GAME.xpLockLevelMax == 0 and GAME.eslowmo then
-        GAME.xpLockLevelMax = 1.5
-    end
+    local slowMo = GAME.eslowmo and 0.5 or 0
+    GAME.xpLockLevelMax = (((URM and M.NH == 2 and 1) or (M.EX == -1 and 0) or 5) + (GAME.efastLeak and 5 or 0) + (M.NH == -1 and 2 or 0)) * (1 + slowMo)
+    if GAME.xpLockLevelMax == 0 and GAME.eslowmo then GAME.xpLockLevelMax = 1.5 end
     -- fast leak increases leakSpeed to 2.666 times normal rate, slow leak decreases leakSpeed to 1/2.666 times normal rate, eslowmo halves leak speed
-    --GAME.leakSpeed = ((M.EX > 0 and 5 or 3) + (GAME.fastLeak and 8 or 0) + (M.EX == -1 and -1.2 or 0) + (GAME.efastLeak and -1.875 or 0) + (GAME.efastLeak and M.EX == -1 and (0.075 + 0.15) or 0)) / (1 + slowMo)
     GAME.leakSpeed = (((M.EX > 0 or (M.DP == 2 and M.EX ~= -1)) and 5 or 3) + (GAME.fastLeak and 8 or GAME.efastLeak and -1.875 or 0)) / (1 + slowMo)
-    --
     GAME.invincible = false
 
     TASK.unlock('sure_quit')
@@ -3392,6 +3308,7 @@ function GAME.start()
     GAME.playing = true
 
     -- Statistics
+    GAME.refreshPieceFstr()
     GAME.comboStr = table.concat(TABLE.sort(GAME.getHand(true)))
     GAME.prevPB = BEST.highScore[(GAME.isUltraRun and 'u' or '') .. GAME.comboStr]
     if GAME.prevPB == 0 then GAME.prevPB = -2600 end
@@ -3556,7 +3473,6 @@ function GAME.start()
     GAME.achv_felMagicQuest = 0
     GAME.achv_artistTrinityH = nil
     GAME.achv_artistTrinityBurnt = false
-    GAME.achv_resetCount = 0
     GAME.achv_obliviousQuest = 0
     GAME.achv_doublePass = 0
     GAME.achv_level19capH = nil
@@ -3687,7 +3603,6 @@ function GAME.finish(reason)
     end
     GAME.currentTask = false
 
-    local unlockDuo
     if GAME.totalQuest > 2.6 then
         LOG('info', ("[%s] (%s) F%d %.1fm in %.3fs"):format(reason, table.concat(GAME.getHand(true), ', '), GAME.floor, GAME.roundHeight, GAME.time))
 
@@ -3696,11 +3611,7 @@ function GAME.finish(reason)
             for k, v in next, M do
                 if v > GAME.completion[k] then
                     if GAME.completion[k] == 0 then
-                        if k == 'DP' then
-                            unlockDuo = true
-                        else
-                            unlockRev = unlockRev + 1
-                        end
+                        unlockRev = unlockRev + 1
                         RevUnlocked = true
                     end
                     GAME.completion[k] = v
@@ -3784,7 +3695,7 @@ function GAME.finish(reason)
                     IssueAchv('its_kinda_rare')
                 end
             end
-            if STAT.mod == 'vanilla' and not TestMode and SupportCurl then
+            if GAME.totalQuest >= 20 and STAT.mod == 'vanilla' and not TestMode and SupportCurl then
                 local curl =
                     SYSTEM == 'Windows' and [[curl -s -X POST https://vercel-leaderboard-one.vercel.app/api -H "Content-Type: application/json" -d "$1"]] or
                     [[curl -s -X POST https://vercel-leaderboard-one.vercel.app/api -H 'Content-Type: application/json' -d '$1']]
@@ -4030,9 +3941,7 @@ function GAME.finish(reason)
         SubmitAchv('multitasker', roundUnit(GAME.height * GAME.comboMP, .1))
         SubmitAchv('effective', zpGain)
         SubmitAchv('drag_racing', GAME.peakRank)
-        if GAME.peakRank >= 26 then
-            SubmitAchv('your_too_fast', GAME.peakRank)
-        end
+        if GAME.peakRank >= 26 then SubmitAchv('your_too_fast', GAME.peakRank) end
         SubmitAchv('space_race', GAME.peakRank * GAME.comboMP)
         table.sort(maxCSP, function(a, b) return a[1] > b[1] end)
         for i = 1, #maxCSP do
@@ -4044,9 +3953,6 @@ function GAME.finish(reason)
         SubmitAchv('empty_box', GAME.achv_noResetH or GAME.roundHeight)
         SubmitAchv('the_perfectionist', GAME.achv_perfectH or GAME.roundHeight)
         SubmitAchv('sunk_cost', GAME.achv_demoteH or GAME.roundHeight)
-        if M.GV ~= -1 then
-            SubmitAchv('patience_is_a_virtue', GAME.achv_noManualCommitH or GAME.roundHeight)
-        end
         SubmitAchv(GAME.comboStr, GAME.roundHeight)
         local soat = SubmitAchv('the_spike_of_all_time', GAME.maxSpikeWeak)
         SubmitAchv('the_spike_of_all_time_plus', GAME.maxSpike, soat)
@@ -4078,13 +3984,16 @@ function GAME.finish(reason)
             SubmitAchv('spotless', GAME.achv_noDamageH or GAME.roundHeight)
         elseif GAME.comboStr == 'rAS' then
             SubmitAchv('arrogance', GAME.achv_noPerfectH or GAME.roundHeight)
-            SubmitAchv('fel_magic', GAME.achv_felMagicQuest)
         elseif GAME.comboStr == 'rDP' then
             SubmitAchv('overprotection', GAME.achv_protectH or GAME.roundHeight)
-        elseif GAME.comboStr == 'rGVrINrMS' then
-            SubmitAchv('the_masterful_juggler', GAME.achv_maxChain)
         elseif GAME.comboStr == 'DHVLrIN' then
             SubmitAchv('empurple', GAME.achv_noChargeH or GAME.roundHeight)
+        elseif GAME.comboStr == 'rGVrINrMS' then
+            SubmitAchv('the_masterful_juggler', GAME.achv_maxChain)
+        elseif GAME.comboStr == 'ASMSrGVrNH' then
+            SubmitAchv('autoplay_is_awesome', GAME.achv_noManualCommitH or GAME.roundHeight)
+        elseif GAME.comboStr == 'EXMSNHVLrAS' then
+            SubmitAchv('faltered', GAME.achv_noChargeH or GAME.roundHeight)
         elseif GAME.comboStr == 'ASDHDP' then
             SubmitAchv('a_mutual_agreement', GAME.achv_shareModH or GAME.roundHeight)
         elseif GAME.comboStr == 'ASDPVL' then
@@ -4123,6 +4032,7 @@ function GAME.finish(reason)
                 MSG("dark", "The Biggest Fan Score: " .. (GAME.achv_carriedH or GAME.roundHeight) .. " meters", 60)
             end
         end
+        if M.GV ~= -1 then SubmitAchv('patience_is_a_virtue', GAME.achv_noManualCommitH or GAME.roundHeight) end
         if M.EX < 2 and M.DP < 2 then
             SubmitAchv('speed_bonus', GAME.gigaCount + GAME.teraCount)
         end
@@ -4169,7 +4079,7 @@ function GAME.finish(reason)
         end
         SubmitAchv('zenith_explorer_plus', GAME.roundHeight)
         SubmitAchv('supercharged_plus', GAME.achv_maxChain)
-        -- TODO if GAME.fullHealth <= 5 then IssueSecret('cardiac_arrest') end
+        if GAME.fullHealth <= 5 then IssueSecret('cardiac_arrest') end
         if GAME.time <= 600 then
             GAME.submitTimedAchievements()
         end
@@ -4185,7 +4095,8 @@ function GAME.finish(reason)
         GAME.resIB:clear()
     end
     ReleaseAchvBuffer()
-    GAME.badTime = false
+
+    GAME.badTime = nil
     GAME.setGigaspeedAnim(false)
     GAME.stopTeraspeed('fin')
     TASK.removeTask_code(task_startSpin)
@@ -4207,7 +4118,7 @@ function GAME.finish(reason)
         end)
     end
 
-    if URM and GAME.height < 0 then
+    if URM and GAME.height < -10 then
         PieceSFXID = 0
         GAME.nightcore = false
         GAME.slowmo = false
@@ -4241,7 +4152,7 @@ local questStyleDP = {
     { k = 0.85, y = 30,  a = .7 },
 }
 
----Submits timed achievements if its cdombo is active
+---Submits timed achievements if its combo is active
 ---@author: Trevor Smithy
 function GAME.submitTimedAchievements()
     if GAME.comboStr == 'eDPeEX' and not URM then
@@ -4294,11 +4205,11 @@ end
 
 local KBisDown = love.keyboard.isDown
 local damned = false
-function GAME.update(dt,realDT)
+function GAME.update(dt)
     GAME.spikeTimer = GAME.spikeTimer - dt
     for i = #GAME.windupAnim, 1, -1 do
         local w = GAME.windupAnim[i]
-        w.bumpTime = w.bumpTime - realDT
+        w.bumpTime = w.bumpTime - (GAME.slowmo and dt / 2 or dt)
         if w.lv < w.lvFin then
             if w.bumpTime <= 0 then
                 w.lv = w.lv + 1
@@ -4307,7 +4218,7 @@ function GAME.update(dt,realDT)
                 end
             end
         end
-        w.time = w.time + realDT
+        w.time = w.time + dt
         w.alpha = min((w.totalTime - w.time) * 5, 1)
         if w.time > w.totalTime then rem(GAME.windupAnim, i) end
     end
@@ -4358,14 +4269,7 @@ function GAME.update(dt,realDT)
 
     -- Timers
     -- Trevor Smithy
-    local timerMulMod = 1
-    if GAME.eslowmo then
-         timerMulMod = timerMulMod * 0.75 
-    end
-    if GAME.ecloseCard then
-        timerMulMod = timerMulMod * 2
-    end    
-
+    local timerMulMod = 1 * (GAME.eslowmo and 0.75 or 1) * (GAME.ecloseCard and 2 or 1)
     GAME.time = GAME.time + dt * (GAME.timerMul * timerMulMod)
     local r = min(GAME.rank, 62)
     GAME.rankTimer[r] = GAME.rankTimer[r] + dt
@@ -4507,21 +4411,7 @@ function GAME.update(dt,realDT)
 
     -- Height change
     -- Trevor Smithy
-    local passiveClimbSpeedMod = 1
-    if GAME.enightcore then 
-        passiveClimbSpeedMod = passiveClimbSpeedMod * 2 
-    end
-    if GAME.eglassCard then
-        passiveClimbSpeedMod = passiveClimbSpeedMod * 8
-    end
-    if GAME.slowmo and uneasyMode then --if uneasy, slightly counter slowmo's reduced passive climb speed
-        passiveClimbSpeedMod = passiveClimbSpeedMod * 1.26
-    end
-
-    if GAME.badTime then
-        passiveClimbSpeedMod = -1 + (-1 * GAME.attackMul)
-    end
-
+    local passiveClimbSpeedMod = (GAME.badTime and -1 + (-1 * GAME.attackMul)) or (GAME.enightcore and 2 or 1) * (GAME.eglassCard and 8 or 1) * (GAME.slowmo and uneasyMode and 1.26 or 1) * 1 --if uneasy, slightly counter slowmo's reduced passive climb speed
     local releaseHeight = GAME.heightBuffer
     GAME.heightBuffer = max(MATH.expApproach(GAME.heightBuffer, 0, dt * 6.3216), GAME.heightBuffer - 6000 * dt)
     releaseHeight = releaseHeight - GAME.heightBuffer
@@ -4577,10 +4467,7 @@ function GAME.update(dt,realDT)
     if GAME.xpLockTimer > 0 then
         GAME.xpLockTimer = GAME.xpLockTimer - dt
     else
-        local closerCardLeakSpeedMod = 1
-        if GAME.ecloseCard and GAME.height > 0 then
-            closerCardLeakSpeedMod = min((1+(GAME.height/1000000)), 2)
-        end
+        local closerCardLeakSpeedMod = (GAME.ecloseCard and GAME.height > 0) and min((1+(GAME.height/1000000)), 2) or 1
         GAME.xp = GAME.xp - dt * GAME.leakSpeed * closerCardLeakSpeedMod * GAME.rank * (GAME.rank + 1) / 60
         if GAME.xp <= 0 then
             GAME.xp = 0
@@ -4622,13 +4509,7 @@ function GAME.update(dt,realDT)
 
     -- Gravity
     -- Trevor Smithy
-    local gravTimerMod = 1 -- larger = slower, smaller = faster
-    if GAME.eslowmo then
-        gravTimerMod = 1.5
-    end
-    if GAME.enightcore then
-        gravTimerMod = 0.5
-    end
+    local gravTimerMod = 1 * (GAME.eslowmo and 1.5 or 1) * (GAME.enightcore and 0.5 or 1)
     if M.GV ~= 0 and GAME.gravTimer then
         GAME.gravTimer = GAME.gravTimer - dt / gravTimerMod
         if GAME.gravTimer <= 0 then
@@ -4654,7 +4535,7 @@ function GAME.update(dt,realDT)
             GAME.omega = true
             GAME.showFloorText("Ω", Floors[11].name, 6.2)
             SFX.play('zenith_levelup_a', 1, 0, Tone(1))
-            PlayBGM('fomg', force)
+            PlayBGM('fomg', true)
             ins(GAME.secTime, GAME.floorTime)
             GAME.refreshSectionTime()
             GAME.floorTime = 0
@@ -4709,12 +4590,7 @@ function GAME.update(dt,realDT)
 
     -- Damage
     -- Trevor Smithy
-    local dmgTimerMulMod = 1
-    if M.GV == -1 and GAME.eslowmo then 
-        dmgTimerMulMod = 1.5
-    elseif M.GV == -1 or GAME.eslowmo then
-        dmgTimerMulMod = 1.25
-    end
+    local dmgTimerMulMod = (M.GV == -1 and GAME.eslowmo) and 1.5 or (M.GV == -1 or GAME.eslowmo) and 1.25 or 1
     GAME.dmgTimer = GAME.dmgTimer - dt / (GAME.dmgTimerMul * dmgTimerMulMod)
     if GAME.dmgTimer <= 0 then
         GAME.dmgTimer = GAME.dmgCycle
@@ -4722,4 +4598,4 @@ function GAME.update(dt,realDT)
     end
 end
 
-_G.GAME = GAME
+return GAME
