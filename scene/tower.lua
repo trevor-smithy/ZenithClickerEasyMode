@@ -253,7 +253,17 @@ local function keyTrigger(key)
                 if not GAME.playing then
                     local hand = GAME.getHand(true)
                     local revCount = table.concat(hand):count('r')
-                    SFX.play('garbagewindup_' .. #hand-revCount, 1, 0, Tone(0))
+                    local pitch = M.GV < 0 and -6 or M.GV > 0 and (URM and M.GV == 2 and 3 or M.GV) or 0
+                    local uneasy = (URM and M.EX == -1 and M.NH < 2 and M.MS < 2 and M.GV < 2 and M.VL < 2 and M.DH < 2 and M.IN < 2 and M.AS < 2 and M.DP < 2) and not GAME.anyRev
+                    if uneasy then
+                        pitch = pitch + 0.25
+                    end
+                    if GAME.slowmo then pitch = pitch - 12 end
+                    if GAME.nightcore then pitch = pitch + 12 end
+                    -- Trevor Smithy
+                    if GAME.eslowmo then pitch = pitch - 6 end
+                    if GAME.enightcore then pitch = pitch + 12 end
+                    SFX.play('garbagewindup_' .. #hand-revCount, 1, 0, pitch)
                     --SFX.play('allclear')
                 else
                     SFX.play('staffwarning')

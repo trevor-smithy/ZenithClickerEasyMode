@@ -2419,6 +2419,16 @@ function GAME.task_toggleEasy()
     local mnh = 0 -- mod no hold
     if M.NH == -1 then mnh = 1.5 else mnh = M.NH end --if easy, don't be negative because then negative interval
     local pitch = M.GV < 0 and 2^(-1/2) or M.GV > 0 and 2 ^ ((URM and M.GV == 2 and 3 or M.GV) / 12) or 1
+    local uneasy = (URM and M.EX == -1 and M.NH < 2 and M.MS < 2 and M.GV < 2 and M.VL < 2 and M.DH < 2 and M.IN < 2 and M.AS < 2 and M.DP < 2) and not GAME.anyRev
+    if uneasy then
+        pitch = pitch * 1.0145
+    end
+    if GAME.slowmo then pitch = pitch / 2 end
+    if GAME.nightcore then pitch = pitch * 2 end
+    -- Trevor Smithy
+    if GAME.eslowmo then pitch = pitch * 2^(-1/2) end
+    if GAME.enightcore then pitch = pitch * 2 end
+    --
     local interval = 0.2 / pitch
     for i = 1, #list do
         if needFlip[i] then
