@@ -326,6 +326,7 @@ local function keyTrigger(key)
                         GAME.invisUI = false
                         GAME.invisCard = false
                         GAME.closeCard = false
+                        STAT.unlockAll = true
                         local set = {}
                         applyCombo(set)
                         set.ultra = true
@@ -337,7 +338,7 @@ local function keyTrigger(key)
                         TABLE.insert(set, 'rDH')
                         TABLE.insert(set, 'rIN')
                         TABLE.insert(set, 'rAS')
-                        TABLE.insert(set, 'rDP')
+                        if ACHV.intended_glitch then TABLE.insert(set, 'rDP') end
                         applyCombo(set)
                         GAME.badTime = true
                         GAME.badTimeStarted = false
@@ -511,6 +512,14 @@ function scene.load()
     if PendingComboFromRecord then
         applyCombo(PendingComboFromRecord)
         PendingComboFromRecord = nil
+    end
+    if STAT.unlockAll and not ACHV.lazy_bastard then
+        IssueAchv('lazy_bastard', true)
+        MSG('achv_issued', {
+            AchvData[6].fg, "Lazy Bastard" .. "\n",
+            COLOR.dL, [[Unlock all mods by activating BAD TIME]] .. "\n",
+            COLOR.LD, "The secret way to get this achievement :D"})
+        SFX.play('achievement_1', .7)
     end
 end
 
