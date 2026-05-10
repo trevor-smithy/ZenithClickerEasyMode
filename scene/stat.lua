@@ -245,7 +245,7 @@ function RefreshProfile()
         for i = 0, clickerLV - 1 do
             GC.mDraw(TEXTURE.stat.clicker_star, 879 - i * 34, 182, 0, .626)
         end
-        if STAT.easyModeClicker then
+        if STAT.greenClicker then
             GC.setColor(0, 1, 0)
             GC.mDraw(TEXTURE.stat.clicker, 800 - clickerLV * 34, 182, 0, .626)
         end

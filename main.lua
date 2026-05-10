@@ -833,6 +833,7 @@ STAT = {
     oldTransparentCard = false,
     unlockAll = false,
     easyModeClicker = false,
+    greenClicker = false,
 }
 
 ACHV = {}

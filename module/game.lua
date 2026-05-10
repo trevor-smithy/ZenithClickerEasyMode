@@ -4450,7 +4450,10 @@ function GAME.update(dt)
                 end
                 if GAME.height < NegFloors[GAME.negFloor].bottom and not GAME.einvisUI then GAME.downFloor() end
                 if GAME.height < NegEvents[GAME.negEvent].h then GAME.nextNegEvent() end
-                if GAME.height <= 1800 and GAME.badTime then STAT.easyModeClicker = true end
+                if GAME.height <= -1800 and GAME.badTime and not STAT.greenClicker then 
+                    STAT.greenClicker = true 
+                    MSG("bright", "YOU DID A THING!")
+                end
             end
         else
             GAME.height = GAME.height + GAME.rank / 4 * passiveClimbSpeedMod * dt * (GAME.einvisUI and 1 or icLerp(GAME.eglassCard and 0.5 or 1, GAME.eglassCard and 3 or 6, Floors[GAME.floor].top - GAME.height))
