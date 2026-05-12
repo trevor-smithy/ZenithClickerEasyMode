@@ -3974,7 +3974,7 @@ function GAME.finish(reason)
 
         SubmitAchv('multitasker', roundUnit(GAME.height * GAME.comboMP, .1))
         SubmitAchv('effective', zpGain)
-        SubmitAchv('drag_racing', GAME.peakRank)
+        SubmitAchv('drag_racing', GAME.peakRank, GAME.peakRank < 26)
         if GAME.peakRank >= 26 then SubmitAchv('your_too_fast', GAME.peakRank) end
         SubmitAchv('space_race', GAME.peakRank * GAME.comboMP)
         table.sort(maxCSP, function(a, b) return a[1] > b[1] end)
