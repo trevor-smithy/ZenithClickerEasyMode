@@ -167,15 +167,12 @@ local function specialDevCommentaryCheck(cID, uneasy)
 end
 
 local timer
-local devCommentary, devCommentaryLink, link
 function scene.load()
     MSG.clear()
     timer = 0
     SetMouseVisible(true)
     scroll, scroll1 = 0, -620
 
-    devCommentary = require('module.devCommentary')
-    devCommentaryLink = require('module.devCommentaryLink')
     local setStr = table.concat(TABLE.sort(GAME.getHand(true)))
     local cID = table.concat(GAME.getHand(true), " ")
     if GAME.anyUltra then
@@ -189,18 +186,18 @@ function scene.load()
         uneasy = true
     end
     local text
-    if devCommentary[cID] and specialDevCommentaryCheck(cID, uneasy) then
+    if DevCommentary[cID] and specialDevCommentaryCheck(cID, uneasy) then
         if BEST.highScore[setStr] < Floors[9].top then
-            text = devCommentary.notFinished
+            text = DevCommentary.notFinished
         else
-            text = devCommentary[cID]
-            link = devCommentaryLink[cID]
+            text = DevCommentary[cID]
+            link = DevCommentaryLink[cID]
         end
     else
         if cID:count('e') > 0 then
-            text = devCommentary.noCommentTS
+            text = DevCommentary.noCommentTS
         else
-            text = devCommentary.noComment
+            text = DevCommentary.noComment
         end
     end
     DevNoteText:setf(text:repD(STAT.uid), 2000, 'center')
@@ -208,6 +205,7 @@ end
 
 function scene.unload()
     link = nil
+    scene.widgetList.link.sound_hover = ''
 end
 
 function scene.mouseMove(_, _, _, dy)
@@ -226,7 +224,7 @@ function scene.keyDown(key, isRep)
         SFX.play('menuclick')
         SCN.back('none')
     end
-    ZENITHA._cursor.active=true
+    ZENITHA._cursor.active = true
     return true
 end
 
@@ -268,7 +266,9 @@ function scene.draw()
 
     gc_setColor(1, 1, 1)
     local icon, kx, ky
-    local smithyMode = GAME.mod.EX == -1 and GAME.mod.NH == 0 and GAME.mod.MS == 0 and GAME.mod.GV == 0 and GAME.mod.VL == -1 and GAME.mod.DH == 0 and GAME.mod.IN == 0 and GAME.mod.AS == -1 and GAME.mod.DP == 0
+    local smithyMode = TABLE.equal(GAME.getHand(true),{'eEX','eVL','eAS'}) 
+    or TABLE.equal(GAME.getHand(true),{'eEX','NH','MS','GV','eVL','DH','IN','eAS','DP'})
+    or TABLE.equal(GAME.getHand(true),{'eEX','rNH','rMS','rGV','eVL','rDH','rIN','eAS','rDP'})
     if GAME.mod.EX > 0 then
         icon = TEXTURE.logo_old
         kx, ky = .5, .5
@@ -288,12 +288,20 @@ function scene.draw()
     gc_draw(AboutText)
     if link then
         gc_setColor(0, 0.62, 1)
+        scene.widgetList.link.sound_hover = 'menutap'
+    end
+    if smithyMode and (GAME.anyRev or URM) then
+        gc_setColor(1, 0.62, 0.62)
     end
     gc_draw(DevNoteText, 0, 285 - DevNoteText:getHeight() * (.68 / 2), 0, .68, .68, 1000, 0)
 
     gc_setColor(1, 1, 1, .2)
     if smithyMode then
-        gc_setColor(0, 1, 0, .2)
+        if URM or GAME.anyRev then
+            gc_setColor(1, 0, 0, .2)
+        else
+            gc_setColor(0, 1, 0, .2)
+        end
     end
     gc_setLineWidth(0.5)
     for i = 1, #lines do
@@ -315,15 +323,33 @@ function scene.draw()
     -- Top bar & title
     gc_replaceTransform(SCR.xOy_u)
     gc_setColor(clr.D)
-    if smithyMode then gc_setColor(COLOR.dG) end
+    if smithyMode then 
+        if URM or GAME.anyRev then
+            gc_setColor(COLOR.dR)
+        else
+            gc_setColor(COLOR.dG)
+        end
+    end
     gc_rectangle('fill', -1300, 0, 2600, 70)
     gc_setColor(clr.L)
-    if smithyMode then gc_setColor(COLOR.LG) end
+    if smithyMode then 
+        if URM or GAME.anyRev then
+            gc_setColor(COLOR.LR)
+        else
+            gc_setColor(COLOR.LG)
+        end
+    end
     gc_setAlpha(.626)
     gc_rectangle('fill', -1300, 70, 2600, 3)
     gc_replaceTransform(SCR.xOy_ul)
     gc_setColor(clr.L)
-    if smithyMode then gc_setColor(COLOR.LG) end
+    if smithyMode then 
+        if URM or GAME.anyRev then
+            gc_setColor(COLOR.LR)
+        else
+            gc_setColor(COLOR.LG)
+        end
+    end
     FONT.set(50)
     if GAME.anyRev then
         gc_print("ABOUT", 15, 68, 0, 1, -1)
@@ -334,19 +360,38 @@ function scene.draw()
     -- Bottom bar & thanks
     gc_replaceTransform(SCR.xOy_d)
     gc_setColor(clr.D)
-    if smithyMode then gc_setColor(COLOR.dG) end
+    if smithyMode then 
+        if URM or GAME.anyRev then
+            gc_setColor(COLOR.dR)
+        else
+            gc_setColor(COLOR.dG)
+        end
+    end
     gc_rectangle('fill', -1300, 0, 2600, -50)
     gc_setColor(clr.L)
-    if smithyMode then gc_setColor(COLOR.LG) end
+    if smithyMode then 
+        if URM or GAME.anyRev then
+            gc_setColor(COLOR.LR)
+        else
+            gc_setColor(COLOR.LG)
+        end
+    end
     gc_setAlpha(.626)
     gc_rectangle('fill', -1300, -50, 2600, -3)
     gc_replaceTransform(SCR.xOy_dl)
     gc_setColor(clr.L)
-    if smithyMode then gc_setColor(COLOR.LG) end
+    if smithyMode then 
+        if URM or GAME.anyRev then
+            gc_setColor(COLOR.LR)
+        else
+            gc_setColor(COLOR.LG)
+        end
+    end
     FONT.set(30)
-    gc_print("THANK YOU FOR PLAYING ZENITH CLICKER!", 15, -45, 0, .85, 1)
+    gc_print("THANK YOU FOR PLAYING ZENITH CLICKER" .. (smithyMode and " EASY MODE" or "") .. (smithyMode and (URM or GAME.anyRev) and "?" or "!"), 15, -45, 0, .85, 1)
 end
 
+local githubX, discordX, bottomY, bottomW, bottomH = -40, -115, 0, 60, 120
 scene.widgetList = {
     WIDGET.new {
         name = 'back', type = 'button',
@@ -368,6 +413,46 @@ scene.widgetList = {
             end
         end,
     },
+    WIDGET.new {
+        type = 'button',
+        pos = {1, 1}, x = githubX, y = bottomY, w = bottomW, h = bottomH,
+        color = {.15, .15, .15},
+        sound_hover = 'menutap',
+        imageColor = { .58, .58, .58 },
+        alignY = 'top',
+        marginY = 10,
+        image = TEXTURE.github,
+        onClick = function() 
+            SFX.play('menuconfirm')
+            love.system.openURL("https://github.com/trevor-smithy/ZenithClickerEasyMode") 
+        end,
+    },
+    --[[WIDGET.new {
+        type = 'image',
+        pos = {1, 1}, x = githubX, y = bottomY-30, w = bottomW-20, h = bottomW-20,
+        imageColor = { .58, .58, .58 },
+        image = love.graphics.newImage('/assets/GitHub_Invertocat_White.png'),
+    },]]
+    WIDGET.new {
+        type = 'button',
+        pos = {1, 1}, x = discordX, y = bottomY, w = bottomW, h = bottomH,
+        color = {.15, .15, .15},
+        sound_hover = 'menutap',
+        imageColor = { .58, .58, .58 },
+        alignY = 'top',
+        marginY = 15,
+        image = TEXTURE.discord,
+        onClick = function() 
+            SFX.play('menuconfirm')
+            love.system.openURL("https://discord.gg/thqhzSn72j") 
+        end,
+    },
+    --[[WIDGET.new {
+        type = 'image', -- 526 x 400
+        pos = {1, 1}, x = discordX, y = bottomY-30, w = bottomW-20, h = bottomW-30,
+        imageColor = { .58, .58, .58 },
+        image = love.graphics.newImage('/assets/Discord-Symbol-White.png'),
+    },]]
 }
 
 return scene

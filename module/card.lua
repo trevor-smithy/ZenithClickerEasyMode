@@ -146,7 +146,6 @@ function Card:setActive(auto, key)
     end
     if not auto and not self.active and GAME.comboStr == 'eASeNH' and GAME.playing then
         GAME.noManualActivate = false
-        --MSG("dark", "Manual activation")
     end
     -- Trevor Smithy
     self.active = not self.active -- the main flip
@@ -159,10 +158,7 @@ function Card:setActive(auto, key)
         end
         local leftCard
         local rightCard
-        local mvl
-        if M.VL == -1 then mvl = 1 else mvl = M.VL end
-        --local baseDist = 110 + (M.EX > 0 and (URM and M.EX == 2 and -30 or -10) or 0) + mvl * 20 + (GAME.closeCard and -30 or GAME.ecloseCard and -50 or 0)
-        local maxCardDistance = 1 + (M.EX == 2 and URM and 2 or M.EX == 2 and 1 or M.EX == 1 and 1 or 0) - mvl + (GAME.closeCard and 1 or 0)
+        local maxCardDistance = 1 + max((M.EX == 2 and URM and 2 or M.EX == 2 and 1 or M.EX == 1 and 1 or 0) - abs(M.VL) + (GAME.closeCard and 1 or 0),0)
         local otherCardActivated = false
         for i = 1, maxCardDistance do
             if self.tempOrder > i then leftCard = CD[self.tempOrder - i] end
@@ -893,13 +889,13 @@ function Card:draw()
                         gc_setAlpha(1.26/temp + sin(love.timer.getTime() * 5.2/temp)/(2*temp))
                     end
                     if self.active and GAME.playing then
-                        if (q2 and TABLE.equal(hand, q2)) or (M.DP == -1 and GAME[GAME.getLifeKey(true)] > 0 and q3 and q1 and TABLE.equal(hand, q3) and TABLE.equal(hand, q1)) then
+                        if (q2 and TABLE.equal(hand, q2)) or (M.DP == -1 and GAME[GAME.getLifeKey(true)] > 0 and M.NH < 2 and q3 and q1 and TABLE.equal(hand, q3) and TABLE.equal(hand, q1)) then
                             gc_setColor(0.13,1,0)
                         else
                             gc_setColor(1,1,0)
                         end
                         gc_setAlpha(min(1, 3/temp))
-                    elseif GAME.playing and (M.DP == -1 and GAME[GAME.getLifeKey(true)] > 0 and q3 and q1 and TABLE.equal(hand, q3) and TABLE.equal(hand, q1)) then
+                    elseif GAME.playing and (M.DP == -1 and GAME[GAME.getLifeKey(true)] > 0 and M.NH < 2 and q3 and q1 and TABLE.equal(hand, q3) and TABLE.equal(hand, q1)) then
                         gc_setColor(0.13,1,0)
                     end
                     gc_setLineWidth(width/2)

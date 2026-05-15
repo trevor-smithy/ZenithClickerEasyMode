@@ -180,6 +180,11 @@ function scene.load()
         SFX.play('hyperalert')
     end
     refreshWidgets()
+    GAME.refreshCurrentCombo()
+end
+
+function scene.unload()
+    GAME.refreshCurrentCombo()
 end
 
 function scene.update(dt)
@@ -430,8 +435,10 @@ function scene.overDraw()
         gc_setAlpha(1)
         FONT.set(50)
         gc_print("MULTIPLE PIECES!!!", 770 - (GAME.ecloseCard and 20 or 0), baseY + 338 + dy)
+        GAME.refreshCurrentCombo()
     else
         GAME.multiplePiecesActive = false
+        GAME.refreshCurrentCombo()
     end
     if URM then
         gc_replaceTransform(SCR.origin)

@@ -11,5 +11,6 @@ return {
     ['eEX eGV uVL eDH'] = "https://www.nationalchurchillmuseum.org/never-give-in-never-never-never.html#:~:text=You%20cannot%20tell,of%20the%20enemy.",
     ['eNH eMS eGV eDH eIN eDP'] = "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
     ['uEX eNH eMS eGV eDH eIN eAS eDP'] = "https://tenor.com/view/alien-stage-alien-stage-karma-vivinos-qmeng-mizisua-gif-10286800856421634964",
-    ['eIN'] = "https://github.com/MrZ626/ZenithClicker/commit/4429e7123a4e8b5caf54e30e10d7df81cf11199d"
+    ['eIN'] = "https://github.com/MrZ626/ZenithClicker/commit/4429e7123a4e8b5caf54e30e10d7df81cf11199d",
+    ['eEX uGV eDH eAS'] = "https://www.youtube.com/shorts/zcX4Pf6Lmlk",
 }

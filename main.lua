@@ -291,27 +291,27 @@ TEXTURE = {
             talentless = aq(3, 7),
             quest_rationing = aq(2, 7),
             the_responsible_one = aq(1, 6),
-            the_unreliable_one = aq(15, 2),
             the_responsible_one_plus = aq(1, 6),
+            the_unreliable_one = aq(15, 2),
             guardian_angel = aq(3, 6),
             carried = aq(3, 8),
-            level_19_cap = aq(16, 2),
-            the_escape_artist = aq(1, 5),
-            the_artist_trinity = aq(1, 5),
-            fel_magic = aq(9, 7),
-            empurple = aq(13, 7),
-            patience_is_a_virtue = aq(10, 6),
-            spotless = aq(16, 4),
+            overprotection = aq(12, 7),
             a_mutual_agreement = aq(13, 4),
             the_cheaters = aq(12, 4),
-            overprotection = aq(12, 7),
+            the_escape_artist = aq(1, 5),
+            the_artist_trinity = aq(11, 3),
+            level_19_cap = aq(16, 2),
+            empurple = aq(13, 7),
+            the_masterful_juggler = aq(11, 7),
             clutch_main = aq(14, 3),
+            spotless = aq(16, 4),
+            autoplay_is_awesome = aq(10, 6),
             sunk_cost = aq(11, 5),
             wax_wings = aq(12, 5),
-            the_masterful_juggler = aq(11, 7),
             the_oblivious_artist = aq(14, 7),
             zero_to_sixty = aq(10, 5),
             speed_bonus = aq(9, 4),
+            under_the_radar = aq(16, 8),
             arrogance = aq(3, 5),
             scarcity_mindset = aq(4, 1),
             detail_oriented = aq(8, 6),
@@ -449,6 +449,18 @@ TEXTURE = {
             yotta = aq(0, 0),
             ronna = aq(0, 0),
             quetta = aq(0, 0),
+            -- Easy Mode - Issued (v1.2) (No CR)
+            patience_is_a_virtue = aq(10, 6),
+            multiple_pieces = aq(1,3),
+            hyperplonk = aq(6, 1),
+            gigaplonk = aq(7, 1),
+            the_windup = aq(8, 1),
+            what_have_you_done = aq(14, 8),
+            music_man = aq(15, 8),
+            im_gonna_be = aq(6, 7),
+            lazy_bastard = aq(16, 8),
+            easy_name = aq(16, 1),
+            biased = aq(4, 5),
         },
         frame = {
             [0] = assets 'achievements/frames/none.png',
@@ -481,7 +493,9 @@ TEXTURE = {
 
     logo = assets 'iconZCEM.png',
     logo_old = assets 'icon_old.png',
-    programmingsmithy = assets 'programmingsmithy.png'
+    programmingsmithy = assets 'programmingsmithy.png',
+    github = assets 'GitHub_Invertocat_White.png',
+    discord = assets 'Discord-Symbol-White.png',
 }
 TEXTURE = TABLE.linkSource({}, TEXTURE, function(path)
     if type(path) ~= 'string' then return path end
@@ -554,6 +568,16 @@ end)
 TEXTURE.lightDot = GC.initCanvas(32, 32, function()
     GC.clear(1, 1, 1, 0)
     GC.blurCircle(.26, 16, 16, 16)
+end)
+
+TEXTURE.surgeIcon = GC.initCanvas(512, 512, function()
+    GC.clear(1, 1, 1, 0)
+    GC.setColor(1, 1, 1)
+    GC.translate(256, 256)
+    for _ = 0, 2 do
+        GC.circle('fill', 0, 0, 180, 4)
+        GC.rotate(.5236)
+    end
 end)
 
 TEXTURE.windup = GC.initCanvas(128, 128, function()
@@ -636,6 +660,7 @@ FONT.load {
     serif = "assets/AbhayaLibre-Regular.ttf",
     sans = "assets/DINPro-Medium.otf",
     led = "assets/UniDreamLED.ttf",
+    symbol = "assets/symbols.otf",
 }
 FontLoaded = SYSTEM == 'Web' or MATH.roll(.62)
 FONT.setDefaultFont(FontLoaded and 'sans' or 'serif')
@@ -668,6 +693,8 @@ TEXTS = { -- Font size can only be 30 and 50 here !!!
     chain      = GC.newText(FONT.get(50)),
     chain2     = GC.newText(FONT.get(50, 'led')),
     b2b        = GC.newText(FONT.get(30), "B2B x"),
+    comboText  = GC.newText(FONT.get(50), "COMBO"),
+    combo      = GC.newText(FONT.get(50)),
     spike      = GC.newText(FONT.get(50)),
     gigaspeed  = GC.newText(FONT.get(50), {
         COLOR.dR, "G", COLOR.dO, "I", COLOR.dY, "G",
@@ -820,6 +847,7 @@ STAT = {
     oldTransparentCard = false,
     unlockAll = false,
     easyModeClicker = false,
+    greenClicker = false,
 }
 
 ACHV = {}
@@ -833,23 +861,6 @@ function SaveBest() if not (TestMode or GAME.multiplePiecesActive) then love.fil
 function SaveStat() if not (TestMode or GAME.multiplePiecesActive) then love.filesystem.write('stat.luaon', 'return' .. TABLE.dumpDeflate(STAT)) end end
 
 function SaveAchv() if not (TestMode or GAME.multiplePiecesActive) then love.filesystem.write('achv.luaon', 'return' .. TABLE.dumpDeflate(ACHV)) end end
-
-MSG.setSafeY(75)
-MSG.addCategory('dark', COLOR.D, COLOR.L)
-MSG.addCategory('bright', COLOR.L, COLOR.D)
-
-AchvData = {
-    [0] = { id = 'achv_none', bg = COLOR.D, fg = COLOR.LD, fg2 = COLOR.LD },
-    { id = 'achv_bronze',   bg = COLOR.DO,          fg = COLOR.lO, fg2 = COLOR.O },
-    { id = 'achv_silver',   bg = { .26, .26, .26 }, fg = COLOR.L,  fg2 = COLOR.dL },
-    { id = 'achv_gold',     bg = COLOR.DY,          fg = COLOR.lY, fg2 = COLOR.Y },
-    { id = 'achv_platinum', bg = COLOR.DJ,          fg = COLOR.lJ, fg2 = COLOR.J },
-    { id = 'achv_diamond',  bg = COLOR.DP,          fg = COLOR.lP, fg2 = COLOR.lB },
-    { id = 'achv_issued',   bg = COLOR.DM,          fg = COLOR.lM, fg2 = COLOR.lM },
-}
-for i = 0, 6 do MSG.addCategory(AchvData[i].id, AchvData[i].bg, COLOR.L, TEXTURE.achievement.frame[i]) end
-for i = 1, 6 do MSG.addCategory("wreath_" .. i, AchvData[5].bg, COLOR.L, GC.load { w = 256, { 'draw', TEXTURE.achievement.frame[5] }, { 'draw', TEXTURE.achievement.wreath[i] } }) end
-MSG.addCategory('achv_badTime', {.126, 0, 0}, COLOR.L, TEXTURE.achievement.frame[6])
 
 local msgTime = 0
 local bufferedMsg = {}
@@ -1011,10 +1022,10 @@ end
 
 BgScale = 1
 
-require 'module/game_data'
-require 'module/achv_data'
-require 'module/shader'
-require 'module/game'
+CHAR = require 'module/char'
+require 'data/base'
+SHADER = require 'module/shader'
+GAME = require 'module/game'
 
 for i = 1, #ModData.deck do table.insert(Cards, require 'module/card'.new(ModData.deck[i])) end
 GAME.refreshLayout()
@@ -1022,17 +1033,24 @@ for i, C in ipairs(Cards) do
     Cards[C.id], C.x, C.y = C, C.tx, C.ty + 260 + 26 * 1.6 ^ i
 end
 
+MSG.setSafeY(75)
+MSG.addCategory('dark', COLOR.D, COLOR.L)
+MSG.addCategory('bright', COLOR.L, COLOR.D)
+for i = 0, 6 do MSG.addCategory(AchvData[i].id, AchvData[i].bg, COLOR.L, TEXTURE.achievement.frame[i]) end
+for i = 1, 6 do MSG.addCategory("wreath_" .. i, AchvData[5].bg, COLOR.L, GC.load { w = 256, { 'draw', TEXTURE.achievement.frame[5] }, { 'draw', TEXTURE.achievement.wreath[i] } }) end
+MSG.addCategory('achv_badTime', {.126, 0, 0}, COLOR.L, TEXTURE.achievement.frame[6])
+
 SCN.addSwapStyle('warp', require 'module/warp_swap')
 
-SCN.add('joining', require 'module/scene/joining')
-SCN.add('tower', require 'module/scene/tower')
-SCN.add('stat', require 'module/scene/stat')
-SCN.add('records', require 'module/scene/records')
-SCN.add('achv', require 'module/scene/achv')
-SCN.add('conf', require 'module/scene/conf')
-SCN.add('about', require 'module/scene/about')
-SCN.add('zcem', require 'module/scene/zcem')
-SCN.add('ending', require 'module/scene/ending')
+SCN.add('joining', require 'scene/joining')
+SCN.add('tower', require 'scene/tower')
+SCN.add('stat', require 'scene/stat')
+SCN.add('records', require 'scene/records')
+SCN.add('achv', require 'scene/achv')
+SCN.add('conf', require 'scene/conf')
+SCN.add('about', require 'scene/about')
+SCN.add('ending', require 'scene/ending')
+SCN.add('zcem', require 'scene/zcem')
 ZENITHA.setFirstScene('joining')
 
 local gc = love.graphics
@@ -1243,8 +1261,8 @@ function RefreshBGM(mode)
         if GAME.slowmo then pitch = pitch / 2 end
         if GAME.nightcore then pitch = pitch * 2 end
         -- Trevor Smithy
-        if GAME.eslowmo then pitch = pitch * 2^(-1/2) end
-        if GAME.enightcore then pitch = pitch * 2 end
+        if GAME.eslowmo and not (GAME.badTime and GAME.playing) then pitch = pitch * 2^(-1/2) end
+        if GAME.enightcore and not (GAME.badTime and GAME.playing) then pitch = pitch * 2 end
         --
     else
         pitch = GAME.nightcore and GAME.manualBGMPitch or GAME.slowmo and 1/GAME.manualBGMPitch or pitch
@@ -1405,7 +1423,7 @@ end
 function ReloadTexts()
     local sep = (TEXTS.mod:getFont():getHeight() + TEXTS.title:getFont():getHeight()) / 2
     for _, text in next, TEXTS do text:setFont(FONT.get(text:getFont():getHeight() < sep and 30 or 50)) end
-    for _, text in next, ShortCut do text:setFont(FONT.get(text:getFont():getHeight() < sep and 30 or 50)) end
+    for _, text in next, CardHintText do text:setFont(FONT.get(text:getFont():getHeight() < sep and 30 or 50)) end
     for _, quest in next, GAME.quests do quest.name:setFont(FONT.get(70)) end
     TEXTS.height:setFont(FONT.get(30))
     TEXTS.time:setFont(FONT.get(30))
@@ -1679,6 +1697,16 @@ function WIDGET._prototype.button:draw()
     -- Drawable
     gc.setColor(self.textColor)
     WIDGET._alignDraw(self, self._text, 0, 0, 0, 1.2, 1.2 - 2.4 * GAME.revTimer)
+    if self._image then
+        local startX = self.alignX == 'center' and 0 or self.alignX == 'left' and -w * .5 + self.marginX or w * .5 - self.marginX
+        local startY = self.alignY == 'center' and 0 or self.alignY == 'top' and -h * .5 + self.marginY or h * .5 - self.marginY
+        gc.setColor(self.imageColor)
+        if self.quad then
+            WIDGET._alignDrawQ(self, self._image, self.quad, startX, startY)
+        else
+            WIDGET._alignDraw(self, self._image, startX, startY)
+        end
+    end
 
     -- Highlight
     if self._hoverTime > 0 then

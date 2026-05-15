@@ -262,6 +262,17 @@ function Initialize(save)
         MSG('dark', "Save fixed to correctly be for mod:'easyMode'")
         SaveStat()
     end
+    if STAT.easyModeClicker then
+        if STAT.clicker and STAT.unlockAll then
+            STAT.greenClicker = true
+            STAT.easyModeClicker = false
+        else
+            STAT.easyModeClicker = false
+            MSG('dark', "Illegitimate Easy Mode Clicker status revoked!")
+        end
+        SaveStat()
+    end
+
     GAME.refreshLockState()
     GAME.refreshPBText()
     love.window.setFullscreen(STAT.fullscreen)

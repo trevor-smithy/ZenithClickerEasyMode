@@ -17,8 +17,8 @@ function scene.update(dt)
         if t1 <= 0 then
             TEXTS.load:set("GETTING READY TO SPECTATE...")
             BGM.setMaxSources(42)
-            BGM.load(FILE.load('module/bgm_data.lua', '-luaon'))
-            SFX.load('assets/sfx.ogg', FILE.load('module/sfx_data.lua', '-luaon'))
+            BGM.load(FILE.load('data/bgm.lua', '-luaon'))
+            SFX.load('assets/sfx.ogg', FILE.load('data/sfx.lua', '-luaon'))
             for i = 1, 9 do
                 SFX.load('garbagewindup_'..i, 'assets/windup_'..i..'.ogg')
             end

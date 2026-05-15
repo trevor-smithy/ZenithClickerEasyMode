@@ -950,7 +950,8 @@ scene.widgetList = {
                 if res1.mod == "A Fool's Mod" then modText = "The Creator thinks you're foolish for trying to use that here"
                 elseif res1.mod == "evilvile" then modText = "The Creator wants nothing to do with something that evil"
                 elseif res1.mod == "shimmer" then modText = "The Creator asks you to keep your sparkling water away from his creation"
-                elseif res1.mod == "unabstracted" then modText = "The Creator prefers his work abstract" end
+                elseif res1.mod == "unabstracted" then modText = "The Creator prefers his work abstract"
+                elseif res1.mod == "finalmixbeg" then modText = "The Creator rejects your chakras and magics" end
                 MSG('dark', modText)
                 SFX.play('staffwarning')
                 return

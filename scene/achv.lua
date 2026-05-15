@@ -90,7 +90,7 @@ function RefreshAchvList(canShuffle)
                 wreath = r >= 5 and floor(MATH.clampInterpolate(0, 0, .9999, 6, r % 1)) or 0
                 if A.type ~= 'issued' then
                     overallProgress.rank[rank] = overallProgress.rank[rank] + 1
-                    if wreath > 0 then overallProgress.wreath[wreath] = overallProgress.wreath[wreath] + 1 end
+                    overallProgress.wreath[wreath] = overallProgress.wreath[wreath] + 1
                     if A.type == 'competitive' then
                         overallProgress.ptGet = overallProgress.ptGet + floor(rank)
                         overallProgress.ptAll = overallProgress.ptAll + 5
@@ -219,6 +219,7 @@ function RefreshAchvList(canShuffle)
             end
         end
     end
+    print(TABLE.dump(overallProgress))
 end
 
 local function submit(id, score, silent, realSilent)
@@ -368,7 +369,22 @@ local function refreshAchivement()
     RefreshAchvList()
 end
 
+local achvIconInit
 function scene.load()
+    if not achvIconInit then
+        achvIconInit = true
+        TEXTURE.achievement.icons = GC.initCanvas(4096, 2048, function()
+            GC.setShader(GC.newShader [[
+                vec4 effect(vec4 color, sampler2D tex, vec2 texCoord, vec2 scrCoord) {
+                    vec4 t = texture2D(tex, texCoord);
+                    return vec4(1., 1., 1., (t.r+t.g+t.b)/3.);
+                }
+            ]])
+            GC.draw(TEXTURE.achievement.icons)
+            GC.setShader()
+            TEXTURE.achievement.icons:release()
+        end)
+    end
     SetMouseVisible(true)
     if GAME.anyRev ~= colorRev then
         colorRev = GAME.anyRev
@@ -398,25 +414,13 @@ function scene.unload()
 end
 
 function scene.mouseMove(_, _, _, dy)
-    local mvl
-    if M.VL == -1 then
-        mvl = 1
-    else
-        mvl = M.VL
-    end
     if love.mouse.isDown(1, 2) then
-        scroll = MATH.clamp(scroll - dy * (1 + mvl), 0, maxScroll)
+        scroll = MATH.clamp(scroll - dy * (1 + MATH.abs(M.VL)), 0, maxScroll)
     end
 end
 
 function scene.touchMove(_, _, _, dy)
-    local mvl
-    if M.VL == -1 then
-        mvl = 1
-    else
-        mvl = M.VL
-    end
-    scroll = MATH.clamp(scroll - dy * (1 + mvl), 0, maxScroll)
+    scroll = MATH.clamp(scroll - dy * (1 + MATH.abs(M.VL)), 0, maxScroll)
 end
 
 function scene.keyDown(key, isRep)
@@ -430,13 +434,7 @@ function scene.keyDown(key, isRep)
 end
 
 function scene.wheelMove(_, dy)
-    local mvl
-    if M.VL == -1 then
-        mvl = 1
-    else
-        mvl = M.VL
-    end
-    scroll = MATH.clamp(scroll - dy * 100 * (1 + mvl), 0, maxScroll)
+    scroll = MATH.clamp(scroll - dy * 100 * (1 + MATH.abs(M.VL)), 0, maxScroll)
 end
 
 function scene.update(dt)
@@ -565,145 +563,145 @@ function scene.draw()
                     gc_ucs_move(i % 2 == 1 and -626 or 26, floor((i - 1) / 2) * 140)
                 end
                 if a.id ~= '' then
-                -- Bottom rectangle
-                if hyper then
-                    if overallProgress.countStart == 6 then
-                        gc_setColor(COLOR.rainbow_dark(i / 2.6 - t * 2.6, .42))
-                    elseif a.type == 'competitive' and (notAllRank5 and a.rank or a.wreath) == overallProgress.countStart then
-                        gc_setColor(.26 + .1 * sin(t * 2.6 + ceil(i / 2) * 1.2), 0, 0, .626)
+                    -- Bottom rectangle
+                    if hyper then
+                        if overallProgress.countStart == 6 then
+                            gc_setColor(COLOR.rainbow_dark(i / 2.6 - t * 2.6, .42))
+                        elseif a.type == 'competitive' and (notAllRank5 and a.rank or a.wreath) == overallProgress.countStart then
+                            gc_setColor(.26 + .1 * sin(t * 2.6 + ceil(i / 2) * 1.2), 0, 0, .626)
+                        else
+                            gc_setColor(0, 0, 0, .626)
+                        end
                     else
                         gc_setColor(0, 0, 0, .626)
                     end
-                else
-                    gc_setColor(0, 0, 0, .626)
-                end
-                gc_rectangle('fill', 0, 0, 600, 130)
-
-                -- Flashing notice
-                if AchvNotice[a.id] then
-                    gc_setColor(1, 1, 1, .1 + .1 * sin(t * (6.2 + M.VL * 4.2)))
                     gc_rectangle('fill', 0, 0, 600, 130)
-                end
 
-                -- Badge base
-                gc_setColor(1, 1, 1)
-                gc_mDraw(texture.frame[a.rank], 65, 65, 0, .42)
-
-                -- Progress ring
-                if a.progress > 0 then
-                    if colorRev then gc_setColor(COLOR.lR) end
-                    if a.progress < 1 then
-                        gc_stc_setComp()
-                        gc_stc_arc('pie', 65, 65,
-                            ea + -2.0944,
-                            ea + -2.0944 + ka * a.progress,
-                            63, 26)
-                        gc_stc_arc('pie', 65, 65,
-                            ea + 1.0472,
-                            ea + 1.0472 + ka * a.progress,
-                            63, 26)
+                    -- Flashing notice
+                    if AchvNotice[a.id] then
+                        gc_setColor(1, 1, 1, .1 + .1 * sin(t * (6.2 + M.VL * 4.2)))
+                        gc_rectangle('fill', 0, 0, 600, 130)
                     end
-                    gc_mDraw(texture.ring, 65, 65, 0, .42)
-                    gc_mDraw(texture.ring, 65, 65, 3.1416, .42)
-                    gc_stc_stop()
-                end
 
-                -- Glint
-                if a.rank >= 1 then
-                    gc_setBlendMode('add')
-                    gc_setColor(1, 1, 1, .1 + .2 * sin(i * 2.6 + t * 2.1))
-                    gc_mDraw(texture.glint_1, 65, 65, 0, .42)
-                    gc_setColor(1, 1, 1, .1 + .2 * sin(i * 2.6 + t * 2.3))
-                    gc_mDraw(texture.glint_2, 65, 65, 0, .42)
-                    gc_setColor(1, 1, 1, .1 + .2 * sin(i * 2.6 + t * 2.6))
-                    gc_mDraw(texture.glint_3, 65, 65, 0, .42)
-                    gc_setBlendMode('alpha')
-                end
-
-                -- Icon
-                local slice = texture.iconQuad[a.id]
-                if slice and (a.rank > 0 or a.progress > 0) then
-                    if a.rank > 0 then
-                        gc_setColor(0, 0, 0, .872)
-                    else
-                        gc_setColor(1, 1, 1, .26)
-                    end
-                    if a.id == "-3" or a.id == "-4"or a.id == "-5" or a.id == "-6" or a.id == "-7" or a.id == "-8" or a.id == "-9" then
-                        gc_mDrawQ(texture.icons, slice or texture.iconQuad._undef, 65, 65, math.pi, .24)
-                    else
-                        gc_mDrawQ(texture.icons, slice or texture.iconQuad._undef, 65, 65, 0, .24)
-                    end
-                end
-
-                -- Wreath
-                if a.wreath > 0 then
+                    -- Badge base
                     gc_setColor(1, 1, 1)
-                    gc_mDraw(texture.wreath[a.wreath], 65, 65, 0, .42)
-                end
+                    gc_mDraw(texture.frame[a.rank], 65, 65, 0, .42)
 
-                -- Credit
-                gc_setColor(colorRev and COLOR.dR or COLOR.LD)
-                gc_printf(A.credit, 65, 113, 130 / .37, 'center', 0, .37, .37, 65 / .37)
-
-                -- Tags
-                local x = 600 - 15
-                if A.ex then
-                    gc_mDraw(texture.extra, x, 15, 0, .42)
-                    x = x - 30
-                end
-                if a.hidden then
-                    gc_mDraw(texture.hidden, x, 15, 0, .2)
-                    x = x - 30
-                end
-                if A.type == 'event' then
-                    gc_mDraw(texture.event, x, 15, 0, .2)
-                    x = x - 30
-                end
-                if A.type == 'competitive' then
-                    gc_mDraw(texture.competitive, x, 15, 0, .2)
-                    x = x - 30
-                else
-                    gc_mDraw(texture.unranked, x, 15, 0, .2)
-                    x = x - 30
-                end
-
-                -- Dev
-                if a.overDev then
-                    if a.id == 'programmer_gamer' or a.id == 'one_of_mine' or a.id == 'ggbw' or a.id == 'perfect_speedrun_plus' or a.id == 'perfectly_balanced' or a.id == 'peasant_revolution' 
-                    or a.id == 'holy_ascention' or a.id == 'stabilized_entropy' or a.id == 'restrained_collapse' or a.id == 'restored_volition' or a.id == 'disproven_blasphemy' 
-                    or a.id == 'solved_paradox' or a.id == 'demystified_grimoire' or a.id == 'restored_eden' or a.id == 'your_too_fast' 
-                    or a.id == 'eEX' or a.id == 'eNH' or a.id == 'eMS' or a.id == 'eGV' or a.id == 'eVL' or a.id == 'eDH' or a.id == 'eIN' or a.id == 'eAS' or a.id == 'eDP'
-                    or a.id == 'emperor_development' or a.id == 'quest_feast' or a.id == 'best_friends' or a.id == 'humble_pupil' or a.id == 'shameless_cashgrab' 
-                    or a.id == 'overweight_gamer' or a.id == 'clean_gamer' or a.id == 'clean_break' or a.id == 'professional_cleaner' or a.id == 'rold_smythy' 
-                    or a.id == "-3" or a.id == "-4"or a.id == "-5" or a.id == "-6" or a.id == "-7" or a.id == "-8" or a.id == "-9" then
-                        gc_setColor(0, 1, 0, .1)
-                    elseif a.id == 'ueEX' or a.id == 'ueEXeNH' or a.id == 'ueEXeMS' or a.id == 'ueEXeGV' or a.id == 'ueEXeVL' or a.id == 'ueEXeDH' or a.id == 'ueEXeIN' or a.id == 'ueEXeAS' or a.id == 'ueEXeDP' then
-                        gc_setColor(1, 0, 0, .2)
-                    else
-                        gc_setColor(1, 1, 1, .1)
+                    -- Progress ring
+                    if a.progress > 0 then
+                        if colorRev then gc_setColor(COLOR.lR) end
+                        if a.progress < 1 then
+                            gc_stc_setComp()
+                            gc_stc_arc('pie', 65, 65,
+                                ea + -2.0944,
+                                ea + -2.0944 + ka * a.progress,
+                                63, 26)
+                            gc_stc_arc('pie', 65, 65,
+                                ea + 1.0472,
+                                ea + 1.0472 + ka * a.progress,
+                                63, 26)
+                        end
+                        gc_mDraw(texture.ring, 65, 65, 0, .42)
+                        gc_mDraw(texture.ring, 65, 65, 3.1416, .42)
+                        gc_stc_stop()
                     end
-                    gc_mDraw(texture.overDev, 565, 75, 0, .26)
-                end
 
-                -- Texts
-                gc_setColor(AchvData[a.rank].fg2)
-                gc_print(a.score, 130, 35, 0)
-                gc_setColor(colorRev and COLOR.LR or COLOR.L)
-                gc_print(a.name, 130, 7, 0, .7)
-                if a.descWidth < 1050 then
-                    gc_print(a.desc, 130, 77, 0, min(400 / a.descWidth, .4), .4)
-                else
-                    gc_printf(a.desc, 130, 73, 1050, 'left', 0, .4)
-                end
-                gc_setColor(colorRev and COLOR.dR or COLOR.LD)
-                gc_print(A.quote, 130, a.descWidth <= 1050 and 98 or 103, 0, .42)
+                    -- Glint
+                    if a.rank >= 1 then
+                        gc_setBlendMode('add')
+                        gc_setColor(1, 1, 1, .1 + .2 * sin(i * 2.6 + t * 2.1))
+                        gc_mDraw(texture.glint_1, 65, 65, 0, .42)
+                        gc_setColor(1, 1, 1, .1 + .2 * sin(i * 2.6 + t * 2.3))
+                        gc_mDraw(texture.glint_2, 65, 65, 0, .42)
+                        gc_setColor(1, 1, 1, .1 + .2 * sin(i * 2.6 + t * 2.6))
+                        gc_mDraw(texture.glint_3, 65, 65, 0, .42)
+                        gc_setBlendMode('alpha')
+                    end
 
-                -- Hidden covering
-                if M.IN > 0 then
-                    gc_setColor(clr.D)
-                    gc_setAlpha(M.IN * (.3 + .1 * sin(ceil(i / 2) * 1.2 - t * 2.6)))
-                    gc_rectangle('fill', 0, 0, 600, 130)
-                end
+                    -- Icon
+                    local slice = texture.iconQuad[a.id]
+                    if slice and (a.rank > 0 or a.progress > 0) then
+                        if a.rank > 0 then
+                            gc_setColor(0, 0, 0, .872)
+                        else
+                            gc_setColor(1, 1, 1, .26)
+                        end
+                        if a.id == "-3" or a.id == "-4"or a.id == "-5" or a.id == "-6" or a.id == "-7" or a.id == "-8" or a.id == "-9" then
+                            gc_mDrawQ(texture.icons, slice or texture.iconQuad._undef, 65, 65, math.pi, .24)
+                        else
+                            gc_mDrawQ(texture.icons, slice or texture.iconQuad._undef, 65, 65, 0, .24)
+                        end
+                    end
+
+                    -- Wreath
+                    if a.wreath > 0 then
+                        gc_setColor(1, 1, 1)
+                        gc_mDraw(texture.wreath[a.wreath], 65, 65, 0, .42)
+                    end
+
+                    -- Credit
+                    gc_setColor(colorRev and COLOR.dR or COLOR.LD)
+                    gc_printf(A.credit, 65, 113, 130 / .37, 'center', 0, .37, .37, 65 / .37)
+
+                    -- Tags
+                    local x = 600 - 15
+                    if A.ex then
+                        gc_mDraw(texture.extra, x, 15, 0, .42)
+                        x = x - 30
+                    end
+                    if a.hidden then
+                        gc_mDraw(texture.hidden, x, 15, 0, .2)
+                        x = x - 30
+                    end
+                    if A.type == 'event' then
+                        gc_mDraw(texture.event, x, 15, 0, .2)
+                        x = x - 30
+                    end
+                    if A.type == 'competitive' then
+                        gc_mDraw(texture.competitive, x, 15, 0, .2)
+                        x = x - 30
+                    else
+                        gc_mDraw(texture.unranked, x, 15, 0, .2)
+                        x = x - 30
+                    end
+
+                    -- Dev
+                    if a.overDev then
+                        if a.id == 'programmer_gamer' or a.id == 'one_of_mine' or a.id == 'ggbw' or a.id == 'perfect_speedrun_plus' or a.id == 'perfectly_balanced' or a.id == 'peasant_revolution' 
+                        or a.id == 'holy_ascention' or a.id == 'stabilized_entropy' or a.id == 'restrained_collapse' or a.id == 'restored_volition' or a.id == 'disproven_blasphemy' 
+                        or a.id == 'solved_paradox' or a.id == 'demystified_grimoire' or a.id == 'restored_eden' or a.id == 'your_too_fast' 
+                        or a.id == 'eEX' or a.id == 'eNH' or a.id == 'eMS' or a.id == 'eGV' or a.id == 'eVL' or a.id == 'eDH' or a.id == 'eIN' or a.id == 'eAS' or a.id == 'eDP'
+                        or a.id == 'emperor_development' or a.id == 'quest_feast' or a.id == 'best_friends' or a.id == 'humble_pupil' or a.id == 'shameless_cashgrab' 
+                        or a.id == 'overweight_gamer' or a.id == 'clean_gamer' or a.id == 'clean_break' or a.id == 'professional_cleaner' or a.id == 'rold_smythy' 
+                        or a.id == "-3" or a.id == "-4"or a.id == "-5" or a.id == "-6" or a.id == "-7" or a.id == "-8" or a.id == "-9" then
+                            gc_setColor(0, 1, 0, .1)
+                        elseif a.id == 'ueEX' or a.id == 'ueEXeNH' or a.id == 'ueEXeMS' or a.id == 'ueEXeGV' or a.id == 'ueEXeVL' or a.id == 'ueEXeDH' or a.id == 'ueEXeIN' or a.id == 'ueEXeAS' or a.id == 'ueEXeDP' then
+                            gc_setColor(1, 0, 0, .2)
+                        else
+                            gc_setColor(1, 1, 1, .1)
+                        end
+                        gc_mDraw(texture.overDev, 565, 75, 0, .26)
+                    end
+
+                    -- Texts
+                    gc_setColor(AchvData[a.rank].fg2)
+                    gc_print(a.score, 130, 35, 0)
+                    gc_setColor(colorRev and COLOR.LR or COLOR.L)
+                    gc_print(a.name, 130, 7, 0, .7)
+                    if a.descWidth < 1050 then
+                        gc_print(a.desc, 130, 77, 0, min(400 / a.descWidth, .4), .4)
+                    else
+                        gc_printf(a.desc, 130, 73, 1050, 'left', 0, .4)
+                    end
+                    gc_setColor(colorRev and COLOR.dR or COLOR.LD)
+                    gc_print(A.quote, 130, a.descWidth <= 1050 and 98 or 103, 0, .42)
+
+                    -- Hidden covering
+                    if M.IN > 0 then
+                        gc_setColor(clr.D)
+                        gc_setAlpha(M.IN * (.3 + .1 * sin(ceil(i / 2) * 1.2 - t * 2.6)))
+                        gc_rectangle('fill', 0, 0, 600, 130)
+                    end
                 end
                 gc_ucs_back()
             end
