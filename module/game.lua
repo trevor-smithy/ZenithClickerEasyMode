@@ -890,7 +890,12 @@ function GAME.genQuest()
         if #GAME.questStack then
             for i = 1, #GAME.questStack do
                 for j = 1, #GAME.questStack[i].combo do
-                    pool[GAME.questStack[i].combo[j]] = pool[GAME.questStack[i].combo[j]] - 0.8*pool[GAME.questStack[i].combo[j]]
+                    if M.NH == 2 then
+                        -- More probability to repeat stack quest's mods on rNH
+                        pool[GAME.questStack[i].combo[j]] = pool[GAME.questStack[i].combo[j]] + 0.2*pool[GAME.questStack[i].combo[j]]
+                    else
+                        pool[GAME.questStack[i].combo[j]] = pool[GAME.questStack[i].combo[j]] - 0.8*pool[GAME.questStack[i].combo[j]]
+                    end
                 end
             end
         end
@@ -2666,7 +2671,7 @@ function GAME.commit(auto, falseCommit)
         if attack > 0 then GAME.addHeight(attack * GAME.attackMul) end
         GAME.addXP(attack + xp)
         rem(GAME.questStack, 1)
-        GAME.cancelAll(true)
+        if M.NH < 2 then GAME.cancelAll(true) end
         GAME.cancelBurn()
         GAME.fault = true
         GAME.questTime = 0
