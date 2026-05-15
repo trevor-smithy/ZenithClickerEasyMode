@@ -1261,8 +1261,8 @@ function RefreshBGM(mode)
         if GAME.slowmo then pitch = pitch / 2 end
         if GAME.nightcore then pitch = pitch * 2 end
         -- Trevor Smithy
-        if GAME.eslowmo then pitch = pitch * 2^(-1/2) end
-        if GAME.enightcore then pitch = pitch * 2 end
+        if GAME.eslowmo and not (GAME.badTime and GAME.playing) then pitch = pitch * 2^(-1/2) end
+        if GAME.enightcore and not (GAME.badTime and GAME.playing) then pitch = pitch * 2 end
         --
     else
         pitch = GAME.nightcore and GAME.manualBGMPitch or GAME.slowmo and 1/GAME.manualBGMPitch or pitch

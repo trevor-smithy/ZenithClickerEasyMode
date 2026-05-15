@@ -3123,7 +3123,7 @@ function GAME.commit(auto, falseCommit)
             if eDPCorrect and correct == 1 then
                 rem(GAME.quests, 3)
                 GAME.totalQuest = GAME.totalQuest + 1
-                if not allyWasDead then
+                if not allyWasDead and M.NH < 2 then
                     for i = 1, #CD do
                         if CD[i].active ~= CD[i].required2 then
                             CD[i]:setActive(false)
@@ -3139,7 +3139,7 @@ function GAME.commit(auto, falseCommit)
                     SFX.play('card_slide_' .. rnd(4), .62)
                     SFX.play(GAME.alleyoopCheck and 'social_notify_major' or 'social_notify_minor')
                 end
-            elseif eDPCorrect and not allyWasDead then
+            elseif eDPCorrect and not allyWasDead and M.NH < 2 then
                 for i = 1, #CD do
                     if CD[i].active ~= CD[i].required then
                         CD[i]:setActive(false)
@@ -4297,7 +4297,7 @@ function GAME.update(dt)
 
     -- Timers
     -- Trevor Smithy
-    local timerMulMod = 1 * (GAME.eslowmo and 0.75 or 1) * (GAME.ecloseCard and 2 or 1)
+    local timerMulMod = 1 * (GAME.eslowmo and not GAME.badTime and 0.75 or 1) * (GAME.ecloseCard and not GAME.badTime and 2 or 1)
     GAME.time = GAME.time + dt * (GAME.timerMul * timerMulMod)
     local r = min(GAME.rank, 62)
     GAME.rankTimer[r] = GAME.rankTimer[r] + dt
@@ -4478,6 +4478,9 @@ function GAME.update(dt)
                 end
                 if GAME.height < NegFloors[GAME.negFloor].bottom and not GAME.einvisUI then GAME.downFloor() end
                 if GAME.height < NegEvents[GAME.negEvent].h then GAME.nextNegEvent() end
+                if GAME.height <= -1650 and GAME.badTime and BgmPlaying ~= "fomg" then
+                    PlayBGM('fomg', true)
+                end
                 if GAME.height <= -1800 and GAME.badTime and not STAT.greenClicker then 
                     STAT.greenClicker = true 
                     MSG("bright", "YOU DID A THING!")

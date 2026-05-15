@@ -889,13 +889,13 @@ function Card:draw()
                         gc_setAlpha(1.26/temp + sin(love.timer.getTime() * 5.2/temp)/(2*temp))
                     end
                     if self.active and GAME.playing then
-                        if (q2 and TABLE.equal(hand, q2)) or (M.DP == -1 and GAME[GAME.getLifeKey(true)] > 0 and q3 and q1 and TABLE.equal(hand, q3) and TABLE.equal(hand, q1)) then
+                        if (q2 and TABLE.equal(hand, q2)) or (M.DP == -1 and GAME[GAME.getLifeKey(true)] > 0 and M.NH < 2 and q3 and q1 and TABLE.equal(hand, q3) and TABLE.equal(hand, q1)) then
                             gc_setColor(0.13,1,0)
                         else
                             gc_setColor(1,1,0)
                         end
                         gc_setAlpha(min(1, 3/temp))
-                    elseif GAME.playing and (M.DP == -1 and GAME[GAME.getLifeKey(true)] > 0 and q3 and q1 and TABLE.equal(hand, q3) and TABLE.equal(hand, q1)) then
+                    elseif GAME.playing and (M.DP == -1 and GAME[GAME.getLifeKey(true)] > 0 and M.NH < 2 and q3 and q1 and TABLE.equal(hand, q3) and TABLE.equal(hand, q1)) then
                         gc_setColor(0.13,1,0)
                     end
                     gc_setLineWidth(width/2)
