@@ -194,31 +194,6 @@ function scene.update(dt)
     end
 end
 
-local bindHint = {
-    "CARD-1",
-    "CARD-2",
-    "CARD-3",
-    "CARD-4",
-    "CARD-5",
-    "CARD-6",
-    "CARD-7",
-    "CARD-8",
-    "CARD-9",
-    "CARD-1 (2nd)",
-    "CARD-2 (2nd)",
-    "CARD-3 (2nd)",
-    "CARD-4 (2nd)",
-    "CARD-5 (2nd)",
-    "CARD-6 (2nd)",
-    "CARD-7 (2nd)",
-    "CARD-8 (2nd)",
-    "CARD-9 (2nd)",
-    "COMMIT",
-    "RESET",
-    "LEFTCLK",
-    "RIGHTCLK",
-}
-
 local KBisDown = love.keyboard.isDown
 function scene.keyDown(key, isRep)
     if isRep then return true end
