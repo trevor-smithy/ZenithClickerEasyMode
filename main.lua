@@ -1070,7 +1070,6 @@ SCN.add('achv', require 'scene/achv')
 SCN.add('conf', require 'scene/conf')
 SCN.add('about', require 'scene/about')
 SCN.add('ending', require 'scene/ending')
-SCN.add('zcem', require 'scene/zcem')
 ZENITHA.setFirstScene('joining')
 
 local gc = love.graphics
@@ -1463,7 +1462,6 @@ function ReloadTexts()
     for _, W in next, SCN.scenes.conf.widgetList do W:reset() end
     for _, W in next, SCN.scenes.about.widgetList do W:reset() end
     for _, W in next, SCN.scenes.records.widgetList do W:reset() end
-    for _, W in next, SCN.scenes.zcem.widgetList do W:reset() end
     AchvText:setFont(FONT.get(30))
     AboutText:setFont(FONT.get(70))
     DevNoteText:setFont(FONT.get(30))

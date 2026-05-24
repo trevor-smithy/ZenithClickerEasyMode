@@ -305,8 +305,6 @@ local function keyTrigger(key)
                         scene.widgetList.stat:resetPos()
                         scene.widgetList.achv.x = -100
                         scene.widgetList.achv:resetPos()
-                        scene.widgetList.zcem.x = 100
-                        scene.widgetList.zcem:resetPos()
                         scene.widgetList.about.x = 100
                         scene.widgetList.about:resetPos()
                         scene.widgetList.conf.x = 100
@@ -385,17 +383,6 @@ local function keyTrigger(key)
                 comboTimer = 3
             end
             GAME.anyChange = false
-        elseif key == 'f15' then
-            if GAME.playing or GAME.badTime then
-                SFX.play('no')
-            else
-                if URM and M.VL == 2 and not UltraVlCheck('zcem') then return end
-                SFX.play('menuhit1')
-                SCN.go('zcem', 'none')
-            end
-            local W = scene.widgetList.zcem
-            W._pressTime = W._pressTimeMax * 2
-            W._hoverTime = W._hoverTimeMax
         end
     end
 end
@@ -2229,15 +2216,6 @@ scene.widgetList = {
         fontSize = 30, text = "ABOUT ", textColor = { COLOR.HEX '909090' },
         onPress = function() love.keypressed('f2') end,
         onClick = function() love.keyreleased('f2') end,
-    },
-    WIDGET.new {
-        name = 'zcem', type = 'button',
-        pos = { 1, 0 }, x = -60, y = 410, w = 160, h = 60,
-        color = 'DG',
-        sound_hover = 'menutap',
-        fontSize = 30, text = "ZCEM   ", textColor = { .15, .75, .15 },
-        onPress = function() love.keypressed('f15') end,
-        onClick = function() love.keyreleased('f15') end,
     },
     WIDGET.new {
         name = 'start', type = 'button',

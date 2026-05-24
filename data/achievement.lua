@@ -2157,7 +2157,7 @@ local d = {
     { -- music_man (1.1.2)
         id = 'music_man',
         name = "Music Man!!!",
-        desc = [[Enable the Music Player in ZCEM]],
+        desc = [[Access the Music Player via ZCEM]],
         quote = [["Wait, why is "GAME PLAY" a button? Also, isn't it just one word?"]],
         credit = "@TrevorSmithy",
         hide = TRUE,
