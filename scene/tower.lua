@@ -38,6 +38,7 @@ local function switchVisitor(bool)
         love.mouse.setRelativeMode(bool)
         ZENITHA._cursor.active = not bool
         for _, W in next, scene.widgetList do W:setVisible(not bool) end
+        scene.widgetList.help2:setVisible()
         if usingTouch then scene.widgetList.help:setVisible(true) end
         if bool then IssueAchv('zenith_traveler') end
         TABLE.clear(HoldingButtons)
@@ -2330,9 +2331,9 @@ scene.widgetList = {
                     SFX.play('no')
                 end
             else
-                PieceSFXID = (PieceSFXID or 0) % #PieceData + 1
-                if PieceSFXID < #PieceData then
-                    local piece = ('zsjltoi'):sub(PieceSFXID, PieceSFXID)
+                GAME.pieceEffectID = GAME.pieceEffectID % #PieceData + 1
+                if GAME.pieceEffectID < #PieceData then
+                    local piece = ('zsjltoi'):sub(GAME.pieceEffectID, GAME.pieceEffectID)
                     SFX.play(piece, 1, 0, Tone(6))
                     if PieceSFXID > 7 then
                         SFX.play('combo_'..(PieceSFXID - 7)..'_power', 1, 0, Tone(0))
@@ -2342,7 +2343,7 @@ scene.widgetList = {
                 end
 
                 for i = 1, #PieceData - 1 do
-                    GAME[PieceData[i].id] = PieceSFXID == i
+                    GAME[PieceData[i].id] = GAME.pieceEffectID == i
                 end
 
                 GAME.refreshLayout()
@@ -2353,7 +2354,7 @@ scene.widgetList = {
                 GAME.multiplePiecesActive = false
                 MSG({
                     cat = 'dark',
-                    str = PieceData[PieceSFXID].popup,
+                    str = PieceData[GAME.pieceEffectID].popup,
                     time = 1.2
                 })
             end
