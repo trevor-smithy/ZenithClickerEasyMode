@@ -1952,7 +1952,7 @@ end
 ---@author: Trevor Smithy
 function GAME.anim_uneasyModIcon()
     -- called on game start if requirements met
-    local p = PieceSFXID
+    local p = GAME.pieceEffectID
     GAME.modIB:clear()
     local hand = GAME.getHand(true)
     table.sort(hand, modIconSorter)
@@ -4336,8 +4336,9 @@ function GAME.update(dt)
     local uneasyMode = (M.EX == -1 and URM and M.NH < 2 and M.MS < 2 and M.GV < 2 and M.VL < 2 and M.DH < 2 and M.IN < 2 and M.AS < 2 and M.DP < 2)
     if ((GAME.slowmo and GAME.time >= 2.6) or (not GAME.slowmo and GAME.time >= 1)) and not GAME.uneasyModIconSelected then
         if uneasyMode and #GAME.getHand(true) == 2 then
-            if PieceSFXID == 1 and M.DH == -1 or PieceSFXID == 2 and (M.MS == -1 or M.GV == -1) or PieceSFXID == 3 and M.NH == -1
-            or PieceSFXID == 4 and M.AS == -1 or PieceSFXID == 5 and M.DP == -1 or PieceSFXID == 6 and M.IN == -1 or PieceSFXID == 7 and M.VL == -1 then
+            local p = GAME.pieceEffectID
+            if p == 1 and M.DH == -1 or p == 2 and (M.MS == -1 or M.GV == -1) or p == 3 and M.NH == -1
+            or p == 4 and M.AS == -1 or p == 5 and M.DP == -1 or p == 6 and M.IN == -1 or p == 7 and M.VL == -1 then
                 TASK.new(GAME.anim_uneasyModIcon)
             end
         end

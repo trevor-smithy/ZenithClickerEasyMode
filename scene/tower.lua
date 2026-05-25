@@ -2335,8 +2335,8 @@ scene.widgetList = {
                 if GAME.pieceEffectID < #PieceData then
                     local piece = ('zsjltoi'):sub(GAME.pieceEffectID, GAME.pieceEffectID)
                     SFX.play(piece, 1, 0, Tone(6))
-                    if PieceSFXID > 7 then
-                        SFX.play('combo_'..(PieceSFXID - 7)..'_power', 1, 0, Tone(0))
+                    if GAME.pieceEffectID > 7 then
+                        SFX.play('combo_'..(GAME.pieceEffectID - 7)..'_power', 1, 0, Tone(0))
                     end
                 else
                     SFX.play('allclear')
