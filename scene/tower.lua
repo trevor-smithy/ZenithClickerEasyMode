@@ -299,7 +299,7 @@ local function keyTrigger(key)
                     SFX.play('combo_16' .. (power and '_power' or ''), 1, 0, Tone((power and (combo-1)/5 or 0)))
                     scene.widgetList.easy.x = -100
                     scene.widgetList.easy:resetPos()
-                    if power then
+                    if power and not GAME.playing then
                         GAME.fallout = true
                         scene.widgetList.stat.x = -100
                         scene.widgetList.stat:resetPos()
