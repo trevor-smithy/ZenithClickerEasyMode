@@ -2331,6 +2331,9 @@ scene.widgetList = {
                     SFX.play('no')
                 end
             else
+                if (k == 3 or kbIsDown('lalt', 'ralt') or next(easyHold)) and (GAME.pieceEffectID < 7 or GAME.pieceEffectID == #PieceData) then
+                    GAME.pieceEffectID = 7
+                end
                 GAME.pieceEffectID = GAME.pieceEffectID % #PieceData + 1
                 if GAME.pieceEffectID < #PieceData then
                     local piece = ('zsjltoi'):sub(GAME.pieceEffectID, GAME.pieceEffectID)
