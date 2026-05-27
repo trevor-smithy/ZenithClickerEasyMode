@@ -3410,10 +3410,10 @@ function GAME.finish(reason)
         W:reset()
     end
 
-    if GAME.smithyMode and (GAME.teramusic or GAME.teraLostHeight) then
+    if (GAME.teramusic or GAME.teraLostHeight) and GAME.smithyMode then
         SubmitAchv('programmer_gamer', GAME.teraLostHeight > 0 and GAME.teraLostHeight or GAME.roundHeight)
     end
-    if (GAME.teramusic or GAME.teraLostHeight) and URM and GAME.comboStr == "eASeDHeEXrGV" and GAME.enightcore then
+    if GAME.teramusic and URM and GAME.comboStr == "eASeDHeEXrGV" and GAME.enightcore then
         SubmitAchv('one_of_mine', GAME.achv_noManualCommitH or GAME.roundHeight) 
     end
     -- Perfectly Balanced
