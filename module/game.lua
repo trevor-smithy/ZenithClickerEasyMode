@@ -1154,7 +1154,8 @@ function GAME.addXP(xp, falseCommit)
             GAME.refreshRPC()
         end
         if GAME.gigaspeed and not GAME.teramusic and GAME.rank >= TeraMusicReq[GAME.floor] then
-            if (M.EX == -1 and M.VL == -1 and M.AS == -1 and (M.NH == 0 and M.MS == 0 and M.GV == 0 and M.DH == 0 and M.IN == 0 and M.DP == 0)) then GAME.smithyMode = true end
+            if GAME.comboStr == 'eASeEXeVL' then GAME.smithyMode = true end
+            GAME.teraLostHeight = 0
             GAME.startTeraAnim()
             GAME.refreshRPC()
         end
@@ -1813,13 +1814,11 @@ end
 --------------------------------------------------------------
 
 function GAME.refreshCurrentCombo()
-    GAME.forceRev = false
     local hand = GAME.getHand(not GAME.playing)
     local comboName = GAME.getComboName(hand, 'button')
-    if not GAME.playing and (M.EX == -1 and M.VL == -1 and M.AS == -1 and (M.NH == 0 and M.MS == 0 and M.GV == 0 and M.DH == 0 and M.IN == 0 and M.DP == 0)) then GAME.smithyMode = true else 
-        if not GAME.playing then GAME.smithyMode = false end
-    end
-    local uneasyMode = (M.EX == -1 and URM and M.NH < 2 and M.MS < 2 and M.GV < 2 and M.VL < 2 and M.DH < 2 and M.IN < 2 and M.AS < 2 and M.DP < 2)
+    local uneasyMode = (M.EX == -1 and URM and not GAME.anyRev)
+    if not GAME.playing then GAME.smithyMode = (table.concat(TABLE.sort(hand)) == 'eASeEXeVL') end
+    GAME.forceRev = false
     GAME.peasantRevolution = false
     -- SECRET COMBOS
     if comboName == "EASY BELIEVED DECEPTIVE TRANQUIL ASCENDANT DAMNED COLLAPSED PIERCING SPIN" then
@@ -3412,11 +3411,7 @@ function GAME.finish(reason)
     end
 
     if GAME.smithyMode and (GAME.teramusic or GAME.teraLostHeight) then
-        local smithyModeHeight = GAME.roundHeight
-        if GAME.teraLostHeight > 0 then
-            smithyModeHeight = GAME.teraLostHeight
-        end
-        SubmitAchv('programmer_gamer', smithyModeHeight)
+        SubmitAchv('programmer_gamer', GAME.teraLostHeight > 0 and GAME.teraLostHeight or GAME.roundHeight)
     end
     if (GAME.teramusic or GAME.teraLostHeight) and URM and GAME.comboStr == "eASeDHeEXrGV" and GAME.enightcore then
         SubmitAchv('one_of_mine', GAME.achv_noManualCommitH or GAME.roundHeight) 
