@@ -115,7 +115,7 @@ local ins, rem = table.insert, table.remove
 ---@field rankLimit number
 ---@field reviveCount number
 ---@field reviveDifficulty number
----@field killCount number
+---@field koAlly number
 ---@field quests Question[]
 ---@field reviveTasks ReviveTask[]
 ---@field currentTask ReviveTask?
@@ -224,6 +224,9 @@ local GAME = {
     ronnaFloor = {},
     quettaFloor = {},
     windupAnim = {}, ---@type Windup[]
+    koCharge = 0,
+    koBuffer = {}, ---@type {uid:string, timer:number, valid:boolean}[]
+    koAnim = {}, ---@type {id1:love.Text, id2:love.Text, a:number, timer:number, pos:number, showP1:boolean, toOppo:boolean}[]
 
     zenithTraveler = false,
     pieceEffectID = 0,
@@ -285,6 +288,7 @@ GAME.floorTime = 0
 GAME.f10Time = love.timer.getTime()
 GAME.reviveTime = false
 GAME.floor = 1
+GAME.negFloor = 1
 GAME.rank = 1
 GAME.xp = 0
 GAME.height = 0
@@ -295,6 +299,10 @@ GAME.comboBounceTime = 0
 local M = GAME.mod
 local MD = ModData
 local CD = Cards
+
+function GAME.ultrafyComboName(n)
+    return n:sub(1, 1) == '"' and '"ULTRA ' .. n:sub(n:sub(2, 4) == "THE" and 6 or 2) or "ULTRA " .. n
+end
 
 ---Unsorted, like {'rEX','NH',...}
 ---@param real boolean current mod setting or literally selected cards
@@ -1039,7 +1047,7 @@ function GAME.takeDamage(dmg, reason, toAlly)
         elseif GAME[GAME.getLifeKey(not toAlly)] > 0 then
             if toAlly then
                 SFX.play('elim')
-                GAME.killCount = GAME.killCount + 1
+                GAME.koAlly = GAME.koAlly + 1
             else
                 GAME.swapControl()
             end
@@ -1066,7 +1074,8 @@ function GAME.takeDamage(dmg, reason, toAlly)
     end
 end
 
-function GAME.addHeight(h, realHeight)
+function GAME.addHeight(h, realHeight, bypassDPlock)
+    if GAME.DPlock and not bypassDPlock then return end
     h = h * (realHeight and 1 or GAME.rank / 4)
     GAME.heightBonus = GAME.heightBonus + h
     GAME.heightBuffer = GAME.heightBuffer + h
@@ -1388,6 +1397,43 @@ function GAME.pieceCount()
     return ((GAME.nightcore and 1 or 0) + (GAME.enightcore and 1 or 0) + (GAME.slowmo and 1 or 0) + (GAME.eslowmo and 1 or 0) + (GAME.glassCard and 1 or 0) + (GAME.eglassCard and 1 or 0) + (GAME.fastLeak and 1 or 0) + (GAME.efastLeak and 1 or 0) + (GAME.invisUI and 1 or 0) + (GAME.einvisUI and 1 or 0) + (GAME.invisCard and 1 or 0) + (GAME.einvisCard and 1 or 0) + (GAME.closeCard and 1 or 0) + (GAME.ecloseCard and 1 or 0))
 end
 
+function GAME.getRandomUID()
+    local lib = UsernameData[
+    GAME.height < 0 and 1 or
+    GAME.height < 1000 and 2 or
+    GAME.height < 2600 and 3 or
+    GAME.height < 6200 and 4 or
+    5
+    ]
+
+    local uid
+    local attempts = 0
+    repeat
+        uid = TABLE.getRandom(lib)
+        attempts = attempts + 1
+    until uid ~= STAT.uid and (TASK.lock('uid_used_' .. uid, 260) or attempts >= 26)
+
+    if GAME.height < 0 then uid = uid:gsub("GUEST", "GHOST") end
+    return uid
+end
+
+function GAME.awardKO(id1, id2, valid, toOppo)
+    if GAME.playing and valid then GAME.addHeight((M.EX == 2 and 8 or 15) * .26 * GAME.attackMul) end
+    ins(GAME.koAnim, 1, {
+        id1 = GC.newText(FONT.get(30), id1),
+        id2 = GC.newText(FONT.get(30), id2),
+        a = 0,
+        timer = 4.2,
+        pos = 0,
+        showP1 = id1 ~= id2,
+        toOppo = toOppo,
+    })
+    if toOppo then
+        GAME.koCount = GAME.koCount + 1
+        SFX.play('elim', .5)
+    end
+end
+
 function GAME.upFloor()
     local roundFloorTime = roundUnit(GAME.floorTime, .001)
     local roundTime = roundUnit(GAME.time, .001)
@@ -1697,8 +1743,7 @@ function GAME.refreshRPC()
             local comboName = GAME.getComboName(hand, 'rpc')
             stateStr = stateStr .. " - "
             if GAME.anyUltra then
-                ---@cast comboName string
-                comboName = comboName:gsub("([^\"])", "ULTRA %1", 1)
+                comboName = GAME.ultrafyComboName(comboName)
             end
             stateStr = stateStr .. comboName
         end
@@ -1934,8 +1979,7 @@ function GAME.refreshCurrentCombo()
             GAME.customUltraCombo = true
         else
             GAME.customUltraCombo = false
-            ---@cast comboName string
-            comboName = comboName:gsub("([^\"])", "ULTRA %1", 1)
+            comboName = GAME.ultrafyComboName(comboName)
         end
     else
         if comboName == '"PATIENCE IS A VIRTUE"' and GAME.enightcore then
@@ -2365,7 +2409,7 @@ function GAME.commit(auto, falseCommit)
     if not auto and not falseCommit and not GAME.achv_noManualCommitH then GAME.achv_noManualCommitH = GAME.roundHeight end
 
     local hand = TABLE.sort(GAME.getHand(false))
-    local allyWasDead = GAME[GAME.getLifeKey(true)] == 0
+    local oldAllyHP = GAME[GAME.getLifeKey(true)]
 
     if not falseCommit then
         if #hand == 0 and GAME.questTime < .1 then return SFX.play('no') end
@@ -2639,7 +2683,6 @@ function GAME.commit(auto, falseCommit)
         local attack = 3
         local surge = 0
         local xp = 0
-        if dp and M.EX < 2 then attack = attack + 2 end
         local check_achv_romantic_homicide
         if (GAME.fault and not (M.DP == -1 and (GAME.alleyoopCheck or GAME.slamDunkCheck) and (GAME.dunk or GAME.bigDunk))) or falseCommit then
             -- Non-perfect
@@ -2663,7 +2706,7 @@ function GAME.commit(auto, falseCommit)
                 end
             else
                 if not falseCommit then
-                    check_achv_romantic_homicide = M.DP == 2 and GAME.chain >= 62 and GAME[GAME.getLifeKey(true)] == 0
+                    check_achv_romantic_homicide = M.DP == 2 and GAME.chain >= 62 and oldAllyHP == 0
                     if GAME.currentTask then
                         if GAME.chain >= 4 and GAME.chain <= 10 and GAME.chain % 2 == 0 then
                             GAME.incrementPrompt('b2b_break_' .. GAME.chain)
@@ -2922,19 +2965,17 @@ function GAME.commit(auto, falseCommit)
         attack = attack + surge * (GAME.bigDunk and 9 or GAME.dunk and 3 or 1)
         if not falseCommit then GAME.achv_altFromSurge = GAME.achv_altFromSurge + surge * GAME.rank / 4 * GAME.attackMul end
 
-        local oldAllyLife = GAME[GAME.getLifeKey(true)]
-        ---@cast oldAllyLife number
         if M.DP ~= 0 and not falseCommit then
-            if GAME[GAME.getLifeKey(true)] == 0 and M.DP ~= -1 then
+            if oldAllyHP == 0 and M.DP ~= -1 then
                 xp = xp / 2
                 attack = attack / 2
-            elseif not allyWasDead and not GAME.achv_carriedH then
+            elseif oldAllyHP > 0 and not GAME.achv_carriedH then
                 GAME.achv_carriedH = GAME.roundHeight
                 if GAME.totalQuest >= 26 then SFX.play('btb_break') end
             end
             if M.DP == 2 then
-                if (oldAllyLife == GAME.fullHealth and M.NH == -1 and (oldAllyLife - (URM and attack / 2.6 or attack / 4) <= 0)) or (oldAllyLife <= 0 and GAME[GAME.getLifeKey(false)] > GAME.fullHealth -(GAME.dmgWrong+3) and M.NH == -1 and GAME[GAME.getLifeKey(false)] - (URM and attack / 2.6 or attack / 4) <= 0) then
-                    GAME.takeDamage(GAME.fullHealth-(GAME.dmgWrong+3), 'wrong', oldAllyLife > 0)
+                if (oldAllyHP == GAME.fullHealth and M.NH == -1 and (oldAllyHP - (URM and attack / 2.6 or attack / 4) <= 0)) or (oldAllyHP <= 0 and GAME[GAME.getLifeKey(false)] > GAME.fullHealth -(GAME.dmgWrong+3) and M.NH == -1 and GAME[GAME.getLifeKey(false)] - (URM and attack / 2.6 or attack / 4) <= 0) then
+                    GAME.takeDamage(GAME.fullHealth-(GAME.dmgWrong+3), 'wrong', oldAllyHP > 0)
                     GAME.bonusRecoveryHealth = GAME.bonusRecoveryHealth + 3
                     GAME.dmgTimerMul = GAME.dmgTimerMul + 1
                     TEXT:add {
@@ -2946,7 +2987,7 @@ function GAME.commit(auto, falseCommit)
                     }
                     IssueAchv('cheat_death')
                 else
-                    GAME.takeDamage(URM and attack / 2.6 or attack / 4, 'wrong', oldAllyLife > 0)
+                    GAME.takeDamage(URM and attack / 2.6 or attack / 4, 'wrong', oldAllyHP > 0)
                 end
                 if not GAME.playing then return end
                 if check_achv_romantic_homicide then IssueAchv('romantic_homicide') end
@@ -2955,14 +2996,22 @@ function GAME.commit(auto, falseCommit)
 
         attack = MATH.roundRnd(attack)
 
+        if not GAME.DPlock then
+            local kc = attack == 0 and 0 or dp and 6 or 1
+            if dblCorrect then kc = kc * 2 end
+            kc = kc + max(surge - 260 / surge, 0)
+            if oldAllyHP == 0 then kc = kc / 2 end
+            GAME.koCharge = GAME.koCharge + kc
+        end
+
         if not falseCommit then
             GAME.incrementPrompt('send', attack)
             GAME.totalAttack = GAME.totalAttack + attack
             GAME.totalSurge = GAME.totalSurge + surge
         end
 
-        if GAME.DPlock then attack = min(attack, URM and oldAllyLife * 2.6 or oldAllyLife * 4) end
-        if attack > 0 and not falseCommit then GAME.addHeight(attack * GAME.attackMul * comboAttackMul / (1 + (#GAME.questStack)/4) / (GAME.badTime and 3 or 1)) end
+        if GAME.DPlock then attack = min(attack, URM and oldAllyHP * 2.6 or oldAllyHP * 4) end
+        if attack > 0 and not falseCommit then GAME.addHeight(attack * GAME.attackMul, false, oldAllyHP > 0 * comboAttackMul / (1 + (#GAME.questStack)/4) / (GAME.badTime and 3 or 1)) end
         if not falseCommit then
             GAME.addXP((attack + xp) * comboXPMul)
         else
@@ -3321,13 +3370,17 @@ function GAME.start()
     GAME.maxSpike = 0
     GAME.maxSpikeWeak = 0
 
+    -- KO
+    GAME.koCount = 0
+    GAME.koCharge = 0
+
     -- rDP
     GAME.onAlly = false
     GAME.life2 = GAME.fullHealth
     GAME.rankLimit = 26000
     GAME.reviveCount = 0
     GAME.reviveDifficulty = 0
-    GAME.killCount = 0
+    GAME.koAlly = 0
     GAME.currentTask = false
     GAME.DPlock = false
     GAME.lastFlip = false
@@ -3429,6 +3482,8 @@ function GAME.finish(reason)
         'shatter', .8
     )
 
+    GAME.awardKO(GAME.time > MATH.rand(6, 12) and GAME.getRandomUID() or STAT.uid, STAT.uid, false, false)
+
     TASK.removeTask_code(GAME.task_cancelAll)
     TASK.removeTask_code(GAME.task_uneasyTeraspeed)
 
@@ -3448,6 +3503,10 @@ function GAME.finish(reason)
     end
     FloatOnCard = nil
     GAME.refreshLayout()
+
+    for _, k in next, GAME.koBuffer do
+        k.valid = false
+    end
 
     if STAT.stacker then
         local W = SCN.scenes.tower.widgetList.start
@@ -3587,6 +3646,8 @@ function GAME.finish(reason)
         STAT.totalBonus = roundUnit(STAT.totalBonus + abs(GAME.heightBonus), .1)
         STAT.totalFloor = STAT.totalFloor + (GAME.floor - 1) + (GAME.negFloor - 1)
         STAT.totalGiga = STAT.totalGiga + GAME.gigaCount + GAME.teraCount
+        STAT.totalKO = STAT.totalKO + GAME.koCount
+        STAT.totalRevive = STAT.totalRevive + GAME.reviveCount
         if GAME.floor >= 10 then
             STAT.totalF10 = STAT.totalF10 + 1
             if GAME.floorTime <= 6.26 then
@@ -3785,7 +3846,7 @@ function GAME.finish(reason)
             COLOR.L, ("Speed  %.1fm/s"):format(roundUnit(g.height / g.time, .1)),
             COLOR.LD, ("  (max rank %d)\n"):format(g.peakRank),
             COLOR.L, ("Attack  %d"):format(g.totalAttack),
-            COLOR.LD, ("  (%.1fapm  %dsurge)\n"):format(g.totalAttack / g.time * 60, g.totalSurge),
+            COLOR.LD, ("  (%.1fapm %dsurge %dKOs)\n"):format(g.totalAttack / g.time * 60, g.totalSurge, g.koCount),
             COLOR.L, ("Bonus  " .. (g.heightBonus >= 2600 and "%.0fm" or "%.1fm")):format(g.heightBonus),
             COLOR.LD, abs(g.height) <= 2.6 and "" or ("  (%.1f%%  %.1fm/quest)"):format(g.heightBonus / g.height * 100, g.heightBonus / g.totalQuest),
         })
@@ -3852,7 +3913,7 @@ function GAME.finish(reason)
         SubmitAchv('elegance', STAT.totalPerfect, true, true)
         SubmitAchv('garbage_offensive', STAT.totalAttack, true, true)
         SubmitAchv('tower_climber', STAT.totalHeight, true, true)
-        SubmitAchv('tower_regular', STAT.totalFloor, true, true)
+        SubmitAchv('what_ever_it_takes', STAT.totalKO, true, true)
         SubmitAchv('speed_player', STAT.totalGiga, true, true)
         _t = 0
         for id in next, MD.name do _t = _t + min(BEST.speedrun[id], 2600) end
@@ -3885,6 +3946,7 @@ function GAME.finish(reason)
         SubmitAchv(GAME.comboStr, GAME.roundHeight)
         local soat = SubmitAchv('the_spike_of_all_time', GAME.maxSpikeWeak)
         SubmitAchv('the_spike_of_all_time_plus', GAME.maxSpike, soat)
+        SubmitAchv('slayer_of_the_tower', GAME.koCount)
         SubmitAchv('moon_struck', MATH.roundUnit(abs(GAME.roundHeight - 2202.8), .1))
         if GAME.roundHeight >= 6200 then IssueSecret('fomg') end
         SubmitAchv('plonk', GAME.achv_plonkH or GAME.roundHeight)
@@ -3971,7 +4033,7 @@ function GAME.finish(reason)
             SubmitAchv('guardian_angel', GAME.achv_maxReviveH or 0)
             if M.DP > 0 then SubmitAchv('carried', GAME.achv_carriedH or GAME.roundHeight) end
             if M.DP == 2 then
-                SubmitAchv('the_unreliable_one', GAME.killCount)
+                SubmitAchv('the_unreliable_one', GAME.koAlly)
                 if GAME.floor < 10 and GAME.time >= 600 and GAME.fatigueSet == Fatigue.rDP and not GAME.einvisUI then
                     IssueSecret('rDP_meta')
                 end
@@ -4134,7 +4196,42 @@ function GAME.update(dt)
         if w.time > w.totalTime then rem(GAME.windupAnim, i) end
     end
 
+    for i = #GAME.koBuffer, 1, -1 do
+        local k = GAME.koBuffer[i]
+        k.timer = k.timer - dt
+        if k.timer <= 0 then
+            GAME.awardKO(STAT.uid, k.uid, k.valid, true)
+            rem(GAME.koBuffer, i)
+        end
+    end
+    for i = #GAME.koAnim, 1, -1 do
+        local k = GAME.koAnim[i]
+        k.pos = MATH.expApproach(k.pos, i, dt * 6.26)
+        if k.a < 1 and k.timer > 0 then
+            k.a = min(k.a + dt * 2.6, 1)
+        elseif k.timer > 0 then
+            k.timer = k.timer - dt
+        elseif k.a > 0 then
+            k.a = max(k.a - dt * 2.6, 0)
+        else
+            k.id1:release()
+            k.id2:release()
+            rem(GAME.koAnim, i)
+        end
+    end
+
     if not GAME.playing then return end
+
+    GAME.koCharge = max(GAME.koCharge - dt * min(GAME.height, 6200) / 2600, 0)
+    while GAME.koCharge > 26 do
+        GAME.koCharge = GAME.koCharge - 26
+        local t = MATH.lerp(.62, 2.6, math.random() ^ 2)
+        ins(GAME.koBuffer, {
+            uid = GAME.getRandomUID(),
+            timer = t + math.random() * .1,
+            valid = true,
+        })
+    end
 
     if TestMode then
         if KBisDown(']') then
@@ -4160,8 +4257,7 @@ function GAME.update(dt)
             end
         end
         if KBisDown('return') and TASK.lock("test_eliminate", .26) then
-            GAME.addHeight(15)
-            SFX.play('elim')
+            GAME.awardKO(STAT.uid, GAME.getRandomUID(), true, true)
         end
         if KBisDown('rshift') then
             GAME.time = GAME.time + dt * 62
@@ -4181,7 +4277,7 @@ function GAME.update(dt)
     -- Timers
     -- Trevor Smithy
     local timerMulMod = 1 * (GAME.eslowmo and not GAME.badTime and 0.75 or 1) * (GAME.ecloseCard and not GAME.badTime and 2 or 1)
-    if STAT.srTimer_life then STAT.srTimer_game = STAT.srTimer_game + dt end
+    STAT.srTimer_game = STAT.srTimer_game + dt
     GAME.time = GAME.time + dt * (GAME.timerMul * timerMulMod)
     local r = min(GAME.rank, 62)
     GAME.rankTimer[r] = GAME.rankTimer[r] + dt

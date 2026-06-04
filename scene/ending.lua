@@ -1,5 +1,6 @@
 ---@type Zenitha.Scene
 local scene = {}
+local firstClear
 local badTime = nil
 
 EndText = GC.newText(FONT.get(70))
@@ -175,9 +176,10 @@ do
 end
 
 function scene.load()
+    firstClear = SCN.args[1]
     t = 0
     e = 1
-    STAT.bg = true
+    CONF.bg = true
     GAME.bgH = event[1][2]
     GAME.bgX = 0
     GAME.revDeckSkin = false
@@ -189,12 +191,12 @@ function scene.load()
             badTime = true
         end
         GAME.finish('forfeit')
-        SFX.setVol(STAT.sfx / 100)
+        SFX.setVol(CONF.sfx / 100)
     end
     TASK.removeTask_code(Task_MusicEnd)
     PlayBGM('fomg', true)
-    STAT.bgm = math.max(STAT.bgm, math.min(STAT.sfx, 20))
-    BGM.setVol(STAT.bgm / 100)
+    CONF.bgm = math.max(CONF.bgm, math.min(CONF.sfx, 20))
+    BGM.setVol(CONF.bgm / 100)
 end
 
 function scene.unload()
@@ -206,16 +208,29 @@ function scene.unload()
     TASK.new(function()
         for i = 1, 100 do
             TASK.yieldT(.01)
-            BGM.setVol(STAT.bgm / 100 * i / 100)
+            BGM.setVol(CONF.bgm / 100 * i / 100)
         end
     end)
     PlayBGM('f0')
 end
 
-function scene.keyDown() return true end
+function scene.keyDown(key, isRep)
+    if isRep then return end
+    if key == 'escape' and not firstClear then
+        if TASK.lock('sure_quit', 2.6) then
+            SFX.play('menuclick')
+            MSG('dark', "PRESS AGAIN TO SKIP", 2.6)
+        else
+            SFX.play('menuback')
+            BGM.set('all', 'volume', 0, 1.6)
+            SCN.back('slowFade')
+        end
+    end
+    return true
+end
 
 function scene.update(dt)
-    if love.keyboard.isDown('space', 'escape') and t < 98.72 then
+    if love.keyboard.isDown('space') and t < 98.72 then
         dt = dt * 12.6
     end
     if t < 120 then
@@ -229,7 +244,7 @@ function scene.update(dt)
             TASK.new(function()
                 for i = 99, 0, -1 do
                     TASK.yieldT(.1)
-                    BGM.setVol(STAT.bgm / 100 * i / 100)
+                    BGM.setVol(CONF.bgm / 100 * i / 100)
                 end
                 TASK.yieldT(2.6)
                 SFX.play('victory')

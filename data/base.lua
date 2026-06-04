@@ -101,7 +101,7 @@ NegTexts = {
         begin = [[You find yourself in an unfamiliar place.]],
         noAS = [[You passed the security check without any prohibited items.]],
         ASoff = [[To prevent mech heart users from entering, the AS mod has been confiscated.]],
-        -- egg = [[Garbo checks the imprisoned mech heart users here from time to time, except rtxtile, who kept escaping somehow?]],
+        -- egg = [[Garbo checks the imprisoned mech heart users here from time to time, except rtxile, who kept escaping somehow?]],
     },
     b2 = { -- Zenith Restaurant
         desc = "A lively restaurant with a lovely atmosphere.\nThough the prices here are slightly outrageous...",
@@ -191,6 +191,7 @@ NegEvents = {
             GAME.attackMul = GAME.attackMul - .1
             GAME.dmgTimerMul = GAME.dmgTimerMul + .01
             GAME.mod.AS = 0
+            TEXTS.chain:set(tostring(GAME.chain))
             GAME.refreshModIcon()
             GAME.refreshRPC()
         end,
@@ -543,11 +544,11 @@ NegEvents = {
             GAME.mod.EX = 2
         end,
     },
-    { h = -1660 }, { text = 'b10.end1', color = 'L', duration = 6.26, sfx = 'piece_change', event = function() BGM.setVol(STAT.bgm / 100 * .85) end },
-    { h = -1690 }, { text = 'b10.end2', color = 'L', duration = 6.26, sfx = 'piece_change', event = function() BGM.setVol(STAT.bgm / 100 * .7) end },
-    { h = -1720 }, { text = 'b10.end3', color = 'L', duration = 6.26, sfx = 'piece_change', event = function() BGM.setVol(STAT.bgm / 100 * .5) end },
-    { h = -1750 }, { text = 'b10.end4', color = 'L', duration = 6.26, sfx = 'piece_change', event = function() BGM.setVol(STAT.bgm / 100 * .3) end },
-    { h = -1780 }, { text = 'b10.end5', color = 'L', duration = 6.26, sfx = 'piece_change', event = function() BGM.setVol(STAT.bgm / 100 * 0) end },
+    { h = -1660 }, { text = 'b10.end1', color = 'L', duration = 6.26, sfx = 'piece_change', event = function() BGM.setVol(CONF.bgm / 100 * .85) end },
+    { h = -1690 }, { text = 'b10.end2', color = 'L', duration = 6.26, sfx = 'piece_change', event = function() BGM.setVol(CONF.bgm / 100 * .7) end },
+    { h = -1720 }, { text = 'b10.end3', color = 'L', duration = 6.26, sfx = 'piece_change', event = function() BGM.setVol(CONF.bgm / 100 * .5) end },
+    { h = -1750 }, { text = 'b10.end4', color = 'L', duration = 6.26, sfx = 'piece_change', event = function() BGM.setVol(CONF.bgm / 100 * .3) end },
+    { h = -1780 }, { text = 'b10.end5', color = 'L', duration = 6.26, sfx = 'piece_change', event = function() BGM.setVol(CONF.bgm / 100 * 0) end },
     { h = -1800 },
     {
         event = function()
@@ -555,9 +556,10 @@ NegEvents = {
             GAME.height = -1800
             FloatOnCard = nil
             GAME.refreshLayout()
+            local firstClear = not STAT.clicker
             STAT.clicker = true
             SFX.play('warp')
-            SCN.go('ending', "warp")
+            SCN.go('ending', "warp", firstClear)
         end
     },
     { h = -1e99 },
@@ -577,6 +579,7 @@ end
 
 ModData = require 'data/mod'
 ComboData = require 'data/combo'
+UsernameData = require 'data/username'
 Fatigue = require 'data/fatigue'
 RevivePrompts = require 'data/revive'
 Achievements = require 'data/achievement'

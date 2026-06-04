@@ -107,12 +107,8 @@ local function newRecord(list, isUltra)
             comboText = "\"UNEASY " .. comboText:sub(2)
         elseif #setStr == 4 and M.DH == 2 then
             comboText = ComboData.gameEX[setStr].name
-        elseif comboText:sub(1, 1) ~= "\"" then
-            comboText = "ULTRA " .. comboText
-        elseif comboText:sub(2, 4) == "THE" then
-            comboText = comboText:gsub("THE", "ULTRA", 1)
         else
-            comboText = "\"ULTRA " .. comboText:sub(2)
+            comboText = GAME.ultrafyComboName(comboText)
         end
     end
     return {
@@ -379,15 +375,15 @@ function scene.keyDown(key, isRep)
     if isRep then return true end
     local ctrl = love.keyboard.isDown('lctrl', 'rctrl')
     local alt = love.keyboard.isDown('lalt', 'ralt')
-    local bindID = TABLE.find(STAT.keybind, key)
+    local bindID = TABLE.find(CONF.keybind, key)
     if bindID and bindID <= 18 then
         local i = bindID > 9 and bindID - 9 or bindID
         setMod(i, ctrl, alt)
         refresh()
-    elseif key == STAT.keybind[19] or key == 'return' then
+    elseif key == CONF.keybind[19] or key == 'return' then
         -- Confirm
         cd = min(cd, .01)
-    elseif key == STAT.keybind[20] or key == 'f13' then
+    elseif key == CONF.keybind[20] or key == 'f13' then
         -- Reset
         for i = 1, #set.sel do set.sel[i] = 0 end
         set.match = 'include'
