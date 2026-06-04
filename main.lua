@@ -888,7 +888,7 @@ function SaveAchv()
 end
 
 function SaveConf()
-    if TestMode then return end
+    if (TestMode or GAME.multiplePiecesActive) then return end
     love.filesystem.write('conf.luaon', 'return' .. TABLE.dumpDeflate(CONF))
 end
 
