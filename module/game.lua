@@ -4327,7 +4327,7 @@ function GAME.update(dt)
                 if GAME.height < NegEvents[GAME.negEvent].h then GAME.nextNegEvent() end
                 -- Trevor Smithy (Bad Time)
                 if GAME.badTime then
-                    if GAME.height <= -1650 and BgmPlaying ~= "fomg" then PlayBGM('fomg', true) end
+                    if GAME.height <= -1650 and BgmPlaying ~= "f10" then PlayBGM('f10', true) end
                     if GAME.height <= -1800 and not STAT.greenClicker then 
                         STAT.greenClicker = true 
                         MSG("bright", "YOU DID A THING!")

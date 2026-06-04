@@ -1844,7 +1844,7 @@ function Daemon_Slow()
     local length
     while true do
         -- Music syncing
-        if BgmPlaying == 'f0' and BGM.isPlaying() then
+        if BgmPlaying == 'f0' and BGM.isPlaying() and not MOBILE then
             length = length or lib[f0List[1]].source:getDuration()
             local t0 = lib[f0List[1]].source:tell() % length
             for i = #f0List, 2, -1 do
