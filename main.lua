@@ -798,6 +798,13 @@ CONF = {
     bgm = 100,
     autoMute = false,
     oldHitbox = false,
+    -- Trevor Smithy
+    easyName = false,
+    imperial = false,
+    promotion = true,
+    stacker = false,
+    oldTransparentCard = false,
+    lyrics = false,
 }
 -- Create BEST, STAT, ACHV tables,
 -- only called when launching and on resetall
@@ -849,6 +856,10 @@ function InitProfile()
         totalKO = 0,
         totalRevive = 0,
         badge = {},
+
+        rold = false,
+        unlockAll = false,
+        greenClicker = false,
     }
 
     ACHV = {}
@@ -2035,7 +2046,7 @@ function Daemon_Fast()
                     changed = true
                 end
             end
-            if changed and not (GAME.playing and STAT.stacker) then
+            if changed and not (GAME.playing and CONF.stacker) then
                 local W = SCN.scenes.tower.widgetList.start
                 W.text = startBtnTexts[startBtnPtr]
                 W:reset()

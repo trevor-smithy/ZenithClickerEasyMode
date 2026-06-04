@@ -288,7 +288,7 @@ function scene.load()
     TASK.unlock('import')
     TASK.unlock('rebind_control')
     TASK.unlock('just_saved')
-    if STAT.stacker and STAT.promotion then
+    if CONF.stacker and CONF.promotion then
         MSG("achv_badTime", "WARNING: PROMOTION and STACKER are MUTUALLY EXCLUSIVE!\nDISABLE ONE NOW OR IT WILL BE DONE AUTOMATICALLY!")
         SFX.play('hyperalert')
     end
@@ -354,7 +354,7 @@ function scene.keyDown(key, isRep)
                 if #bindBuffer >= 22 then
                     CONF.keybind = bindBuffer
                     bindBuffer = nil
-                    SaveStat()
+                    SaveConf()
                     MSG('dark', "Keybinding updated.")
                     SFX.play('social_notify_major')
                 else
@@ -1081,21 +1081,21 @@ local page2 = {
                     UseAltName()
                     SFX.play('social_dm')
                 elseif data == 'UseEasyName' or data == 'UseEasName' then
-                    STAT.easyName = not STAT.easyName
+                    CONF.easyName = not CONF.easyName
                     SFX.play('social_dm')
-                    MSG('dark', "Easy Names In-Game: " .. (STAT.easyName and "ON" or "OFF"))
+                    MSG('dark', "Easy Names In-Game: " .. (CONF.easyName and "ON" or "OFF"))
                 elseif data == 'imperial' or data == 'feet' then
-                    STAT.imperial = not STAT.imperial
+                    CONF.imperial = not CONF.imperial
                     SFX.play('social_dm')
-                    MSG('dark', "Imperial Units: " .. (STAT.imperial and "ON" or "OFF"))
+                    MSG('dark', "Imperial Units: " .. (CONF.imperial and "ON" or "OFF"))
                 elseif data == 'promotion' then
-                    STAT.promotion = not STAT.promotion
+                    CONF.promotion = not CONF.promotion
                     SFX.play('social_dm')
-                    MSG('dark', "Rank Promotion Gauge: " .. (STAT.promotion and "ON" or "OFF"))
+                    MSG('dark', "Rank Promotion Gauge: " .. (CONF.promotion and "ON" or "OFF"))
                 elseif data == 'old_transparent_card' or data == 'oldTransparentCard' or data == 'oldtransparentcard' or data == 'oldeO' then
-                    STAT.oldTransparentCard = not STAT.oldTransparentCard
+                    CONF.oldTransparentCard = not CONF.oldTransparentCard
                     SFX.play('social_dm')
-                    MSG('dark', "Transparent Card: " .. (STAT.oldTransparentCard and "V1.0/1.1" or "V1.2+"))
+                    MSG('dark', "Transparent Card: " .. (CONF.oldTransparentCard and "V1.0/1.1" or "V1.2+"))
                 elseif data == 'eZ' or data == 'ez' then
                     if not GAME.enightcore and anyPieceActive then 
                         SFX.play('damage_alert')
@@ -1183,9 +1183,9 @@ local page2 = {
                     GAME.refreshLayout()
                     GAME.refreshCurrentCombo()
                 elseif data == 'lyrics' then
-                    STAT.lyrics = not STAT.lyrics
-                    SFX.play(STAT.lyrics and 'social_online' or 'social_offline')
-                    MSG('dark', "In-Game Lyrics: " .. (STAT.lyrics and "Enabled" or " Disabled"))
+                    CONF.lyrics = not CONF.lyrics
+                    SFX.play(CONF.lyrics and 'social_online' or 'social_offline')
+                    MSG('dark', "In-Game Lyrics: " .. (CONF.lyrics and "Enabled" or " Disabled"))
                 elseif data == 'resubmit' then
                     if DAILYCMD then
                         ASYNC.runCmd('submitDaily', DAILYCMD)
@@ -1591,21 +1591,21 @@ local page4 = {
         frameColor = ZCEMclr.cbFrame,
         textColor = ZCEMclr.T, text = "PROMOTION GAUGE",
         x = baseX + 40, y = baseY + 60 + 80,
-        disp = function() return STAT.promotion end,
+        disp = function() return CONF.promotion end,
         code = function()
             local multiple = GAME.multiplePiecesActive
             MSG.clear()
-            STAT.promotion = not STAT.promotion
-            MSG('dark', "Rank Promotion Gauge: " .. (STAT.promotion and "ON" or "OFF"))
-            if STAT.stacker and STAT.promotion then
-                STAT.stacker = false
+            CONF.promotion = not CONF.promotion
+            MSG('dark', "Rank Promotion Gauge: " .. (CONF.promotion and "ON" or "OFF"))
+            if CONF.stacker and CONF.promotion then
+                CONF.stacker = false
                 MSG('dark', "STACKER and PROMOTION GAUGE are MUTUALLY EXCLUSIVE!")
                 SFX.play('no')
             else
                 SFX.play('social_dm')
             end
             GAME.multiplePiecesActive = false
-            SaveStat()
+            SaveConf()
             if multiple then GAME.multiplePiecesActive = true end
         end,
     },
@@ -1615,15 +1615,15 @@ local page4 = {
         frameColor = ZCEMclr.cbFrame,
         textColor = ZCEMclr.T, text = "IMPERIAL UNITS",
         x = baseX + 500, y = baseY + 60 + 240,
-        disp = function() return STAT.imperial end,
+        disp = function() return CONF.imperial end,
         code = function()
             local multiple = GAME.multiplePiecesActive
             MSG.clear()
-            STAT.imperial = not STAT.imperial
+            CONF.imperial = not CONF.imperial
             SFX.play('social_dm')
-            MSG('dark', "Imperial Units: " .. (STAT.imperial and "ON" or "OFF"))
+            MSG('dark', "Imperial Units: " .. (CONF.imperial and "ON" or "OFF"))
             GAME.multiplePiecesActive = false
-            SaveStat()
+            SaveConf()
             if multiple then GAME.multiplePiecesActive = true end
         end,
     },
@@ -1633,15 +1633,15 @@ local page4 = {
         frameColor = ZCEMclr.cbFrame,
         textColor = ZCEMclr.T, text = "OLD TRANSPARENT CARD",
         x = baseX + 40, y = baseY + 60 + 160,
-        disp = function() return STAT.oldTransparentCard end,
+        disp = function() return CONF.oldTransparentCard end,
         code = function()
             local multiple = GAME.multiplePiecesActive
             MSG.clear()
-            STAT.oldTransparentCard = not STAT.oldTransparentCard
+            CONF.oldTransparentCard = not CONF.oldTransparentCard
             SFX.play('social_dm')
-            MSG('dark', "Transparent Card: " .. (STAT.oldTransparentCard and "V1.0/1.1" or "V1.2+"))
+            MSG('dark', "Transparent Card: " .. (CONF.oldTransparentCard and "V1.0/1.1" or "V1.2+"))
             GAME.multiplePiecesActive = false
-            SaveStat()
+            SaveConf()
             if multiple then GAME.multiplePiecesActive = true end
         end,
     },
@@ -1659,7 +1659,7 @@ local page4 = {
             MSG('dark', "Force old hitbox: " .. (STAT.oldHitbox and "ON" or "OFF"))
             SFX.play(STAT.oldHitbox and 'social_online' or 'social_offline')
             GAME.multiplePiecesActive = false
-            SaveStat()
+            SaveConf()
             if multiple then GAME.multiplePiecesActive = true end
         end,
     },
@@ -1669,15 +1669,15 @@ local page4 = {
         frameColor = ZCEMclr.cbFrame,
         textColor = ZCEMclr.T, text = "USE EASY NAMES",
         x = baseX + 40, y = baseY + 60 + 240,
-        disp = function() return STAT.easyName end,
+        disp = function() return CONF.easyName end,
         code = function()
             local multiple = GAME.multiplePiecesActive
             MSG.clear()
-            STAT.easyName = not STAT.easyName
+            CONF.easyName = not CONF.easyName
             SFX.play('social_dm')
-            MSG('dark', "Easy Names In-Game: " .. (STAT.easyName and "ON" or "OFF"))
+            MSG('dark', "Easy Names In-Game: " .. (CONF.easyName and "ON" or "OFF"))
             GAME.multiplePiecesActive = false
-            SaveStat()
+            SaveConf()
             if multiple then GAME.multiplePiecesActive = true end
         end,
     },
@@ -1687,21 +1687,21 @@ local page4 = {
         frameColor = ZCEMclr.cbFrame,
         textColor = ZCEMclr.T, text = "STACKER MODE",
         x = baseX + 500, y = baseY + 60 + 80,
-        disp = function() return STAT.stacker end,
+        disp = function() return CONF.stacker end,
         code = function()
             local multiple = GAME.multiplePiecesActive
             MSG.clear()
-            STAT.stacker = not STAT.stacker
-            MSG('dark', "Stacker Mode: " .. (STAT.stacker and "ON" or "OFF"))
-            if STAT.stacker and STAT.promotion then
-                STAT.promotion = false
+            CONF.stacker = not CONF.stacker
+            MSG('dark', "Stacker Mode: " .. (CONF.stacker and "ON" or "OFF"))
+            if CONF.stacker and CONF.promotion then
+                CONF.promotion = false
                 SFX.play('no')
                 MSG('dark', "STACKER and PROMOTION GAUGE are MUTUALLY EXCLUSIVE!")
             else
                 SFX.play('social_dm')
             end
             GAME.multiplePiecesActive = false
-            SaveStat()
+            SaveConf()
             if multiple then GAME.multiplePiecesActive = true end
         end,
     },

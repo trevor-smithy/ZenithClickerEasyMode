@@ -643,7 +643,7 @@ function Card:draw()
                 if self.required or self.required2 then
                     if self.required then
                         r1, g1, b1 = 1, .26, 0
-                        if STAT.easyName then
+                        if CONF.easyName then
                             if not (URM and self.id == 'EX' and M.EX == -1 and M.NH < 2 and M.MS < 2 and M.GV < 2 and M.VL < 2 and M.DH < 2 and M.IN < 2 and M.AS < 2 and M.DP < 2) then
                                 r1, g1, b1 = 0, 1, 0          -- Green
                             else
@@ -823,7 +823,7 @@ function Card:draw()
         end
 
         -- Outline (draw)
-        if STAT.oldTransparentCard then
+        if CONF.oldTransparentCard then
             if GAME.einvisCard then
                 gc_setLineWidth(20)
                 local temp = M.IN == 1 and 2 or M.IN == 2 and not URM and 3 or M.IN == 2 and URM and 4 or 1

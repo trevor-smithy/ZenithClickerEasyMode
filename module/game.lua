@@ -376,7 +376,7 @@ function GAME.getComboZP(list)
     if GAME.eglassCard then zp = zp * .9 end
     if GAME.efastLeak then zp = zp * .75 end
     if GAME.einvisUI then zp = zp * .826 end
-    if GAME.einvisCard and not STAT.oldTransparentCard then
+    if GAME.einvisCard and not CONF.oldTransparentCard then
         zp = zp * ((m.rDH and 0.9 or 1) * ((URM and m.rIN) and 0.95 or (not URM and m.rIN) and 0.9 or m.IN and 0.875 or m.eIN and 0.83 or 0.85) * (m.eDP and 0.9 or (m.DP or m.rDP) and 0.95 or 1))
     end
     if GAME.ecloseCard then
@@ -414,7 +414,7 @@ function GAME.getComboName(list, mode)
 
         -- Super set
         local comboText
-        if not GAME.anyRev and not TABLE.find(list, 'DP') and not STAT.easyName then
+        if not GAME.anyRev and not TABLE.find(list, 'DP') and not CONF.easyName then
             comboText = len == 8 and [["SWAMP WATER"]] or len == 7 and [["SWAMP WATER LITE"]]
             if comboText then
                 fstr = comboText:atomize()
@@ -426,7 +426,7 @@ function GAME.getComboName(list, mode)
         end
 
         -- Named combo
-        local combo = (M.DH == 2 and STAT.easyName and ComboData.gameeEX or M.DH == 2 and ComboData.gameEX or STAT.easyName and ComboData.menu or ComboData.game)[table.concat(STAT.easyName and TABLE.sort(easyList) or TABLE.sort(list), ' ')]
+        local combo = (M.DH == 2 and CONF.easyName and ComboData.gameeEX or M.DH == 2 and ComboData.gameEX or CONF.easyName and ComboData.menu or ComboData.game)[table.concat(CONF.easyName and TABLE.sort(easyList) or TABLE.sort(list), ' ')]
         if combo then
             fstr = combo.name:atomize()
             if URM and M.DH == 2 then
@@ -479,7 +479,7 @@ function GAME.getComboName(list, mode)
         if M.DH == 2 then
             TABLE.shuffle(list)
         else
-            table.sort(STAT.easyName and easyList or list, modNameSorter)
+            table.sort(CONF.easyName and easyList or list, modNameSorter)
             if M.DH == 1 and MATH.roll((#list - 1) / 6.26) then
                 local r1, r2 = rnd(#list), rnd(#list - 1)
                 if r2 >= r1 then r2 = r2 + 1 end
@@ -488,7 +488,7 @@ function GAME.getComboName(list, mode)
         end
 
         local colorModNumber = 1
-        local eINeMSAS = M.IN == -1 and M.MS == -1 and M.AS ~= 0 and not STAT.easyName
+        local eINeMSAS = M.IN == -1 and M.MS == -1 and M.AS ~= 0 and not CONF.easyName
         local modCodes = {'EX', 'NH', 'MS', 'GV', 'VL', 'DH', 'IN', 'AS', 'DP'}
         for i = 1, len - 1 do
             if eINeMSAS then 
@@ -499,9 +499,9 @@ function GAME.getComboName(list, mode)
                 end
                 ins(fstr, MD.textColor[modCodes[colorModNumber]])       
             else
-                ins(fstr, MD.textColor[STAT.easyName and easyList[i] or list[i]])
+                ins(fstr, MD.textColor[CONF.easyName and easyList[i] or list[i]])
             end
-            ins(fstr, MD.adj[STAT.easyName and easyList[i] or list[i]] .. " ")
+            ins(fstr, MD.adj[CONF.easyName and easyList[i] or list[i]] .. " ")
         end
         if eINeMSAS then
             for j = 1, #modCodes do
@@ -511,9 +511,9 @@ function GAME.getComboName(list, mode)
             end
             ins(fstr, MD.textColor[modCodes[colorModNumber]])
         else
-            ins(fstr, MD.textColor[STAT.easyName and easyList[len] or list[len]])
+            ins(fstr, MD.textColor[CONF.easyName and easyList[len] or list[len]])
         end
-        ins(fstr, MD.noun[STAT.easyName and easyList[len] or list[len]])
+        ins(fstr, MD.noun[CONF.easyName and easyList[len] or list[len]])
 
         if M.IN > 0 then
             local r = rnd(0, 3)
@@ -549,7 +549,7 @@ function GAME.getComboName(list, mode)
         -- Super Set
         if mode == 'button' and GAME.playing then
             local len_noDP = len - (TABLE.find(list, 'DP') and 1 or 0)
-            if len_noDP >= 7 and not STAT.easyName then
+            if len_noDP >= 7 and not CONF.easyName then
                 return len_noDP == 7 and [["SWAMP WATER LITE"]] or [["SWAMP WATER"]]
             end
         else
@@ -578,7 +578,7 @@ function GAME.getComboName(list, mode)
 
         -- Named Combo
         local combo
-        local cmbStr = table.concat(STAT.easyName and GAME.playing and TABLE.sort(easyList) or TABLE.sort(list), ' ')
+        local cmbStr = table.concat(CONF.easyName and GAME.playing and TABLE.sort(easyList) or TABLE.sort(list), ' ')
         if mode == 'record' then
             combo =
                 ComboData.menu[cmbStr] or
@@ -596,9 +596,9 @@ function GAME.getComboName(list, mode)
         else
             combo = (
                 (mode == 'rpc' or not GAME.playing) and ComboData.menu or
-                M.DH == 2 and STAT.easyName and ComboData.gameeEX or
+                M.DH == 2 and CONF.easyName and ComboData.gameeEX or
                 M.DH == 2 and ComboData.gameEX or 
-                STAT.easyName and ComboData.menu or
+                CONF.easyName and ComboData.menu or
                 ComboData.game
             )[cmbStr]
             if combo and GAME.rollCheck then 
@@ -615,12 +615,12 @@ function GAME.getComboName(list, mode)
         end
 
         -- General
-        table.sort(STAT.easyName and GAME.playing and M.DH ~= 2 and mode ~= 'rpc' and easyList or list, modNameSorter)
+        table.sort(CONF.easyName and GAME.playing and M.DH ~= 2 and mode ~= 'rpc' and easyList or list, modNameSorter)
         local str = ""
         for i = 1, len - 1 do 
-            str = str .. (STAT.easyName and GAME.playing and MD.adj[easyList[i]] or MD.adj[list[i]]) .. " " 
+            str = str .. (CONF.easyName and GAME.playing and MD.adj[easyList[i]] or MD.adj[list[i]]) .. " " 
         end
-        return str .. (STAT.easyName and GAME.playing and MD.noun[easyList[len]] or MD.noun[list[len]])
+        return str .. (CONF.easyName and GAME.playing and MD.noun[easyList[len]] or MD.noun[list[len]])
     end
 end
 
@@ -866,7 +866,7 @@ function GAME.genQuest()
     GAME.gravTimer = false
     GAME.resetCount = 0
     for _, C in ipairs(CD) do C.touchCount, C.required, C.required2 = 0, false, false end
-    if STAT.stacker and GAME.questStack[1] then
+    if CONF.stacker and GAME.questStack[1] then
         for _, v in next, GAME.questStack[1].combo do CD[v].required = true end
     else
         for _, v in next, GAME.quests[1].combo do CD[v].required = true end
@@ -1323,7 +1323,7 @@ function GAME.showWindup(lv)
     local attempt = 0
     local x, y
     while true do
-        x, y = (62 + 26 * attempt) * MATH.rand(-1, 1), MATH.rand(-20, 20) - (STAT.stacker and GAME.questStack[1] and 70 or 0)
+        x, y = (62 + 26 * attempt) * MATH.rand(-1, 1), MATH.rand(-20, 20) - (CONF.stacker and GAME.questStack[1] and 70 or 0)
         for i = 1, #GAME.windupAnim do
             local w = GAME.windupAnim[i]
             if MATH.distance(x, y, w.x, w.y) < 62 then
@@ -1581,12 +1581,12 @@ function GAME.upFloor()
             end
         end
         local comboName
-        if not STAT.easyName then
+        if not CONF.easyName then
             comboName = GAME.getComboName(GAME.getHand(true), 'button')
         else
-            STAT.easyName = false
+            CONF.easyName = false
             comboName = GAME.getComboName(GAME.getHand(true), 'button')
-            STAT.easyName = true
+            CONF.easyName = true
         end
         if (URM and M.EX == -1 and GAME.comboStr:count('r') == 0) then
             --MSG("bright", comboName)
@@ -2218,7 +2218,7 @@ function GAME.refreshLifeState()
     if hp == GAME.fullHealth then
         newState = 'safe'
     else
-        local dangerDmg = max(GAME.dmgWrong + GAME.dmgWrongExtra, GAME.dmgTime, STAT.stacker and GAME.dmgWrong * (#GAME.questStack-25)/10 or 0)
+        local dangerDmg = max(GAME.dmgWrong + GAME.dmgWrongExtra, GAME.dmgTime, CONF.stacker and GAME.dmgWrong * (#GAME.questStack-25)/10 or 0)
         newState = hp <= dangerDmg and 'danger' or 'safe'
     end
     if oldState ~= newState then
@@ -2605,7 +2605,7 @@ function GAME.commit(auto, falseCommit)
         GAME.questTime = 0
         GAME.gravTimer = GAME.gravDelay
         for _, C in ipairs(CD) do C.touchCount, C.required, C.required2 = 0, false, false end
-        if STAT.stacker and GAME.questStack[1] then
+        if CONF.stacker and GAME.questStack[1] then
             for _, v in next, GAME.questStack[1].combo do CD[v].required = true end
         else
             for _, v in next, GAME.quests[1].combo do CD[v].required = true end
@@ -3095,10 +3095,10 @@ function GAME.commit(auto, falseCommit)
                 if GAME.comboStr == 'DPMSrNH' then SubmitAchv('scarcity_mindset', GAME.totalFlip) end
             elseif GAME.totalQuest == 41 then
                 if GAME.comboStr == 'EXMS' then SubmitAchv('quest_rationing', GAME.roundHeight) end
-                if GAME.comboStr == 'eEXeMS' and not URM and not STAT.stacker then 
+                if GAME.comboStr == 'eEXeMS' and not URM and not CONF.stacker then 
                     SubmitAchv('quest_feast', GAME.roundHeight)
                 end
-                if GAME.comboStr == 'EXeDHeNH' and not STAT.stacker then
+                if GAME.comboStr == 'EXeDHeNH' and not CONF.stacker then
                     SubmitAchv('emperor_development', GAME.rank == GAME.peakRank and GAME.rank + (GAME.xp/(4*(GAME.rank+1))) or GAME.peakRank) 
                 end
             end
@@ -3149,7 +3149,7 @@ function GAME.commit(auto, falseCommit)
             end
         end
         -- Stacker Mode - push to stack
-        if #hand == 0 and STAT.stacker and not auto then
+        if #hand == 0 and CONF.stacker and not auto then
             ins(GAME.questStack, 1, {combo = GAME.quests[1].combo, name = GC.newText(FONT.get(70), GAME.getComboName(TABLE.copy(GAME.quests[1].combo), 'ingame')), y = 330, k = 1, a = 1,})
             rem(GAME.quests, 1)
             GAME.genQuest()
@@ -3246,7 +3246,7 @@ function GAME.start()
         GAME.badTimeStarted = true
         GAME.fallout = false
     end
-    if STAT.stacker then
+    if CONF.stacker then
         SCN.scenes.tower.widgetList.start.text = ''
         SCN.scenes.tower.widgetList.start:reset()
     end
@@ -3508,7 +3508,7 @@ function GAME.finish(reason)
         k.valid = false
     end
 
-    if STAT.stacker then
+    if CONF.stacker then
         local W = SCN.scenes.tower.widgetList.start
         W.text = M.DH ~= 0 and "COMMENCE" or "START"
         W:reset()
@@ -3565,11 +3565,11 @@ function GAME.finish(reason)
         IssueAchv('multiple_pieces')
     end
 
-    if M.DH == 2 and STAT.easyName then
+    if M.DH == 2 and CONF.easyName then
         IssueAchv('easy_name')
     end
 
-    if GAME.height >= 825000 and STAT.imperial then
+    if GAME.height >= 825000 and CONF.imperial then
         IssueAchv('im_gonna_be')
     end
 
@@ -3662,7 +3662,7 @@ function GAME.finish(reason)
 
         -- Easy Mode Version for records
         if not GAME.multiplePiecesActive then
-            if not STAT.imperial then
+            if not CONF.imperial then
                 TEXTS.easyModeVersion:set((STAT.oldHitbox and "eT" or "eV") .. (require 'version'.verStr))
             else
                 TEXTS.easyModeVersion:set({ COLOR.LL, ("%.1fm"):format(GAME.roundHeight) })
@@ -3774,7 +3774,7 @@ function GAME.finish(reason)
         local resStr = {}
         --for i = 1, 7 do
         -- Trevor Smithy
-        if STAT.stacker then
+        if CONF.stacker then
             TABLE.append(resStr, {COLOR.dI, "S"})
         end
         if (M.EX == -1 and GAME.comboStr:count('r') == 0 and URM) or GAME.badTime then
@@ -3784,7 +3784,7 @@ function GAME.finish(reason)
             if GAME[PieceData[i].id] then TABLE.append(resStr, PieceData[i].text) end
         end
         if #resStr > 0 then ins(resStr, " ") end
-        if STAT.imperial then
+        if CONF.imperial then
             local height = GAME.height
             height = height * 3.2
             local miles = 0
@@ -4390,12 +4390,12 @@ function GAME.update(dt)
             GAME.maxQuestSize = GAME.maxQuestSize + 1
             SFX.play('warning', 1)
         end
-        if GAME.time >= 780 and GAME.maxQuestSize < (M.NH == 2 and 7 or 6) and M.NH >= 1 and STAT.easyName then
+        if GAME.time >= 780 and GAME.maxQuestSize < (M.NH == 2 and 7 or 6) and M.NH >= 1 and CONF.easyName then
             GAME.maxQuestSize = GAME.maxQuestSize + 1
             SFX.play('warning', 1)
         end
-        -- game.time >= 840 = 8 mod if stat.easyName, rDH, rNH and eT
-        if GAME.time >= 885 and GAME.maxQuestSize < 9 and M.NH == 2 and STAT.easyName then
+        -- game.time >= 840 = 8 mod if CONF.easyName, rDH, rNH and eT
+        if GAME.time >= 885 and GAME.maxQuestSize < 9 and M.NH == 2 and CONF.easyName then
             GAME.maxQuestSize = GAME.maxQuestSize + 1
         end
     end

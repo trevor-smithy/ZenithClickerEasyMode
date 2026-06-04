@@ -1188,7 +1188,7 @@ function scene.draw()
         TABLE.clear(GAME.questStack)
     end
 
-    if STAT.stacker then stackerStartButtonColor() end
+    if CONF.stacker then stackerStartButtonColor() end
 end
 
 function scene.overDraw()
@@ -1471,13 +1471,13 @@ function scene.overDraw()
             end
 
             -- Promotion Gauge
-            if STAT.stacker and STAT.promotion then 
-                STAT.promotion = false -- forcibly disable promotion gauge with stacker
-                SaveStat()
+            if CONF.stacker and CONF.promotion then 
+                CONF.promotion = false -- forcibly disable promotion gauge with stacker
+                SaveConf()
                 SFX.play('warning')
                 MSG('dark', "STACKER and PROMOTION GAUGE are MUTUALLY EXCLUSIVE! \nPROMOTION GAUGE has been disabled!")
             end
-            if STAT.promotion then
+            if CONF.promotion then
                 gc_push('transform')
                 gc_translate(460, 290)
                 gc_scale(GAME.uiHide)
@@ -1558,9 +1558,9 @@ function scene.overDraw()
 
                 -- Short Text & Panel
                 gc_setColor(.3, .1, 0, .62/eTAlpha)
-                gc_mRect('fill', 800, 330 - (STAT.stacker and GAME.questStack[1] and 60 or 0), GAME.currentTask.shortObj:getWidth() * 1.6 + 50, 75, 20)
+                gc_mRect('fill', 800, 330 - (CONF.stacker and GAME.questStack[1] and 60 or 0), GAME.currentTask.shortObj:getWidth() * 1.6 + 50, 75, 20)
                 gc_setColor(1, 1, 1)
-                gc_mDraw(GAME.currentTask.shortObj, 800, 330 - (STAT.stacker and GAME.questStack[1] and 60 or 0), 0, 1.6)
+                gc_mDraw(GAME.currentTask.shortObj, 800, 330 - (CONF.stacker and GAME.questStack[1] and 60 or 0), 0, 1.6)
             end
         end
 
@@ -1588,7 +1588,7 @@ function scene.overDraw()
                 gc_mDraw(text, 800, Q.y, 0, kx, ky)
             end
         end
-        if STAT.stacker and GAME.questStack[1] then
+        if CONF.stacker and GAME.questStack[1] then
             local Q = GAME.questStack[1]
             local text = Q.name
             local kx = min(Q.k, 800 / text:getWidth())
@@ -1610,7 +1610,7 @@ function scene.overDraw()
                 gc_mDraw(text, 800, Q.y, 0, kx, ky)
             end
         end
-        if STAT.stacker and GAME.comboBounceTime > 0 then
+        if CONF.stacker and GAME.comboBounceTime > 0 then
             gc_setColor(1, 1, 1)
             local alpha = 1
             local x, y = 215, 315
@@ -1709,7 +1709,7 @@ function scene.overDraw()
         local height = GAME.height
         local miles = 0
         local feet = 0
-        if STAT.imperial then
+        if CONF.imperial then
             altitudeText[3] = 'ft'
             height = height * 3.2
             if height >= 5280 then
@@ -1717,8 +1717,8 @@ function scene.overDraw()
                 feet = height%5280
             end
         else altitudeText[3] = 'm' end
-        altitudeText[1] = ("%.1f"):format(STAT.imperial and height or GAME.roundHeight)
-        if STAT.imperial and miles > 0 then
+        altitudeText[1] = ("%.1f"):format(CONF.imperial and height or GAME.roundHeight)
+        if CONF.imperial and miles > 0 then
             altitudeText[1] = miles .. 'mi ' .. ("%.1f"):format(feet)
         end
         TEXTS.height:set(altitudeText)
@@ -1992,7 +1992,7 @@ function scene.overDraw()
         gc_replaceTransform(SCR.xOy_m)
         GC.setColor(1, 1, 1, .26 * GAME.uiHide)
         local w, h = GAME.pieceFstrObj:getDimensions()
-        GC.draw(GAME.pieceFstrObj, 0, -170 - (STAT.stacker and GAME.questStack[1] and 60 or 0), 0, min(4.2, 740 / w) * (STAT.stacker and GAME.questStack[1] and 0.62 or 1), nil, w / 2, h * .57)
+        GC.draw(GAME.pieceFstrObj, 0, -170 - (CONF.stacker and GAME.questStack[1] and 60 or 0), 0, min(4.2, 740 / w) * (CONF.stacker and GAME.questStack[1] and 0.62 or 1), nil, w / 2, h * .57)
     end
 
     -- Trevor Smithy
@@ -2190,7 +2190,7 @@ function scene.overDraw()
     -- gc_mRect('fill', 0, 0, -GAME.koCharge * 10, 20)
     
     -- Lyrics
-    if STAT.lyrics and (BgmPlaying == 'teral' or BgmPlaying == 'terael') and GAME.playing and not GAME.invisUI then
+    if CONF.lyrics and (BgmPlaying == 'teral' or BgmPlaying == 'terael') and GAME.playing and not GAME.invisUI then
         gc_replaceTransform(SCR.xOy_m)
         GAME.showLyric(Lyric.terael, 0, -30, BgmPlaying == 'teral' and 0.1 or 0)
     end
@@ -2296,7 +2296,7 @@ scene.widgetList = {
         onPress = function(k)
             if k == 3 then return end
             HoldingButtons.startBtn = true
-            if M.EX <= 0 or STAT.stacker then
+            if M.EX <= 0 or CONF.stacker then
                 SFX.play('move')
                 button_start()
             else

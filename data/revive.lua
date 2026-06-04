@@ -1,15 +1,15 @@
 local function rndMod(t)
     local d = MATH.randFreqAll(ModData.weight)
     t.prompt = t.prompt:repD(d)
-    if STAT.easyName then d = 'e' .. d end
-    t.text = STAT.easyName and t.text:repD(ModData.noun[d]) or t.text:repD(ModData.adj[d])
+    if CONF.easyName then d = 'e' .. d end
+    t.text = CONF.easyName and t.text:repD(ModData.noun[d]) or t.text:repD(ModData.adj[d])
     t.short = t.short:repD(d)
 end
 local function rndMod2(t)
     local d = ModData.deck[math.random(9)].id
     t.prompt = t.prompt:repD(d)
-    if STAT.easyName then d = 'e' .. d end
-    t.text = STAT.easyName and t.text:repD(ModData.noun[d]) or t.text:repD(ModData.adj[d])
+    if CONF.easyName then d = 'e' .. d end
+    t.text = CONF.easyName and t.text:repD(ModData.noun[d]) or t.text:repD(ModData.adj[d])
     t.short = t.short:repD(d)
 end
 local function f5() return math.max(GAME.floor, GAME.negFloor) <= 5 end
@@ -23,8 +23,8 @@ local function notENHorF9wind() return math.max(GAME.floor, GAME.negFloor) >= 9 
 local function notENHorF9wind3() return math.max(GAME.floor, GAME.negFloor) >= 9 and GAME.maxQuestSize >= 5 and GAME.mod.DH ~= -1 and GAME.mod.NH ~= -1 end
 local function notEMS() return GAME.mod.MS ~= -1 end
 local function notEMSorF6() return math.max(GAME.floor, GAME.negFloor) >= 6 and GAME.mod.MS ~= -1 end
-local function notEasyName() return not STAT.easyName end -- whether or not to use SWAMP WATER or BATH WATER
-local function easyName() return STAT.easyName end
+local function notEasyName() return not CONF.easyName end -- whether or not to use SWAMP WATER or BATH WATER
+local function easyName() return CONF.easyName end
 local function EDP() return GAME.mod.DP == -1 and GAME.mod.NH ~= 2 and GAME.animDuration < 26 end --3rd quest, don't do if rNH or excessive animDuration
 local function notEDHandEDP() return GAME.mod.DH ~= -1 and GAME.mod.DP ~= -1 end -- friend removes annoying revive task
 
