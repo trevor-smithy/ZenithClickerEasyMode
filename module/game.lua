@@ -150,6 +150,7 @@ local ins, rem = table.insert, table.remove
 ---@field achv_cleanBreakQuest number
 ---@field achv_professionalCleanerQuest number
 ---@field achv_roldSmythyQuest number
+---@field hasSubmittedTimedAchievements boolean
 ---@field comboSFX number
 ---@field comboBounceTime number
 ---@field multiplePiecesActive boolean True if multiple pieces are active together. If so, disables achievements and record submission viability
@@ -3161,6 +3162,7 @@ function GAME.start()
     GAME.achv_cleanBreakQuest = 0
     GAME.achv_professionalCleanerQuest = 0
     GAME.achv_roldSmythyQuest = 0
+    GAME.hasSubmittedTimedAchievements = false
     GAME.noManualActivate = true
     GAME.noMouseOrSpin = true
     GAME.noKeyboardOrReset = true
@@ -4350,7 +4352,8 @@ function GAME.update(dt)
     end
 
     -- Time Based Achievements
-    if GAME.time > 600 then
+    if GAME.time > 600 and not GAME.hasSubmittedTimedAchievements then
+        GAME.hasSubmittedTimedAchievements = true
         GAME.submitTimedAchievements()
     end
 
