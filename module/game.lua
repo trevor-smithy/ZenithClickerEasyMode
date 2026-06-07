@@ -1577,9 +1577,9 @@ function GAME.upFloor()
         end
         if GAME.comboStr == 'eGVeIN' then
             if not GAME.achv_noDamageH then
-                SubmitAchv('humble_pupil', GAME.time/GAME.totalQuest)
+                SubmitAchv('humble_pupil', GAME.totalQuest/GAME.time)
             elseif GAME.achv_noDamageH > 1650 then
-                SubmitAchv('humble_pupil', GAME.time/GAME.totalQuest)
+                SubmitAchv('humble_pupil', GAME.totalQuest/GAME.time)
             end
         end
         local comboName
