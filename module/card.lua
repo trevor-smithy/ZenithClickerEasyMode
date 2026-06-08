@@ -79,7 +79,8 @@ end
 ---@param self Card 
 ---@param auto boolean i.e. was not manually selected
 ---@param key number? 1 or nil = active/inactive 2 = reverse 3 = easy
-function Card:setActive(auto, key)
+---@param friendActivation boolean? If true, do not check for closer card
+function Card:setActive(auto, key, friendActivation)
     local eNHBlocksFaults = M.NH == -1 and true or false
     if not auto then
         GAME.spinCheck = false
@@ -150,7 +151,7 @@ function Card:setActive(auto, key)
     -- Trevor Smithy
     self.active = not self.active -- the main flip
     --Closer Card
-    if GAME.ecloseCard and GAME.playing and not auto then
+    if GAME.ecloseCard and GAME.playing and not (auto or friendActivation) then
         self.active = not self.active
         if not GAME.achv_noManualFlipH then
             GAME.achv_noManualFlipH = GAME.roundHeight
@@ -179,7 +180,7 @@ function Card:setActive(auto, key)
         elseif self.active and self.required and (self.touchCount == 0 or M.NH == -1 and self.touchCount <= 1) then
             --don't deselect a correct card
             self.assistPenalty = 0
-        elseif not otherCardActivated then
+        elseif not otherCardActivated and GAME.questTime > 0.26 then
             self.active = not self.active
             self.assistPenalty = 5
             if not eNHBlocksFaults then

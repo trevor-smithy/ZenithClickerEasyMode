@@ -491,7 +491,7 @@ function GAME.getComboName(list, mode)
         end
 
         local colorModNumber = 1
-        local eINeMSAS = M.IN == -1 and M.MS == -1 and M.AS ~= 0 and not CONF.easyName
+        local eINeMSAS = M.IN == -1 and M.MS == -1 and M.AS ~= 0 and not CONF.easyName and not GAME.ecloseCard
         local modCodes = {'EX', 'NH', 'MS', 'GV', 'VL', 'DH', 'IN', 'AS', 'DP'}
         for i = 1, len - 1 do
             if eINeMSAS then 
@@ -2454,12 +2454,12 @@ function GAME.commit(auto, falseCommit)
         end
         GAME.alleyoopCheck = true
     else -- not a 3rd quest
-        if GAME.alleyoopCheck and correct and not allyWasDead and not falseCommit then --last was a 3rd quest
+        if GAME.alleyoopCheck and correct and oldAllyHP > 0 and not falseCommit then --last was a 3rd quest
             IssueAchv('alleyoop')
             SFX.play('shatter', 0.626)
             GAME.dunk = true
         end
-        if GAME.slamDunkCheck and correct and not allyWasDead and not falseCommit then
+        if GAME.slamDunkCheck and correct and oldAllyHP > 0 and not falseCommit then
             --MSG('bright', 'SLAMDUNK')
             IssueAchv('slamdunk')
             SFX.play('shatter', 1)
@@ -2707,7 +2707,7 @@ function GAME.commit(auto, falseCommit)
             xp = xp + 3
 
             -- B2B
-            if correct == 1 or (correct == 2 and M.DP == -1 and not allyWasDead) then
+            if correct == 1 or (correct == 2 and M.DP == -1 and oldAllyHP > 0) then
                 GAME.chain = GAME.chain + 1
                 if GAME.chain < 4 then
                 elseif GAME.chain < 8 then
@@ -2745,7 +2745,7 @@ function GAME.commit(auto, falseCommit)
                 xp = xp * 3
             end
         end
-        if GAME.setupCheck and not allyWasDead and correct == 1 and not falseCommit then
+        if GAME.setupCheck and oldAllyHP > 0 and correct == 1 and not falseCommit then
             if not GAME.achv_bestFriendQuest then
                 GAME.achv_bestFriendQuest = 0
             end
@@ -2983,23 +2983,23 @@ function GAME.commit(auto, falseCommit)
             if eDPCorrect and correct == 1 then
                 rem(GAME.quests, 3)
                 GAME.totalQuest = GAME.totalQuest + 1
-                if not allyWasDead and M.NH < 2 then
+                if oldAllyHP > 0 and M.NH < 2 then
                     for i = 1, #CD do
                         if CD[i].active ~= CD[i].required2 then
-                            CD[i]:setActive(false)
+                            CD[i]:setActive(false, 1, true)
                             if M.VL > 0 then
                                 CD[i]:setActive(false)
                             end
                             if M.VL == 2 then
-                                CD[i]:setActive(false)
-                                CD[i]:setActive(false)
+                                CD[i]:setActive(false, 1, true)
+                                CD[i]:setActive(false, 1, true)
                             end
                         end
                     end
                     SFX.play('card_slide_' .. rnd(4), .62)
                     SFX.play(GAME.alleyoopCheck and 'social_notify_major' or 'social_notify_minor')
                 end
-            elseif eDPCorrect and not allyWasDead and M.NH < 2 then
+            elseif eDPCorrect and oldAllyHP > 0 and M.NH < 2 then
                 for i = 1, #CD do
                     if CD[i].active ~= CD[i].required then
                         CD[i]:setActive(false)
