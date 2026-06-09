@@ -1250,7 +1250,8 @@ local page2 = {
                 elseif res1.mod == "evilvile" then modText = "The Creator wants nothing to do with something that evil"
                 elseif res1.mod == "shimmer" then modText = "The Creator asks you to keep your sparkling water away from his creation"
                 elseif res1.mod == "unabstracted" then modText = "The Creator prefers his work abstract"
-                elseif res1.mod == "finalmixbeg" then modText = "The Creator rejects your chakras and magics" end
+                elseif res1.mod == "finalmixbeg" then modText = "The Creator rejects your chakras and magics" 
+                elseif res1.mod == "Rodinia's Domain" or res1.mod == "Rodinia" or res1.mod == "Extra" then modText = "The Creator is too flustered by the traces of Rodinia to properly accept that." end
                 MSG('dark', modText)
                 SFX.play('staffwarning')
                 return
