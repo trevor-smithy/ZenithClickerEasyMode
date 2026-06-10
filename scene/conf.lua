@@ -1743,13 +1743,13 @@ local pageZCEM = {
         frameColor = ZCEMclr.cbFrame,
         textColor = ZCEMclr.T, text = "OLD HITBOX",
         x = baseX + 500, y = baseY + 60 + 160,
-        disp = function() return STAT.oldHitbox end,
+        disp = function() return CONF.oldHitbox end,
         code = function()
             local multiple = GAME.multiplePiecesActive
             MSG.clear()
-            STAT.oldHitbox = not STAT.oldHitbox
-            MSG('dark', "Force old hitbox: " .. (STAT.oldHitbox and "ON" or "OFF"))
-            SFX.play(STAT.oldHitbox and 'social_online' or 'social_offline')
+            CONF.oldHitbox = not CONF.oldHitbox
+            MSG('dark', "Force old hitbox: " .. (CONF.oldHitbox and "ON" or "OFF"))
+            SFX.play(CONF.oldHitbox and 'social_online' or 'social_offline')
             GAME.multiplePiecesActive = false
             SaveConf()
             if multiple then GAME.multiplePiecesActive = true end

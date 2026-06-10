@@ -3600,7 +3600,7 @@ function GAME.finish(reason)
         -- Easy Mode Version for records
         if not GAME.multiplePiecesActive then
             if not CONF.imperial then
-                TEXTS.easyModeVersion:set((STAT.oldHitbox and "eT" or "eV") .. (require 'version'.verStr))
+                TEXTS.easyModeVersion:set((CONF.oldHitbox and "eT" or "eV") .. (require 'version'.verStr))
             else
                 TEXTS.easyModeVersion:set({ COLOR.LL, ("%.1fm"):format(GAME.roundHeight) })
             end
