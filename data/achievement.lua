@@ -2318,14 +2318,27 @@ local compFunc = {
 
 do
     local i = 1
+    local zcem = 1
     repeat
         local achv = d[i]
         if achv.title then
-            if i % 2 == 0 then
-                table.insert(d, i, {})
-                i = i + 1
+            if achv.mod == 'ZCEM' then
+                if zcem % 2 == 0 then
+                    table.insert(d, i, {mod = 'ZCEM'})
+                    i = i + 1
+                    zcem = zcem + 1
+                end
+                table.insert(d, i + 1, {mod = 'ZCEM'})
+            else
+                if i % 2 == 0 then
+                    table.insert(d, i, {})
+                    i = i + 1
+                end
+                table.insert(d, i + 1, {})
             end
-            table.insert(d, i + 1, {})
+        end
+        if achv.mod == 'ZCEM'  then
+            zcem = zcem + 1
         end
         i = i + 1
     until i > #d

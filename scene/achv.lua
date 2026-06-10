@@ -789,6 +789,7 @@ scene.widgetList = {
         onClick = function() 
             love.keypressed('1') 
             maxScroll = max(ceil(((page == ZCEMpage and #achvListZCEM or #achvList) - 12) / 2) * 140, 0)
+            if scroll > maxScroll then scroll = maxScroll end
         end,
     },
     WIDGET.new {
@@ -800,6 +801,7 @@ scene.widgetList = {
         onClick = function()
             love.keypressed(tostring(ZCEMpage))
             maxScroll = max(ceil(((page == ZCEMpage and #achvListZCEM or #achvList) - 12) / 2) * 140, 0)
+            if scroll > maxScroll then scroll = maxScroll end
         end,
     },
 }
