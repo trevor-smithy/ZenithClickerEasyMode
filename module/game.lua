@@ -1951,6 +1951,8 @@ function GAME.refreshCurrentCombo()
             end
         elseif comboName:count('EASY') == 1 and comboName:count('UNEASY') == 0 then
             comboName = comboName:gsub('EASY', 'UNEASY', 1)
+        elseif comboName:count('"') == 2 and not secretComboName then
+            comboName = comboName:gsub("([^\"])", "UNEASY %1", 1)
         end
     end
     --
