@@ -2309,6 +2309,35 @@ local d = {
         hide = TRUE,
         mod = "ZCEM",
     },
+    { title = "Easy Mode - Issued (v1.3) (No CR)", mod = "ZCEM" },
+    { -- glissando
+        id = 'glissando',
+        name = "Glissando",
+        desc = [[Hear all 16 combo sfx at once by using at least eGV, rNH and Stacker Mode]],
+        quote = [["Waow so satisfying~"]],
+        credit = "@TrevorSmithy",
+        type = 'issued',
+        hide = function() return GAME.completion.NH == 0 end,
+        mod = "ZCEM",
+    },
+    { -- secret_grade
+        id = 'secret_grade',
+        name = "Secret Grade",
+        desc = [[Make a stack of sequential single mod quests from left to right and back (i.e: EX, NH, MS, GV, VL, DH, IN, AS, DP, AS, IN, DH, VL, GV, MS, NH, EX)]],
+        quote = [[A (poorly guarded) secret.]],
+        type = 'issued',
+        hide = TRUE,
+        mod = "ZCEM",
+    },
+    { -- garbage_in_garbage_out
+        id = 'garbage_in_garbage_out',
+        name = "Garbage In, Garbage Out",
+        desc = [[Die with at least 41 quests on the stack]],
+        quote = [["That's good. O-ok. Alright. OK THAT'S GOOD! IT'S- IT'S ENOUGH SLICES!]],
+        type = 'issued',
+        hide = TRUE,
+        mod = "ZCEM",
+    },
 }
 
 local compFunc = {

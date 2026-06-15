@@ -300,8 +300,8 @@ local function keyTrigger(key)
                         GAME.fallout = true
                         scene.widgetList.stat.x = -100
                         scene.widgetList.stat:resetPos()
-                        scene.widgetList.achv.x = -100
-                        scene.widgetList.achv:resetPos()
+                        scene.widgetList.chnl.x = -100
+                        scene.widgetList.chnl:resetPos()
                         scene.widgetList.about.x = 100
                         scene.widgetList.about:resetPos()
                         scene.widgetList.conf.x = 100
@@ -1860,7 +1860,7 @@ function scene.overDraw()
             gc_replaceTransform(SCR.xOy_dl)
             gc_translate(0, GAME.uiHide * 30)
             setFont(30)
-            gc_setColor(TextColor)
+            gc_setColor(GAME.badTime and COLOR.L or TextColor)
             gc_setAlpha(.42)
             TEXTS.srTimer:set(STRING.time(STAT.srTimer_game) .. "/ " .. STRING.time(STAT.srTimer_life, 2))
             gc_draw(TEXTS.srTimer, 7, -70)
@@ -2356,6 +2356,7 @@ scene.widgetList = {
         onPress = function()
             --if not DailyAvailable then return end
             --applyCombo(DAILY)
+            if GAME.badTime then return end
             applyCombo(generateRandomCombo())
             if TABLE.equal(GAME.getHand(true),{'eEX','rGV','eDH','eAS'}) then -- but it isn't one of mine check
                 GAME.enightcore = true

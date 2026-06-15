@@ -2534,6 +2534,11 @@ function GAME.commit(auto, falseCommit)
 
         GAME.incrementPrompt('send', attack)
         GAME.totalAttack = GAME.totalAttack + attack
+        
+        for i, q in next, GAME.questStack do
+            if not TABLE.equal(hand, TABLE.sort(q.combo)) then break end
+            if i > 15 then IssueAchv('glissando') end
+        end
 
         if attack > 0 then GAME.addHeight(attack * GAME.attackMul) end
         GAME.addXP(attack + xp)
@@ -3103,6 +3108,20 @@ function GAME.commit(auto, falseCommit)
                 end
                 if TASK.lock('hyperalert', 2) then
                     SFX.play("hyperalert", 1, 0, Tone(0))
+                end
+            end
+            if not ACHV.secret_grade then
+                local secretGrade = 'EXNHMSGVVLDHINASDPASINDHVLGVMSNHEX'
+                local stackSet = {}
+                local stackText = ''
+                for i = #GAME.questStack, 1, -1 do
+                    ins(stackSet, GAME.questStack[i].combo)
+                end
+                for _, q in next, stackSet do
+                    stackText = stackText .. q[1]
+                end
+                if #GAME.questStack >= 17 then
+                    if STRING.find(stackText, secretGrade) then IssueAchv('secret_grade') end
                 end
             end
             return
@@ -4061,6 +4080,7 @@ function GAME.finish(reason)
     if reason ~= 'forfeit' then
         TASK.lock('cannotStart', 1)
         TASK.lock('cannotFlip', .626)
+        if #GAME.questStack > 40 then IssueAchv('garbage_in_garbage_out') end
     end
     TASK.removeTask_code(Task_MusicEnd)
     TASK.new(Task_MusicEnd)

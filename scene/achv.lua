@@ -729,10 +729,11 @@ function scene.draw()
     gc_replaceTransform(SCR.xOy_ul)
     gc_setColor(clr.L)
     FONT.set(50)
+    local pageTitles = {"ZC", "ZCEM"}
     if colorRev then
-        gc_print("CHNL / ACHV", 15, 68, 0, 1, -1)
+        gc_print("CHNL / ACHV / " .. pageTitles[page], 15, 68, 0, 1, -1)
     else
-        gc_print("CHNL / ACHV", 15, 0)
+        gc_print("CHNL / ACHV / " .. pageTitles[page], 15, 0)
     end
     -- Badge (wreath) count
     if STAT.maxFloor >= 10 and not whenItsReady and not TestMode then
