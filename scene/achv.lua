@@ -11,7 +11,6 @@ local clr = {
 }
 local colorRev = false
 
-AchvText = GC.newText(FONT.get(30))
 local Achievements = Achievements
 local M = GAME.mod
 
@@ -105,9 +104,9 @@ function RefreshAchvList(canShuffle)
                 overDev = selfScore == devScore or A.comp(selfScore, devScore)
                 odCap = odCap + 1
             end
-            AchvText:set(A.desc)
+            TEXTS.temp30:set(A.desc)
             local hidden = A.hide() and not ACHV[A.id]
-            local descWidth = hidden and 26 or AchvText:getWidth()
+            local descWidth = hidden and 26 or TEXTS.temp30:getWidth()
             if not hidden or not A.realHide() then 
                 if A.mod == "ZCEM" then countSinceLastTitle = countSinceLastTitle + 1 end
                 table.insert((A.mod == "ZCEM" and achvListZCEM or achvList), {
@@ -600,9 +599,8 @@ function scene.draw()
 
                 -- Progress ring
                 if a.progress > 0 then
-                    gc_stc_reset()
-                    if colorRev then gc_setColor(COLOR.lR) end
                     if a.progress < 1 then
+                        gc_stc_reset()
                         gc_stc_arc('pie', 65, 65,
                             ea + -2.0944,
                             ea + -2.0944 + ka * a.progress,
@@ -612,6 +610,7 @@ function scene.draw()
                             ea + 1.0472 + ka * a.progress,
                             63, 26)
                     end
+                    if colorRev then gc_setColor(COLOR.lR) end
                     gc_mDraw(texture.ring, 65, 65, 0, .42)
                     gc_mDraw(texture.ring, 65, 65, 3.1416, .42)
                     gc_stc_stop()

@@ -1,4 +1,5 @@
 love.window.setIcon(love.image.newImageData('assets/iconZCEM.png'))
+love.mouse.setVisible(false)
 
 require 'Zenitha'
 
@@ -6,785 +7,301 @@ ZENITHA.setMainLoopSpeed(240)
 ZENITHA.setRenderRate(50)
 ZENITHA.setAppInfo("Zenith Clicker", SYSTEM .. " " .. (require 'version'.appVer))
 ZENITHA.setClickDist(62)
+ZENITHA.setFirstScene('joining')
 ZENITHA._cursor.speed = 1600
 
 STRING.install()
 
 SCR.setSize(1600, 1000)
 
-FILE.createDirectory({
-    'customAssets/achievements',
-    'customAssets/badges',
-    'customAssets/card',
-    'customAssets/music',
-    'customAssets/panel',
-    'customAssets/particle',
-    'customAssets/rank',
-    'customAssets/revive',
-    'customAssets/stat',
-    'customAssets/tower',
-})
+local gc = love.graphics
+local gc_push, gc_pop = gc.push, gc.pop
+local gc_translate, gc_scale = gc.translate, gc.scale
+local gc_rotate, gc_setShader = gc.rotate, gc.setShader
+local gc_setColor, gc_setLineWidth, gc_setLineJoin = gc.setColor, gc.setLineWidth, gc.setLineJoin
+local gc_draw, gc_line = gc.draw, gc.line
+local gc_mRect = GC.mRect
 
-
----@return any love.Texture
-local function assets(path) return FILE.exist('customAssets/' .. path) and 'customAssets/' .. path or 'assets/' .. path end
-local function q(oy, n, size)
-    return GC.newQuad(
-        n * size, oy,
-        size, size,
-        2178*2, 1663 -- was 2178
-    )
-end
-local function q2(ox, oy, w, h)
-    return GC.newQuad(
-        ox, oy,
-        w, h,
-        2178*2, 1663
-    )
-end
-local function aq(x, y) return GC.newQuad((x - 1) % 16 * 256, (y - 1) % 16 * 256, 256, 256, 4096, 2048) end
-TEXTURE = {
-    star0 = assets 'crystal-dark.png',
-    star1 = assets 'crystal.png',
-    star2 = assets 'crystal-fire.png',
-    panel = {
-        glass_a = assets 'panel/glass-a.png',
-        glass_b = assets 'panel/glass-b.png',
-        throb_a = assets 'panel/throb-a.png',
-        throb_b = assets 'panel/throb-b.png',
-    },
-    modIcon = assets 'mod_icon_easy.png',
-    modQuad_ig = {
-        VL = q(0, 0, 225),
-        NH = q(0, 1, 225),
-        MS = q(0, 2, 225),
-        IN = q(0, 3, 225),
-        GV = q(0, 4, 225),
-        EX = q(0, 5, 225),
-        DP = q(0, 6, 225),
-        DH = q(0, 7, 225),
-        AS = q(0, 8, 225),
-        rVL = q(225, 0, 242),
-        rNH = q(225, 1, 242),
-        rMS = q(225, 2, 242),
-        rIN = q(225, 3, 242),
-        rGV = q(225, 4, 242),
-        rEX = q(225, 5, 242),
-        rDP = q(225, 6, 242),
-        rDH = q(225, 7, 242),
-        rAS = q(225, 8, 242),
-        -- Trevor Smithy
-        eVL = q(0, 9, 225),
-        eNH = q(0, 10, 225),
-        eMS = q(0, 11, 225),
-        eIN = q(0, 12, 225),
-        eGV = q(0, 13, 225),
-        eEX = q(0, 14, 225),
-        eDP = q(0, 15, 225),
-        eDH = q(0, 16, 225),
-        eAS = q(0, 17, 225),
-        ueEX = q2(3303, 233, 225, 225),
-        --
-    },
-    modQuad_uneasy_ig = {
-        eVL = q2(2178, 233, 225, 225),
-        eNH = q2(2178+225, 233, 225, 225),
-        eMS = q2(2178+225*2, 233, 225, 225),
-        eIN = q2(2178+225*3, 233, 225, 225),
-        eGV = q2(2178+225*4, 233, 225, 225),
-        eEX = q2(3303, 233, 225, 225),
-        eDP = q2(2178+225*6, 233, 225, 225),
-        eDH = q2(2178+225*7, 233, 225, 225),
-        eAS = q2(2178+225*8, 233, 225, 225),
-    },
-    modQuad_res = {
-        VL = q(467, 0, 183),
-        NH = q(467, 1, 183),
-        MS = q(467, 2, 183),
-        IN = q(467, 3, 183),
-        GV = q(467, 4, 183),
-        EX = q(467, 5, 183),
-        DP = q(467, 6, 183),
-        DH = q(467, 7, 183),
-        AS = q(467, 8, 183),
-        rVL = q(650, 0, 183),
-        rNH = q(650, 1, 183),
-        rMS = q(650, 2, 183),
-        rIN = q(650, 3, 183),
-        rGV = q(650, 4, 183),
-        rEX = q(650, 5, 183),
-        rDP = q(650, 6, 183),
-        rDH = q(650, 7, 183),
-        rAS = q(650, 8, 183),
-        -- Trevor Smithy
-        eVL = q(467, 9, 183),
-        eNH = q(467, 10, 183),
-        eMS = q(467, 11, 183),
-        eIN = q(467, 12, 183),
-        eGV = q(467, 13, 183),
-        eEX = q(467, 14, 183),
-        eDP = q(467, 15, 183),
-        eDH = q(467, 16, 183),
-        eAS = q(467, 17, 183),
-        ueEX = q(650, 14, 183),
-    },
-    modQuad_ultra_res = {
-        rVL = q(833, 0, 183),
-        rNH = q(833, 1, 183),
-        rMS = q(833, 2, 183),
-        rIN = q(833, 3, 183),
-        rGV = q(833, 4, 183),
-        rEX = q(833, 5, 183),
-        rDP = q(833, 6, 183),
-        rDH = q(833, 7, 183),
-        rAS = q(833, 8, 183),
-    },
-    modQuad_ultra = {
-        rNH = q2(0000, 1016, 315, 315),
-        rMS = q2(0315, 1016, 315, 315),
-        rGV = q2(0630, 1016, 315, 315),
-        rVL = q2(0945, 1016, 315, 315),
-        rDH = q2(0000, 1331, 315, 315),
-        rIN = q2(0315, 1331, 315, 315),
-        rAS = q2(0630, 1331, 315, 315),
-        rEX = q2(0945, 1331, 315, 332),
-        rDP = q2(1260, 1016, 419, 378),
-    },
-    EX = { lock = '_lockover_9', front = assets 'card/expert.png', back = assets 'card/expert-back.png' },
-    NH = { lock = '_lockfull_2', front = assets 'card/nohold.png', back = assets 'card/nohold-back.png' },
-    MS = { lock = '_lockfull_3', front = assets 'card/messy.png', back = assets 'card/messy-back.png' },
-    GV = { lock = '_lockfull_4', front = assets 'card/gravity.png', back = assets 'card/gravity-back.png' },
-    VL = { lock = '_lockfull_5', front = assets 'card/volatile.png', back = assets 'card/volatile-back.png' },
-    DH = { lock = '_lockfull_6', front = assets 'card/doublehole.png', back = assets 'card/doublehole-back.png' },
-    IN = { lock = '_lockfull_7', front = assets 'card/invisible.png', back = assets 'card/invisible-back.png' },
-    AS = { lock = '_lockfull_8', front = assets 'card/allspin.png', back = assets 'card/allspin-back.png' },
-    DP = { lock = '_lockover_?', front = assets 'card/duo.png', back = assets 'card/duo-back.png' },
-    lockfull = assets 'card/lockfull.png',
-    lockover = assets 'card/lockover.png',
-    towerBG = { assets 'tower/f1.jpg', assets 'tower/f2.jpg', assets 'tower/f3.jpg', assets 'tower/f4.jpg', assets 'tower/f5.jpg', assets 'tower/f6.jpg', assets 'tower/f7.jpg', assets 'tower/f8.jpg', assets 'tower/f9.jpg', assets 'tower/f10.png' },
-    moon = assets 'tower/moon.png',
-    stars = assets 'tower/stars.png',
-    warning = assets 'finalwarning.png',
-
-    revive = {
-        norm = assets 'revive/norm.png',
-        rev_left = assets 'revive/rev_left.png',
-        rev_right = assets 'revive/rev_right.png',
-    },
-    spark = {
-        assets 'particle/spark1.png',
-        assets 'particle/spark2.png',
-        assets 'particle/spark3.png',
-    },
-
-    stat = {
-        avatar = assets 'stat/avatar.png',
-        clicker = assets 'stat/clicker.png',
-        clicker_star = assets 'stat/clicker_star.png',
-        rank = {
-            [0] = assets 'rank/z.png',
-            assets 'rank/d.png',
-            assets 'rank/d+.png',
-            assets 'rank/c-.png',
-            assets 'rank/c.png',
-            assets 'rank/c+.png',
-            assets 'rank/b-.png',
-            assets 'rank/b.png',
-            assets 'rank/b+.png',
-            assets 'rank/a-.png',
-            assets 'rank/a.png',
-            assets 'rank/a+.png',
-            assets 'rank/s-.png',
-            assets 'rank/s.png',
-            assets 'rank/s+.png',
-            assets 'rank/ss.png',
-            assets 'rank/u.png',
-            assets 'rank/x.png',
-            assets 'rank/x+.png',
-        },
-        badges = (function()
-            local list = love.filesystem.getDirectoryItems('assets/badges')
-            local l = {}
-            for _, v in next, list do
-                l[v:match('^(.*)%.png$')] = assets('badges/' .. v)
-            end
-            return l
-        end)()
-    },
-
-    channel = {
-        achievements = assets "channel/achievements.jpg",
-        records = assets "channel/me.jpg",
-        splits = assets "channel/standalone.jpg",
-        leaderboard = assets "channel/leaderboard.jpg",
-        -- players = assets "channel/players.jpg",
-    },
-    achievement = {
-        icons = assets 'achievements/achv_icons.png',
-        iconQuad = {
-            _undef = aq(8, 8),
-
-            contender = aq(2, 2),
-            clicker = aq(1, 1),
-            elegance = aq(4, 1),
-            garbage_offensive = aq(3, 1),
-            tower_climber = aq(8, 2),
-            what_ever_it_takes = aq(1, 3),
-            speed_player = aq(5, 2),
-            plonk = aq(6, 2),
-            zenith_explorer = aq(2, 3),
-            zenith_explorer_plus = aq(2, 3),
-            clicker_speedrun = aq(5, 1),
-            naga_eyes = aq(8, 8),
-            supercharged = aq(5, 6),
-            supercharged_plus = aq(5, 6),
-            multitasker = aq(7, 2),
-            effective = aq(7, 2),
-            zenith_speedrun = aq(2, 6),
-            zenith_speedrun_plus = aq(2, 6),
-            zenith_challenger = aq(11, 2),
-            divine_challenger = aq(12, 2),
-            zenith_speedrunner = aq(14, 2),
-            divine_speedrunner = aq(13, 2),
-            the_spike_of_all_time = aq(4, 2),
-            the_spike_of_all_time_minus = aq(4, 2),
-            clock_out = aq(13, 5),
-            vip_list = aq(6, 6),
-
-            EX = aq(3, 3),
-            NH = aq(7, 3),
-            MS = aq(8, 3),
-            GV = aq(6, 3),
-            VL = aq(5, 3),
-            DH = aq(4, 3),
-            IN = aq(1, 4),
-            AS = aq(2, 4),
-            DP = aq(3, 4),
-            GVIN = aq(6, 4),
-            ASNH = aq(4, 6),
-            DPEX = aq(8, 5),
-            GVNH = aq(4, 4),
-            DHMSNH = aq(5, 4),
-            DHEXNH = aq(7, 4),
-            DHEXMSVL = aq(8, 4),
-            ASEXVL = aq(1, 7),
-            swamp_water_lite = aq(5, 7),
-            swamp_water = aq(2, 5),
-
-            rEX = aq(15, 1),
-            rNH = aq(11, 1),
-            rMS = aq(12, 1),
-            rGV = aq(10, 1),
-            rVL = aq(9, 1),
-            rDH = aq(16, 1),
-            rIN = aq(13, 1),
-            rAS = aq(14, 1),
-            rDP = aq(7, 7),
-            rGVrIN = aq(9, 3),       -- The Grandmaster+
-            EXNHrAS = aq(10, 7),     -- Magic School
-            INrASrDHrNH = aq(14, 6), -- The Spellcaster
-            DHEXrGV = aq(10, 3),     -- Demonic Speed
-            EXGVNHrMS = aq(12, 6),   -- Bnuuy
-            ASDPGVrMSrNH = aq(9, 2), -- Grand-Master! Rounds
-            DHrEXrVL = aq(9, 6),     -- Sweat and Ruin
-            ASGVrDPrMS = aq(13, 3),  -- Cupid's Gamble
-            NHVLrDPrGV = aq(11, 6),  -- Despairful Longing
-            VLrEXrIN = aq(16, 6),    -- Authoritarian Delusion
-            rDPrEX = aq(12, 3),      -- Tyrannical Dyarchy
-            INMSrDHrEX = aq(7, 8),   -- Sisyphean Monarchy
-            ASMSrDHrIN = aq(13, 6),  -- Kitsune Trickery
-            swamp_water_lite_plus = aq(15, 3),
-            swamp_water_plus = aq(16, 3),
-
-            talentless = aq(3, 7),
-            quest_rationing = aq(2, 7),
-            the_responsible_one = aq(1, 6),
-            the_responsible_one_plus = aq(1, 6),
-            the_unreliable_one = aq(15, 2),
-            guardian_angel = aq(3, 6),
-            carried = aq(3, 8),
-            overprotection = aq(12, 7),
-            a_mutual_agreement = aq(13, 4),
-            the_cheaters = aq(12, 4),
-            the_escape_artist = aq(1, 5),
-            the_artist_trinity = aq(11, 3),
-            level_19_cap = aq(16, 2),
-            empurple = aq(13, 7),
-            the_masterful_juggler = aq(11, 7),
-            clutch_main = aq(14, 3),
-            spotless = aq(16, 4),
-            autoplay_is_awesome = aq(10, 6),
-            sunk_cost = aq(11, 5),
-            wax_wings = aq(12, 5),
-            the_oblivious_artist = aq(14, 7),
-            zero_to_sixty = aq(10, 5),
-            speed_bonus = aq(9, 4),
-            under_the_radar = aq(16, 8),
-            arrogance = aq(3, 5),
-            scarcity_mindset = aq(4, 1),
-            detail_oriented = aq(8, 6),
-            psychokinesis = aq(8, 6),
-            fickle_fuel = aq(9, 5),
-            moon_struck = aq(7, 6),
-            slayer_of_the_tower = aq(1, 3),
-            lovers_promise = aq(8, 7),
-
-            hardcore_beginning = aq(16, 5),
-            love_hotel = aq(16, 5),
-            financially_responsible = aq(16, 5),
-            unfair_battle = aq(16, 5),
-            museum_heist = aq(16, 5),
-            workaholic = aq(16, 5),
-            human_experiment = aq(16, 5),
-            thermal_anomaly = aq(16, 5),
-            ultra_dash = aq(16, 5),
-            perfect_speedrun = aq(15, 5),
-            the_perfectionist = aq(15, 5),
-            cruise_control = aq(15, 5),
-            dazed = aq(5, 6),
-            drag_racing = aq(5, 6),
-            space_race = aq(5, 6),
-            the_spike_of_all_time_plus = aq(5, 6),
-
-            -- Special, no texture needed
-            blight = aq(0, 0),
-            desolation = aq(0, 0),
-            havoc = aq(0, 0),
-            pandemonium = aq(0, 0),
-            inferno = aq(0, 0),
-            purgatory = aq(0, 0),
-            perdition = aq(0, 0),
-            cataclysm = aq(0, 0),
-            annihilation = aq(0, 0),
-            armageddon = aq(0, 0),
-            abyss = aq(0, 0),
-
-            cut_off = aq(6, 2),
-            worn_out = aq(6, 2),
-            the_harbinger = aq(5, 8),
-            final_defiance = aq(3, 2),
-            speedrun_speedrunning = aq(5, 2),
-            abyss_weaver = aq(5, 2),
-            royal_resistance = aq(10, 2),
-            lovers_stand = aq(10, 2),
-            romantic_homicide = aq(4, 8),
-            benevolent_ambition = aq(15, 4),
-            blazing_speed = aq(10, 4),
-            dusty_memories = aq(11, 4),
-            its_kinda_rare = aq(14, 4),
-            fruitless_effort = aq(6, 7),
-            false_god = aq(2, 8),
-
-            identity = aq(6, 6),
-            respectful = aq(2, 1),
-            zenith_relocation = aq(4, 7),
-            intended_glitch = aq(11, 4),
-            lucky_coincidence = aq(14, 5),
-            zenith_traveler = aq(1, 8),
-            dark_force = aq(3, 1),
-            return_to_the_light = aq(5, 5),
-            smooth_dismount = aq(4, 1),
-            -- Trevor Smithy
-            programmer_gamer = aq(10, 8), -- smithy ball
-            one_of_mine = aq(10, 6),
-            ggbw = aq(9, 8),  -- fan
-            perfect_speedrun_plus = aq(15, 5),
-            perfectly_balanced = aq(11, 8), -- thanos knife
-            peasant_revolution = aq(15, 1),
-            holy_ascention = aq(11, 1),
-            stabilized_entropy = aq(12, 1),
-            restrained_collapse = aq(10, 1),
-            restored_volition = aq(9, 1),
-            disproven_blasphemy = aq(16, 1),
-            solved_paradox = aq(13, 1),
-            demystified_grimoire = aq(14, 1),
-            restored_eden = aq(7, 7),
-            your_too_fast = aq(13, 8), --scared jackenstein
-            your_long = aq(12, 8), --jackenstein
-            cheat_death = aq(5, 5),
-            trip_to_hell = aq(5, 7),
-            -- easy mods
-            eEX = aq(3, 3),
-            eNH = aq(7, 3),
-            eMS = aq(8, 3),
-            eGV = aq(6, 3),
-            eVL = aq(5, 3),
-            eDH = aq(4, 3),
-            eIN = aq(1, 4),
-            eAS = aq(2, 4),
-            eDP = aq(3, 4),
-            -- Uneasy Mods (v1.1) (No CR)
-            ueEX = aq(15, 1),
-            ueEXeNH = aq(11, 1),
-            ueEXeMS = aq(12, 1),
-            ueEXeGV = aq(10, 1),
-            ueEXeVL = aq(9, 1),
-            ueEXeDH = aq(16, 1),
-            ueEXeIN = aq(13, 1),
-            ueEXeAS = aq(14, 1),
-            ueEXeDP = aq(7, 7),
-            -- Easy Mode - Special (v1.1) (No CR)
-            humble_pupil = aq(6, 4),
-            overweight_gamer = aq(4, 6),
-            best_friends = aq(8, 5),
-            shameless_cashgrab = aq(4, 4),
-            clean_break = aq(5, 4),
-            emperor_development = aq(7, 4),
-            professional_cleaner = aq(8, 4),
-            rold_smythy = aq(1, 7),
-            quest_feast = aq(2, 7),
-            clean_gamer = aq(1, 5),
-            -- Easy Mode - Why (v1.1) (No CR)
-            ["-3"] = aq(0,0),
-            ["-4"] = aq(0,0),
-            ["-5"] = aq(0,0),
-            ["-6"] = aq(0,0),
-            ["-7"] = aq(0,0),
-            ["-8"] = aq(0,0),
-            ["-9"] = aq(0,0),
-            -- Easy Mode - Issued (v1.1) (No CR)
-            inefficiency = aq(15, 6),
-            could_you_not = aq(3, 2),
-            oh_no_you_dont = aq(10, 2),
-            uneasy = aq(6, 5),
-            roll = aq(9,4),
-            alleyoop = aq(15,7),
-            slamdunk = aq(15,7),
-            www = aq(16,7),
-            peta = aq(0, 0),
-            exa = aq(0, 0),
-            zetta = aq(0, 0),
-            yotta = aq(0, 0),
-            ronna = aq(0, 0),
-            quetta = aq(0, 0),
-            -- Easy Mode - Issued (v1.2) (No CR)
-            patience_is_a_virtue = aq(10, 6),
-            multiple_pieces = aq(1,3),
-            hyperplonk = aq(6, 1),
-            gigaplonk = aq(7, 1),
-            the_windup = aq(8, 1),
-            what_have_you_done = aq(14, 8),
-            music_man = aq(15, 8),
-            im_gonna_be = aq(6, 7),
-            lazy_bastard = aq(16, 8),
-            easy_name = aq(16, 1),
-            biased = aq(4, 5),
-        },
-        frame = {
-            [0] = assets 'achievements/frames/none.png',
-            assets 'achievements/frames/bronze.png',
-            assets 'achievements/frames/silver.png',
-            assets 'achievements/frames/gold.png',
-            assets 'achievements/frames/platinum.png',
-            assets 'achievements/frames/diamond.png',
-            assets 'achievements/frames/issued.png',
-        },
-        ring = assets 'achievements/frames/ring-piece.png',
-        wreath = {
-            assets 'achievements/wreaths/t100.png',
-            assets 'achievements/wreaths/t50.png',
-            assets 'achievements/wreaths/t25.png',
-            assets 'achievements/wreaths/t10.png',
-            assets 'achievements/wreaths/t5.png',
-            assets 'achievements/wreaths/t3.png',
-        },
-        glint_1 = assets 'achievements/glint-a.png',
-        glint_2 = assets 'achievements/glint-b.png',
-        glint_3 = assets 'achievements/glint-c.png',
-        competitive = assets 'achievements/competitive.png',
-        hidden = assets 'achievements/hidden.png',
-        event = assets 'achievements/event.png',
-        unranked = assets 'achievements/unranked.png',
-        extra = assets 'achievements/extra.png',
-        overDev = assets 'achievements/verified-halfmod.png',
-    },
-
-    logo = assets 'iconZCEM.png',
-    logo_old = assets 'icon_old.png',
-    programmingsmithy = assets 'programmingsmithy.png',
-    github = assets 'GitHub_Invertocat_White.png',
-    discord = assets 'Discord-Symbol-White.png',
-}
-TEXTURE = TABLE.linkSource({}, TEXTURE, function(path)
-    if type(path) ~= 'string' then return path end
-    if path:match('^_lock') then
-        local lockType = path:match('_(lock....)')
-        local char = path:sub(-1)
-        local w, h = TEXTURE[lockType]:getDimensions()
-        return GC.initCanvas(w, h, function()
-            GC.draw(TEXTURE[lockType], 0, 0)
-            local t = GC.newText(FONT.get(70, 'sans'), char)
-            if lockType == 'lockfull' then
-                GC.setColor(COLOR.HEX "646483FF")
-                for i = 0, 25 do
-                    local angle = i / 26 * MATH.tau
-                    local dx, dy = math.cos(angle) * 2, math.sin(angle) * 2
-                    GC.mDraw(t, w * .51 + dx, h * .526 + dy, 0, 2)
-                end
-            else
-                GC.setColor(COLOR.HEX "544F65FF")
-                for i = 0, 25 do
-                    local angle = i / 26 * MATH.tau
-                    local dx, dy = math.cos(angle) * 1.6, math.sin(angle) * 1.6
-                    GC.mDraw(t, w * .495 + dx, h * .52 + dy, 0, 1.5)
-                end
-            end
-            t:release()
-        end)
+ZENITHA.globalEvent.drawCursor = NULL
+ZENITHA.globalEvent.clickFX = NULL
+function ZENITHA.globalEvent.fileDrop(file)
+    local data = file:read('data')
+    local suc, res = pcall(gc.newImage, data)
+    if suc then
+        if AVATAR then AVATAR:release() end
+        AVATAR = res
+        love.filesystem.write('avatar', data)
+        IssueAchv('identity')
+        SFX.play('supporter')
+        MSG('dark', "Your avatar was updated!")
     else
-        local suc, res = pcall(love.graphics.newImage, path)
-        if not suc then
-            MSG.log('error', ("Cannot load image '%s': %s"):format(path, res))
-            return PAPER
-        end
-        return res
+        MSG('dark', "Invalid image file")
     end
-end)
-
-TEXTURE.pixel = GC.load { w = 1, h = 1, { 'clear', 1, 1, 1 } }
-
-TEXTURE.ruler = GC.initCanvas(32, 600, function()
-    for y = 0, 199 do
-        local w =
-            y % 200 == 0 and 32 or
-            y % 40 == 0 and 20 or
-            y % 8 == 0 and 10 or
-            6
-        local l = .4 + .6 * w / 32
-        GC.setColor(l, l, l)
-        GC.rectangle('fill', 16 - w / 2, y * 3, w, 1)
-    end
-    GC.setColor(1, 1, 1)
-    GC.rectangle('fill', 0, 1, 32, 1)
-    GC.rectangle('fill', 0, 600, 32, -1)
-end)
-TEXTURE.ruler:setFilter('nearest', 'nearest')
-TEXTURE.ruler:setWrap('repeat', 'repeat')
-
-TEXTURE.transition = GC.initCanvas(128, 1, function()
-    for x = 0, 127 do
-        GC.setColor(1, 1, 1, 1 - x / 128)
-        GC.rectangle('fill', x, 0, 1, 1)
-    end
-end)
-
-TEXTURE.darkCorner = GC.initCanvas(128, 128, function()
-    GC.setColor(0, 0, 0)
-    GC.blurCircle(.626, 64, 64, 64)
-end)
-
-TEXTURE.lightDot = GC.initCanvas(32, 32, function()
-    GC.clear(1, 1, 1, 0)
-    GC.blurCircle(.26, 16, 16, 16)
-end)
-
-TEXTURE.surgeIcon = GC.initCanvas(512, 512, function()
-    GC.clear(1, 1, 1, 0)
-    GC.setColor(1, 1, 1)
-    GC.translate(256, 256)
-    for _ = 0, 2 do
-        GC.circle('fill', 0, 0, 180, 4)
-        GC.rotate(.5236)
-    end
-end)
-
-TEXTURE.windup = GC.initCanvas(128, 128, function()
-    GC.clear(1, 1, 1, 0)
-    local l = {}
-    for i = 0, 15 do
-        local a = i / 16 * MATH.tau
-        local d = i % 2 == 0 and 58 or 45
-        local dx, dy = d * math.cos(a), d * math.sin(a)
-        table.insert(l, 64 + dx)
-        table.insert(l, 64 + dy)
-    end
-    GC.setLineWidth(10)
-    GC.polygon('line', l)
-end)
-do
-    local w = 13
-    local d1 = 20
-    local d2 = 16
-    local d3 = 30
-    local d4 = 15
-    TEXTURE.windupText = {
-        GC.initCanvas(128, 128, function()
-            GC.clear(1, 1, 1, 0)
-            GC.rectangle('fill', 64 - w / 2, 64 - 31, w, 62 - w * 1.6); GC.rectangle('fill', 64 - w / 2, 64 + 31, w, -w)
-        end),
-        GC.initCanvas(128, 128, function()
-            GC.clear(1, 1, 1, 0)
-            GC.rectangle('fill', 64 - w / 2 - d1 / 2, 64 - 31, w, 62 - w * 1.6); GC.rectangle('fill', 64 - w / 2 - d1 / 2, 64 + 31, w, -w)
-            GC.rectangle('fill', 64 - w / 2 + d1 / 2, 64 - 31, w, 62 - w * 1.6); GC.rectangle('fill', 64 - w / 2 + d1 / 2, 64 + 31, w, -w)
-        end),
-        GC.initCanvas(128, 128, function()
-            GC.clear(1, 1, 1, 0)
-            GC.rectangle('fill', 64 - w / 2 - d2, 64 - 31, w, 62 - w * 1.6); GC.rectangle('fill', 64 - w / 2 - d2, 64 + 31, w, -w)
-            GC.rectangle('fill', 64 - w / 2 + 00, 64 - 31, w, 62 - w * 1.6); GC.rectangle('fill', 64 - w / 2 + 00, 64 + 31, w, -w)
-            GC.rectangle('fill', 64 - w / 2 + d2, 64 - 31, w, 62 - w * 1.6); GC.rectangle('fill', 64 - w / 2 + d2, 64 + 31, w, -w)
-        end),
-        GC.initCanvas(128, 128, function()
-            local w = w - 2
-            GC.clear(1, 1, 1, 0)
-            GC.rectangle('fill', 64 - w / 2 - d1 - 1, 64 - 31, w, 62 - w * 1.6); GC.rectangle('fill', 64 - w / 2 - d1 - 1, 64 + 31, w, -w)
-            GC.rectangle('fill', 64 - w / 2 - d4 / 2, 64 - 31, w, 62 - w * 1.6); GC.rectangle('fill', 64 - w / 2 - d4 / 2, 64 + 31, w, -w)
-            GC.rectangle('fill', 64 - w / 2 + d4 / 2, 64 - 31, w, 62 - w * 1.6); GC.rectangle('fill', 64 - w / 2 + d4 / 2, 64 + 31, w, -w)
-            GC.rectangle('fill', 64 - w / 2 + d1 + 1, 64 - 31, w, 62 - w * 1.6); GC.rectangle('fill', 64 - w / 2 + d1 + 1, 64 + 31, w, -w)
-        end),
-        GC.initCanvas(128, 128, function()
-            w = 12
-            GC.clear(1, 1, 1, 0)
-            GC.rectangle('fill', 64 - w / 2 - d3, 64 - 31, w, 62 - w * 1.6); GC.rectangle('fill', 64 - w / 2 - d3, 64 + 31, w, -w)
-            GC.rectangle('fill', 64 - w / 2 - d4, 64 - 31, w, 62 - w * 1.6); GC.rectangle('fill', 64 - w / 2 - d4, 64 + 31, w, -w)
-            GC.rectangle('fill', 64 - w / 2 + 00, 64 - 31, w, 62 - w * 1.6); GC.rectangle('fill', 64 - w / 2 + 00, 64 + 31, w, -w)
-            GC.rectangle('fill', 64 - w / 2 + d4, 64 - 31, w, 62 - w * 1.6); GC.rectangle('fill', 64 - w / 2 + d4, 64 + 31, w, -w)
-            GC.rectangle('fill', 64 - w / 2 + d3, 64 - 31, w, 62 - w * 1.6); GC.rectangle('fill', 64 - w / 2 + d3, 64 + 31, w, -w)
-        end),
-    }
+    file:close()
+    file:release()
+    if SCN.cur == 'stat' then RefreshProfile() end
 end
 
-TEXTURE.recRevBG = GC.initCanvas(1586, 606, function()
-    GC.draw(TEXTURE.panel.glass_a)
-    GC.draw(TEXTURE.panel.glass_b)
-end)
-
-TEXTURE.recRevLight = GC.initCanvas(165, 120, function()
-    GC.clear(1, .1, .1, 0)
-    GC.setColor(1, .1, .1)
-    GC.blurCircle(-.2, 60, 60, 60)
-    GC.blurCircle(-.6, 105, 60, 60)
-end)
-
-TEXTURE.recEasyLight = GC.initCanvas(165, 120, function()
-    GC.clear(1, .1, .1, 0)
-    GC.setColor(.1, 1, .1)
-    GC.blurCircle(-.2, 60, 60, 60)
-    GC.blurCircle(-.6, 105, 60, 60)
-end)
-
-
-
-FONT.load {
-    serif = "assets/AbhayaLibre-Regular.ttf",
-    sans = "assets/DINPro-Medium.otf",
-    led = "assets/UniDreamLED.ttf",
-    symbol = "assets/symbols.otf",
-}
-FontLoaded = SYSTEM == 'Web' or MATH.roll(.62)
-FONT.setDefaultFont(FontLoaded and 'sans' or 'serif')
-FONT.setOnInit(function(font, size)
-    font:setFallbacks(FONT.get(size, '_norm'))
-end)
-
-BG.add('black', { draw = function() GC.clear(0, 0, 0) end })
-BG.set('black')
-
-TEXTS = { -- Font size can only be 30 and 50 here !!!
-    version    = GC.newText(FONT.get(30)),
-    mod        = GC.newText(FONT.get(30)),
-    mpPreview  = GC.newText(FONT.get(30)),
-    zpPreview  = GC.newText(FONT.get(30)),
-    zpChange   = GC.newText(FONT.get(30)),
-    dcBest     = GC.newText(FONT.get(30)),
-    dcTimer    = GC.newText(FONT.get(30)),
-    srTimer    = GC.newText(FONT.get(30)),
-    title      = GC.newText(FONT.get(50), "EXPERT QUICK PICK"),
-    load       = GC.newText(FONT.get(50)),
-    pb         = GC.newText(FONT.get(50)),
-    endResult  = GC.newText(FONT.get(30)),
-    endHeight  = GC.newText(FONT.get(50)),
-    endFloor   = GC.newText(FONT.get(30)),
-    linePB     = GC.newText(FONT.get(50), "PB"),
-    lineKM     = GC.newText(FONT.get(50), "1000"),
-    height     = GC.newText(FONT.get(30)),
-    time       = GC.newText(FONT.get(30)),
-    rank       = GC.newText(FONT.get(30)),
-    chain      = GC.newText(FONT.get(50)),
-    chain2     = GC.newText(FONT.get(50, 'led')),
-    b2b        = GC.newText(FONT.get(30), "B2B x"),
-    comboText  = GC.newText(FONT.get(50), "COMBO"),
-    combo      = GC.newText(FONT.get(50)),
-    spike      = GC.newText(FONT.get(50)),
-    gigaspeed  = GC.newText(FONT.get(50), {
-        COLOR.dR, "G", COLOR.dO, "I", COLOR.dY, "G",
-        COLOR.dK, "A", COLOR.dG, "S", COLOR.dJ, "P",
-        COLOR.dC, "E", COLOR.dS, "E", COLOR.dB, "D"
-    }),
-    teraspeed  = GC.newText(FONT.get(50), {
-        COLOR.R, "T", COLOR.O, "E", COLOR.Y, "R",
-        COLOR.K, "A", COLOR.G, "S", COLOR.J, "P",
-        COLOR.C, "E", COLOR.S, "E", COLOR.B, "D",
-    }),
-    petaspeed  = GC.newText(FONT.get(50), {
-        COLOR.R, "P", COLOR.O, "E", COLOR.Y, "T",
-        COLOR.K, "A", COLOR.G, "S", COLOR.J, "P",
-        COLOR.C, "E", COLOR.S, "E", COLOR.B, "D",
-    }),
-    exaspeed  = GC.newText(FONT.get(50), {
-        COLOR.R, "E", COLOR.O, "X", COLOR.Y, "A",
-        COLOR.G, "S", COLOR.J, "P",
-        COLOR.C, "E", COLOR.S, "E", COLOR.B, "D",
-    }),
-    zettaspeed  = GC.newText(FONT.get(50), {
-        COLOR.R, "Z", COLOR.O, "E", COLOR.Y, "T",
-        COLOR.K, "T", COLOR.G, "A", COLOR.J, "S",
-        COLOR.C, "P", COLOR.S, "E", COLOR.B, "E", COLOR.P, "D",
-    }),
-    yottaspeed  = GC.newText(FONT.get(50), {
-        COLOR.R, "Y", COLOR.O, "O", COLOR.Y, "T",
-        COLOR.K, "T", COLOR.G, "A", COLOR.J, "S",
-        COLOR.C, "P", COLOR.S, "E", COLOR.B, "E", COLOR.P, "D",
-    }),
-    ronnaspeed  = GC.newText(FONT.get(50), {
-        COLOR.R, "R", COLOR.O, "O", COLOR.Y, "N",
-        COLOR.K, "N", COLOR.G, "A", COLOR.J, "S",
-        COLOR.C, "P", COLOR.S, "E", COLOR.B, "E", COLOR.P, "D",
-    }),
-    quettaspeed  = GC.newText(FONT.get(50), {
-        COLOR.R, "Q", COLOR.O, "U", COLOR.Y, "E",
-        COLOR.K, "T", COLOR.G, "T", COLOR.J, "A",
-        COLOR.C, "S", COLOR.S, "P", COLOR.B, "E", COLOR.P, "E", COLOR.M, "D",
-    }),
-    gigatime   = GC.newText(FONT.get(50)),
-    floorTime  = GC.newText(FONT.get(30)),
-    rankTime   = GC.newText(FONT.get(30)),
-    slogan     = GC.newText(FONT.get(30), "CROWD THE TOWER!"),
-    slogan_EX  = GC.newText(FONT.get(30), "THRONG THE TOWER!"),
-    slogan_rEX = GC.newText(FONT.get(30), "OVERFLOW THE TOWER!"),
-    forfeit    = GC.newText(FONT.get(50), "KEEP HOLDING TO FORFEIT"),
-    credit     = GC.newText(FONT.get(30), "Most assets from TETR.IO"),
-    test       = GC.newText(FONT.get(50), "TEST"),
-    easyTitle  = GC.newText(FONT.get(50), "EASY QUICK PICK"),
-    uneasyTitle= GC.newText(FONT.get(50), "UNEASY QUICK PICK"),
-    easyModeVersion = GC.newText(FONT.get(30)),
-}
-if not FontLoaded then
-    TASK.new(function()
-        local loadTime = love.timer.getTime() + (MATH.roll(.9626) and MATH.rand(2.6, 6.26) or 26)
-        while love.timer.getTime() < loadTime do
-            TASK.yieldT(0.1)
-            if GAME.anyRev then
-                TASK.yieldT(0.26)
-                SFX.play('staffsilence')
-                MSG('dark', "A DARK FORCE INTERRUPTED THE FONT LOADING")
-                IssueAchv('dark_force')
-                return
-            end
-            if SCN.cur == 'about' then
-                TASK.yieldT(0.26)
-                SFX.play('staffspam')
-                break
-            end
-        end
-        FONT.setDefaultFont('sans')
-        FontLoaded = true
-        ReloadTexts()
-        FILE.save('', 'serifQuit')
-    end)
+function ZENITHA.globalEvent.resize()
+    BgScale = math.max(SCR.w / 1024, SCR.h / 640)
+    StarPS:reset()
+    StarPS:moveTo(0, -GAME.bgH * 2 * BgScale)
+    StarPS:setEmissionArea('uniform', SCR.w * .626, SCR.h * .626)
+    StarPS:setSizes(SCR.k * 1.626)
+    local dt = 1 / StarPS:getEmissionRate()
+    for _ = 1, StarPS:getBufferSize() do
+        StarPS:emit(1)
+        StarPS:update(dt)
+    end
 end
 
-local button_invis = WIDGET.newClass('button_invis', 'button')
-button_invis.draw = NULL
+local function task_saveConf()
+    TASK.yieldT(2.6)
+    SaveConf()
+end
+local function confUpdate()
+    TASK.removeTask_code(task_saveConf)
+    TASK.new(task_saveConf)
+end
+local KBisDown = love.keyboard.isDown
+function ZENITHA.globalEvent.keyDown(key, isRep)
+    if isRep then return end
+    if KBisDown('lctrl', 'rctrl') then return end
+    if key == 'f12' then
+        if TASK.lock('dev') then
+            MSG('check', "Zenith Clicker is powered by Love2d & Zenitha, not Web!", 6.26)
+        else
+            ZENITHA.setDebugMode(not ZENITHA.getDebugMode() and 1 or false)
+        end
+    elseif key == 'f11' then
+        CONF.fullscreen = not CONF.fullscreen
+        love.window.setFullscreen(CONF.fullscreen)
+        confUpdate()
+        MSG('dark', "Fullscreen: " .. (CONF.fullscreen and "ON" or "OFF"), 1)
+    elseif key == 'f10' then
+        CONF.syscursor = not CONF.syscursor
+        SetMouseVisible(true)
+        ApplySettings()
+        confUpdate()
+        MSG('dark', "Star Force: " .. (CONF.syscursor and "OFF" or "ON"), 1)
+    elseif key == 'f9' then
+        if not GAME.zenithTraveler then CONF.bg = not CONF.bg end
+        confUpdate()
+        MSG('dark', "BG: " .. (CONF.bg and "ON" or "OFF"), 1)
+    elseif key == 'f8' then
+        if CONF.bgBrightness < 80 then
+            CONF.bgBrightness = MATH.clamp(CONF.bgBrightness + 10, 30, 80)
+            confUpdate()
+            MSG('dark', "BG " .. CONF.bgBrightness .. "%", 1)
+        end
+    elseif key == 'f7' then
+        if CONF.bgBrightness > 30 then
+            CONF.bgBrightness = MATH.clamp(CONF.bgBrightness - 10, 30, 80)
+            confUpdate()
+            MSG('dark', "BG " .. CONF.bgBrightness .. "%", 1)
+        end
+    elseif key == 'f5' then
+        if CONF.cardBrightness > 80 then
+            CONF.cardBrightness = MATH.clamp(CONF.cardBrightness - 5, 80, 100)
+            confUpdate()
+            MSG('dark', "Card " .. CONF.cardBrightness .. "%", 1)
+        end
+    elseif key == 'f6' then
+        if CONF.cardBrightness < 100 then
+            CONF.cardBrightness = MATH.clamp(CONF.cardBrightness + 5, 80, 100)
+            confUpdate()
+            MSG('dark', "Card " .. CONF.cardBrightness .. "%", 1)
+        end
+    elseif key == 'f3' then
+        if CONF.sfx > 0 then
+            TempSFX = CONF.sfx
+            CONF.sfx = 0
+        else
+            CONF.sfx = TempSFX or 60
+            TempSFX = false
+        end
+        confUpdate()
+        MSG('dark', CONF.sfx > 0 and "SFX ON" or "SFX OFF", 1)
+        ApplySettings()
+        SFX.play('menuclick')
+    elseif key == 'f4' then
+        if CONF.bgm > 0 then
+            TempBGM = CONF.bgm
+            CONF.bgm = 0
+        else
+            CONF.bgm = TempBGM or 100
+            TempBGM = false
+        end
+        confUpdate()
+        MSG('dark', CONF.bgm > 0 and "BGM ON" or "BGM OFF", 1)
+        ApplySettings()
+    end
+end
+
+function ZENITHA.globalEvent.quit() SaveStat() end
+
+local function task_autoSoundOff()
+    coroutine.yield()
+    while true do
+        local dt = coroutine.yield()
+        local v = math.max(love.audio.getVolume() - dt * 2.6, 0)
+        love.audio.setVolume(v)
+        if v == 0 then return end
+    end
+end
+local function task_autoSoundOn()
+    coroutine.yield()
+    while true do
+        local dt = coroutine.yield()
+        local v = math.min(love.audio.getVolume() + dt * 2.6, 1)
+        love.audio.setVolume(v)
+        if v == 1 then return end
+    end
+end
+function ZENITHA.globalEvent.focus(f)
+    if not CONF.autoMute then return end
+    if f then
+        TASK.removeTask_code(task_autoSoundOff)
+        TASK.new(task_autoSoundOn)
+    else
+        TASK.removeTask_code(task_autoSoundOn)
+        TASK.new(task_autoSoundOff)
+    end
+end
+
+for i = 1, 4 do SCN.scenes._console.widgetList[i].textColor = COLOR.D end
+
+WIDGET.setDefaultOption {
+    checkBox = {
+        w = 40,
+        labelPos = 'right',
+        labelDist = 8,
+        lineWidth = 2,
+        sound_on = 'menuclick',
+        sound_off = 'menuclick',
+    },
+    slider = {
+        lineWidth = 2,
+        _approachSpeed = 1e99,
+    },
+}
+
+function WIDGET._prototype.button:draw()
+    gc_push('transform')
+    gc_translate(self._x, self._y + (SCN.cur == 'tower' and self.pos[1] == .5 and DeckPress or 0))
+
+    if self._pressTime > 0 then
+        gc_scale(1 - self._pressTime / self._pressTimeMax * .0626)
+    end
+    local w, h = self.w, self.h
+
+    local fillC = self.fillColor
+    local frameC = self.frameColor
+
+    -- Background
+    gc_setColor(fillC)
+    gc_mRect('fill', 0, 0, w, h)
+
+    -- Frame
+    gc_setLineWidth(3)
+    gc_setColor(frameC[1] * .42, frameC[2] * .42, frameC[3] * .42)
+    gc_line(-w / 2, h / 2, w / 2, h / 2, w / 2, -h / 2 - 1.5)
+    gc_setColor(.2 + frameC[1] * .8, .2 + frameC[2] * .8, .2 + frameC[3] * .8)
+    gc_line(-w / 2, h / 2 + 1.5, -w / 2, -h / 2, w / 2 - 1.5, -h / 2)
+
+    -- Drawable
+    gc_setColor(self.textColor)
+    WIDGET._alignDraw(self, self._text, 0, 0, 0, 1.2, 1.2 - 2.4 * GAME.revTimer)
+
+    -- Highlight
+    if self._hoverTime > 0 then
+        gc_setColor(1, 1, 1, self._hoverTime / self._hoverTimeMax * .0626)
+        gc_mRect('fill', 0, 0, w - 3, h - 3)
+    end
+
+    gc_pop()
+end
+
+function WIDGET._prototype.checkBox:draw()
+    gc_push('transform')
+    gc_translate(self._x, self._y)
+    local w = self.w
+
+    gc_setLineWidth(self.lineWidth)
+    if self.disp() then
+        -- Active
+        gc_setColor(self.frameColor)
+        gc_mRect('fill', 0, 0, w, w, 2)
+        gc_setColor(0, 0, 0, .42)
+        gc_line(-w / 2, w / 2, w / 2, w / 2, w / 2, -w / 2)
+        gc_setColor(1, 1, 1, .62)
+        gc_line(-w / 2, w / 2, -w / 2, -w / 2, w / 2, -w / 2)
+        gc_setLineWidth(self.lineWidth * 2)
+        gc_setLineJoin('bevel')
+        gc_setColor(1, 1, 1)
+        gc_line(-w * .355, 0, 0, w * .355, w * .355, -w * .355)
+    else
+        -- Background
+        gc_setColor(self.fillColor)
+        gc_mRect('fill', 0, 0, w, w, 2)
+        gc_setColor(0, 0, 0, .626)
+        gc_line(-w / 2, w / 2, -w / 2, -w / 2, w / 2, -w / 2)
+        gc_setColor(1, 1, 1, .0626)
+        gc_line(-w / 2, w / 2, w / 2, w / 2, w / 2, -w / 2)
+    end
+
+    -- Drawable
+    local x2, y2 = w * .5 + self.labelDist, 0
+    gc_setColor(self.textColor)
+    WIDGET._alignDraw(self, self._text, x2, y2, nil, self.textScale)
+
+    -- Highlight
+    gc_setColor(1, 1, 1, self._hoverTime / self._hoverTimeMax * .0626)
+    gc_mRect('fill', 0, 0, w, w, 2)
+
+    gc_pop()
+end
+
+function WIDGET._prototype.slider:draw()
+    local x, y = self._x, self._y
+    local x2 = x + self.w
+    local rangeL, rangeR = self._rangeL, self._rangeR
+
+    local frameC = self.frameColor ---@cast frameC -string +Zenitha.Color
+
+    -- Axis
+    gc_setColor(frameC)
+    gc_setLineWidth(self.lineWidth * 2)
+    gc_line(x, y, x2, y)
+
+    local fillC = self.fillColor
+
+    -- Block
+    local pos = MATH.clamp(self._pos, rangeL, rangeR)
+    local cx = x + self.w * (pos - rangeL) / self._rangeWidth
+    local bw, bh = 26, 30
+    GC.ucs_move(cx, y)
+    gc_setColor(fillC)
+    gc_mRect('fill', 0, 0, bw, bh, self.cornerR)
+    gc_setLineWidth(self.lineWidth)
+    gc_setColor(0, 0, 0, .26)
+    gc_line(-bw / 2, bh / 2, bw / 2, bh / 2, bw / 2, -bh / 2)
+    gc_setColor(1, 1, 1, .1)
+    gc_line(-bw / 2, bh / 2, -bw / 2, -bh / 2, bw / 2, -bh / 2)
+    GC.ucs_back()
+end
+
+WIDGET.newClass('button_invis', 'button').draw = NULL
+
+UTIL.time("Load & Configure & Customize Zenitha", true)
+--------------------------------------------------------------
+
+CHAR = require 'module/char'
+require 'data/base'
+require 'module/texture'
+
+UTIL.time("Load gamedata & Initialize Textures", true)
+--------------------------------------------------------------
 
 Metatable = {
     best_highscore = { __index = function() return 0 end },
@@ -815,12 +332,175 @@ CONF = {
     lyrics = false,
 }
 SR = {}
+LB = {}
 
-TABLE.update(CONF, FILE.safeLoad('conf.luaon', '-luaon') or NONE)
-TABLE.update(SR, FILE.safeLoad('speedrun.luaon', '-luaon') or NONE)
+UTIL.time("Prepare storage", true)
+--------------------------------------------------------------
 
--- Create BEST, STAT, ACHV tables,
--- only called when launching and on resetall
+-- Vars: System
+
+TestMode = false
+DiscordState = {}
+Cards = {} ---@type Map<Card>
+CRprogress = {
+    f10 = 0,
+    sr = 0,
+    achvGet = 0,
+    achvAll = 0,
+}
+Daily = {
+    history = {},
+    historyDisp = {},
+    actived = false,
+    available = false,
+    needSubmit = false,
+}
+SHADER = require 'module/shader'
+GAME = require 'module/game'
+
+-- Vars: VFX
+
+FloatOnCard = nil ---@type number?
+GigaSpeed = {
+    r = 0,
+    g = 0,
+    b = 0,
+    alpha = 0,
+    bgAlpha = 0,
+    textTimer = false,
+    isTera = false,
+}
+ImpactGlow = {}
+DeckPress = 0
+ThrobAlpha = {
+    card = 0,
+    bg1 = 0,
+    bg2 = 0,
+}
+Wind = {}
+WindBatch = GC.newSpriteBatch(GC.load { w = 1, h = 1, { 'clear', 1, 1, 1, 1 } }, 260, 'static')
+for i = 1, 62 do
+    Wind[i] = { math.random(), math.random(), MATH.clampInterpolate(1, 0.5, 260, 2.6, i) }
+    WindBatch:add(0, 0)
+end
+BgScale = 1
+
+-- Vars: Music
+
+---@enum (key) ZC.bgmName
+BgmData = {
+    --[[
+        # F0 (Watchful Eye)           4|4 ♩ = 184         C Minor
+        # F1 (Divine Registration)    4|4 ♩ = 184         C Minor
+        # F2 (Zenith Hotel)           4|4 ♩ = 110         D Major / B Minor
+        # F3 (Empty Prayers)         12|8 ♩.= 120         C Major / A Minor
+        # F4 (Crowd Control)          5|8 ♪ = 180         F♯ Minor
+        # F5 (Phantom Memories)   4|4 6|8 ♩ = 130 ♩.= 130 E Minor
+        # F6 (Echo)                   4|4 ♩ = 65          A Minor
+        # F7 (Cryptic Chemistry)      4|4 ♩ = 120         A+50 Minor
+        # F8 (Chrono Flux)            4|4 ♩ = 150         E Minor
+        # F9 (Broken Record)          4|4 ♩ = 160         E Minor
+        # F10 (Deified Validation)    4|4 ♩ = 98          C Major / C Minor
+        # Hyper (Schnellfeuer Bullet) 4|4 ♩ = 240         C♯ Minor
+    ]]
+    f0    = { meta = '4|4  184 BPM  C Minor           ', bar = 4, bpm = 184, toneFix = 0.0, loop = { 0, 114.7826 } },
+    f1    = { meta = '4|4  184 BPM  C Minor           ', bar = 4, bpm = 184, toneFix = 0.0, loop = { 18.261, 91.304 }, introLen = 1.304, teleport = { -1, 7.826 } },
+    f2    = { meta = '4|4  110 BPM  D Major & B Minor ', bar = 4, bpm = 110, toneFix = -1., loop = { 26.181, 113.454 } },
+    f2r   = { meta = '4|4  110 BPM  D Major & B Minor ', bar = 4, bpm = 110, toneFix = -1., loop = { 26.181, 113.454 } },
+    f3    = { meta = '12|8  120 BPM  C Major & A Minor', bar = 4, bpm = 120, toneFix = -1., loop = { 56, 128 } },
+    f3r   = { meta = '12|8  120 BPM  C Major & A Minor', bar = 4, bpm = 120, toneFix = -1., loop = { 56, 128 } },
+    f4    = { meta = '5|8  180 BPM  F# Minor          ', bar = 5, bpm = 180, toneFix = 1.0, loop = { 13.333, 93.333 } },
+    f4r   = { meta = '5|8  180 BPM  F# Minor          ', bar = 5, bpm = 180, toneFix = 1.0, loop = { 13.333, 93.333 } },
+    f5    = { meta = '4|4 6|8  130 BPM  E Minor       ', bar = 4, bpm = 130, toneFix = -1., loop = { 96, 169.846 } },
+    f5r   = { meta = '4|4 6|8  130 BPM  E Minor       ', bar = 4, bpm = 130, toneFix = -1., loop = { 96, 169.846 } },
+    f6    = { meta = '4|4  130 BPM  A Minor           ', bar = 4, bpm = 130, toneFix = 2.0, loop = { 29.538, 103.384 } },
+    f6r   = { meta = '4|4  130 BPM  G Minor           ', bar = 4, bpm = 130, toneFix = 0.0, loop = { 29.538, 103.384 } },
+    f7    = { meta = '4|4  120 BPM  A+50c Minor       ', bar = 4, bpm = 120, toneFix = 2.5, bpmData = { 60, 32, 120 }, loop = { 128, 192 } },
+    f7r   = { meta = '4|4  120 BPM  A+50c Minor       ', bar = 4, bpm = 120, toneFix = 2.5, bpmData = { 60, 32, 120 }, loop = { 128, 192 }, teleport = { 8, 32 } },
+    f8    = { meta = '4|4  150 BPM  E Minor           ', bar = 4, bpm = 150, toneFix = -1., loop = { 38.4, 134.4 } },
+    f8r   = { meta = '4|4  150 BPM  E Minor           ', bar = 4, bpm = 150, toneFix = -1., loop = { 38.4, 134.4 } },
+    f9    = { meta = '4|4  160 BPM  E Minor           ', bar = 4, bpm = 160, toneFix = -1., loop = { 36, 144 } },
+    f9r   = { meta = '4|4  160 BPM  E Minor           ', bar = 4, bpm = 160, toneFix = -1., loop = { 36, 144 } },
+    f10   = { meta = '4|4  196 BPM  C Major & C Minor ', bar = 4, bpm = 196, toneFix = 0.0, bpmData = { 49, 19.592, 98 }, loop = { 203.877, 311.632 } },
+    f10r  = { meta = '4|4  196 BPM  C Major & C Minor ', bar = 4, bpm = 196, toneFix = 0.0, bpmData = { 49, 19.592, 98 }, loop = { 203.877, 311.632 } },
+    fomg  = { meta = '4|4  180 & 200 BPM  Bb Minor    ', bar = 4, bpm = 200, toneFix = 3.0, bpmData = { 90, 10.667, 180, 25.333, 200 }, loop = { 38.4 - 11.862, 144 - 11.862 } },
+    tera  = { meta = '4|4  240 BPM  C# Minor          ', bar = 4, bpm = 240, toneFix = 1.0, loop = { 76, 140 }, introLen = 2, teleport = { -1, 20 } }, -- 4 endings at 140/142/144/146
+    terar = { meta = '4|4  240 BPM  C# Minor          ', bar = 4, bpm = 240, toneFix = 1.0, loop = { 84 - 15.565, 172 - 15.565 }, teleport = { 0, 18 - 15.565 } },
+}
+for _, v in next, BgmData do
+    v.meta = STRING.trim(v.meta)
+    if not v.bpmData then v.bpmData = { v.bpm } end
+end
+BgmSet = {
+    f0 = {
+        'piano',
+        'arp', 'bass', 'guitar', 'pad', 'staccato', 'violin',
+        'expert', 'rev',
+        'piano2', 'violin2',
+    },
+    f1 = { 'f1', 'f1ex', 'f1rev' },
+}
+BgmPlaying = false ---@type ZC.bgmName | false
+SongNamePlaying = false -- Same as BgmPlaying, but this distinguishes f0(r) and f1(r) for album page
+BgmLooping = false
+BgmNeedSkip = false
+BgmNeedStop = false
+MusicBeat = 0 ---@type number 0-1, envelope: /|/|/|
+
+-- Vars: Daily Challenge extras
+
+VALENTINE = false
+VALENTINE_TEXT = "FLOOD THE TOWER SIDE BY SIDE WITH WHAT COULD BE"
+XMAS = false
+ZDAY = false
+
+-- Vars: Cursor
+
+MX, MY = -260, 0 -- Mouse position
+CursorProgress = 0
+CursorHide = true
+
+local M = GAME.mod
+
+-- Functions: Cursor
+
+function SetMouseVisible(bool)
+    if CONF.syscursor then
+        love.mouse.setVisible(bool)
+    else
+        CursorHide = not bool
+    end
+end
+
+-- Functions: Save Data
+
+function SaveBest()
+    if TestMode then return end
+    love.filesystem.write('best.luaon', 'return' .. TABLE.dumpDeflate(BEST))
+end
+
+function SaveStat()
+    if TestMode then return end
+    STAT.modTime = os.time()
+    love.filesystem.write('stat.luaon', 'return' .. TABLE.dumpDeflate(STAT))
+end
+
+function SaveAchv()
+    if TestMode then return end
+    love.filesystem.write('achv.luaon', 'return' .. TABLE.dumpDeflate(ACHV))
+end
+
+function SaveConf()
+    if TestMode then return end
+    love.filesystem.write('conf.luaon', 'return' .. TABLE.dumpDeflate(CONF))
+end
+
+function SaveSR()
+    if TestMode then return end
+    love.filesystem.write('speedrun.luaon', 'return' .. TABLE.dumpDeflate(SR))
+end
+
+-- Create BEST, STAT, ACHV tables, only called when launching and on resetall
 function InitProfile()
     BEST = {
         highScore = setmetatable({}, Metatable.best_highscore),
@@ -851,6 +531,7 @@ function InitProfile()
         peakZP = 0,
         peakDZP = 0,
         dailyBest = 0,
+        dailyFast = 1e99,
         dailyMastered = false,
         lastDay = 0,
         vipListCount = 0,
@@ -882,42 +563,20 @@ function InitProfile()
     AchvNotice = {}
 end
 
-InitProfile()
-
-TestMode = false
-
-function SaveBest()
-    if (TestMode or GAME.multiplePiecesActive) then return end
-    love.filesystem.write('best.luaon', 'return' .. TABLE.dumpDeflate(BEST))
+function LoadSave()
+    -- Fill BEST, STAT, ACHV tables with actual save data, only called after InitProfile()
+    local stat = FILE.safeLoad('stat.luaon', '-luaon')
+    if stat then
+        TABLE.update(STAT, stat)
+        if not STAT.srTimer_game then
+            STAT.srTimer_game, STAT.srTimer_life = STAT.totalTime, MATH.roundUnit(STAT.totalTime * 1.26, .001)
+        end
+    end
+    TABLE.update(BEST, FILE.safeLoad('best.luaon', '-luaon') or NONE)
+    TABLE.update(ACHV, FILE.safeLoad('achv.luaon', '-luaon') or NONE)
 end
 
-function SaveStat()
-    if (TestMode or GAME.multiplePiecesActive) then return end
-    STAT.modTime = os.time()
-    love.filesystem.write('stat.luaon', 'return' .. TABLE.dumpDeflate(STAT))
-end
-
-function SaveAchv()
-    if (TestMode or GAME.multiplePiecesActive) then return end
-    love.filesystem.write('achv.luaon', 'return' .. TABLE.dumpDeflate(ACHV))
-end
-
-function SaveConf()
-    if (TestMode or GAME.multiplePiecesActive) then return end
-    love.filesystem.write('conf.luaon', 'return' .. TABLE.dumpDeflate(CONF))
-end
-
-function SaveSR()
-    if TestMode then return end
-    love.filesystem.write('speedrun.luaon', 'return' .. TABLE.dumpDeflate(SR))
-end
-
-CRprogress = {
-    f10 = 0,
-    sr = 0,
-    achvGet = 0,
-    achvAll = 0,
-}
+-- Functions: Game Progress
 
 local function norm(x, k) return 1 + (x - 1) / (k * x + 1) end
 function CalculateCR()
@@ -993,6 +652,10 @@ function CalculateCR()
     if not STAT.badge.champion and cr >= 25000 then IssueSecret('champion', true) end
 
     return MATH.round(cr), cap
+end
+
+function RankAvailable()
+    return STAT.totalTime / 60 + STAT.totalFloor / 9 + STAT.totalGiga / 2 > 62
 end
 
 local msgTime = 0
@@ -1109,196 +772,11 @@ function ReleaseAchvBuffer()
     TABLE.clear(bufferedMsg)
 end
 
-MX, MY = -260, 0
+-- Functions: Music
 
----@type Map<Card>
-Cards = {}
-
----@type nil | number
-FloatOnCard = nil
-
-GigaSpeed = {
-    r = 0,
-    g = 0,
-    b = 0,
-    alpha = 0,
-    bgAlpha = 0,
-    textTimer = false,
-    isTera = false,
-}
-ImpactGlow = {}
-DeckPress = 0
-ThrobAlpha = {
-    card = 0,
-    bg1 = 0,
-    bg2 = 0,
-}
-Wind = {}
-WindBatch = GC.newSpriteBatch(GC.load { w = 1, h = 1, { 'clear', 1, 1, 1, 1 } }, 260, 'static')
-for i = 1, 62 do
-    Wind[i] = { math.random(), math.random(), MATH.clampInterpolate(1, 0.5, 260, 2.6, i) }
-    WindBatch:add(0, 0)
+function Tone(pitch)
+    return pitch + (URM and M.GV == 2 and 3 or M.GV) + BgmData[BgmPlaying].toneFix
 end
-StarPS = GC.newParticleSystem(TEXTURE.stars, 32)
-StarPS:setParticleLifetime(2.6)
-StarPS:setRotation(0, 6.26)
-StarPS:setEmissionRate(12)
----@diagnostic disable-next-line
-StarPS:setColors(COLOR.LX, COLOR.L, COLOR.L, COLOR.L, COLOR.L, COLOR.L, COLOR.L, COLOR.LX)
-
-WoundPS = GC.newParticleSystem(GC.load { w = 16, h = 16,
-    { 'clear', 1, 1, 1 },
-    { 'setCL', 0, 0, 0 },
-    { 'fRect', 1, 1, 14, 14 },
-}, 32)
-WoundPS:setEmissionArea('uniform', 42, 42, 0)
-WoundPS:setParticleLifetime(2.6, 6.2)
-WoundPS:setSpread(6.28)
-WoundPS:setSpeed(26, 42)
----@diagnostic disable-next-line
-WoundPS:setColors(COLOR.LX, COLOR.L, COLOR.L, COLOR.L, COLOR.L, COLOR.L, COLOR.L, COLOR.LX)
-
-
-SparkPS = {}
-for i = 1, 3 do
-    local ps = GC.newParticleSystem(TEXTURE.spark[i])
-    ps:setParticleLifetime(.26, .62)
-    ps:setEmissionArea('ellipse', 62, 62, 0)
-    ---@diagnostic disable-next-line
-    ps:setColors(COLOR.L, COLOR.LX)
-    SparkPS[i] = ps
-end
-
-BgScale = 1
-
-CHAR = require 'module/char'
-require 'data/base'
-SHADER = require 'module/shader'
-GAME = require 'module/game'
-
-for i = 1, #ModData.deck do table.insert(Cards, require 'module/card'.new(ModData.deck[i])) end
-GAME.refreshLayout()
-for i, C in ipairs(Cards) do
-    Cards[C.id], C.x, C.y = C, C.tx, C.ty + 260 + 26 * 1.6 ^ i
-end
-
-MSG.setSafeY(75)
-MSG.addCategory('dark', COLOR.D, COLOR.L)
-MSG.addCategory('bright', COLOR.L, COLOR.D)
-MSG.addCategory('speedrun', COLOR.LG, COLOR.D)
-for i = 0, 6 do MSG.addCategory(AchvData[i].id, AchvData[i].bg, COLOR.L, TEXTURE.achievement.frame[i]) end
-for i = 1, 6 do MSG.addCategory("wreath_" .. i, AchvData[5].bg, COLOR.L, GC.load { w = 256, { 'draw', TEXTURE.achievement.frame[5] }, { 'draw', TEXTURE.achievement.wreath[i] } }) end
-MSG.addCategory('achv_badTime', {.126, 0, 0}, COLOR.L, TEXTURE.achievement.frame[6])
-
-SCN.addSwapStyle('warp', require 'module/warp_swap')
-
-for _, v in next, love.filesystem.getDirectoryItems('scene') do
-    if FILE.isSafe('scene/' .. v) then
-        local sceneName = v:sub(1, -5)
-        SCN.add(sceneName, FILE.load('scene/' .. v, '-lua'))
-    end
-end
-ZENITHA.setFirstScene('joining')
-
-local gc = love.graphics
-
-local pressValue = 0
-
-CursorProgress = 0
-CursorHide = true
-local function starCursor(x, y)
-    if CursorHide or GAME.zenithTraveler then return end
-    GC.translate(x, y)
-    GC.scale(1.42)
-    GC.rotate(MATH.lerp(-.626, -1.2, pressValue))
-    GC.scale(.8 + .2 * pressValue, 1)
-    local l = .626 + .374 * pressValue
-    GC.setColor(l, l, l)
-    GC.draw(TEXTURE.star0, 0, -6, 0, .14, .3, TEXTURE.star1:getWidth() * .5, 0)
-    GC.scale(.12, .26)
-    GC.setShader(SHADER.coloring)
-    GC.setColor(1, .626, .5)
-    GC.draw(TEXTURE.star0, -150, 0)
-    if CursorProgress <= .384626 then
-        local t = MATH.interpolate(0, 1, .384626, 0, CursorProgress)
-        GC.setColor(.9, .9, .9, t)
-        GC.draw(TEXTURE.star0, -150, 0)
-        GC.setShader()
-    else
-        GC.setShader()
-        GC.setColor(1, 1, 1, MATH.iLerp(.384626, 1, CursorProgress))
-        GC.draw(TEXTURE.star1, -150, 0)
-    end
-end
-
-local M = GAME.mod
-
---[[
-# F0 (Watchful Eye)           4|4      ♩ = 184         C Minor
-# F1 (Divine Registration)    4|4      ♩ = 184         C Minor
-# F2 (Zenith Hotel)           4|4      ♩ = 110         D Major / B Minor
-# F3 (Empty Prayers)         12|8      ♩.= 120         C Major / A Minor
-# F4 (Crowd Control)          5|8      ♪ = 180         F♯ Minor
-# F5 (Phantom Memories)       4|4 6|8  ♩ = 130 ♩.= 130 E Minor
-# F6 (Echo)                   4|4      ♩ = 65          A Minor
-# F7 (Cryptic Chemistry)      4|4      ♩ = 120         A+50 Minor
-# F8 (Chrono Flux)            4|4      ♩ = 150         E Minor
-# F9 (Broken Record)          4|4      ♩ = 160         E Minor
-# F10 (Deified Validation)    4|4      ♩ = 98          C Major / C Minor
-# Hyper (Schnellfeuer Bullet) 4|4      ♩ = 240         C♯ Minor
-]]
-
-BgmSet = {
-    f0 = {
-        'piano',
-        'arp', 'bass', 'guitar', 'pad', 'staccato', 'violin',
-        'expert', 'rev',
-        'piano2', 'violin2',
-    },
-    f1 = { 'f1', 'f1ex', 'f1rev' },
-}
-
----@enum (key) ZC.bgmName
-BgmData = {
-    f0    = { meta = '4|4  184 BPM  C Minor           ', bar = 4, bpm = 184, toneFix = 0.0, loop = { 0, 114.7826 } },
-    f1    = { meta = '4|4  184 BPM  C Minor           ', bar = 4, bpm = 184, toneFix = 0.0, loop = { 18.261, 91.304 }, introLen = 1.304, teleport = { -1, 7.826 } },
-    f2    = { meta = '4|4  110 BPM  D Major & B Minor ', bar = 4, bpm = 110, toneFix = -1., loop = { 26.181, 113.454 } },
-    f2r   = { meta = '4|4  110 BPM  D Major & B Minor ', bar = 4, bpm = 110, toneFix = -1., loop = { 26.181, 113.454 } },
-    f3    = { meta = '12|8  120 BPM  C Major & A Minor', bar = 4, bpm = 120, toneFix = -1., loop = { 56, 128 } },
-    f3r   = { meta = '12|8  120 BPM  C Major & A Minor', bar = 4, bpm = 120, toneFix = -1., loop = { 56, 128 } },
-    f4    = { meta = '5|8  180 BPM  F# Minor          ', bar = 5, bpm = 180, toneFix = 1.0, loop = { 13.333, 93.333 } },
-    f4r   = { meta = '5|8  180 BPM  F# Minor          ', bar = 5, bpm = 180, toneFix = 1.0, loop = { 13.333, 93.333 } },
-    f5    = { meta = '4|4 6|8  130 BPM  E Minor       ', bar = 4, bpm = 130, toneFix = -1., loop = { 96, 169.846 } },
-    f5r   = { meta = '4|4 6|8  130 BPM  E Minor       ', bar = 4, bpm = 130, toneFix = -1., loop = { 96, 169.846 } },
-    f6    = { meta = '4|4  130 BPM  A Minor           ', bar = 4, bpm = 130, toneFix = 2.0, loop = { 29.538, 103.384 } },
-    f6r   = { meta = '4|4  130 BPM  G Minor           ', bar = 4, bpm = 130, toneFix = 0.0, loop = { 29.538, 103.384 } },
-    f7    = { meta = '4|4  120 BPM  A+50c Minor       ', bar = 4, bpm = 120, toneFix = 2.5, bpmData = { 60, 32, 120 }, loop = { 128, 192 } },
-    f7r   = { meta = '4|4  120 BPM  A+50c Minor       ', bar = 4, bpm = 120, toneFix = 2.5, bpmData = { 60, 32, 120 }, loop = { 128, 192 }, teleport = { 8, 32 } },
-    f8    = { meta = '4|4  150 BPM  E Minor           ', bar = 4, bpm = 150, toneFix = -1., loop = { 38.4, 134.4 } },
-    f8r   = { meta = '4|4  150 BPM  E Minor           ', bar = 4, bpm = 150, toneFix = -1., loop = { 38.4, 134.4 } },
-    f9    = { meta = '4|4  160 BPM  E Minor           ', bar = 4, bpm = 160, toneFix = -1., loop = { 36, 144 } },
-    f9r   = { meta = '4|4  160 BPM  E Minor           ', bar = 4, bpm = 160, toneFix = -1., loop = { 36, 144 } },
-    f10   = { meta = '4|4  196 BPM  C Major & C Minor ', bar = 4, bpm = 196, toneFix = 0.0, bpmData = { 49, 19.592, 98 }, loop = { 203.877, 311.632 } },
-    f10r  = { meta = '4|4  196 BPM  C Major & C Minor ', bar = 4, bpm = 196, toneFix = 0.0, bpmData = { 49, 19.592, 98 }, loop = { 203.877, 311.632 } },
-    fomg  = { meta = '4|4  180 & 200 BPM  Bb Minor    ', bar = 4, bpm = 200, toneFix = 3.0, bpmData = { 90, 10.667, 180, 25.333, 200 }, loop = { 38.4 - 11.862, 144 - 11.862 } },
-    tera  = { meta = '4|4  240 BPM  C# Minor          ', bar = 4, bpm = 240, toneFix = 1.0, loop = { 76, 140 }, introLen = 2, teleport = { -1, 20 } }, -- 4 endings at 140/142/144/146
-    terar = { meta = '4|4  240 BPM  C# Minor          ', bar = 4, bpm = 240, toneFix = 1.0, loop = { 84 - 15.565, 172 - 15.565 }, teleport = { 0, 18 - 15.565 } },
-    --Trevor Smithy
-    terae = { meta = '4|4  240 BPM  C# Minor          ', bar = 4, bpm = 240, toneFix = 1,   loop = { 76, 140 }, introLen = 2, teleport = { -1, 20 }, end1 = 140, end2 = 142, end3 = 144, end4 = 146 },
-    teral = { meta = '4|4  240 BPM  C# Minor          ', bar = 4, bpm = 240, toneFix = 1,   loop = { 76, 140 }, introLen = 2, teleport = { -1, 20 }, end1 = 140, end2 = 142, end3 = 144, end4 = 146 },
-    terael = { meta = '4|4  240 BPM  C# Minor         ', bar = 4, bpm = 240, toneFix = 1,   loop = { 76, 140 }, introLen = 2, teleport = { -1, 20 }, end1 = 140, end2 = 142, end3 = 144, end4 = 146 },
-}
-for _, v in next, BgmData do
-    v.meta = STRING.trim(v.meta)
-    if not v.bpmData then v.bpmData = { v.bpm } end
-end
-
-MusicBPM = nil ---@type number
-BgmPlaying = false ---@type ZC.bgmName | false
-SongNamePlaying = false -- Same as BgmPlaying, but this distinguishes f0(r) and f1(r) for album page
-BgmLooping = false
-BgmNeedSkip = false
-BgmNeedStop = false
 
 function RevMusicMode()
     return
@@ -1364,48 +842,6 @@ function PlayBGM(name, force)
         BgmNeedSkip = BgmData[BgmPlaying].teleport
         RefreshBGM()
     end
-end
-
-local normalHelp = {
-    COLOR.LL, "Welcome to ", COLOR.LF, "Zenith Clicker", COLOR.LL, "! Choose the required tarot cards and send players to scale the tower.\n",
-    "The higher you go in the tower, the more tricky players you'll encounter!\n",
-    "There's a leaderboard for daily challenge, how high can you reach?\n",
-    "[DYNAMIC TEXT]",
-}
-local ultraHelp = {
-    COLOR.LL, "Welcome to ", COLOR.LR, "Zenith Clicker: ", COLOR.R, "Ultra Reverse", COLOR.LL, ". Activate a reversed mod to start ", COLOR.lR, "suffering.\n",
-    COLOR.LL, "The higher you go in the tower, the more likely you are to ", COLOR.R, "die.\n",
-    COLOR.LL, "There are no more achievements, and ", COLOR.lR, "you are not expected to go very high up.\n",
-    COLOR.R, "Give Up: ", COLOR.LL, "ESC    ", COLOR.R, "Forfeit: ", COLOR.LL, "ESC    ", COLOR.R, "Quit: ", COLOR.LL, "ESC"
-}
-function RefreshHelpText()
-    local s = SCN.scenes.tower.widgetList
-    ---@cast s Map<Zenitha.Widget.base | Zenitha.WidgetArg>
-    if URM then
-        s.help.text = "U"
-        s.help.floatText = ultraHelp
-        if GAME.height >= 0 then
-            s.help2.text = "!"
-            s.help2.floatText = "The final ULTRA REVERSE challenge.\n\"Because it is there.\""
-        else
-            s.help2.text = "B"
-            s.help2.floatText = "B" .. GAME.negFloor .. ": " .. NegFloors[GAME.negFloor].name .. "\n" .. NegTexts['b' .. GAME.negFloor].desc
-        end
-    else
-        s.help.text = "?"
-        normalHelp[#normalHelp] = ("Commit: $1    Reset: $2    Forfeit/Quit: ESC"):repD(CONF.keybind[19]:upper(), CONF.keybind[20]:upper())
-        s.help.floatText = normalHelp
-        s.help2.text = "?"
-        local hand = GAME.getHand(true)
-        local lastLine = (
-            #hand == 0 and "Without any mods, " or
-            #hand == 1 and "With this mod, " or
-            "With this combo, "
-        ) .. "ZP earn starts from 0%% at %.0fm, to 100%% at %.0fm"
-        s.help2.floatText = "Each mod will multiply ZP gain with a certain rate.\n" .. lastLine:format(STAT.zp / 26 / GAME.comboZP, STAT.zp / 16 / GAME.comboZP)
-    end
-    s.help:reset()
-    s.help2:reset()
 end
 
 function RefreshBGM(mode)
@@ -1475,7 +911,7 @@ function Task_MusicEnd(manual)
         BgmNeedStop = outroStart + 8 * 60 / D.bpm
     elseif BgmPlaying == 'f6' or BgmPlaying == 'f6r' then
         outroStart = D.loop[2]
-        BgmNeedStop = outroStart + 4 * 60 / D.bpm
+        BgmNeedStop = outroStart + 8 * 60 / D.bpm
     elseif BgmPlaying == 'f7' or BgmPlaying == 'f7r' then
         outroStart = D.loop[2]
         BgmNeedStop = outroStart + 8 * 60 / D.bpm
@@ -1487,13 +923,13 @@ function Task_MusicEnd(manual)
         BgmNeedStop = outroStart + 8 * 60 / D.bpm
     elseif BgmPlaying == 'f10' or BgmPlaying == 'f10r' then
         local t = BgmPlaying == 'f10' and 4.2 or 6.2
-        if BGM.tell() < 28 * 4 * 60 / D.bpm then
+        if BGM.tell() < 56 * 4 * 60 / D.bpm then
             BGM.stop(t)
             TASK.yieldT(t)
-        elseif BGM.tell() < 59 * 4 * 60 / D.bpm then
-            BGM.set('all', 'seek', 59 * 4 * 60 / D.bpm)
-            BgmNeedStop = BGM.tell() + 5 * 60 / D.bpm
-        elseif BGM.tell() < 77.25 * 4 * 60 / D.bpm then
+        elseif BGM.tell() < 118 * 4 * 60 / D.bpm then
+            BGM.set('all', 'seek', 118 * 4 * 60 / D.bpm)
+            BgmNeedStop = BGM.tell() + 10 * 60 / D.bpm
+        elseif BGM.tell() < 154.5 * 4 * 60 / D.bpm then
             BGM.stop(t)
             TASK.yieldT(t)
         else
@@ -1501,12 +937,12 @@ function Task_MusicEnd(manual)
             BgmNeedStop = outroStart + 8 * 60 / D.bpm
         end
     elseif BgmPlaying == 'fomg' then
-        if BGM.tell() > D.loop[1] then
-            outroStart = D.loop[2]
-            BgmNeedStop = outroStart + 13 * 60 / D.bpm
+        if BGM.tell() < D.loop[1] then
+            outroStart = D.loop[2] + 32 * 60 / D.bpm
+            BgmNeedStop = outroStart + 16 * 60 / D.bpm
         else
-            outroStart = D.loop[2] + 16 * 60 / D.bpm
-            BgmNeedStop = outroStart + 8 * 60 / D.bpm
+            outroStart = D.loop[2]
+            BgmNeedStop = outroStart + 26 * 60 / D.bpm
         end
     elseif BgmPlaying == 'tera' or BgmPlaying == 'terae' or BgmPlaying == 'teral' or BgmPlaying == 'terael' then
         outroStart = D.loop[2] + math.random(0, 3) * 8 * 60 / D.bpm
@@ -1530,10 +966,35 @@ function Task_MusicEnd(manual)
     end
 end
 
-function Tone(pitch)
-    return pitch + (M.GV == -1 and -6 or URM and M.GV == 2 and 3 or M.GV) + BgmData[BgmPlaying].toneFix
-end
+-- Functions: System
 
+require 'module/initialize'
+
+local pressValue = 0
+local function starCursor(x, y)
+    if CursorHide or GAME.zenithTraveler then return end
+    gc_translate(x, y)
+    gc_scale(1.42)
+    gc_rotate(MATH.lerp(-.626, -1.2, pressValue))
+    gc_scale(.8 + .2 * pressValue, 1)
+    local l = .626 + .374 * pressValue
+    gc_setColor(l, l, l)
+    gc_draw(TEXTURE.star0, 0, -6, 0, .14, .3, TEXTURE.star1:getWidth() * .5, 0)
+    gc_scale(.12, .26)
+    gc_setShader(SHADER.coloring)
+    gc_setColor(1, .626, .5)
+    gc_draw(TEXTURE.star0, -150, 0)
+    if CursorProgress <= .384626 then
+        local t = MATH.interpolate(0, 1, .384626, 0, CursorProgress)
+        gc_setColor(.9, .9, .9, t)
+        gc_draw(TEXTURE.star0, -150, 0)
+        gc_setShader()
+    else
+        gc_setShader()
+        gc_setColor(1, 1, 1, MATH.iLerp(.384626, 1, CursorProgress))
+        gc_draw(TEXTURE.star1, -150, 0)
+    end
+end
 function ApplySettings()
     love.mouse.setVisible(CONF.syscursor)
     ZENITHA.globalEvent.drawCursor = CONF.syscursor and NULL or starCursor
@@ -1542,32 +1003,66 @@ function ApplySettings()
 end
 
 function ReloadTexts()
-    local sep = (TEXTS.mod:getFont():getHeight() + TEXTS.title:getFont():getHeight()) / 2
-    for _, text in next, TEXTS do text:setFont(FONT.get(text:getFont():getHeight() < sep and 30 or 50)) end
-    for _, text in next, CardHintText do text:setFont(FONT.get(text:getFont():getHeight() < sep and 30 or 50)) end
+    local sep35 = (TEXTS.temp30:getFont():getHeight() + TEXTS.title:getFont():getHeight()) / 2
+    local sep57 = (TEXTS.title:getFont():getHeight() + TEXTS.test:getFont():getHeight()) / 2
+    for _, text in next, TEXTS do
+        local h = text:getFont():getHeight()
+        text:setFont(FONT.get(h < sep35 and 30 or h < sep57 and 50 or 70))
+    end
+    for _, text in next, CardHintText do text:setFont(FONT.get(50)) end
     for _, quest in next, GAME.quests do quest.name:setFont(FONT.get(70)) end
-    TEXTS.height:setFont(FONT.get(30))
-    TEXTS.time:setFont(FONT.get(30))
-    TEXTS.gigatime:setFont(FONT.get(50))
-    TEXTS.chain2:setFont(FONT.get(50, 'led'))
     for _, W in next, SCN.scenes[SCN.cur].widgetList do W:reset() end
-    AchvText:setFont(FONT.get(30))
-    AboutText:setFont(FONT.get(70))
-    DevNoteText:setFont(FONT.get(30))
-    EndText:setFont(FONT.get(70))
-    EndText2:setFont(FONT.get(70))
     for _, text in next, SRSplitText1 do text:setFont(FONT.get(50)) end
     for _, text in next, SRSplitText2 do text:setFont(FONT.get(50)) end
     for _, text in next, SRSplitText3 do text:setFont(FONT.get(30)) end
     if SCN.cur == 'stat' then RefreshProfile() end
     if SCN.cur == 'records' then SCN.scenes.records.load() end
+    if SCN.cur == 'leaderboard' then SCN.scenes.leaderboard.load() end
     if SCN.cur == 'achv' then RefreshAchvList() end
 end
 
-VALENTINE = false
-VALENTINE_TEXT = "FLOOD THE TOWER SIDE BY SIDE WITH WHAT COULD BE"
-XMAS = false
-ZDAY = false
+local normalHelp = {
+    COLOR.LL, "Welcome to ", COLOR.LF, "Zenith Clicker", COLOR.LL, "! Choose the required tarot cards and send players to scale the tower.\n",
+    "The higher you go in the tower, the more tricky players you'll encounter!\n",
+    "There's a leaderboard for daily challenge, how high can you reach?\n",
+    "[DYNAMIC TEXT]",
+}
+local ultraHelp = {
+    COLOR.LL, "Welcome to ", COLOR.LR, "Zenith Clicker: ", COLOR.R, "Ultra Reverse", COLOR.LL, ". Activate a reversed mod to start ", COLOR.lR, "suffering.\n",
+    COLOR.LL, "The higher you go in the tower, the more likely you are to ", COLOR.R, "die.\n",
+    COLOR.LL, "There are no more achievements, and ", COLOR.lR, "you are not expected to go very high up.\n",
+    COLOR.R, "Give Up: ", COLOR.LL, "ESC    ", COLOR.R, "Forfeit: ", COLOR.LL, "ESC    ", COLOR.R, "Quit: ", COLOR.LL, "ESC"
+}
+function RefreshHelpText()
+    local s = SCN.scenes.tower.widgetList
+    ---@cast s Map<Zenitha.Widget.base | Zenitha.WidgetArg>
+    if URM then
+        s.help.text = "U"
+        s.help.floatText = ultraHelp
+        if GAME.height >= 0 then
+            s.help2.text = "!"
+            s.help2.floatText = "The final ULTRA REVERSE challenge.\n\"Because it is there.\""
+        else
+            s.help2.text = "B"
+            s.help2.floatText = "B" .. GAME.negFloor .. ": " .. NegFloors[GAME.negFloor].name .. "\n" .. NegTexts['b' .. GAME.negFloor].desc
+        end
+    else
+        s.help.text = "?"
+        normalHelp[#normalHelp] = ("Commit: $1    Reset: $2    Forfeit/Quit: ESC"):repD(CONF.keybind[19]:upper(), CONF.keybind[20]:upper())
+        s.help.floatText = normalHelp
+        s.help2.text = "?"
+        local hand = GAME.getHand(true)
+        local lastLine = (
+            #hand == 0 and "Without any mods, " or
+            #hand == 1 and "With this mod, " or
+            "With this combo, "
+        ) .. "ZP earn starts from 0%% at %.0fm, to 100%% at %.0fm"
+        s.help2.floatText = "Each mod will multiply ZP gain with a certain rate.\n" .. lastLine:format(STAT.zp / 26 / GAME.comboZP, STAT.zp / 16 / GAME.comboZP)
+    end
+    s.help:reset()
+    s.help2:reset()
+end
+
 function RefreshDaily()
     local dateToday = os.date("!*t", os.time())
     local dateLastDay = os.date("!*t", math.max(STAT.lastDay, 946656000)) -- at least 2000/1/1
@@ -1584,6 +1079,7 @@ function RefreshDaily()
             STAT.zp = MATH.expApproach(STAT.zp, 0, dayPast * .026)
             STAT.dzp = MATH.expApproach(STAT.dzp, 0, dayPast * .0626)
             STAT.dailyBest = 0
+            STAT.dailyFast = 1e99
             STAT.dailyMastered = false
             LOG('info', "ZP: " .. math.floor(oldZP / 1000 + .5) .. "k -> " .. math.floor(STAT.zp / 1000 + .5) .. "k")
             LOG('info', "DZP: " .. math.floor(oldDZP) .. " -> " .. math.floor(STAT.dzp))
@@ -1591,35 +1087,45 @@ function RefreshDaily()
         STAT.lastDay = os.time()
     end
 
-    for x = 0, 0 do
-        -- for x = 0, 1e99 do
-        math.randomseed(os.date("!%Y%m%d") + x)
+    Daily.actived = false
+    Daily.available = false
+    Daily.needSubmit = false
+    local function modCardSorter(a, b) return ModData.prio_card[a] < ModData.prio_card[b] end
+    local now = os.time()
+    for x = -4, 0 do
+        local time = now + x * 86400
+        math.randomseed(os.date("!%Y%m%d", time) + 0)
         for _ = 1, 26 do math.random() end
 
         local modCount = math.ceil(9 - math.log(math.random(11, 42), 1.62)) -- 5 444 3333 2222
-        DAILY = {}
+        local cmb = {}
 
-        DailyActived = false
-        DailyAvailable = false
 
         local freq = { 3, 3, 2, 5, 3, 5, 4, 4, 2 }
-        while #DAILY < modCount do
+        while #cmb < modCount do
             local m = ModData.deck[MATH.randFreq(freq)].id
-            if not TABLE.find(DAILY, m) then table.insert(DAILY, m) end
+            if not TABLE.find(cmb, m) then table.insert(cmb, m) end
         end
-        if MATH.roll(.26 + #DAILY * .1) then
-            if #DAILY >= 3 and MATH.roll(.62) then TABLE.popRandom(DAILY) end
-            local r = math.random(#DAILY)
-            DAILY[r] = 'r' .. DAILY[r]
+        if MATH.roll(.26 + #cmb * .1) then
+            if #cmb >= 3 and MATH.roll(.62) then TABLE.popRandom(cmb) end
+            local r = math.random(#cmb)
+            cmb[r] = 'r' .. cmb[r]
             if MATH.roll(.26) then
-                local r2 = math.random(#DAILY - 1)
+                local r2 = math.random(#cmb - 1)
                 if r2 >= r then r2 = r2 + 1 end
-                DAILY[r2] = 'r' .. DAILY[r2]
+                cmb[r2] = 'r' .. cmb[r2]
             end
         end
-        -- assert(table.concat(DAILY, ' ')~="rEX rDP","Appears after "..x.." days later")
-        LOG('info', "Today's Daily Challenge: " .. table.concat(DAILY, ' '))
+
+        local sortedDaily = TABLE.copy(cmb)
+        Daily.history[-x] = table.concat(TABLE.sort(sortedDaily))
+        Daily.historyDisp[-x] = table.concat(TABLE.sort(sortedDaily, modCardSorter), " ")
+        if x == 0 then
+            Daily.combo = cmb
+            LOG('info', "Today's Daily Challenge: " .. table.concat(Daily.combo, ' '))
+        end
     end
+    -- for k, v in next, DailyHistory do print(k, table.concat(v, " ")) end
 
     local isV = os.date('!%d') == '14'
     if VALENTINE ~= isV then
@@ -1638,290 +1144,6 @@ function RefreshDaily()
     if ZDAY ~= isZ then
         ZDAY = isZ
     end
-end
-
----@diagnostic disable-next-line
-loadstring(love.data.decompress('string', 'deflate', love.data.decode('string', 'base64', [[bdJRa4MwEADgvyKBQgUpHexxDtLkWgMxDhPL+ihTWYfVQfWp+N+X5MqWsT3enbn7crGbh7fpPA5RdW1pP6n60q5jQ3cSNvNnU0/tOh8bXk91cuvmvnf19AavKXmKcqoNlNEzSVTmYlGWcCwY3QkpzMnlc+3yLAPQ4OLD0cUcmBSKGlEolzxKf1hpE5zkvmMuNMuEbVppBVq7glCukAku1MHF1I8oCynvCf6CiZwq5oYuSd18IBnB+0qieG8REpGeeEIg8mw3pFUeJgFNgQgtVsJBoeOuQIMXGMEsYBjnIRQE4+11AwGEAr8gNATL+cNwi/mm+On/UxiQZYl/XjlVlZRROzTRuYvG68a/NVldVg2J05RsH7cPZHpvf/8Y9vMv]])))()
-
-love.mouse.setVisible(false)
-ZENITHA.globalEvent.drawCursor = NULL
-ZENITHA.globalEvent.clickFX = NULL
-function ZENITHA.globalEvent.fileDrop(file)
-    local data = file:read('data')
-    local suc, res = pcall(GC.newImage, data)
-    if suc then
-        if AVATAR then AVATAR:release() end
-        AVATAR = res
-        love.filesystem.write('avatar', data)
-        IssueAchv('identity')
-        SFX.play('supporter')
-        MSG('dark', "Your avatar was updated!")
-    else
-        MSG('dark', "Invalid image file.")
-    end
-    file:close()
-    file:release()
-    if SCN.cur == 'stat' then RefreshProfile() end
-end
-
-function ZENITHA.globalEvent.resize()
-    BgScale = math.max(SCR.w / 1024, SCR.h / 640)
-    StarPS:reset()
-    StarPS:moveTo(0, -GAME.bgH * 2 * BgScale)
-    StarPS:setEmissionArea('uniform', SCR.w * .626, SCR.h * .626)
-    StarPS:setSizes(SCR.k * 1.626)
-    local dt = 1 / StarPS:getEmissionRate()
-    for _ = 1, StarPS:getBufferSize() do
-        StarPS:emit(1)
-        StarPS:update(dt)
-    end
-end
-
-local function task_saveConf()
-    TASK.yieldT(2.6)
-    SaveConf()
-end
-local function confUpdate()
-    TASK.removeTask_code(task_saveConf)
-    TASK.new(task_saveConf)
-end
-
-local KBisDown = love.keyboard.isDown
-function ZENITHA.globalEvent.keyDown(key, isRep)
-    if isRep then return end
-    if KBisDown('lctrl', 'rctrl') then return end
-    if key == 'f12' then
-        if TASK.lock('dev') then
-            MSG('check', "Zenith Clicker is powered by Love2d & Zenitha, not Web!", 6.26)
-        else
-            ZENITHA.setDebugMode(not ZENITHA.getDebugMode() and 1 or false)
-        end
-    elseif key == 'f11' then
-        CONF.fullscreen = not CONF.fullscreen
-        love.window.setFullscreen(CONF.fullscreen)
-        confUpdate()
-        MSG('dark', "Fullscreen: " .. (CONF.fullscreen and "ON" or "OFF"), 1)
-    elseif key == 'f10' then
-        CONF.syscursor = not CONF.syscursor
-        SetMouseVisible(true)
-        ApplySettings()
-        confUpdate()
-        MSG('dark', "Star Force: " .. (CONF.syscursor and "OFF" or "ON"), 1)
-    elseif key == 'f9' then
-        if not GAME.zenithTraveler then CONF.bg = not CONF.bg end
-        confUpdate()
-        MSG('dark', "BG: " .. (CONF.bg and "ON" or "OFF"), 1)
-    elseif key == 'f8' then
-        if CONF.bgBrightness < 80 then
-            CONF.bgBrightness = MATH.clamp(CONF.bgBrightness + 10, 30, 80)
-            confUpdate()
-            MSG('dark', "BG " .. CONF.bgBrightness .. "%", 1)
-        end
-    elseif key == 'f7' then
-        if CONF.bgBrightness > 30 then
-            CONF.bgBrightness = MATH.clamp(CONF.bgBrightness - 10, 30, 80)
-            confUpdate()
-            MSG('dark', "BG " .. CONF.bgBrightness .. "%", 1)
-        end
-    elseif key == 'f5' then
-        if CONF.cardBrightness > 80 then
-            CONF.cardBrightness = MATH.clamp(CONF.cardBrightness - 5, 80, 100)
-            confUpdate()
-            MSG('dark', "Card " .. CONF.cardBrightness .. "%", 1)
-        end
-    elseif key == 'f6' then
-        if CONF.cardBrightness < 100 then
-            CONF.cardBrightness = MATH.clamp(CONF.cardBrightness + 5, 80, 100)
-            confUpdate()
-            MSG('dark', "Card " .. CONF.cardBrightness .. "%", 1)
-        end
-    elseif key == 'f3' then
-        if CONF.sfx > 0 then
-            TempSFX = CONF.sfx
-            CONF.sfx = 0
-        else
-            CONF.sfx = TempSFX or 60
-            TempSFX = false
-        end
-        confUpdate()
-        MSG('dark', CONF.sfx > 0 and "SFX ON" or "SFX OFF", 1)
-        ApplySettings()
-        SFX.play('menuclick')
-    elseif key == 'f4' then
-        if CONF.bgm > 0 then
-            TempBGM = CONF.bgm
-            CONF.bgm = 0
-        else
-            CONF.bgm = TempBGM or 100
-            TempBGM = false
-        end
-        confUpdate()
-        MSG('dark', CONF.bgm > 0 and "BGM ON" or "BGM OFF", 1)
-        ApplySettings()
-    end
-end
-
-function ZENITHA.globalEvent.quit() SaveStat() end
-
-do -- Auto mute when unfocused
-    local function task_autoSoundOff()
-        coroutine.yield()
-        while true do
-            local dt = coroutine.yield()
-            local v = math.max(love.audio.getVolume() - dt * 2.6, 0)
-            love.audio.setVolume(v)
-            if v == 0 then return end
-        end
-    end
-    local function task_autoSoundOn()
-        coroutine.yield()
-        while true do
-            local dt = coroutine.yield()
-            local v = math.min(love.audio.getVolume() + dt * 2.6, 1)
-            love.audio.setVolume(v)
-            if v == 1 then return end
-        end
-    end
-    function ZENITHA.globalEvent.focus(f)
-        if not CONF.autoMute then return end
-        if f then
-            TASK.removeTask_code(task_autoSoundOff)
-            TASK.new(task_autoSoundOn)
-        else
-            TASK.removeTask_code(task_autoSoundOn)
-            TASK.new(task_autoSoundOff)
-        end
-    end
-end
-
-WIDGET.setDefaultOption {
-    checkBox = {
-        w = 40,
-        labelPos = 'right',
-        labelDist = 8,
-        lineWidth = 2,
-        sound_on = 'menuclick',
-        sound_off = 'menuclick',
-    },
-    slider = {
-        lineWidth = 2,
-        _approachSpeed = 1e99,
-    },
-}
-
-function WIDGET._prototype.button:draw()
-    gc.push('transform')
-    gc.translate(self._x, self._y + (SCN.cur == 'tower' and self.pos[1] == .5 and DeckPress or 0))
-
-    if self._pressTime > 0 then
-        gc.scale(1 - self._pressTime / self._pressTimeMax * .0626)
-    end
-    local w, h = self.w, self.h
-
-    local fillC = self.fillColor
-    local frameC = self.frameColor
-
-    -- Background
-    gc.setColor(fillC)
-    GC.mRect('fill', 0, 0, w, h)
-
-    -- Frame
-    gc.setLineWidth(3)
-    gc.setColor(frameC[1] * .42, frameC[2] * .42, frameC[3] * .42)
-    gc.line(-w / 2, h / 2, w / 2, h / 2, w / 2, -h / 2 - 1.5)
-    gc.setColor(.2 + frameC[1] * .8, .2 + frameC[2] * .8, .2 + frameC[3] * .8)
-    gc.line(-w / 2, h / 2 + 1.5, -w / 2, -h / 2, w / 2 - 1.5, -h / 2)
-
-    -- Drawable
-    gc.setColor(self.textColor)
-    WIDGET._alignDraw(self, self._text, 0, 0, 0, 1.2, 1.2 - 2.4 * GAME.revTimer)
-    if self._image then
-        local startX = self.alignX == 'center' and 0 or self.alignX == 'left' and -w * .5 + self.marginX or w * .5 - self.marginX
-        local startY = self.alignY == 'center' and 0 or self.alignY == 'top' and -h * .5 + self.marginY or h * .5 - self.marginY
-        gc.setColor(self.imageColor)
-        if self.quad then
-            WIDGET._alignDrawQ(self, self._image, self.quad, startX, startY)
-        else
-            WIDGET._alignDraw(self, self._image, startX, startY)
-        end
-    end
-
-    -- Highlight
-    if self._hoverTime > 0 then
-        gc.setColor(1, 1, 1, self._hoverTime / self._hoverTimeMax * .0626)
-        GC.mRect('fill', 0, 0, w - 3, h - 3)
-    end
-
-    gc.pop()
-end
-
-function WIDGET._prototype.checkBox:draw()
-    gc.push('transform')
-    gc.translate(self._x, self._y)
-    local w = self.w
-
-    gc.setLineWidth(self.lineWidth)
-    if self.disp() then
-        -- Active
-        gc.setColor(self.frameColor)
-        GC.mRect('fill', 0, 0, w, w, 2)
-        gc.setColor(0, 0, 0, .42)
-        gc.line(-w / 2, w / 2, w / 2, w / 2, w / 2, -w / 2)
-        gc.setColor(1, 1, 1, .62)
-        gc.line(-w / 2, w / 2, -w / 2, -w / 2, w / 2, -w / 2)
-        gc.setLineWidth(self.lineWidth * 2)
-        gc.setLineJoin('bevel')
-        gc.setColor(1, 1, 1)
-        gc.line(-w * .355, 0, 0, w * .355, w * .355, -w * .355)
-    else
-        -- Background
-        gc.setColor(self.fillColor)
-        GC.mRect('fill', 0, 0, w, w, 2)
-        gc.setColor(0, 0, 0, .626)
-        gc.line(-w / 2, w / 2, -w / 2, -w / 2, w / 2, -w / 2)
-        gc.setColor(1, 1, 1, .0626)
-        gc.line(-w / 2, w / 2, w / 2, w / 2, w / 2, -w / 2)
-    end
-
-    -- Drawable
-    local x2, y2 = w * .5 + self.labelDist, 0
-    gc.setColor(self.textColor)
-    WIDGET._alignDraw(self, self._text, x2, y2, nil, self.textScale)
-
-    -- Highlight
-    gc.setColor(1, 1, 1, self._hoverTime / self._hoverTimeMax * .0626)
-    GC.mRect('fill', 0, 0, w, w, 2)
-
-    gc.pop()
-end
-
-function WIDGET._prototype.slider:draw()
-    local x, y = self._x, self._y
-    local x2 = x + self.w
-    local rangeL, rangeR = self._rangeL, self._rangeR
-
-    local frameC = self.frameColor
-
-    -- Axis
-    gc.setColor(frameC)
-    gc.setLineWidth(self.lineWidth * 2)
-    gc.line(x, y, x2, y)
-
-    local fillC = self.fillColor
-
-    -- Block
-    local pos = MATH.clamp(self._pos, rangeL, rangeR)
-    local cx = x + self.w * (pos - rangeL) / self._rangeWidth
-    local bw, bh = 26, 30
-    GC.ucs_move(cx, y)
-    gc.setColor(fillC)
-    GC.mRect('fill', 0, 0, bw, bh, self.cornerR)
-    gc.setLineWidth(self.lineWidth)
-    gc.setColor(0, 0, 0, .26)
-    gc.line(-bw / 2, bh / 2, bw / 2, bh / 2, bw / 2, -bh / 2)
-    gc.setColor(1, 1, 1, .1)
-    gc.line(-bw / 2, bh / 2, -bw / 2, -bh / 2, bw / 2, -bh / 2)
-    GC.ucs_back()
 end
 
 local uVLpool = {}
@@ -1946,7 +1168,68 @@ function UltraVlCheck(id, auto)
     return true
 end
 
-DiscordState = {}
+local curlAvailable = SYSTEM == 'Windows' or SYSTEM == 'Linux' or (function()
+    local suc, f = pcall(io.popen, 'curl --version', 'r')
+    if suc and f then
+        local res = f:read('*a')
+        f:close()
+        if res and res:find('^curl') then return true end
+    end
+end)()
+function TryOpenLeaderboard()
+    if not curlAvailable then
+        SFX.play('no')
+        MSG('warn', "Leaderboard is not supported on this device (no cUrl)")
+    elseif STAT.maxFloor < 10 then
+        SFX.play('no')
+        MSG('warn', "Reach F10 once to unlock the leaderboards!")
+    else
+        SFX.play('menuhit2')
+        SCN.go('leaderboard', 'none')
+    end
+end
+
+local function genCurlCMD(data)
+    local json = JSON.encode(data)
+    if SYSTEM == 'Windows' then
+        json = json:gsub('"', [[\"]])
+        return ([[curl -s -X POST https://vercel-leaderboard-one.vercel.app/api -H "Content-Type: application/json" -d "$1"]]):repD(json)
+    else
+        return ([[curl -s -X POST https://vercel-leaderboard-one.vercel.app/api -H 'Content-Type: application/json' -d '$1']]):repD(json)
+    end
+end
+function CurlRequest(act, data)
+    if not curlAvailable or STAT.mod ~= 'vanilla' then return end
+    if act == 'submit' then
+        if TestMode then return end
+        if STAT.uid:sub(1, 5) == 'ANON-' then
+            if TASK.lock('anon_submit') then
+                MSG('warn', "Anonymous users cannot submit daily challenge scores", 10 * 1.6)
+            end
+            return
+        end
+        Daily.cmd = genCurlCMD {
+            act = 'submit',
+            hid = STAT.hid,
+            uid = STAT.uid,
+            combo = GAME.comboStr,
+            alt = GAME.roundHeight,
+            time = GAME.gigaTime and MATH.roundUnit(GAME.gigaTime, .001),
+            cr = RankAvailable() and CalculateCR() or 0,
+        }
+        ASYNC.runCmd('submitDaily', Daily.cmd)
+        MSG('dark', "Submitting Daily Challenge score...")
+    elseif act == 'fetch' then
+        LB[data] = LB[data] or {}
+        ASYNC.runCmd('fetchLeaderboard', genCurlCMD {
+            act = 'fetch',
+            combo = data,
+        })
+    elseif act == 'checkUpdate' then
+        ASYNC.runCmd('checkUpdate', [[curl -s -X GET https://api.github.com/repos/MrZ626/ZenithClicker/releases/latest]])
+    end
+end
+
 function Daemon_Slow()
     TASK.yieldT(1)
     local lib = BGM._srcLib
@@ -1997,17 +1280,46 @@ function Daemon_Slow()
             if suc and res then
                 if res.error then
                     MSG('warn', "Daily Challenge submission failed:\n" .. res.error, duration * .626)
-                else
+                elseif next(res) then
                     MSG('check',
-                        "Daily Challenge score submitted!\n" ..
-                        "Alt #" .. tostring(res.altRank) .. " of " .. tostring(res.altCount) .. ", top: " .. tostring(res.altBest) .. "m\n" ..
-                        "SR #" .. tostring(res.timeRank) .. " of " .. tostring(res.timeCount) .. ", top: " .. tostring(res.timeBest) .. "s",
+                        "Score submitted!\n" ..
+                        "Altitude #" .. tostring(res.altRank) .. " of " .. tostring(res.altCount) .. "\nSpeedrun #" .. tostring(res.timeRank) .. " of " .. tostring(res.timeCount),
                         duration)
                     SFX.play('pause_continue', 1, 0, Tone(-5))
+                else
+                    MSG('check', "Daily Challenge submission failed:\nNot a better score", duration)
                 end
-                DAILYCMD = nil
+                Daily.cmd = nil
             else
-                MSG('warn', "Daily Challenge submission failed\nRetry with secret code 'resubmit'\ndata received from server: " .. msg, 10 * 1.6)
+                MSG('warn', "Daily Challenge submission failed\nRetry with opening leaderboard page\ndata received from server: " .. msg, duration * 1.26)
+                SFX.play('pause_retry', 1, 0, Tone(-5))
+            end
+        end
+        msg = ASYNC.get('fetchLeaderboard')
+        if msg then
+            local suc, res = pcall(JSON.decode, msg)
+            if suc and res then
+                if res.error then
+                    MSG('warn', "Daily Challenge leaderboard fetch failed:\n" .. res.error)
+                elseif res.alt then
+                    local t = os.time()
+                    -- Write new data
+                    LB[res.combo].alt = res.alt
+                    LB[res.combo].time = res.time
+                    LB[res.combo].lastUpd = t
+                    -- Delete old data
+                    for cmb, L in next, LB do
+                        if not TABLE.findAll(Daily.history, cmb) and t - (L.lastUpd or 0) > 86400 * 10 then
+                            LB[cmb] = nil
+                        end
+                    end
+                    FILE.save(LB, 'leaderboard.luaon', '-luaon')
+                else
+                    MSG('warn', "Daily Challenge leaderboard fetch failed:\nNo Data")
+                    SFX.play('pause_retry', 1, 0, Tone(-5))
+                end
+            else
+                MSG('warn', "Daily Challenge leaderboard fetch failed")
                 SFX.play('pause_retry', 1, 0, Tone(-5))
             end
         end
@@ -2016,7 +1328,6 @@ function Daemon_Slow()
     end
 end
 
-MusicBeat = 0 ---@type number 0-1, envelope: /|/|/|
 function Daemon_Fast()
     local max = math.max
     local hsv = COLOR.HSV
@@ -2099,12 +1410,22 @@ function Daemon_Fast()
             -- BGM time control
             if BgmLooping then
                 if BGM.tell() > BgmLooping[2] then
-                    BGM.set('all', 'seek', BgmLooping[1] + (BGM.tell() - BgmLooping[2]))
+                    local pass = BGM.tell() - BgmLooping[2]
+                    if pass < .26 then
+                        BGM.set('all', 'seek', BgmLooping[1] + pass)
+                    else
+                        BGM.set('all', 'seek', BgmLooping[1])
+                    end
                 end
             end
             if BgmNeedSkip then
                 if BGM.tell() > BgmNeedSkip[1] then
-                    BGM.set('all', 'seek', BgmNeedSkip[2] + (BGM.tell() - BgmNeedSkip[1]))
+                    local pass = BGM.tell() - BgmNeedSkip[1]
+                    if pass < .26 then
+                        BGM.set('all', 'seek', BgmNeedSkip[2] + pass)
+                    else
+                        BGM.set('all', 'seek', BgmNeedSkip[2])
+                    end
                     BgmNeedSkip = false
                 end
             end
@@ -2201,14 +1522,45 @@ function Daemon_Fast()
     end
 end
 
-require 'module/initialize'
+-- Functions: Secret Content
 
+function UseAltName()
+    TABLE.update(ModData, STRING.unpackTable("H4sIAAAAAAAAA3XPwQ6CMAwG4FchO/MExJjMUaXJKIQNokcT9WBQT54I7y501jCj139d+/2Dujz7no63s8oGpZ3K1CppKmuRdslapaqzHCE5rzdo0R84zguOS3SmQOiq1hE4x09I/FRgLjsoDGPTTJMmWlO/D5aaDHAE+7BZOw8NJ2VQmQLAhZldx0kOZnJqjxVN8Ziq++N5//R4t5AOiwbi/9KLPcjFvZ0uyKea17JVpMEpymAU4cI3646n6z9cyzgLP2QLVQ4UqSKSRxObtq2NWIeYNV8fxxd95CicAAIAAA=="))
+    UseAltName = NULL
+end
+
+if os.date("%d%m") - 1 == 400 then UseAltName() end
+
+UTIL.time("Create util global vars & functions", true)
+--------------------------------------------------------------
+
+for i = 1, #ModData.deck do table.insert(Cards, require 'module/card'.new(ModData.deck[i])) end
+for _, C in ipairs(Cards) do Cards[C.id] = C end
+
+SCN.addSwapStyle('warp', require 'module/warp_swap')
+
+for _, v in next, love.filesystem.getDirectoryItems('scene') do
+    if FILE.isSafe('scene/' .. v) then
+        local sceneName = v:sub(1, -5)
+        SCN.add(sceneName, FILE.load('scene/' .. v, '-lua'))
+    end
+end
+
+TABLE.update(CONF, FILE.safeLoad('conf.luaon', '-luaon') or NONE)
+TABLE.update(SR, FILE.safeLoad('speedrun.luaon', '-luaon') or NONE)
+TABLE.update(LB, FILE.safeLoad('leaderboard.luaon', '-luaon') or NONE)
+InitProfile()
+LoadSave()
 Initialize()
-RefreshDaily()
+
 TABLE.update(TextColor, BaseTextColor)
 TABLE.update(ShadeColor, BaseShadeColor)
-GAME.refreshCurrentCombo()
+--RefreshDaily()
 TEXTS.version:set(SYSTEM .. (CONF.oldHitbox and " eT" or " eV") .. (require 'version'.verStr))
+GAME.refreshCurrentCombo()
+
+GAME.refreshLayout()
+for i, C in ipairs(Cards) do C.x, C.y = C.tx, C.ty + 260 + 26 * 1.6 ^ i end
 if SYSTEM == 'Web' then
     _G[('DiscordRPC')] = { update = NULL, setEnable = NULL }
 else
@@ -2219,6 +1571,11 @@ else
         details = "QUICK PICK",
         state = "Enjoying Music",
     }
+end
+
+if FILE.exist('avatar') then
+    local suc, res = pcall(GC.newImage, 'avatar')
+    if suc then AVATAR = res end
 end
 
 if not ACHV.return_to_the_light then
@@ -2233,8 +1590,12 @@ if not ACHV.return_to_the_light then
     end
 end
 
--- Debug
-for i = 1, 4 do SCN.scenes._console.widgetList[i].textColor = COLOR.D end
+UTIL.time("Boot Sequence", true)
+--------------------------------------------------------------
+
+UTIL.showTimeLog()
+
+-- (Debug) SFX Test
 TASK.new(function()
     for _, s in next, ([[ ]]):trim():split('%s+', true) do
         TASK.yieldT(1)

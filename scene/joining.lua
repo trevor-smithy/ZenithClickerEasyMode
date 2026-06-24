@@ -44,6 +44,7 @@ function scene.update(dt)
                 STAT.srActive = SCN.args[1] == 'reset'
                 Initialize(true)
                 GAME.clearResultStat()
+                collectgarbage()
             end
             if not initialized then
                 BGM.setMaxSources(42)
@@ -54,6 +55,10 @@ function scene.update(dt)
                 end
                 TASK.new(Daemon_Slow)
                 TASK.new(Daemon_Fast)
+                TASK.new(function()
+                    TASK.yieldT(2.6)
+                    CurlRequest('checkUpdate')
+                end)
                 TEXTS.load:set("GETTING READY TO SPECTATE...")
 
                 ---@diagnostic disable-next-line

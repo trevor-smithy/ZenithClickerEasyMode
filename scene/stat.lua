@@ -81,10 +81,10 @@ function RefreshProfile()
     GC.rectangle('fill', 0, 210, 1200, 60)
     -- bottom ribbon
     GC.rectangle('fill', 0, 720, 1200, -90)
-    -- github link
+    -- note
     FONT.set(50)
     GC.setColor(textColor)
-    GC.printf("↗  VIEW GITHUB REPO", 0, 640, 1200, 'center')
+    GC.printf("↗  OPEN CLICKER CHANNEL", 0, 640, 1200, 'center')
     -- bottom dark
     GC.setColor(0, 0, 0, .3)
     GC.rectangle('fill', 0, 720, 1200, -3)
@@ -212,7 +212,7 @@ function RefreshProfile()
     GC.setColor(scoreColor)
     dblMidDraw(t30, bw / 2 + t50:getWidth() / 2 + t30:getWidth() / 2, bh / 2 + 4)
     -- Rank
-    local zRank = STAT.totalTime / 60 + STAT.totalFloor / 9 + STAT.totalGiga / 2 <= 62
+    local zRank = not RankAvailable()
     local rank = MATH.clamp(math.ceil(rating / 1400), 1, 18)
     local rankIcon = TEXTURE.stat.rank[rank]
     GC.setColor(1, 1, 1)
@@ -329,7 +329,7 @@ function RefreshProfile()
     if TestMode then
         GC.ucs_move(600, 360)
         GC.setColor(1, 1, 1, .26)
-        GC.mDraw(TEXTS.test, 0, 0, -.26, 10)
+        GC.mDraw(TEXTS.test, 0, 0, -.26, 7)
     end
 
     GC.setCanvas()
@@ -405,7 +405,7 @@ scene.widgetList = {
         onPress = function()
             if cardShow == 1 then
                 SFX.play('menuconfirm')
-                love.system.openURL("https://github.com/MrZ626/ZenithClicker")
+                SCN.swapTo('chnl', 'none')
             end
         end,
     },

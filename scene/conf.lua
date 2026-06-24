@@ -354,7 +354,7 @@ function scene.keyDown(key, isRep)
                     CONF.keybind = bindBuffer
                     bindBuffer = nil
                     SaveConf()
-                    MSG('dark', "Keybinding updated.")
+                    MSG('dark', "Keybinding updated")
                     SFX.play('social_notify_major')
                 else
                     SFX.play('irs')
@@ -440,7 +440,10 @@ function scene.update(dt)
     GAME.bgH = MATH.expApproach(GAME.bgH, GAME.height, dt * 1.6)
     StarPS:moveTo(0, -GAME.bgH * 2 * BgScale)
     StarPS:update(dt)
-    if not TASK.getLock('reset_all') then resetall_cnt = 0 end
+    if not TASK.getLock('reset_all') then
+        if resetall_cnt == 16 then IssueAchv('knifes_edge') end
+        resetall_cnt = 0
+    end
     resetall_anim = MATH.expApproach(resetall_anim, resetall_cnt / 16, dt * 12)
     comboTimer = comboTimer - dt
     if comboTimer <= 0 then
@@ -585,7 +588,7 @@ function scene.draw()
         -- Keybind
         if bindBuffer then
             setFont(30)
-            gc_print("Press key for...", 600, 670, 0, .872)
+            gc_print("Press key for..", 600, 670, 0, .872)
             gc_print(bindHint[#bindBuffer + 1], 600, 700, 0, .872)
         end
     elseif page == 2 then
@@ -963,12 +966,12 @@ pages[2] = {
                 return
             end
             if newName == STAT.uid then
-                MSG('dark', "New name is the same as the old one.")
+                MSG('dark', "New name is the same as the old one")
                 SFX.play('staffwarning')
                 return
             end
             if newName:match('^ANON[-_]') then
-                MSG('dark', "You can’t enter ANON as your new name.")
+                MSG('dark', "You can't enter ANON as your new name")
                 SFX.play('staffwarning')
                 return
             end
@@ -1016,7 +1019,7 @@ pages[2] = {
                 STAT.aboutme = newText
                 SaveStat()
                 SFX.play('supporter')
-                MSG('dark', "Your About Me text has been updated.")
+                MSG('dark', "Your About Me text has been updated")
                 if SCN.cur == 'stat' then RefreshProfile() end
                 IssueAchv('identity')
                 return
@@ -1066,167 +1069,14 @@ pages[2] = {
             if #data <= 26 then
                 if data == '' then
                     MSG('dark', "No data in clipboard")
-                elseif data == 'cmd' then
-                    SFX.play('cutin_superlobby', 1, 0, Tone(-2))
-                    SCN.go('_console')
-                elseif data == 'old_hitbox' then
-                    CONF.oldHitbox = not CONF.oldHitbox
-                    MSG('dark', "Force old hitbox: " .. (CONF.oldHitbox and "ON" or "OFF"))
-                    SFX.play(CONF.oldHitbox and 'social_online' or 'social_offline')
-                    TEXTS.version:set(SYSTEM .. (CONF.oldHitbox and " T" or " V") .. (require 'version'.verStr))
-                elseif data == 'true_ending' then
-                    SFX.play('warp')
-                    SCN.go('ending', 'warp')
-                elseif data == 'test' then
-                    if STAT.srActive then
-                        STAT.srActive = false
-                        SaveStat()
-                    end
-                    TestMode = true
-                    SFX.play('maintenance')
-                elseif data == 'dev' then
-                    MSG('dark', OverDevProgressText)
-                elseif data == 'UseAltName' then
-                    UseAltName()
-                    SFX.play('social_dm')
-                elseif data == 'UseEasyName' or data == 'UseEasName' then
-                    CONF.easyName = not CONF.easyName
-                    SFX.play('social_dm')
-                    MSG('dark', "Easy Names In-Game: " .. (CONF.easyName and "ON" or "OFF"))
-                elseif data == 'imperial' or data == 'feet' then
-                    CONF.imperial = not CONF.imperial
-                    SFX.play('social_dm')
-                    MSG('dark', "Imperial Units: " .. (CONF.imperial and "ON" or "OFF"))
-                elseif data == 'promotion' then
-                    CONF.promotion = not CONF.promotion
-                    SFX.play('social_dm')
-                    MSG('dark', "Rank Promotion Gauge: " .. (CONF.promotion and "ON" or "OFF"))
-                elseif data == 'old_transparent_card' or data == 'oldTransparentCard' or data == 'oldtransparentcard' or data == 'oldeO' then
-                    CONF.oldTransparentCard = not CONF.oldTransparentCard
-                    SFX.play('social_dm')
-                    MSG('dark', "Transparent Card: " .. (CONF.oldTransparentCard and "V1.0/1.1" or "V1.2+"))
-                elseif data == 'eZ' or data == 'ez' then
-                    if not GAME.enightcore and anyPieceActive then 
-                        SFX.play('damage_alert')
-                        MSG('dark', "WARNING: MULTIPLE PIECES ENABLED DISABLES SCORING AND MAY CAUSE ISSUES. DO NOT REPORT!")
-                        GAME.multiplePiecesActive = true
-                    else
-                        SFX.play('social_dm')
-                    end
-                    GAME.enightcore = not GAME.enightcore
-                    MSG('dark', "eZ: " .. (GAME.enightcore and "ON" or "OFF"))
-                    GAME.refreshLayout()
-                    RefreshBGM()
-                    GAME.refreshCurrentCombo()
-                elseif data == 'eS' or data == 'es' then
-                    if not GAME.eslowmo and anyPieceActive then 
-                        SFX.play('damage_alert')
-                        MSG('dark', "WARNING: MULTIPLE PIECES ENABLED DISABLES SCORING AND MAY CAUSE ISSUES. DO NOT REPORT!")
-                        GAME.multiplePiecesActive = true
-                    else
-                        SFX.play('social_dm')
-                    end
-                    GAME.eslowmo = not GAME.eslowmo
-                    MSG('dark', "eS: " .. (GAME.eslowmo and "ON" or "OFF"))
-                    GAME.refreshLayout()
-                    RefreshBGM()
-                    GAME.refreshCurrentCombo()
-                elseif data == 'eJ' or data == 'ej' then
-                    if not GAME.eglassCard and anyPieceActive then 
-                        SFX.play('damage_alert')
-                        MSG('dark', "WARNING: MULTIPLE PIECES ENABLED DISABLES SCORING AND MAY CAUSE ISSUES. DO NOT REPORT!")
-                        GAME.multiplePiecesActive = true
-                    else
-                        SFX.play('social_dm')
-                    end
-                    GAME.eglassCard = not GAME.eglassCard
-                    MSG('dark', "eJ: " .. (GAME.eglassCard and "ON" or "OFF"))
-                    GAME.refreshLayout()
-                    GAME.refreshCurrentCombo()
-                elseif data == 'eL' or data == 'el' then
-                    if not GAME.efastLeak and anyPieceActive then 
-                        SFX.play('damage_alert')
-                        MSG('dark', "WARNING: MULTIPLE PIECES ENABLED DISABLES SCORING AND MAY CAUSE ISSUES. DO NOT REPORT!")
-                        GAME.multiplePiecesActive = true
-                    else
-                        SFX.play('social_dm')
-                    end
-                    GAME.efastLeak = not GAME.efastLeak
-                    MSG('dark', "eL: " .. (GAME.efastLeak and "ON" or "OFF"))
-                    GAME.refreshLayout()
-                    GAME.refreshCurrentCombo()
-                elseif data == 'eT' or data == 'et' then
-                    if not GAME.einvisUI and anyPieceActive then 
-                        SFX.play('damage_alert')
-                        MSG('dark', "WARNING: MULTIPLE PIECES ENABLED DISABLES SCORING AND MAY CAUSE ISSUES. DO NOT REPORT!")
-                        GAME.multiplePiecesActive = true
-                    else
-                        SFX.play('social_dm')
-                    end
-                    GAME.einvisUI = not GAME.einvisUI
-                    MSG('dark', "eT: " .. (GAME.einvisUI and "ON" or "OFF"))
-                    GAME.refreshLayout()
-                    GAME.refreshCurrentCombo()
-                elseif data == 'eO' or data == 'eo' then
-                    if not GAME.einvisCard and anyPieceActive then 
-                        SFX.play('damage_alert')
-                        MSG('dark', "WARNING: MULTIPLE PIECES ENABLED DISABLES SCORING AND MAY CAUSE ISSUES. DO NOT REPORT!")
-                        GAME.multiplePiecesActive = true
-                    else
-                        SFX.play('social_dm')
-                    end
-                    GAME.einvisCard = not GAME.einvisCard
-                    MSG('dark', "eO: " .. (GAME.einvisCard and "ON" or "OFF"))
-                    GAME.refreshLayout()
-                    GAME.refreshCurrentCombo()
-                elseif data == 'eI' or data == 'ei' then
-                    if not GAME.ecloseCard and anyPieceActive then 
-                        SFX.play('damage_alert')
-                        MSG('dark', "WARNING: MULTIPLE PIECES ENABLED DISABLES SCORING AND MAY CAUSE ISSUES. DO NOT REPORT!")
-                        GAME.multiplePiecesActive = true
-                    else
-                        SFX.play('social_dm')
-                    end
-                    GAME.ecloseCard = not GAME.ecloseCard
-                    MSG('dark', "eI: " .. (GAME.ecloseCard and "ON" or "OFF"))
-                    GAME.refreshLayout()
-                    GAME.refreshCurrentCombo()
                 elseif data == 'lyrics' then
                     CONF.lyrics = not CONF.lyrics
                     SFX.play(CONF.lyrics and 'social_online' or 'social_offline')
                     MSG('dark', "In-Game Lyrics: " .. (CONF.lyrics and "Enabled" or " Disabled"))
-                elseif data == 'resubmit' then
-                    if DAILYCMD then
-                        ASYNC.runCmd('submitDaily', DAILYCMD)
-                        MSG('info', "Re-submitting Daily Challenge score...")
-                        SFX.play('social_invite')
-                    else
-                        MSG('warn', "No buffered Daily Challenge score")
-                        SFX.play('failure', 1, 0, Tone(0))
-                    end
                 else
-                    local msg = "Invalid code '" .. data .. "' in clipboard."
-                    if MATH.roll(.26) then
-                        msg = msg .. "\n" .. TABLE.getRandom {
-                            "Try 'cmd'",
-                            "Try 'cooldown'",
-                            "Try 'old_hitbox'",
-                            "Try 'test'",
-                            "Try 'dev'",
-                            "Try 'repo'",
-                            MATH.coin("Try 'mp'", "Try 'music'"),
-                            "Try 'f" .. STAT.maxFloor .. "'",
-                            "Try 'UseEasyName'",
-                            "Try 'imperial'",
-                            "Try 'promotion'",
-                            STAT.clicker and "Try 'true_ending'" or nil,
-                        }
-                    end
-                    MSG('dark', msg)
+                    MSG('dark', "Invalid data '" .. data .. "' in clipboard")
                     SFX.play('staffwarning')
-                    return
                 end
-                LOG('info', "Secret: " .. data)
                 return
             end
             if TASK.lock('import', 4.2) then
@@ -1302,9 +1152,9 @@ pages[2] = {
                 lastClear = false
                 SFX.play('hyperalert')
                 if instaReset then
-                    MSG('warn', "Reset all progress? Press again to confirm.", 2.6)
+                    MSG('warn', "Reset all progress? Press again to confirm", 2.6)
                 else
-                    MSG('info', "Reset all progress? Spam to confirm.", 2.6)
+                    MSG('info', "Reset all progress? Spam to confirm", 2.6)
                 end
                 return
             end
@@ -1349,7 +1199,7 @@ pages[2] = {
 local function saveSlot(i)
     if TestMode then
         SFX.play('staffwarning')
-        MSG('dark', "You are not a good person.")
+        MSG('dark', "You are not a good person")
         return
     end
     if uidList[i] and STAT.uid ~= uidList[i].uid and not uidList[i].uid:match("^ANON%-") then
@@ -1387,7 +1237,7 @@ local function loadSlot(i)
 
     if TASK.lock('load_slot' .. i, 2.6) then
         SFX.play('hyperalert')
-        MSG('warn', "Load from slot " .. i .. "? Current save will be overwritten. Press again to confirm.", 4.2)
+        MSG('warn', "Load from slot " .. i .. "? Current save will be overwritten. Press again to confirm", 4.2)
         return
     end
     TASK.unlock('load_slot' .. i)
@@ -1406,7 +1256,7 @@ local function clearSlot(i)
     end
     if TASK.lock('clear_slot' .. i, 2.6) then
         SFX.play('hyperalert')
-        MSG('warn', "Clear slot " .. i .. "? This action cannot be undone. Press again to confirm.", 4.2)
+        MSG('warn', "Clear slot " .. i .. "? This action cannot be undone. Press again to confirm", 4.2)
         return
     end
     TASK.unlock('clear_slot' .. i)
@@ -1496,7 +1346,7 @@ pages[3] = {
         onClick = function()
             MusicBPM = nil
             TASK.removeTask_code(Task_MusicEnd)
-            BGM.set('all', 'seek', math.min(BGM.tell() + 30, BGM.getDuration()))
+            BGM.set('all', 'seek', math.min(BGM.tell() + 30, BGM.getDuration() - .26))
         end,
     },
     WIDGET.new { -- no loop

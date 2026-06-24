@@ -36,11 +36,76 @@ function scene.keyDown(key, isRep)
         SFX.play('menuhit2')
         SCN.go('splits', 'none')
     elseif key == '4' and not disableLeaderboard then
-        SFX.play('menuhit2')
-        SCN.go('leaderboard', 'none')
+        TryOpenLeaderboard()
+    elseif key == '5' then
+        if TASK.lock('discord_confirm', 2.6) then
+            SFX.play('menuhit2')
+            MSG('info', "Check discord server in browser?\nPress again to confirm", 2.6)
+        else
+            TASK.unlock('discord_confirm')
+            SFX.play('menuconfirm')
+            love.system.openURL("https://discord.gg/thqhzSn72j")
+        end
+        TASK.unlock('github_confirm')
+    elseif key == '6' then
+        if TASK.lock('github_confirm', 2.6) then
+            SFX.play('menuhit2')
+            MSG('info', "Open GitHub repo in browser?\nPress again to confirm", 2.6)
+        else
+            TASK.unlock('github_confirm')
+            SFX.play('menuconfirm')
+            love.system.openURL("https://github.com/MrZ626/ZenithClicker")
+        end
+        TASK.unlock('discord_confirm')
     end
     ZENITHA._cursor.active = true
     return true
+end
+
+local lastHover
+local hoverHis = {}
+function scene.update()
+    if WIDGET.sel ~= lastHover then
+        lastHover = WIDGET.sel
+        if WIDGET.sel then
+            if #hoverHis >= 20 then table.remove(hoverHis, 1) end
+            table.insert(hoverHis, TABLE.find(scene.widgetList, WIDGET.sel))
+            local code = table.concat(hoverHis)
+            if code:find('12341234123412341234') then
+                SFX.play('warp')
+                SCN.swapTo('ending', 'warp')
+            elseif code:find('34653465346534653465') then
+                CONF.oldHitbox = not CONF.oldHitbox
+                MSG('dark', "Old hitbox: " .. (CONF.oldHitbox and "ON" or "OFF"))
+                SFX.play(CONF.oldHitbox and 'social_online' or 'social_offline')
+                TEXTS.version:set(SYSTEM .. (CONF.oldHitbox and " T" or " V") .. (require 'version'.verStr))
+            elseif code:find('34563456345634563456') then
+                UseAltName()
+                MSG('dark', "Alt strings applied")
+                SFX.play('social_online')
+            elseif code:find('3434343434') then
+                MSG('dark', OverDevProgressText)
+                SFX.play('social_online')
+            elseif code:find('5656565656') then
+                if not TestMode then
+                    if STAT.srActive then
+                        STAT.srActive = false
+                        SaveStat()
+                    end
+                    TestMode = true
+                    SFX.play('maintenance')
+                else
+                    MSG('info', "You are already in test mode!")
+                end
+            elseif code:find('6666666666') then
+                SFX.play('cutin_superlobby', 1, 0, Tone(-2))
+                SCN.go('_console')
+            else
+                return
+            end
+            TABLE.clear(hoverHis)
+        end
+    end
 end
 
 local gc = love.graphics
@@ -104,6 +169,8 @@ local buttonContent = {
         if colorRev then gc_setShader(sd) end
         GC.mDraw(texture_chn.records, w / 2, h / 2, 0, w / texture_chn.records:getWidth())
         if colorRev then gc_setShader() end
+        gc_setColor(1, 1, 1, .062)
+        gc_print(STAT.uid, 62, -100, 0, 2.6, 5, 0, 0, -.26)
         gc_setColor(0, 0, 0, .42)
         gc_print("PERSONAL RECORDS", 22, 6 + 6, 0, .9)
         gc_print("VIEW YOUR OWN RECORDS", 26, 62 + 3, 0, .36)
@@ -129,18 +196,42 @@ local buttonContent = {
         GC.mDraw(texture_chn.leaderboard, w / 2, h / 2, 0, w / texture_chn.leaderboard:getWidth())
         if colorRev then gc_setShader() end
         gc_setColor(0, 0, 0, .42)
-        gc_print("LEADERBOARD", 22, 6 + 6, 0, .9)
-        gc_print("VIEW THE DAILY CHALLENGE LEADERBOARD", 26, 62 + 3, 0, .36)
+        gc_print("LEADERBOARDS", 22, 6 + 6, 0, .9)
+        gc_print("VIEW THE DAILY CHALLENGE LEADERBOARDS", 26, 62 + 3, 0, .36)
         gc_setColor(clr.LT)
-        gc_print("LEADERBOARD", 22, 6, 0, .9)
-        gc_print("VIEW THE DAILY CHALLENGE LEADERBOARD", 26, 62, 0, .36)
+        gc_print("LEADERBOARDS", 22, 6, 0, .9)
+        gc_print("VIEW THE DAILY CHALLENGE LEADERBOARDS", 26, 62, 0, .36)
+    end,
+    function(w, h)
+        -- gc_setColor(1, 1, 1)
+        -- if colorRev then gc_setShader(sd) end
+        -- GC.mDraw(texture_chn.leaderboard, w / 2, h / 2, 0, w / texture_chn.leaderboard:getWidth())
+        -- if colorRev then gc_setShader() end
+        gc_setColor(0, 0, 0, .42)
+        gc_print("DISCORD", 22, 6 + 6, 0, .9)
+        gc_print("JOIN OUR DISCORD COMMUNITY", 26, 62 + 3, 0, .36)
+        gc_setColor(.6, .7, .9)
+        gc_print("DISCORD", 22, 6, 0, .9)
+        gc_print("JOIN OUR DISCORD COMMUNITY", 26, 62, 0, .36)
+    end,
+    function(w, h)
+        -- gc_setColor(1, 1, 1)
+        -- if colorRev then gc_setShader(sd) end
+        -- GC.mDraw(texture_chn.leaderboard, w / 2, h / 2, 0, w / texture_chn.leaderboard:getWidth())
+        -- if colorRev then gc_setShader() end
+        gc_setColor(0, 0, 0, .42)
+        gc_print("GITHUB", 22, 6 + 6, 0, .9)
+        gc_print("OPEN THE GITHUB REPOSITORY", 26, 62 + 3, 0, .36)
+        gc_setColor(.6, .6, .6)
+        gc_print("GITHUB", 22, 6, 0, .9)
+        gc_print("OPEN THE GITHUB REPOSITORY", 26, 62, 0, .36)
     end,
 }
 function scene.overDraw()
     gc_replaceTransform(SCR.xOy)
     gc_setLineWidth(10)
     gc_setColor(1, 0, 0)
-    for i = 1, 4 do
+    for i = 1, #buttonContent do
         if i == 4 and disableLeaderboard then break end
         local W = scene.widgetList[i]
         gc_push()
@@ -151,6 +242,10 @@ function scene.overDraw()
         gc_stc_rect(0, 0, W.w, W.h)
         setFont(50)
         buttonContent[i](W.w, W.h)
+        if W._hoverTime > 0 then
+            gc_setColor(1, 1, 1, W._hoverTime / W._hoverTimeMax * .0626)
+            gc_rectangle('fill', 0, 0, W.w, W.h)
+        end
         gc_stc_stop()
         gc_pop()
     end
@@ -189,6 +284,20 @@ scene.widgetList = {
         color = clr.button,
         sound_hover = 'menutap',
         onClick = function() love.keypressed('4') end,
+    },
+    WIDGET.new {
+        type = 'button',
+        pos = { .5, .5 }, x = (-btnW - gap) / 4, y = btnY + 3 * btnH, w = (btnW - gap) / 2, h = btnH - gap,
+        color = { COLOR.HEX '2A5697FF' },
+        sound_hover = 'menutap',
+        onClick = function() love.keypressed('5') end,
+    },
+    WIDGET.new {
+        type = 'button',
+        pos = { .5, .5 }, x = (btnW + gap) / 4, y = btnY + 3 * btnH, w = (btnW - gap) / 2, h = btnH - gap,
+        color = { COLOR.HEX '424242FF' },
+        sound_hover = 'menutap',
+        onClick = function() love.keypressed('6') end,
     },
     WIDGET.new {
         name = 'back', type = 'button',

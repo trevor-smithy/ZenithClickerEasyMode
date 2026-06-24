@@ -1484,6 +1484,16 @@ local d = {
         hide = TRUE,
         type = 'issued',
     },
+    { -- knifes_edge
+        ex = true,
+        id = 'knifes_edge',
+        name = "Knife's Edge",
+        desc = [[Reach final save wipe animation but not delete it.]],
+        quote = [[That was a close one!]],
+        credit = "@F1e308",
+        hide = TRUE,
+        type = 'issued',
+    },
     { title = "Easy Mode Ex-Vanilla", mod = "ZCEM" },
     { -- patience_is_a_virtue
         ex = true,

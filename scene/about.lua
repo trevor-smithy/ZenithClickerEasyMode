@@ -10,8 +10,6 @@ local clr = {
     L = { COLOR.HEX '656565FF' },
 }
 
-DevNoteText = GC.newText(FONT.get(30))
-AboutText = GC.newText(FONT.get(70))
 local lines = {}
 
 local tempY = 0
@@ -20,7 +18,7 @@ local function addText(text, x, y, scale, wraplimit)
     if type(text) == 'string' then text = { COLOR.L, text } end
     scale = scale or 1
     local w = (wraplimit or 900) / scale
-    AboutText:addf(text, w, 'center', x - w / 2 * scale, tempY + y, 0, scale)
+    TEXTS.aboutText:addf(text, w, 'center', x - w / 2 * scale, tempY + y, 0, scale)
 end
 
 local function addSection(y)
@@ -201,7 +199,12 @@ function scene.load()
             text = DevCommentary.noComment
         end
     end
-    DevNoteText:setf(text:repD(STAT.uid), 2000, 'center')
+    TEXTS.devNoteText:setf(text:repD(STAT.uid), 2000, 'center')
+end
+
+function scene.unload()
+    link = nil
+    scene.widgetList.link.sound_hover = ''
 end
 
 function scene.unload()
@@ -287,7 +290,7 @@ function scene.draw()
     else
         gc_mDraw(icon, -270, 100, 0, kx, ky)
     end
-    gc_draw(AboutText)
+    gc_draw(TEXTS.aboutText)
     if link then
         gc_setColor(0, 0.62, 1)
         scene.widgetList.link.sound_hover = 'menutap'
@@ -295,7 +298,7 @@ function scene.draw()
     if smithyMode and (GAME.anyRev or URM) then
         gc_setColor(1, 0.62, 0.62)
     end
-    gc_draw(DevNoteText, 0, 285 - DevNoteText:getHeight() * (.68 / 2), 0, .68, .68, 1000, 0)
+    gc_draw(TEXTS.devNoteText, 0, 285 - TEXTS.devNoteText:getHeight() * (.68 / 2), 0, .68, .68, 1000, 0)
 
     gc_setColor(1, 1, 1, .2)
     if smithyMode then
