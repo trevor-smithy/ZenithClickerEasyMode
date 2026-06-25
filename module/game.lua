@@ -2179,9 +2179,9 @@ end
 
 function GAME.refreshDailyChallengeText()
     TEXTS.dcBest:set(
-        STAT.dailyBest > 0 and
-        ("%.0fm  %.0fZP"):format(STAT.dailyBest / GAME.getComboZP(Daily.combo), STAT.dailyBest)
-        or ""
+        --STAT.dailyBest > 0 and
+        --("%.0fm  %.0fZP"):format(STAT.dailyBest / GAME.getComboZP(Daily.combo), STAT.dailyBest) or 
+        ""
     )
     Daily.available = false --true
     --[[for _, v in next, Daily.combo do
