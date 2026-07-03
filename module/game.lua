@@ -1613,13 +1613,13 @@ function GAME.upFloor()
                 SubmitAchv('ueEXeGV', roundTime)
             elseif GAME.comboStr == 'eEXeVL' and GAME.closeCard then
                 SubmitAchv('ueEXeVL', roundTime)
-            elseif GAME.comboStr == 'eEXeDH' and GAME.nightcore then
+            elseif GAME.comboStr == 'eDHeEX' and GAME.nightcore then
                 SubmitAchv('ueEXeDH', roundTime)
             elseif GAME.comboStr == 'eEXeIN' and GAME.invisCard then
                 SubmitAchv('ueEXeIN', roundTime)
-            elseif GAME.comboStr == 'eEXeAS' and GAME.fastLeak then
+            elseif GAME.comboStr == 'eASeEX' and GAME.fastLeak then
                 SubmitAchv('ueEXeAS', roundTime)
-            elseif GAME.comboStr == 'eEXeDP' and GAME.invisUI then
+            elseif GAME.comboStr == 'eDPeEX' and GAME.invisUI then
                 SubmitAchv('ueEXeDP', roundTime)
             end
         end
