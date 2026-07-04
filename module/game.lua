@@ -2730,6 +2730,31 @@ function GAME.commit(auto, falseCommit)
             end
             xp = xp + 3
 
+            if M.AS == -1 and correct then
+                if GAME.chain == 7 then SFX.play('btb_1')
+                elseif GAME.chain == 23 then SFX.play('btb_2')
+                elseif GAME.chain == 66 then SFX.play('btb_3')
+                elseif GAME.chain == 184 then 
+                    TASK.new(function()
+                        SFX.play('btb_1')
+                        TASK.yieldT(0.26)
+                        SFX.play('btb_2')
+                    end)
+                elseif GAME.chain == 503 then 
+                    TASK.new(function()
+                        SFX.play('btb_1')
+                        TASK.yieldT(0.26)
+                        SFX.play('btb_3')
+                    end)
+                elseif GAME.chain == 863 then 
+                    TASK.new(function()
+                        SFX.play('btb_2')
+                        TASK.yieldT(0.36)
+                        SFX.play('btb_3')
+                    end)
+                end
+            end
+
             -- B2B
             if correct == 1 or (correct == 2 and M.DP == -1 and oldAllyHP > 0) then
                 GAME.chain = GAME.chain + 1
