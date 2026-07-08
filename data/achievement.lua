@@ -1494,7 +1494,7 @@ local d = {
         hide = TRUE,
         type = 'issued',
     },
-    { title = "Easy Mode Ex-Vanilla", mod = "ZCEM" },
+    { title = "Ex-Vanilla", desc = "Achievements that were removed from vanilla Zenith Clicker but were kept in ZCEM", mod = "ZCEM" },
     { -- patience_is_a_virtue
         ex = true,
         id = 'patience_is_a_virtue',
@@ -1505,7 +1505,7 @@ local d = {
         rank = floorRank(1, 3, 5, 7, 9, 10, 2000),
         mod = "ZCEM",
     },
-    { title = "Easy Mode (v1.0) (No CR)", mod = "ZCEM" },
+    { title = "The Originals", desc = "Added in v1.0, includes a custom challenge for each Ultra Reversed mod", mod = "ZCEM" },
     { -- Programmer & Pro Gamer
         ex = true,
         id = 'programmer_gamer',
@@ -1688,7 +1688,7 @@ local d = {
         type = 'issued',
         mod = "ZCEM",
     },
-    { title = "Easy Mods (v1.1) (No CR)", mod = "ZCEM" },
+    { title = "Easy Mods", desc = "Added in v1.1", mod = "ZCEM" },
     { -- eEX
         id = 'eEX',
         name = "Soft",
@@ -1729,7 +1729,7 @@ local d = {
         id = 'eVL',
         name = "Calm",
         desc = [[HFD with the "Tranquility" mod]],
-        quote = [[you're safe, just right where you are.]],
+        quote = [[You're safe, just right where you are.]],
         rank = floorRank(1, 3, 5, 7, 9, 10, 4200),
         type = 'unranked',
         mod = "ZCEM",
@@ -1770,7 +1770,7 @@ local d = {
         type = 'unranked',
         mod = "ZCEM",
     },
-    { title = "Uneasy Mods (v1.1) (No CR)", hide = function() return not ACHV.uneasy end, mod = "ZCEM",},
+    { title = "Uneasy Mods", desc = "Added in v1.1, each pair is matched with a regular piece to make their 'Uneasy' variant", hide = function() return not ACHV.uneasy end, mod = "ZCEM",},
     { -- ueEX
         id = 'ueEX',
         name = "Lethargy",
@@ -1897,7 +1897,7 @@ local d = {
         type = 'unranked',
         mod = "ZCEM",
     },
-    { title = "Easy Mode - Special (v1.1) (No CR)", mod = "ZCEM" },
+    { title = "Special Quests", desc = "Added in v1.1, each easy variant of the named combos has a special quest-based achievement goal", mod = "ZCEM" },
     { -- emperor_development
         --id = 'eDHEXeNH',
         id = 'emperor_development',
@@ -2005,7 +2005,7 @@ local d = {
         type = 'unranked',
         mod = "ZCEM",
     },
-    { title = "Easy Mode - Why (v1.1) (No CR)", hide = function() return TABLE.countAll(GAME.completion, 0) >= 8 end, mod = "ZCEM"},
+    { title = "-Why", desc = "Added in v1.1, unlike normal WHY these require the exact MP listed", hide = function() return TABLE.countAll(GAME.completion, 0) >= 8 end, mod = "ZCEM"},
     { -- -3
         id = '-3',
         name = "Respite",
@@ -2076,7 +2076,7 @@ local d = {
         type = 'unranked',
         mod = "ZCEM",
     },
-    { title = "Easy Mode - Issued (v1.1) (No CR)", mod = "ZCEM" },
+    { title = "Secrets", desc = "Added in v1.1, these require exploring mechanics/features introduced by ZCEM", mod = "ZCEM" },
     { -- www
         id = 'www',
         name = "WWW.",
@@ -2223,7 +2223,7 @@ local d = {
         type = 'issued',
         mod = "ZCEM",
     },
-    { title = "Easy Mode - Issued (v1.2) (No CR)", mod = "ZCEM" },
+    { title = "Shenanigans", desc = "Added in v1.2, these require even more obscure knowledge to obtain", mod = "ZCEM" },
     { -- multiple_pieces (1.1.1)
         id = 'multiple_pieces',
         name = "Multiple Pieces???",
@@ -2319,7 +2319,7 @@ local d = {
         hide = TRUE,
         mod = "ZCEM",
     },
-    { title = "Easy Mode - Issued (v1.3) (No CR)", mod = "ZCEM" },
+    { title = "Stacker", desc = "Added in v1.3, these require doing something specific or unique with Stacker Mode enabled", mod = "ZCEM" },
     { -- glissando
         id = 'glissando',
         name = "Glissando",

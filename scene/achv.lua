@@ -84,7 +84,7 @@ function RefreshAchvList(canShuffle)
         end
         if not A.id then
             if page == ZCEMpage then countSinceLastTitle = 0 end
-            table.insert(modAchvList, { title = A.hide() and "???" or A.title and A.title:upper() })
+            table.insert(modAchvList, { title = A.hide() and "???" or A.title and A.title:upper(), desc = not A.hide() and A.desc, mod = A.mod or "ZC", })
         else
             local rank, score, progress, wreath, overDev
             if TestMode or not ACHV[A.id] then
@@ -133,6 +133,7 @@ function RefreshAchvList(canShuffle)
                     type = A.type,
                     hidden = A.hide ~= FALSE,
                     overDev = overDev,
+                    mod = A.mod or "ZC",
                 })
             elseif A.mod == "ZCEM" and countSinceLastTitle % 2 == 1 then  
                 table.insert(achvListZCEM, {id = '', name = ''})
@@ -554,7 +555,7 @@ function scene.draw()
             local a = achvLists[page][i]
             if not a.id then
                 if a.title then
-                    gc_ucs_move(i % 2 == 1 and -605 or 5, floor((i - 1) / 2) * 140)
+                    gc_ucs_move(i % 2 == 1 and -605 or 5, floor((i - 1) / 2) * 140 - (a.desc and 30 or 0))
                     gc_setColor(0, 0, 0, .42)
                     gc_rectangle('fill', -25, 42, 1260, -10)
                     gc_setColor(clr.L)
@@ -562,12 +563,17 @@ function scene.draw()
                     if colorRev then
                         gc_print(a.title, 10, 134, 0, 1.8, -1.8)
                     else
-                        if a.title:sub(1, 4) == "EASY" then
+                        if a.mod == "ZCEM" then
                             gc_setColor(COLOR.G)
-                        elseif a.title:sub(1, 6) == "UNEASY" then
-                            gc_setColor(COLOR.dR)
+                            if a.title:sub(1, 6) == "UNEASY" then gc_setColor(COLOR.dR) end
                         end
                         gc_print(a.title, 10, 62, 0, 1.8)
+                    end
+                    if a.desc then
+                        gc_setColor(colorRev and COLOR.dR or COLOR.LD)
+                        FONT.set(10)
+                        gc_print(a.desc, 30, 130, 0, 1.8)
+                        FONT.set(30)
                     end
                     gc_ucs_back()
                 end
