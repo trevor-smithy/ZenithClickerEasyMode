@@ -380,6 +380,15 @@ local function refreshAchivement()
             end
         )
     end
+
+    local smithys = {'programming_smithy', 'uneasy_smithy', 'swamped_smithy',        'bogged_smithy',          'overwhelmed_smithy',          'paralyzed_smithy'}
+    local combos =  {'eASeEXeVL',          'ueASeEXeVL',    'DHDPGVINMSNHeASeEXeVL', 'uDHDPGVINMSNHeASeEXeVL', 'eASeEXeVLrDHrDPrGVrINrMSrNH', 'ueASeEXeVLrDHrDPrGVrINrMSrNH'}
+    _t = 0
+    for combo, smithy in next, smithys do
+        submit(smithy, BEST.speedrun[combos[combo]], true)
+        _t = _t + min(BEST.speedrun[combos[combo]], 2600) 
+    end
+    submit('speedrunning_smithy', _t, true)
     RefreshAchvList()
 end
 

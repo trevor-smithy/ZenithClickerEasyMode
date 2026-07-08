@@ -390,7 +390,7 @@ return {
         Thanks for playing my mod! WAH-BAAM! - Trevor Smithy
     ]],
     ['ueEX eVL eAS'] = STRING.trimIndent [[
-        The Uneasy Pro G(r)am(m)ing Smithy, because, well, I'm Trevor Smithy and I'm a -- wait, what have you done?
+        The Uneasy Smithy, because, well, I'm Trevor Smithy and I'm a -- wait, what have you done?
         Why? Why is it so hard to climb? Why are my attacks so weak? Oh no. I can hear the voices now.
         You're going too fast.... They're coming for me. Run, climb while you still can! 
         Whatever you do, DON'T STOP CLIMBIN' AND CLIMBIN' AND CLIMBIN' AND CLI—   
