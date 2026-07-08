@@ -282,14 +282,6 @@ function Initialize(save)
         end
         SaveStat()
     end
-    if not STAT.fixPupilAchv then
-        if ACHV.humble_pupil then
-            ACHV.humble_pupil = 1/ACHV.humble_pupil
-        end
-        STAT.fixPupilAchv = true
-        SaveStat()
-        SaveAchv()
-    end
 
     GAME.refreshRev()
     GAME.refreshLockState()
