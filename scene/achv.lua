@@ -157,7 +157,7 @@ function RefreshAchvList(canShuffle)
                 if achvLists[page][i].name and #achvLists[page][i].name > 4.2 then
                     local newStr
                     repeat
-                        local cList = #achvLists[page][i].name:atomize()
+                        local cList = achvLists[page][i].name:atomize()
 
                         local mode = math.random(3)
                         if mode == 1 or MATH.roll(.26) then
