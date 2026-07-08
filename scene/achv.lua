@@ -386,7 +386,7 @@ local function refreshAchivement()
     _t = 0
     for combo, smithy in next, smithys do
         submit(smithy, BEST.speedrun[combos[combo]], true)
-        _t = _t + min(BEST.speedrun[combos[combo]], 2600) 
+        _t = _t + min(BEST.speedrun[combos[combo]], 1800) 
     end
     submit('speedrunning_smithy', _t, true)
     RefreshAchvList()

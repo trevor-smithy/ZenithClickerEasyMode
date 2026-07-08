@@ -2435,7 +2435,7 @@ local d = {
         comp = '<',
         scoreSimp = function(time) return string.format("%.2fs", time) end,
         scoreFull = function(time) return string.format("%.1f m/s", Floors[9].top / time) end,
-        rank = numberRankRev(90*14, 70*14, 60*14, 50*14, 40*14, 30*14, 20*14),
+        rank = numberRankRev(90*10, 70*10, 60*10, 50*11, 40*12, 30*13, 20*14),
         mod = "ZCEM",
     },
     {
