@@ -3133,6 +3133,7 @@ function GAME.commit(auto, falseCommit)
         if #hand == 0 and CONF.stacker and not auto then
             ins(GAME.questStack, 1, {combo = GAME.quests[1].combo, name = GC.newText(FONT.get(70), GAME.getComboName(TABLE.copy(GAME.quests[1].combo), 'ingame')), y = 330, k = 1, a = 1,})
             rem(GAME.quests, 1)
+            if GAME.fault and GAME.chain >= 4 and not ACHV.its_a_feature then IssueAchv('its_a_feature') end
             GAME.genQuest()
             SFX.play("hold")
             if #GAME.questStack >= 20 then

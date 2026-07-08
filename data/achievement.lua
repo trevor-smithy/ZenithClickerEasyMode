@@ -2350,6 +2350,15 @@ local d = {
         hide = TRUE,
         mod = "ZCEM",
     },
+    { -- its_a_feature
+        id = 'its_a_feature',
+        name = "It's A Feature",
+        desc = [[Un-fault a B2B chain by stacking a quest.]],
+        quote = [["Wait, that saves B2B? Certainly that's a bug..."]],
+        type = 'issued',
+        hide = TRUE,
+        mod = "ZCEM",
+    },
     { title = "Smithy", desc = "Added in v1.3, these all require using eEX/ueEX, eVL, and eAS with all other mods sharing the same (non-easy) state", mod = "ZCEM"},
     {
         id = 'programming_smithy',
