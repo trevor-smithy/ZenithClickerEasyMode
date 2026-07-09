@@ -4476,7 +4476,7 @@ function GAME.update(dt)
         end
     end
 
-    if GAME.height < 0 and (M.NH == -1 or M.MS == -1 or M.GV == -1 or M.VL == -1 or M.DH == -1 or M.AS == -1 or M.DP == -1) then
+    if GAME.height < 0 and (M.NH == -1 or M.MS == -1 or M.GV == -1 or M.VL == -1 or M.DH == -1 or M.IN == -1 or M.AS == -1 or M.DP == -1) then
         GAME.height = 0
     end
 
