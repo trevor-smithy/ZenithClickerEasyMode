@@ -382,7 +382,7 @@ jobs:
         #build-android,
         build-linux,
         build-web-compat,
-        #build-windows,
+        build-windows,
       ]
     env:
       ACTION_TYPE: Release
