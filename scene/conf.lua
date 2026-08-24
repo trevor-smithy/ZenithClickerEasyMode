@@ -486,6 +486,10 @@ local function modifiedBPM()
         bpm = bpm * 1.01455 
         bpmModifier = bpmModifier * 1.01455
     end
+    if GAME.ultimateChallenge then
+        bpm = bpm / 2
+        bpmModifier = bpmModifier / 2
+    end
     return bpm
 end
 

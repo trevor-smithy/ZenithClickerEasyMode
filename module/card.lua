@@ -410,8 +410,17 @@ function Card:spin()
     TWEEN.tag_kill('shake_' .. self.id)
     local animFunc, ease
     local re = (GAME.playing or self.upright or self.easy) and 0 or 3.1416
-
-    if M.IN ~= 1 and M.IN ~= -1 then
+    local duration = 120/54.7
+    if GAME.ultimateChallenge then
+        ease = 'Linear'
+        function animFunc(t)
+            self.r = t * -6.2832
+        end
+        if GAME.nightcore then duration = duration/2 end
+        if GAME.enightcore then duration = duration/2 end
+        if GAME.slowmo then duration = duration*2 end
+        if GAME.eslowmo then duration = duration/2^(-1/2) end
+    elseif M.IN ~= 1 and M.IN ~= -1 then
         -- Normal
         ease = 'OutQuart'
         function animFunc(t)
@@ -437,7 +446,7 @@ function Card:spin()
             end
         end
     end
-    TWEEN.new(animFunc):setUnique('spin_' .. self.id):setEase(ease):setDuration(M.IN == 2 and .62 or .42):run()
+    TWEEN.new(animFunc):setUnique('spin_' .. self.id):setEase(ease):setDuration(GAME.ultimateChallenge and duration or M.IN == 2 and .62 or .42):run()
         :setOnKill(function()
             self.ky = 1
             self.r = re
@@ -707,10 +716,14 @@ function Card:draw()
     else
         if self.active then
             if self.easy then
-                if not (self.id == 'EX' and GAME.uneasyMode) then
+                if not (self.id == 'EX' and (GAME.uneasyMode or GAME.ultimateChallenge)) then
                     r1, g1, b1 = 0, 1, 0          -- Green
                 else
-                    r1, g1, b1 = 0.626, 0, 0          -- Dark Red (for Uneasy)
+                    if GAME.uneasyMode then
+                        r1, g1, b1 = 0.626, 0, 0  -- Dark Red (for Uneasy)
+                    else -- ultimateChallenge
+                        r1, g1, b1 = 1, 0.84, 0   -- Gold
+                    end
                 end
             elseif not self.upright then
                 r1, g1, b1 = 0, .5, .7        -- Reversed

@@ -1014,6 +1014,7 @@ end
 ---@param reason 'wrong' | 'time'
 ---@param toAlly? boolean
 function GAME.takeDamage(dmg, reason, toAlly)
+    dmg = GAME.ultimateChallenge and dmg/(1 + (M.DP == 0 and ((GAME.startingHealth-GAME.life)/GAME.startingHealth * 2) or ((GAME.startingHealth*2-(GAME.life+GAME.life2))/GAME.startingHealth))) or dmg
     if GAME.currentTask then
         GAME.incrementPrompt('dmg_time')
         GAME.incrementPrompt('dmg_amount', dmg)
@@ -1098,6 +1099,9 @@ function GAME.easyXPModifiers(xp)
         xp = xp * (1 + (GAME.rank - 1)/(xpRankModifier*3))
     elseif M.EX == -1 and GAME.rank > 1 and (GAME.rank <= 126 or GAME.dunk or GAME.bigDunk) then
         xp = xp * (1 + (GAME.rank - 1)/xpRankModifier)
+        if GAME.ultimateChallenge then
+            xp = xp * (1 + (M.DP == 0 and ((GAME.startingHealth-GAME.life)/GAME.startingHealth * 2) or ((GAME.startingHealth*2-(GAME.life+GAME.life2))/GAME.startingHealth)))
+        end
     end
     if GAME.ecloseCard then
         xp = roundUnit(xp * max((1-(GAME.height/1000000)), 0), 0.01)
@@ -1916,6 +1920,7 @@ end
 
 --------------------------------------------------------------
 function GAME.secretComboName(comboStr)
+    GAME.ultimateChallenge = false
     for _, c in next, (GAME.anyUltra and Secret.combos.ultra or GAME.uneasyMode and Secret.combos.uneasy or Secret.combos.other) do
         if GAME.uneasyMode then IssueAchv('uneasy') end
         local failed = false
@@ -3333,7 +3338,7 @@ function GAME.start()
     GAME.lifeLeak = 0
 
     -- Player
-    GAME.fullHealth = M.DP > 0 and 15 or 20
+    GAME.fullHealth = M.DP ~= 0 and 15 or 20
     GAME.startingHealth = GAME.fullHealth
     GAME.life = GAME.fullHealth
     GAME.dmgTimer = GAME.dmgDelay
@@ -3998,23 +4003,23 @@ function GAME.finish(reason)
             --         SubmitAchv('minimalism', GAME.achv_maxChain)
             --     end
         -- Trevor Smithy
-        elseif URM and M.EX == 2 and M.NH == -1 and M.MS == -1 and M.GV == -1 and M.VL == -1 and M.DH == -1 and M.IN == -1 and M.AS == -1 and M.DP == 0 then
+        elseif URM and GAME.comboStr == "eASeDHeGVeINeMSeNHeVLrEX" then
             SubmitAchv('peasant_revolution', GAME.roundHeight)
-        elseif URM and M.EX == -1 and M.NH == 2 and M.MS == 0 and M.GV == -1 and M.VL == 0 and M.DH == -1 and M.IN == 0 and M.AS == 0 and M.DP == 0 then
+        elseif URM and GAME.comboStr == "eDHeEXeGVrNH" then
             SubmitAchv('holy_ascention', GAME.roundHeight)
-        elseif URM and M.EX == -1 and M.NH == 0 and M.MS == 2 and M.GV == 0 and M.VL == 0 and M.DH == 0 and M.IN == -1 and M.AS == 0 and M.DP == -1 then
+        elseif URM and GAME.comboStr == "eDPeEXeINrMS" then
             SubmitAchv('stabilized_entropy', GAME.roundHeight)
-        elseif URM and M.EX == -1 and M.NH == 0 and M.MS == 0 and M.GV == 2 and M.VL == 0 and M.DH == 0 and M.IN == 0 and M.AS == -1 and M.DP == -1 then
+        elseif URM and GAME.comboStr == "eASeDPeEXrGV" then
             SubmitAchv('restrained_collapse', GAME.roundHeight)
-        elseif URM and M.EX == -1 and M.NH == 0 and M.MS == 0 and M.GV == -1 and M.VL == 2 and M.DH == -1 and M.IN == 0 and M.AS == 0 and M.DP == 0 then
+        elseif URM and GAME.comboStr == "eDHeEXeGVrVL" then
             SubmitAchv('restored_volition', GAME.roundHeight)
-        elseif URM and M.EX == -1 and M.NH == 0 and M.MS == -1 and M.GV == 0 and M.VL == 0 and M.DH == 2 and M.IN == -1 and M.AS == 0 and M.DP == 0 then
+        elseif URM and GAME.comboStr == "eEXeINeMSrDH" then
             SubmitAchv('disproven_blasphemy', GAME.roundHeight)
-        elseif URM and M.EX == -1 and M.NH == -1 and M.MS == 0 and M.GV == 0 and M.VL == 0 and M.DH == 0 and M.IN == 2 and M.AS == -1 and M.DP == 0 then
+        elseif URM and GAME.comboStr == "eASeEXeNHrIN" then
             SubmitAchv('solved_paradox', GAME.roundHeight)
-        elseif URM and M.EX == -1 and M.NH == -1 and M.MS == 0 and M.GV == 0 and M.VL == -1 and M.DH == 0 and M.IN == 0 and M.AS == 2 and M.DP == 0 then
+        elseif URM and GAME.comboStr == "eEXeNHeVLrAS" then
             SubmitAchv('demystified_grimoire', GAME.roundHeight)
-        elseif URM and M.EX == -1 and M.NH == 0 and M.MS == -1 and M.GV == 0 and M.VL == -1 and M.DH == 0 and M.IN == 0 and M.AS == 0 and M.DP == 2 then
+        elseif URM and GAME.comboStr == "eEXeMSeVLrDP" then
             SubmitAchv('restored_eden', GAME.roundHeight)
         elseif M.EX == -1 and M.NH == -1 and M.MS == 0 and M.GV == -1 and M.VL == -1 and M.DH == -1 and M.IN == -1 and ((M.AS == -1 and M.DP == 1) or (M.AS == 1 and M.DP == -1) or (M.AS == 1 and M.DP == 1)) then
             SubmitAchv('ggbw', GAME.achv_carriedH or GAME.roundHeight)
@@ -4285,6 +4290,7 @@ function GAME.update(dt)
     -- Timers
     -- Trevor Smithy
     local timerMulMod = 1 * (GAME.eslowmo and not GAME.badTime and 0.75 or 1) * (GAME.ecloseCard and not GAME.badTime and 2 or 1)
+    local ultimateChallengeMod = GAME.ultimateChallenge and (1 + (M.DP == 0 and ((GAME.startingHealth-GAME.life)/GAME.startingHealth * 2) or ((GAME.startingHealth*2-(GAME.life+GAME.life2))/GAME.startingHealth))) or 1
     STAT.srTimer_game = STAT.srTimer_game + dt
     GAME.time = GAME.time + dt * (GAME.timerMul * timerMulMod)
     local r = min(GAME.rank, 62)
@@ -4495,7 +4501,7 @@ function GAME.update(dt)
         GAME.xpLockTimer = GAME.xpLockTimer - dt
     else
         local closerCardLeakSpeedMod = (GAME.ecloseCard and GAME.height > 0) and min((1+(GAME.height/1000000)), 2) or 1
-        GAME.xp = GAME.xp - dt * GAME.leakSpeed * closerCardLeakSpeedMod * GAME.rank * (GAME.rank + 1) / 60
+        GAME.xp = GAME.xp - dt * GAME.leakSpeed * closerCardLeakSpeedMod * GAME.rank * (GAME.rank + 1) / (60 * ultimateChallengeMod)
         if GAME.xp <= 0 then
             GAME.xp = 0
             if GAME.rank > 1 then
@@ -4538,7 +4544,7 @@ function GAME.update(dt)
     -- Trevor Smithy
     local gravTimerMod = 1 * (GAME.eslowmo and 1.5 or 1) * (GAME.enightcore and 0.5 or 1)
     if M.GV ~= 0 and GAME.gravTimer then
-        GAME.gravTimer = GAME.gravTimer - dt / gravTimerMod
+        GAME.gravTimer = GAME.gravTimer - dt / (gravTimerMod * ultimateChallengeMod)
         if GAME.gravTimer <= 0 then
             GAME.faultWrong = false
             GAME.commit(true)
@@ -4619,7 +4625,7 @@ function GAME.update(dt)
     -- Damage
     -- Trevor Smithy
     local dmgTimerMulMod = 1 + (M.GV == -1 and 0.25 or 0) + (GAME.eslowmo and 0.25 or 0)
-    GAME.dmgTimer = GAME.dmgTimer - dt / (GAME.dmgTimerMul * dmgTimerMulMod)
+    GAME.dmgTimer = GAME.dmgTimer - dt / (GAME.dmgTimerMul * dmgTimerMulMod * ultimateChallengeMod)
     if GAME.dmgTimer <= 0 then
         GAME.dmgTimer = GAME.dmgCycle
         GAME.takeDamage(GAME.dmgTime, 'time')

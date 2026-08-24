@@ -1913,6 +1913,11 @@ function scene.overDraw()
                         'full', 2, COLOR.DarkRed, COLOR.Red,
                         MD.uneasyDesc[infoID], 260, -68, 2600, 'center', 0, .8, 1
                     )
+                elseif GAME.ultimateChallenge and C.id == 'EX' then
+                    setFont(70)
+                    gc_strokePrint('full', 3, COLOR.DarkOrange, COLOR.Yellow, "< EASY MODE >", 130, -150, 2600, 'center', 0, .9, 1)
+                    setFont(30)
+                    gc_strokePrint('full', 2, COLOR.DarkOrange, COLOR.Yellow, "WHAT DOESN'T KILL YOU MAKES YOU STRONGER", 260, -73, 2600, 'center', 0, .8, 1)
                 else
                     setFont(70)
                     gc_strokePrint('full', 3, ShadeColor, TextColor, MD.easyName[infoID], 130, -150, 2600, 'center', 0, .9, 1)
