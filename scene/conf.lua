@@ -1073,10 +1073,6 @@ pages[2] = {
             if #data <= 26 then
                 if data == '' then
                     MSG('dark', "No data in clipboard")
-                elseif data == 'lyrics' then
-                    CONF.lyrics = not CONF.lyrics
-                    SFX.play(CONF.lyrics and 'social_online' or 'social_offline')
-                    MSG('dark', "In-Game Lyrics: " .. (CONF.lyrics and "Enabled" or " Disabled"))
                 else
                     MSG('dark', "Invalid data '" .. data .. "' in clipboard")
                     SFX.play('staffwarning')
@@ -1476,7 +1472,7 @@ pages[ZCEMpage] = {
         fillColor = ZCEMclr.cbFill,
         frameColor = ZCEMclr.cbFrame,
         textColor = ZCEMclr.T, text = "PROMOTION GAUGE",
-        x = baseX + 40, y = baseY + 60 + 80,
+        x = baseX + 40, y = baseY + 130,
         disp = function() return CONF.promotion end,
         code = function()
             local multiple = GAME.multiplePiecesActive
@@ -1500,7 +1496,7 @@ pages[ZCEMpage] = {
         fillColor = ZCEMclr.cbFill,
         frameColor = ZCEMclr.cbFrame,
         textColor = ZCEMclr.T, text = "IMPERIAL UNITS",
-        x = baseX + 500, y = baseY + 60 + 240,
+        x = baseX + 500, y = baseY + 250,
         disp = function() return CONF.imperial end,
         code = function()
             local multiple = GAME.multiplePiecesActive
@@ -1518,7 +1514,7 @@ pages[ZCEMpage] = {
         fillColor = ZCEMclr.cbFill,
         frameColor = ZCEMclr.cbFrame,
         textColor = ZCEMclr.T, text = "OLD TRANSPARENT CARD",
-        x = baseX + 40, y = baseY + 60 + 160,
+        x = baseX + 40, y = baseY + 190,
         disp = function() return CONF.oldTransparentCard end,
         code = function()
             local multiple = GAME.multiplePiecesActive
@@ -1536,7 +1532,7 @@ pages[ZCEMpage] = {
         fillColor = ZCEMclr.cbFill,
         frameColor = ZCEMclr.cbFrame,
         textColor = ZCEMclr.T, text = "OLD HITBOX",
-        x = baseX + 500, y = baseY + 60 + 160,
+        x = baseX + 500, y = baseY + 190,
         disp = function() return CONF.oldHitbox end,
         code = function()
             local multiple = GAME.multiplePiecesActive
@@ -1554,7 +1550,7 @@ pages[ZCEMpage] = {
         fillColor = ZCEMclr.cbFill,
         frameColor = ZCEMclr.cbFrame,
         textColor = ZCEMclr.T, text = "USE EASY NAMES",
-        x = baseX + 40, y = baseY + 60 + 240,
+        x = baseX + 40, y = baseY + 250,
         disp = function() return CONF.easyName end,
         code = function()
             local multiple = GAME.multiplePiecesActive
@@ -1572,7 +1568,7 @@ pages[ZCEMpage] = {
         fillColor = ZCEMclr.cbFill,
         frameColor = ZCEMclr.cbFrame,
         textColor = ZCEMclr.T, text = "STACKER MODE",
-        x = baseX + 500, y = baseY + 60 + 80,
+        x = baseX + 500, y = baseY + 130,
         disp = function() return CONF.stacker end,
         code = function()
             local multiple = GAME.multiplePiecesActive
@@ -1586,6 +1582,42 @@ pages[ZCEMpage] = {
             else
                 SFX.play('social_dm')
             end
+            GAME.multiplePiecesActive = false
+            SaveConf()
+            if multiple then GAME.multiplePiecesActive = true end
+        end,
+    },
+    WIDGET.new {
+        name = 'lyrics', type = 'checkBox',
+        fillColor = ZCEMclr.cbFill,
+        frameColor = ZCEMclr.cbFrame,
+        textColor = ZCEMclr.T, text = "IN-GAME LYRICS",
+        x = baseX + 40, y = baseY + 310,
+        disp = function() return CONF.lyrics end,
+        code = function()
+            local multiple = GAME.multiplePiecesActive
+            MSG.clear()
+            CONF.lyrics = not CONF.lyrics
+            SFX.play(CONF.lyrics and 'social_online' or 'social_offline')
+            MSG('dark', "In-Game Lyrics: " .. (CONF.lyrics and "Enabled" or " Disabled"))
+            GAME.multiplePiecesActive = false
+            SaveConf()
+            if multiple then GAME.multiplePiecesActive = true end
+        end,
+    },
+    WIDGET.new {
+        name = 'board', type = 'checkBox',
+        fillColor = ZCEMclr.cbFill,
+        frameColor = ZCEMclr.cbFrame,
+        textColor = ZCEMclr.T, text = "BOARD UI",
+        x = baseX + 500, y = baseY + 310,
+        disp = function() return CONF.board end,
+        code = function()
+            local multiple = GAME.multiplePiecesActive
+            MSG.clear()
+            CONF.board = not CONF.board
+            SFX.play(CONF.board and 'social_online' or 'social_offline')
+            MSG('dark', "Board UI: " .. (CONF.board and "Enabled" or " Disabled"))
             GAME.multiplePiecesActive = false
             SaveConf()
             if multiple then GAME.multiplePiecesActive = true end
