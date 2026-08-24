@@ -142,6 +142,7 @@ local ins, rem = table.insert, table.remove
 ---@field noMouseOrSpin boolean
 ---@field noKeyboardOrReset boolean
 ---@field peasantRevolution boolean
+---@field ultimateChallenge boolean
 
 ---@field achv_bestFriendQuest number
 ---@field achv_shamelessCashgrabQuest number
@@ -1927,6 +1928,7 @@ function GAME.secretComboName(comboStr)
             if not failed then
                 if c.customUltraCombo then GAME.customUltraCombo = true end
                 if c.peasantRevolution then GAME.peasantRevolution = true end
+                if c.ultimateChallenge then GAME.ultimateChallenge = true end
                 if c.forceRev and GAME.pieceCount() < 2 then GAME.forceRev = true end
                 if c.name == '"BAD TIME"' then
                     SCN.scenes.tower.widgetList.reset:setVisible(false)

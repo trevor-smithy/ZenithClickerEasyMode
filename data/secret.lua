@@ -20,7 +20,6 @@ local d = {
             -- Misc
             { set = "eASeDHeDPeGVeINeMSeNHeVLrEX", name = '"ULTRA HARD BATH WITH A FRIEND"'},
             { set = "eASeDHeEXeGVeINeMSeNHeVLrDP", name = '"BATH WITH A STALKER"'},
-            { set = "eDHeDPeGVeINeMSeNHrASrEXrVL", name = '"THE WHELMED SMITHY"'},
             { set = "eASeDHeEXrGV", checks = {'enightcore', false}, name = '"PATIENCE IS A VIRTUE..."'},
             { set = "eASeDHeEXrGV", checks = {'enightcore', true}, name = [["BUT IT ISN'T ONE OF MINE"]], customUltraCombo = true},
             -- No Named Rev Equivalent
@@ -31,8 +30,18 @@ local d = {
             { set = "eASeDPeEXeNHrINrMS", name = '"PARADOXICAL ENTROPY"', forceRev = true, customUltraCombo = true},
             { set = "eDPeEXeNHeVLrASrGV", name = '"DEPRAVED GALAXY"', forceRev = true, customUltraCombo = true},
             { set = "eDHeEXeGVeMSrDPrVL", name = '"SEVERED VOLITION"', forceRev = true, customUltraCombo = true},
+            -- Triple Ultras: Whelmed Smithy is below
+            { set = "eASeDPeEXeGVeINeVLrDHrMSrNH", name = '"DEAD ON ARRIVAL"', forceRev = true, customUltraCombo = true},
+            { set = "eASeDHeEXeMSeNHeVLrDPrGVrIN", name = '"EPIC GRANDMASTER DUEL"', forceRev = true, customUltraCombo = true},
+            -- Quadruple Ultras
+            --nh ms dh in, ex gv vl as
+            {set = "eASeEXeGVeVLrDHrINrMSrNH", name = '"GUESSING GAME"', forceRev = true, customUltraCombo = true},
+            {set = "eDHeINeMSeNHrASrEXrGVrVL", name = '"FINAL DEVELOPMENT"', forceRev = true, customUltraCombo = true},
+            -- Ultimate Challenge
+            {set = "eEXrASrDHrGVrINrMSrNHrVL", name = '"ULTIMATE CHALLENGE"', forceRev = true, customUltraCombo = true, ultimateChallenge = true},
             -- Smithy
-            { set = "eASeEXeVLrDHrDPrGVrINrMSrNH", name = '"THE PARALYZED SMITHY"'},
+            { set = "eDHeDPeGVeINeMSeNHrASrEXrVL", name = '"THE WHELMED SMITHY"', forceRev = true, customUltraCombo = true},
+            { set = "eASeEXeVLrDHrDPrGVrINrMSrNH", name = '"THE PARALYZED SMITHY"', forceRev = true, customUltraCombo = true},
         },
         uneasy = {
             { set = "DPeASeDHeEXeGVeINeMSeNHeVL", name = '"BATH WITH A LOVER?"'},
