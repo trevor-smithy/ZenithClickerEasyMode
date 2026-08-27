@@ -1921,6 +1921,8 @@ end
 --------------------------------------------------------------
 function GAME.secretComboName(comboStr)
     GAME.ultimateChallenge = false
+    GAME.peasantRevolution = false
+    SCN.scenes.tower.widgetList.easy.textColor = COLOR.DG
     for _, c in next, (GAME.anyUltra and Secret.combos.ultra or GAME.uneasyMode and Secret.combos.uneasy or Secret.combos.other) do
         if GAME.uneasyMode then IssueAchv('uneasy') end
         local failed = false
@@ -2331,22 +2333,31 @@ function GAME.task_toggleEasy()
     if GAME.enightcore then pitch = pitch * 2 end
     --
     local interval = 0.2 / pitch
-    for i = 1, #list do
-        if needFlip[i] then
-            GAME.anyChange = true
-            local isEasy = false
-            if list[i].easy then
-                isEasy = true
-            end
+    if GAME.peasantRevolution then
+        GAME.anyChange = true
+        for i = 1, #list do
             list[i]:setActive(true)
-            if isEasy then
+            if list[i].id == 'EX' then list[i]:setActive(true, 3) elseif list[i].id ~= 'DP' then list[i]:setActive(true, 2) else list[i]:setActive(true) end
+            if interval then TASK.yieldT(interval) end
+        end
+    else
+        for i = 1, #list do
+            if needFlip[i] then
+                GAME.anyChange = true
+                local isEasy = false
+                if list[i].easy then
+                    isEasy = true
+                end
                 list[i]:setActive(true)
-            else
-                list[i]:setActive(true, 3)
-            end
-            if interval then
-                SFX.play('card_slide_' .. rnd(4), .62)
-                TASK.yieldT(interval)
+                if isEasy then
+                    list[i]:setActive(true)
+                else
+                    list[i]:setActive(true, 3)
+                end
+                if interval then
+                    SFX.play('card_slide_' .. rnd(4), .62)
+                    TASK.yieldT(interval)
+                end
             end
         end
     end

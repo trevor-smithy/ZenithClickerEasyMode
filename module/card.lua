@@ -411,7 +411,7 @@ function Card:spin()
     local animFunc, ease
     local re = (GAME.playing or self.upright or self.easy) and 0 or 3.1416
     local duration = 120/54.7
-    if GAME.ultimateChallenge then
+    if GAME.ultimateChallenge and self.id == 'EX' then
         ease = 'Linear'
         function animFunc(t)
             self.r = t * -6.2832
@@ -446,7 +446,7 @@ function Card:spin()
             end
         end
     end
-    TWEEN.new(animFunc):setUnique('spin_' .. self.id):setEase(ease):setDuration(GAME.ultimateChallenge and duration or M.IN == 2 and .62 or .42):run()
+    TWEEN.new(animFunc):setUnique('spin_' .. self.id):setEase(ease):setDuration(GAME.ultimateChallenge and self.id == 'EX' and duration or M.IN == 2 and .62 or .42):run()
         :setOnKill(function()
             self.ky = 1
             self.r = re

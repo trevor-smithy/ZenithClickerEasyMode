@@ -1202,9 +1202,11 @@ function scene.overDraw()
                 if not (GAME.peasantRevolution and floor(t * speedMod * prMod) % 2 == 1) then
                     TEXTS.mod:setFont(FONT.get(GAME.badTime and 90 or 60))
                     gc_setColor(COLOR.rainbow_light(2.6 * t * speedMod))
+                    if GAME.peasantRevolution then SCN.scenes.tower.widgetList.easy.textColor = COLOR.Y end
                 elseif GAME.peasantRevolution then
                     TEXTS.mod:setFont(FONT.get(30))
                     gc_setColor(TextColor)
+                    SCN.scenes.tower.widgetList.easy.textColor = COLOR.DG
                     BGM.set('all', 'highgain', 1, 0.626/speedMod)
                 end
                 if GAME.peasantRevolution and floor(t * speedMod * prMod) % 2 == 1 then TEXTS.mod:set('"ULTRA HARD BATH WATER"') end
@@ -1918,6 +1920,11 @@ function scene.overDraw()
                     gc_strokePrint('full', 3, COLOR.DarkOrange, COLOR.Yellow, "< EASY MODE >", 130, -150, 2600, 'center', 0, .9, 1)
                     setFont(30)
                     gc_strokePrint('full', 2, COLOR.DarkOrange, COLOR.Yellow, "WHAT DOESN'T KILL YOU MAKES YOU STRONGER", 260, -73, 2600, 'center', 0, .8, 1)
+                elseif GAME.ultimateChallenge and C.id == 'DP' then
+                    setFont(70)
+                    gc_strokePrint('full', 3, COLOR.DarkMagenta, COLOR.LightMagenta, "< FRIEND >", 130, -150, 2600, 'center', 0, .9, 1)
+                    setFont(30)
+                    gc_strokePrint('full', 2, COLOR.DarkMagenta, COLOR.LightMagenta, "A CHEAP SACRIFICE TO EMPOWER ONESELF", 260, -73, 2600, 'center', 0, .8, 1)
                 else
                     setFont(70)
                     gc_strokePrint('full', 3, ShadeColor, TextColor, MD.easyName[infoID], 130, -150, 2600, 'center', 0, .9, 1)
