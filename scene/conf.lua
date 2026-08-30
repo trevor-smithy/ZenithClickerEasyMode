@@ -158,7 +158,7 @@ local function refreshWidgets()
     for _, W in next, scene.widgetList do 
         W:setVisible() 
         local tabs = {'back', 'conf', 'utils', 'album', 'zcem'}
-        local zcem = {'gameplay', 'bpm', 'promotion', 'imperial', 'oldTransparentCard', 'oldHitbox', 'easyName', 'stacker', 'pieces', 'ez', 'es', 'ej', 'el', 'et', 'eo', 'ei', 'urm', 'clear', 'help2'}
+        local zcem = {'gameplay', 'bpm', 'promotion', 'imperial', 'oldTransparentCard', 'oldHitbox', 'easyName', 'stacker', 'board', 'lyrics', 'pieces', 'ez', 'es', 'ej', 'el', 'et', 'eo', 'ei', 'urm', 'clear', 'help2'}
         if not TABLE.find(tabs, W.name) and TABLE.find(zcem, W.name) then
             if GAME.ecloseCard then
                 if W.x < 700 then

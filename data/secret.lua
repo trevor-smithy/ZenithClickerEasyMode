@@ -38,8 +38,8 @@ local d = {
             {set = "eASeEXeGVeVLrDHrINrMSrNH", name = '"GUESSING GAME"', forceRev = true, customUltraCombo = true},
             {set = "eDHeINeMSeNHrASrEXrGVrVL", name = '"FINAL DEVELOPMENT"', forceRev = true, customUltraCombo = true},
             -- Ultimate Challenge
-            {set = "eEXrASrDHrGVrINrMSrNHrVL", name = '"ULTIMATE CHALLENGE"', forceRev = true, customUltraCombo = true, ultimateChallenge = true},
-            {set = "eDPeEXrASrDHrGVrINrMSrNHrVL", name = '"ULTIMATE CHALLENGE WITH A FRIEND"', forceRev = true, customUltraCombo = true, ultimateChallenge = true},
+            {set = "eEXrASrDHrGVrINrMSrNHrVL",    name = '"ULTIMATE CHALLENGE"', forceRev = true, customUltraCombo = true, ultimateChallenge = true},
+            {set = "eDPeEXrASrDHrGVrINrMSrNHrVL", name = '"FRIENDLY CHALLENGE"', forceRev = true, customUltraCombo = true, ultimateChallenge = true},
             -- Smithy
             { set = "eDHeDPeGVeINeMSeNHrASrEXrVL", name = '"THE WHELMED SMITHY"', forceRev = true, customUltraCombo = true},
             { set = "eASeEXeVLrDHrDPrGVrINrMSrNH", name = '"THE PARALYZED SMITHY"', forceRev = true, customUltraCombo = true},

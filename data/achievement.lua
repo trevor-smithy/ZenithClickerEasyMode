@@ -2557,7 +2557,7 @@ local d = {
     },
     {
         id = 'eDPeEXrASrDHrGVrINrMSrNHrVL',
-        name = "Ultimate Challenge with a Friend",
+        name = "Friendly Challenge",
         desc = [[HFD with "Best Friends" and all Ultras]],
         quote = [["In times of desparation, sometimes you must sacrifice those closest to you..."]],
         credit = "@TrevorSmithy",

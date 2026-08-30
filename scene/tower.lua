@@ -1196,8 +1196,8 @@ function scene.overDraw()
     if not GAME.invisUI then
         -- Current combo
         if not GAME.playing or M.IN < 2 then
+            local speedMod = ((GAME.enightcore or GAME.nightcore) and 2 or 1) * (GAME.eslowmo and 0.75 or 1) * (GAME.slowmo and 0.5 or 1)
             if GAME.customUltraCombo then
-                local speedMod = ((GAME.enightcore or GAME.nightcore) and 2 or 1) * (GAME.eslowmo and 0.75 or 1) * (GAME.slowmo and 0.5 or 1)
                 local prMod = 1.08422
                 if not (GAME.peasantRevolution and floor(t * speedMod * prMod) % 2 == 1) then
                     TEXTS.mod:setFont(FONT.get(GAME.badTime and 90 or 60))
@@ -1219,7 +1219,16 @@ function scene.overDraw()
                 gc_setColor(TextColor)
             end
             if M.IN == 2 then gc_setAlpha(.42 + .26 * sin(t * 2.6)) end
-            gc_mDraw(TEXTS.mod, 800, GAME.badTime and 390 or 396, 0, min(1, 760 / TEXTS.mod:getWidth()))
+            if GAME.ultimateChallenge then
+                local text = M.DP == -1 and 'FRIENDLY CHALLENGE' or 'ULTIMATE CHALLENGE'
+                local x = M.DP == -1 and 802 or 800
+                setFont(70)
+                gc_strokePrint('full', 6, {COLOR.rainbow_gray(2.6 * t * speedMod)}, nil, text, x, 345, 2600, 'center', 0, 1, 1)
+                gc_strokePrint('full', 4, {COLOR.rainbow_dark(2.6 * t * speedMod)}, nil, text, x, 345, 2600, 'center', 0, 1, 1)
+                gc_strokePrint('full', 2, {COLOR.rainbow(2.6 * t * speedMod)}, {COLOR.rainbow_light(2.6 * t * speedMod)}, text, x, 345, 2600, 'center', 0, 1, 1)
+            else
+                gc_mDraw(TEXTS.mod, 800, GAME.badTime and 390 or 396, 0, min(1, 760 / TEXTS.mod:getWidth()))
+            end
         end
 
         -- Glow
@@ -2171,6 +2180,16 @@ function scene.overDraw()
         gc_draw(TEXTURE.transition, SCR.w, 0, 0, -.42 / 128 * SCR.w, SCR.h)
     end
     --
+
+    if GAME.ultimateChallenge and not GAME.playing then
+        gc_replaceTransform(SCR.origin)
+        local t = love.timer.getTime()
+        local speedMod = ((GAME.enightcore or GAME.nightcore) and 2 or 1) * (GAME.eslowmo and 0.75 or 1) * (GAME.slowmo and 0.5 or 1)
+        gc_setColor(COLOR.rainbow_light(2.6 * t * speedMod))
+        gc_setAlpha(0.35)
+        gc_draw(TEXTURE.transition, 0, 0, 0, .42 / 128 * SCR.w, SCR.h)
+        gc_draw(TEXTURE.transition, SCR.w, 0, 0, -.42 / 128 * SCR.w, SCR.h)
+    end
 
     -- Ultra cover
     if URM and (not GAME.playing or GAME.anyRev) then
