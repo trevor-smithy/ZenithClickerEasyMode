@@ -389,13 +389,16 @@ end
 
 ---@return table { _: string, ultra: boolean}
 ---@author: Trevor Smithy
-local function generateRandomCombo()
+local function generateRandomCombo(forceSpecial)
+    for i = 1, #PieceData - 1 do
+        GAME[PieceData[i].id] = false
+    end
     local set = {}
     local smithyMode = math.random(40) == 40
     --local freq = { 3, 3, 2, 5, 3, 5, 4, 4, 2 }
     if not smithyMode then
         local specialCombo = math.random(20) > 17
-        if not specialCombo then
+        if not (specialCombo or forceSpecial) then
             local EX = math.random(20) -- roll a d20
             if not Cards.EX.lock then TABLE.insert(set, 1, EX > 10 and 'eEX' or EX > 7 and 'EX' or EX > 5 and 'rEX' or '') end
             local NH = math.random(20) -- roll a d20
@@ -418,18 +421,38 @@ local function generateRandomCombo()
             local easy = TABLE.find(set, 'eEX')
             set.ultra = (math.random(20) > (easy and not anyRev and -5 or 0) + 15) and (easy or anyRev) --d20
         else
-            local index = math.random(47, #ComboData.menu)
-            local comboSet = ComboData.menu[index].set
+            local forceUltra = false
+            local comboSet
+            local setIndex = 0
+            if STAT.srMilestone.star_9 and STAT.clicker and ACHV.uneasy and math.random(2) > 1 then
+                local c = Secret.combos
+                setIndex = math.random(3)
+                c = setIndex == 1 and c.ultra or setIndex == 2 and c.uneasy or c.other
+                c = c[math.random(#c)]
+                comboSet = c.set
+                if c.checks then
+                    local notCondition = false
+                    for i = 1, #c.checks, 2 do
+                        if c.checks[1] == 'badTime' then break end
+                        if c.checks[1] == 'canBeRandomlySelected' then notCondition = true end
+                        if c.checks[1] == 'ultraIfRandom' then forceUltra = true end
+                        GAME[c.checks[i]] = notCondition and not c.checks[i+1] or c.checks[i+1]
+                    end
+                end
+            else
+                local index = math.random(47, #ComboData.menu)
+                comboSet = ComboData.menu[index].set
+            end
             local tempSet = STRING.split(comboSet, ' ')
             for i = 1, #tempSet do
                 TABLE.insert(set, tempSet[i])
             end
-            if index <= 57 then
-                set.ultra = true
-            else
+            if setIndex == 0 then
                 local anyRev = TABLE.find(set, 'rEX') or TABLE.find(set, 'rNH') or TABLE.find(set, 'rMS') or TABLE.find(set, 'rGV') or TABLE.find(set, 'rVL') or TABLE.find(set, 'rDH') or TABLE.find(set, 'rIN') or TABLE.find(set, 'rAS') or TABLE.find(set, 'rDP')
                 local easy = TABLE.find(set, 'eEX')
                 set.ultra = (math.random(20) > (easy and not anyRev and -5 or 0) + 15) and (easy or anyRev) --d20 and a set where URM would do anything
+            else
+                set.ultra = setIndex < 3 or forceUltra --either ultra or uneasy
             end
         end
     elseif not TABLE.equal(GAME.getHand(true),{'eEX','eVL','eAS'}) then
@@ -2383,11 +2406,11 @@ scene.widgetList = {
         floatFontSize = 30,
         floatCornerR = 26,
         floatText = "NO DATA",
-        onPress = function()
+        onPress = function(k)
             --if not Daily.available then return end
             --applyCombo(DAILY)
             if GAME.badTime then return end
-            applyCombo(generateRandomCombo())
+            applyCombo(generateRandomCombo(k == 2 or kbIsDown('lctrl', 'rctrl') or next(revHold)))
             if TABLE.equal(GAME.getHand(true),{'eEX','rGV','eDH','eAS'}) then -- but it isn't one of mine check
                 GAME.enightcore = true
                 RefreshBGM()

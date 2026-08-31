@@ -51,18 +51,8 @@ d.menu = {
     { set = "MS GV AS",           name = "Dazed" },
 
     -- Trevor Smithy
-    -- ultras -- NOTICE: IF THESE ARE MOVED OUT OF THIS ORDER, MAKE SURE TO UPDATE generateRandomCombo() IN tower.lua to reflect this!
     { set = "eEX rGV eDH eAS",      name = "Patience is a Virtue" },
-    { set = "rEX eNH eMS eGV eVL eDH eIN eAS",       name = "Super Hard Bath Water"}, --whoops this should be peasant revolution (handled in game.lua)
-    --{ set = "rEX eNH eMS eGV eVL eDH eIN eAS",      name = "Peasant Revolution"},
-    { set = "eEX rNH eGV eDH",      name = "Holy Ascension"},
-    { set = "eEX rMS eIN eDP",      name = "Stabilized Entropy"},
-    { set = "eEX rGV eAS eDP",      name = "Restrained Collapse"},
-    { set = "eEX eDH eGV rVL",      name = "Restored Volition"},
-    { set = "eEX eMS rDH eIN",      name = "Disproven Blasphemy"},
-    { set = "eEX eNH rIN eAS",      name = "Solved Paradox"},
-    { set = "eEX eNH eVL rAS",      name = "Demystified Grimoire"},
-    { set = "eEX eMS eVL rDP",      name = "Lasting Eden"},
+    
     -- Bath Waters
     { set = "eEX eNH eMS eGV eVL eDH eIN eAS",      name = "Bath Water"},
     { set = "eNH eMS eGV eVL eDH eIN eAS",          name = "Normal Bath Water"}, -- soft e, normal, hard ue, very hard

@@ -1926,7 +1926,7 @@ function GAME.secretComboName(comboStr)
     for _, c in next, (GAME.anyUltra and Secret.combos.ultra or GAME.uneasyMode and Secret.combos.uneasy or Secret.combos.other) do
         if GAME.uneasyMode then IssueAchv('uneasy') end
         local failed = false
-        if comboStr == c.set then
+        if comboStr == c.set:gsub(" ", "") then
             if c.checks then
                 for i = 1, #c.checks, 2 do
                     if GAME[c.checks[i]] ~= c.checks[i+1] then failed = true end
