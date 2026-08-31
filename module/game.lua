@@ -4512,7 +4512,7 @@ function GAME.update(dt)
         GAME.xpLockTimer = GAME.xpLockTimer - dt
     else
         local closerCardLeakSpeedMod = (GAME.ecloseCard and GAME.height > 0) and min((1+(GAME.height/1000000)), 2) or 1
-        GAME.xp = GAME.xp - dt * GAME.leakSpeed * closerCardLeakSpeedMod * GAME.rank * (GAME.rank + 1) / (60 * ultimateChallengeMod)
+        GAME.xp = GAME.xp - dt * GAME.leakSpeed * closerCardLeakSpeedMod * GAME.rank * (GAME.rank + 1) / (60 * ultimateChallengeMod^1.26)
         if GAME.xp <= 0 then
             GAME.xp = 0
             if GAME.rank > 1 then
