@@ -2496,8 +2496,8 @@ local d = {
     { -- uASuEXuVL
         id = 'eDHeDPeGVeINeMSeNHrASrEXrVL',
         name = "The Whelmed Smithy",
-        desc = [[HFD with eDH, eDP, eGV, eIN, eMS, eNH, rAS, rEX, and rVL]],
-        quote = [["TODO"]],
+        desc = [[HFD with eDH, eDP, eGV, eIN, eMS, eNH, uAS, uEX, and uVL]],
+        quote = [["Did you know whelmed is actually a synonym of overwhelmed? Now you do!"]],
         credit = "@TrevorSmithy",
         rank = floorRank(1, 3, 5, 7, 9, 10, 2600),
         type = 'unranked',
