@@ -135,20 +135,24 @@ local descriptionTable = {
     "Promotion Gauge: A colored indicator of maximum XP if surge is broken.", 
     "Stacker Mode: Commit NOTHING to add to the stack, clear for big burst!",
     "Old Transparent Card: Old version of eO. Worse with DP, but no ZP nerf.",
-    "Old Hitbox: Hitboxes are based on center of cards instead of visible area.",
+    "Old Hitbox: Hitboxes are centered on cards instead of visible area.",
     "Use Easy Names: Mods use their Easy variants in-game, even with rDH!",
-    "Imperial Units: Feet and Miles used instead of Meters. No records allowed!"
+    "Imperial Units: Feet and Miles used instead of Meters.",
+    "In-Game Lyrics: Enables lyrics in game for songs that have them.",
+    "Board UI: Toggles updated Board UI, may look weird with other toggles.",
 }
 local pieceDescriptionTable = {
     [0] = "Press to cycle through options' descriptions.",
-    "eZ: Passive climb speed x2, Gravity Timer x2, normal damage/fatigue timer.",
-    "eS: Damage, fatigue, gravity timers and XP loss x0.75, normal climb speed.",
+    "eZ: Passive climb speed & gravity timer x2, normal damage/fatigue timer.",
+    "eS: Damage, fatigue, gravity timers & XP loss x0.75, normal climb speed.",
     "eJ: Attack x0.5, passive climb speed x8 (x4.8 with rEX or uEX)",
     "eL: XP lock increased by 5 seconds, XP leak speed x0.375",
     "eT: 20% UI element opacity, stuck in Floor 1 (easier quests, timers, etc.)",
     "eO: 26% card opacity, adds a colored outline if card is required.",
-    "eI: Assist Mode, stronger the closer cards are (excluding Close Card).",
-    "Ultra Reverse: Upgrades Reversed mods to Ultra Reversed, or Easy to Uneasy."
+    "eI: Assist Mode, selects nearby cards, so it's stronger the closer cards are.",
+    "Ultra Reverse: Upgrades Reversed to Ultra Reversed or Easy to Uneasy.",
+    "CYCLE PIECES: Cycle through all pieces, including regular ones.",
+    "CLEAR PIECES: Clear all pieces, including regular ones. Disables URM.",
 }
 local startHour = os.date('%H')
 local startMin = os.date('%M')
@@ -1936,7 +1940,7 @@ pages[ZCEMpage] = {
             descriptionIndex = descriptionIndex + 1
             if descriptionIndex > #descriptionTable then descriptionIndex = 1 end
             scene.widgetList.description.floatText = piece and pieceDescriptionTable[descriptionIndex] or descriptionTable[descriptionIndex]
-            if descriptionIndex == 2 and bpmMode then scene.widgetList.description.floatText = "BPM: Shows current song's BPM, affected by Z/S/eZ/eS/all GVs/ueEX." end
+            if descriptionIndex == 2 and bpmMode and not piece then scene.widgetList.description.floatText = "BPM: Shows current song's BPM, affected by Z/S/eZ/eS/all GVs/ueEX." end
             scene.widgetList.description:reset()
         end
     },

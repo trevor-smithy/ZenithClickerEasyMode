@@ -1014,7 +1014,7 @@ end
 ---@param reason 'wrong' | 'time'
 ---@param toAlly? boolean
 function GAME.takeDamage(dmg, reason, toAlly)
-    dmg = GAME.ultimateChallenge and dmg/(1 + (M.DP == 0 and ((GAME.startingHealth-GAME.life)/GAME.startingHealth * 2) or ((GAME.startingHealth*2-(GAME.life+GAME.life2))/GAME.startingHealth))) or dmg
+    dmg = GAME.ultimateChallenge and not GAME.einvisUI and dmg/(1 + (M.DP == 0 and ((GAME.startingHealth-GAME.life)/GAME.startingHealth * 2) or ((GAME.startingHealth*2-(GAME.life+GAME.life2))/GAME.startingHealth))) or dmg
     if GAME.currentTask then
         GAME.incrementPrompt('dmg_time')
         GAME.incrementPrompt('dmg_amount', dmg)
@@ -1099,7 +1099,7 @@ function GAME.easyXPModifiers(xp)
         xp = xp * (1 + (GAME.rank - 1)/(xpRankModifier*3))
     elseif M.EX == -1 and GAME.rank > 1 and (GAME.rank <= 126 or GAME.dunk or GAME.bigDunk) then
         xp = xp * (1 + (GAME.rank - 1)/xpRankModifier)
-        if GAME.ultimateChallenge then
+        if GAME.ultimateChallenge and not GAME.ecloseCard then
             xp = xp * (1 + (M.DP == 0 and ((GAME.startingHealth-GAME.life)/GAME.startingHealth * 2) or ((GAME.startingHealth*2-(GAME.life+GAME.life2))/GAME.startingHealth)))
         end
     end
@@ -4491,7 +4491,7 @@ function GAME.update(dt)
                 end
             end
         else
-            GAME.height = GAME.height + GAME.rank / 4 * passiveClimbSpeedMod * dt * (GAME.einvisUI and 1 or icLerp(GAME.eglassCard and 0.5 or 1, GAME.eglassCard and 3 or 6, Floors[GAME.floor].top - GAME.height))
+            GAME.height = GAME.height + GAME.rank / 4 * passiveClimbSpeedMod * (GAME.eglassCard and 1 or ultimateChallengeMod) * dt * (GAME.einvisUI and 1 or icLerp(GAME.eglassCard and 0.5 or 1, GAME.eglassCard and 3 or 6, Floors[GAME.floor].top - GAME.height))
         end
     end
 
@@ -4512,7 +4512,7 @@ function GAME.update(dt)
         GAME.xpLockTimer = GAME.xpLockTimer - dt
     else
         local closerCardLeakSpeedMod = (GAME.ecloseCard and GAME.height > 0) and min((1+(GAME.height/1000000)), 2) or 1
-        GAME.xp = GAME.xp - dt * GAME.leakSpeed * closerCardLeakSpeedMod * GAME.rank * (GAME.rank + 1) / (60 * ultimateChallengeMod^1.26)
+        GAME.xp = GAME.xp - dt * GAME.leakSpeed * closerCardLeakSpeedMod * GAME.rank * (GAME.rank + 1) / (60 * (GAME.efastLeak and 1 or ultimateChallengeMod))
         if GAME.xp <= 0 then
             GAME.xp = 0
             if GAME.rank > 1 then
@@ -4555,7 +4555,7 @@ function GAME.update(dt)
     -- Trevor Smithy
     local gravTimerMod = 1 * (GAME.eslowmo and 1.5 or 1) * (GAME.enightcore and 0.5 or 1)
     if M.GV ~= 0 and GAME.gravTimer then
-        GAME.gravTimer = GAME.gravTimer - dt / (gravTimerMod * ultimateChallengeMod)
+        GAME.gravTimer = GAME.gravTimer - dt / (gravTimerMod * (GAME.eslowmo and 1 or ultimateChallengeMod))
         if GAME.gravTimer <= 0 then
             GAME.faultWrong = false
             GAME.commit(true)
@@ -4636,7 +4636,7 @@ function GAME.update(dt)
     -- Damage
     -- Trevor Smithy
     local dmgTimerMulMod = 1 + (M.GV == -1 and 0.25 or 0) + (GAME.eslowmo and 0.25 or 0)
-    GAME.dmgTimer = GAME.dmgTimer - dt / (GAME.dmgTimerMul * dmgTimerMulMod * ultimateChallengeMod)
+    GAME.dmgTimer = GAME.dmgTimer - dt / (GAME.dmgTimerMul * dmgTimerMulMod * (GAME.eslowmo and 1 or ultimateChallengeMod))
     if GAME.dmgTimer <= 0 then
         GAME.dmgTimer = GAME.dmgCycle
         GAME.takeDamage(GAME.dmgTime, 'time')

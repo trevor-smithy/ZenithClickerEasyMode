@@ -10,6 +10,8 @@ local d = {swamp_water_plus=2714.92,perdition=1624.7,MS=6326.3,talentless=7817.1
     ueEX=255.55,ueEXeNH=273.50,ueEXeMS=269.57,ueEXeGV=241.6,ueEXeVL=206.59,ueEXeDH=357.59,ueEXeIN=240.77,ueEXeAS=130.82,ueEXeDP=262.65,
     --Easy Mode - Special (v1.1) (No CR)
     emperor_development=13.23,quest_feast=281.00,best_friends=101,humble_pupil=5.67,shameless_cashgrab=130,overweight_gamer=69,clean_gamer=319,clean_break=312,professional_cleaner=100,rold_smythy=520,
+    --Ultimate Challenge
+    eEXrASrDHrGVrINrMSrNHrVL = 3733.2,
 }
 -- Trevor Smithy Placeholder Dev Scores
 d["-3"] = 26000

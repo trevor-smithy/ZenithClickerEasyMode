@@ -104,22 +104,23 @@ function Card:setActive(auto, key, friendActivation)
             self.charge = 0
         end
     elseif M.VL == 2 then
+        local ultimateChallengeMod = GAME.ultimateChallenge and (1 + (M.DP == 0 and ((GAME.startingHealth-GAME.life)/GAME.startingHealth * 2) or ((GAME.startingHealth*2-(GAME.life+GAME.life2))/GAME.startingHealth))) or 1
         self.charge = self.charge + (auto and 3.55 or 1)
         if self.charge < 3.1 then
             SFX.play('clearline', .3)
             self:shake()
             if self.charge < 1.3 then
-                SFX.play('combo_1', .626, 0, Tone(0))
+                SFX.play('combo_1', .626, 0, Tone(0 + (GAME.enightcore and 1 or -6*ultimateChallengeMod+6)))
             elseif self.charge < 2.2 then
-                SFX.play('combo_3', .626, 0, Tone(-2))
+                SFX.play('combo_3', .626, 0, Tone(-2 + (GAME.enightcore and 1 or -6*ultimateChallengeMod+6)))
             else
-                SFX.play('combo_2', .626, 0, Tone(1))
+                SFX.play('combo_2', .626, 0, Tone(1 + (GAME.enightcore and 1 or -6*ultimateChallengeMod+6)))
             end
             return
         end
         if not auto then
             SFX.play('clearquad', .3)
-            SFX.play('combo_4', .626, 0, Tone(0))
+            SFX.play('combo_4', .626, 0, Tone(0 + (GAME.enightcore and 1 or -6*ultimateChallengeMod+6)))
         end
         self.charge = 0
     -- Trevor Smithy
@@ -285,9 +286,9 @@ function Card:setActive(auto, key, friendActivation)
     else
         TASK.unlock('cannotStart')
         -- Trevor Smithy
-        easyOn = self.active and (key == 3 or KBIsDown('lalt', 'ralt'))
+        easyOn = self.active and (key == 3 or KBIsDown('lalt', 'ralt') and key < 4 or key == 6)
         --
-        revOn = self.active and (key == 2 or KBIsDown('lctrl', 'rctrl'))
+        revOn = self.active and (key == 2 or KBIsDown('lctrl', 'rctrl') and key < 4 or key == 5)
         if revOn and completion[self.id] == 0 and not STAT.unlockAll then
             revOn = false
             noSpin = true
@@ -569,7 +570,8 @@ function Card:update(dt)
         end
     end
     if self.charge > 0 then
-        self.charge = max(self.charge - dt, 0)
+        local ultimateChallengeMod = GAME.ultimateChallenge and (1 + (M.DP == 0 and ((GAME.startingHealth-GAME.life)/GAME.startingHealth * 2) or ((GAME.startingHealth*2-(GAME.life+GAME.life2))/GAME.startingHealth))) or 1
+        self.charge = max(self.charge - dt/(GAME.enightcore and 1 or ultimateChallengeMod), 0)
     end
 end
 
@@ -865,6 +867,7 @@ function Card:draw()
             end
         else
             if GAME.einvisCard then
+                local ultimateChallengeMod = GAME.ultimateChallenge and (1 + (M.DP == 0 and ((GAME.startingHealth-GAME.life)/GAME.startingHealth * 2) or ((GAME.startingHealth*2-(GAME.life+GAME.life2))/GAME.startingHealth))) or 1
                 local temp = M.IN == 1 and 2 or M.IN == 2 and not URM and 3 or M.IN == 2 and URM and 4 or 1
                 local width = 40
                 local hand = TABLE.sort(GAME.getHand(false))
@@ -875,7 +878,7 @@ function Card:draw()
                 if self.required then 
                     gc_setColor(ModData.textColor[self.id]) 
                     if not self.active then
-                        gc_setAlpha(1.26/temp + sin(love.timer.getTime() * 5.2/temp)/temp)
+                        gc_setAlpha((1.26 * ultimateChallengeMod)/temp + sin(love.timer.getTime() * 5.2/temp)/temp)
                         width = (9-temp)*5
                     end
                     if self.active and GAME.playing then

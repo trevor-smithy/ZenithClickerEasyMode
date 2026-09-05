@@ -115,7 +115,7 @@ local function applyCombo(set)
         local tar = TABLE.find(set, C.id) and 1 or TABLE.find(set, 'r' .. C.id) and 2 or TABLE.find(set, 'e' .. C.id) and -1 or 0
         if cur ~= tar then
             if cur ~= 0 then C:setActive(true) end
-            if tar ~= 0 then C:setActive(true, tar == -1 and 3 or tar == 2 and 2 or 1) end
+            if tar ~= 0 then C:setActive(true, tar == -1 and 6 or tar == 2 and 5 or 4) end
             changed = true
         end
     end
@@ -1596,6 +1596,7 @@ function scene.overDraw()
             end
         end
 
+        local ultimateChallengeMod = GAME.ultimateChallenge and not GAME.einvisCard and (1 + (M.DP == 0 and ((GAME.startingHealth-GAME.life)/GAME.startingHealth * 2) or ((GAME.startingHealth*2-(GAME.life+GAME.life2))/GAME.startingHealth))) or 1
 
         -- Quests
         for i = 1, GAME.maxQuestCount do
@@ -1608,8 +1609,8 @@ function scene.overDraw()
                 -- Trevor Smithy
                 local k = M.DP ~= 0 and i <= 2 and 1 / i or i ^ -2
                 a = clamp(
-                    a * (1 - (GAME.questTime - .26) * (GAME.floor + .62) * .26 * k),
-                    GAME.faultWrong and not URM and i * .26 or 0, 1
+                    a * (1 - (((GAME.questTime - .26) * (GAME.floor + .62) * .26 * k) / ultimateChallengeMod)),
+                    GAME.faultWrong and (not URM or ultimateChallengeMod > 2) and i * .26 or 0, 1
                 )
             end
             if a > 0 then
@@ -1630,8 +1631,8 @@ function scene.overDraw()
                 -- Trevor Smithy
                 local k = M.DP ~= 0 and 1 or 1 ^ -2
                 a = clamp(
-                    a * (1 - (GAME.questTime - .26) * (GAME.floor + .62) * .26 * k),
-                    GAME.faultWrong and not URM and 1 * .26 or 0, 1
+                    a * (1 - (((GAME.questTime - .26) * (GAME.floor + .62) * .26 * k) / ultimateChallengeMod)),
+                    GAME.faultWrong and (not URM or ultimateChallengeMod > 2) and 1 * .26 or 0, 1
                 )
             end
             if a > 0 then

@@ -1058,7 +1058,11 @@ function RefreshHelpText()
         s.help.floatText = ultraHelp
         if GAME.height >= 0 then
             s.help2.text = "!"
-            s.help2.floatText = "The final ULTRA REVERSE challenge.\n\"Because it is there.\""
+            s.help2.floatText = 
+            GAME.ultimateChallenge and GAME.mod.DP == 0 and "The ULTIMATE challenge of Zenith Clicker Easy Mode. \nLower HP grants weaker versions of unused piece effects."
+            or GAME.ultimateChallenge and "The FRIENDLY challenge. Killing one is recommended since \nlower HP grants weaker versions of unused piece effects."
+            or GAME.uneasyMode and "The Uneasy challenge. All climbing is reduced to a third. \nZP is multiplied by 3. Incompatible with Ultra Reverses."
+            or "The final ULTRA REVERSE challenge.\n\"Because it is there.\""
         else
             s.help2.text = "B"
             s.help2.floatText = "B" .. GAME.negFloor .. ": " .. NegFloors[GAME.negFloor].name .. "\n" .. NegTexts['b' .. GAME.negFloor].desc
@@ -1166,20 +1170,21 @@ end
 local uVLpool = {}
 function UltraVlCheck(id, auto)
     uVLpool[id] = (uVLpool[id] or 0) + (auto and 3.55 or 1)
+    local ultimateChallengeMod = GAME.ultimateChallenge and (1 + (M.DP == 0 and ((GAME.startingHealth-GAME.life)/GAME.startingHealth * 2) or ((GAME.startingHealth*2-(GAME.life+GAME.life2))/GAME.startingHealth))) or 1
     if uVLpool[id] < 3.1 then
         SFX.play('clearline', .3)
         if uVLpool[id] < 1.3 then
-            SFX.play('combo_1', .626, 0, Tone(0))
+            SFX.play('combo_1', .626, 0, Tone(0 + (GAME.enightcore and 1 or -6*ultimateChallengeMod+6)))
         elseif uVLpool[id] < 2.2 then
-            SFX.play('combo_3', .626, 0, Tone(-2))
+            SFX.play('combo_3', .626, 0, Tone(-2 + (GAME.enightcore and 1 or -6*ultimateChallengeMod+6)))
         else
-            SFX.play('combo_2', .626, 0, Tone(1))
+            SFX.play('combo_2', .626, 0, Tone(1 + (GAME.enightcore and 1 or -6*ultimateChallengeMod+6)))
         end
         return false
     end
     if not auto then
         SFX.play('clearquad', .3)
-        SFX.play('combo_4', .626, 0, Tone(0))
+        SFX.play('combo_4', .626, 0, Tone(0 + (GAME.enightcore and 1 or -6*ultimateChallengeMod+6)))
     end
     uVLpool[id] = 0
     return true
@@ -1484,7 +1489,8 @@ function Daemon_Fast()
 
         -- uVL timer reducing
         for k, v in next, uVLpool do
-            uVLpool[k] = max(v - dt, 0)
+            local ultimateChallengeMod = GAME.ultimateChallenge and (1 + (M.DP == 0 and ((GAME.startingHealth-GAME.life)/GAME.startingHealth * 2) or ((GAME.startingHealth*2-(GAME.life+GAME.life2))/GAME.startingHealth))) or 1
+            uVLpool[k] = max(v - dt/(GAME.enightcore and 1 or ultimateChallengeMod), 0)
         end
 
         -- Reverse background animation
