@@ -286,9 +286,9 @@ function Card:setActive(auto, key, friendActivation)
     else
         TASK.unlock('cannotStart')
         -- Trevor Smithy
-        easyOn = self.active and (key == 3 or KBIsDown('lalt', 'ralt') and key < 4 or key == 6)
+        easyOn = self.active and (key == 3 or KBIsDown('lalt', 'ralt') and (not key or key < 4) or key == 6)
         --
-        revOn = self.active and (key == 2 or KBIsDown('lctrl', 'rctrl') and key < 4 or key == 5)
+        revOn = self.active and (key == 2 or KBIsDown('lctrl', 'rctrl') and (not key or key < 4) or key == 5)
         if revOn and completion[self.id] == 0 and not STAT.unlockAll then
             revOn = false
             noSpin = true
