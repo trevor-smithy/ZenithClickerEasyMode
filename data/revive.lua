@@ -132,6 +132,7 @@ local d = {
     { rank = { 3, 5 }, prompt = 'keep_no_perfect',      target = 12,  short = "No perfect 12s",          text = "Have no perfect\npasses for 12 seconds",      cond = notENH },
     { rank = { 4, 6 }, prompt = 'keep_no_imperfect',    target = 14,  short = "No imperfect 14s",        text = "Have no imperfect\npasses for 14 seconds",    cond = F6 },
     { rank = { 3, 5 }, prompt = 'keep_no_reset',        target = 16,  short = "No reset 16s",            text = "Don't reset\nfor 16 seconds" },
+    { rank = { 1, 6 }, prompt = 'kill_yourself',        target = 1,   short = "Kill Yourself",           text = "Die by your own hands",                       cond = function() return GAME.mod.DP == -1 end },
 }
 for i = 1, #d do d[i]._prompt = d[i].prompt end
 

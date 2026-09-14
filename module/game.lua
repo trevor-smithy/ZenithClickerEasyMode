@@ -965,14 +965,18 @@ function GAME.incrementPrompt(prompt, value)
         end
         if t.progress >= t.target then
             GAME.currentTask = TABLE.next(GAME.reviveTasks, GAME.currentTask) or false
+            if t.prompt == 'kill_yourself' then
+                GAME[GAME.getLifeKey(false)] = GAME.fullHealth
+                SFX.play('boardlock_revive')
+            end
             if GAME.currentTask then
-                SFX.play('boardlock_clear')
+                if t.prompt ~= 'kill_yourelf' then SFX.play('boardlock_clear') end
             else
                 GAME.currentTask = false
                 GAME.reviveCount = GAME.reviveCount + 1
                 GAME.reviveDifficulty = GAME.reviveDifficulty + 1
                 GAME[GAME.getLifeKey(true)] = GAME.fullHealth
-                SFX.play('boardlock_revive')
+                if t.prompt ~= 'kill_yourelf' then SFX.play('boardlock_revive') end
                 GAME.DPlock = false
                 GAME.reviveTime = false
                 GAME.switch_sickness = 0
@@ -1072,7 +1076,11 @@ function GAME.takeDamage(dmg, reason, toAlly)
             end
             GAME.dmgWrongExtra = 0 -- Being tolerant!
         else
-            GAME.finish(reason)
+            if GAME.currentTask and reason == 'wrong' then
+                GAME.incrementPrompt('kill_yourself')
+            else
+                GAME.finish(reason)
+            end
         end
     else
         GAME.refreshLifeState()
@@ -3156,7 +3164,7 @@ function GAME.commit(auto, falseCommit)
             SFX.play("hold")
             if #GAME.questStack >= 20 then
                 if #GAME.questStack > 20 then 
-                    GAME.takeDamage((M.MS == -1 and (GAME.dmgWrong + 1)/2 or GAME.dmgWrong) * (#GAME.questStack-20)/(M.MS == -1 and 20 or 10)) 
+                    GAME.takeDamage((M.MS == -1 and (GAME.dmgWrong + 1)/2 or GAME.dmgWrong) * (#GAME.questStack-20)/(M.MS == -1 and 20 or 10),'wrong') 
                 end
                 if TASK.lock('hyperalert', 2) then
                     SFX.play("hyperalert", 1, 0, Tone(0))
