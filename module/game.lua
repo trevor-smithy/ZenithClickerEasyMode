@@ -1076,7 +1076,7 @@ function GAME.takeDamage(dmg, reason, toAlly)
             end
             GAME.dmgWrongExtra = 0 -- Being tolerant!
         else
-            if GAME.currentTask.prompt == 'kill_yourself' and reason == 'wrong' then
+            if GAME.currentTask and GAME.currentTask.prompt == 'kill_yourself' and reason == 'wrong' then
                 GAME.incrementPrompt('kill_yourself')
             else
                 GAME.finish(reason)
