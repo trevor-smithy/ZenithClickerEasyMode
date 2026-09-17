@@ -3,7 +3,7 @@ local d = {swamp_water_plus=2714.92,perdition=1624.7,MS=6326.3,talentless=7817.1
     patience_is_a_virtue=2627.37,
 -- Trevor Smithy Dev scores
     --Easy Mode (v1.0) (No CR)
-    programmer_gamer=42909.0,one_of_mine=26856.9,ggbw=69085.8,perfect_speedrun_plus=361.02,perfectly_balanced=10783.0,peasant_revolution=29067.9,holy_ascention=4814.9,stabilized_entropy=3115.4,restrained_collapse=17205.3,restored_volition=8606.7,disproven_blasphemy=5223.9,solved_paradox=4103.1,demystified_grimoire=17952.5,restored_eden=2650.3,your_too_fast=187,
+    programmer_gamer=42909.0,one_of_mine=26856.9,ggbw=69085.8,perfect_speedrun_plus=361.02,perfectly_balanced=30716.5,peasant_revolution=29067.9,holy_ascention=4814.9,stabilized_entropy=3115.4,restrained_collapse=17205.3,restored_volition=8606.7,disproven_blasphemy=5223.9,solved_paradox=4103.1,demystified_grimoire=17952.5,restored_eden=2650.3,your_too_fast=187,
     --Easy Mods (v1.1) (No CR)
     eEX=2405.8,eNH=2921.1,eMS=2805.6,eGV=3584.5,eVL=6687.3,eDH=14814.9,eIN=6097.8,eAS=22177.6,eDP=4751.4,
     --Uneasy Easy Mods (v1.1) (No CR)
