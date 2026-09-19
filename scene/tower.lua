@@ -126,6 +126,70 @@ local function applyCombo(set)
     if changed then SFX.play('mmstart') end
 end
 
+local function activateBadTime()
+    GAME.fallout = true
+    scene.widgetList.stat.x = -100
+    scene.widgetList.stat:resetPos()
+    scene.widgetList.chnl.x = -100
+    scene.widgetList.chnl:resetPos()
+    scene.widgetList.about.x = 100
+    scene.widgetList.about:resetPos()
+    scene.widgetList.conf.x = 100
+    scene.widgetList.conf:resetPos()
+    GAME.multiplePiecesActive = false
+    GAME.enightcore = true
+    GAME.eslowmo = true
+    GAME.eglassCard = true
+    GAME.efastLeak = true
+    GAME.einvisUI = true
+    GAME.einvisCard = true
+    GAME.ecloseCard = true
+    GAME.nightcore = false
+    GAME.slowmo = false
+    GAME.glassCard = false
+    GAME.fastLeak = false
+    GAME.invisUI = false
+    GAME.invisCard = false
+    GAME.closeCard = false
+    STAT.unlockAll = true
+    local set = {}
+    applyCombo(set)
+    set.ultra = true
+    TABLE.insert(set, 'rEX')
+    TABLE.insert(set, 'rNH')
+    TABLE.insert(set, 'rMS')
+    TABLE.insert(set, 'rGV')
+    TABLE.insert(set, 'rVL')
+    TABLE.insert(set, 'rDH')
+    TABLE.insert(set, 'rIN')
+    TABLE.insert(set, 'rAS')
+    if ACHV.intended_glitch then TABLE.insert(set, 'rDP') end
+    applyCombo(set)
+    GAME.badTime = true
+    GAME.badTimeStarted = false
+    GAME.refreshCurrentCombo()
+    TASK.new(function()
+        TASK.yieldT(0.62)
+        SFX.play('bombdetonate')
+        end
+    )
+    if not ACHV.could_you_not then IssueAchv('could_you_not', true) end
+    MSG.clear()
+    if ACHV.what_have_you_done then
+        MSG("dark", "WHAT HAVE YOU DONE!?", 0.26)
+    else
+        IssueAchv('what_have_you_done', true)
+        local A = Achievements['what_have_you_done']
+        local msg = { 'achv_badTime', {
+            COLOR.L, A.name .. "\n",
+            COLOR.dL, "You feel like you're going to have a-",
+        }, 1 }
+        MSG { msg[1], msg[2], time = .26, last = true, alpha = .75 }
+        SFX.play('hyperalert')
+        SaveAchv()
+    end
+end
+
 local function keyTrigger(key)
     local bindID = TABLE.find(CONF.keybind, key)
     if bindID and bindID <= 18 and (M.AS ~= 0 or (not GAME.playing and (bindID == 8 or bindID == 17))) then
@@ -290,67 +354,7 @@ local function keyTrigger(key)
                     scene.widgetList.easy.x = -100
                     scene.widgetList.easy:resetPos()
                     if power and not GAME.playing then
-                        GAME.fallout = true
-                        scene.widgetList.stat.x = -100
-                        scene.widgetList.stat:resetPos()
-                        scene.widgetList.chnl.x = -100
-                        scene.widgetList.chnl:resetPos()
-                        scene.widgetList.about.x = 100
-                        scene.widgetList.about:resetPos()
-                        scene.widgetList.conf.x = 100
-                        scene.widgetList.conf:resetPos()
-                        GAME.multiplePiecesActive = false
-                        GAME.enightcore = true
-                        GAME.eslowmo = true
-                        GAME.eglassCard = true
-                        GAME.efastLeak = true
-                        GAME.einvisUI = true
-                        GAME.einvisCard = true
-                        GAME.ecloseCard = true
-                        GAME.nightcore = false
-                        GAME.slowmo = false
-                        GAME.glassCard = false
-                        GAME.fastLeak = false
-                        GAME.invisUI = false
-                        GAME.invisCard = false
-                        GAME.closeCard = false
-                        STAT.unlockAll = true
-                        local set = {}
-                        applyCombo(set)
-                        set.ultra = true
-                        TABLE.insert(set, 'rEX')
-                        TABLE.insert(set, 'rNH')
-                        TABLE.insert(set, 'rMS')
-                        TABLE.insert(set, 'rGV')
-                        TABLE.insert(set, 'rVL')
-                        TABLE.insert(set, 'rDH')
-                        TABLE.insert(set, 'rIN')
-                        TABLE.insert(set, 'rAS')
-                        if ACHV.intended_glitch then TABLE.insert(set, 'rDP') end
-                        applyCombo(set)
-                        GAME.badTime = true
-                        GAME.badTimeStarted = false
-                        GAME.refreshCurrentCombo()
-                        TASK.new(function()
-                            TASK.yieldT(0.62)
-                            SFX.play('bombdetonate')
-                            end
-                        )
-                        if not ACHV.could_you_not then IssueAchv('could_you_not', true) end
-                        MSG.clear()
-                        if ACHV.what_have_you_done then
-                            MSG("dark", "WHAT HAVE YOU DONE!?", 0.26)
-                        else
-                            IssueAchv('what_have_you_done', true)
-                            local A = Achievements['what_have_you_done']
-                            local msg = { 'achv_badTime', {
-                                COLOR.L, A.name .. "\n",
-                                COLOR.dL, "You feel like you're going to have a-",
-                            }, 1 }
-                            MSG { msg[1], msg[2], time = .26, last = true, alpha = .75 }
-                            SFX.play('hyperalert')
-                            SaveAchv()
-                        end
+                        activateBadTime()
                     elseif ACHV.could_you_not then
                         MSG("dark", "COULD YOU NOT?",10)
                     else
@@ -2414,8 +2418,12 @@ scene.widgetList = {
             applyCombo(generateRandomCombo(k == 2 or kbIsDown('lctrl', 'rctrl') or next(revHold)))
             if TABLE.equal(GAME.getHand(true),{'eEX','rGV','eDH','eAS'}) then -- but it isn't one of mine check
                 GAME.enightcore = true
+                URM = true
                 RefreshBGM()
                 GAME.refreshCurrentCombo()
+            end
+            if TABLE.equal(GAME.getHand(true),{'rEX','rNH','rMS','rGV','rVL','rDH','rIN','rAS','rDP'}) and URM and (k == 2 or kbIsDown('lctrl', 'rctrl') or next(revHold)) then
+                activateBadTime()
             end
         end,
     },
