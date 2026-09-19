@@ -1930,6 +1930,7 @@ end
 function GAME.secretComboName(comboStr)
     GAME.ultimateChallenge = false
     GAME.peasantRevolution = false
+    GAME.canBeRandomlySelected = false
     SCN.scenes.tower.widgetList.easy.textColor = COLOR.DG
     for _, c in next, (GAME.anyUltra and Secret.combos.ultra or GAME.uneasyMode and Secret.combos.uneasy or Secret.combos.other) do
         if GAME.uneasyMode then IssueAchv('uneasy') end
@@ -4470,7 +4471,7 @@ function GAME.update(dt)
 
     if not GAME.DPlock then
         if M.EX == 2 then
-            if GAME.eglassCard then
+            if GAME.eglassCard or GAME.enightcore then
                 GAME.height = GAME.height + GAME.rank / 4 * (passiveClimbSpeedMod * 0.6) * dt * (GAME.einvisUI and 1 or icLerp(0.5, 3, Floors[GAME.floor].top - GAME.height))
             end
             if not URM then

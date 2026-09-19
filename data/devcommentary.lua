@@ -633,4 +633,22 @@ return {
         "Gamer Girl Bath Water? Seriously? You didn't think this was actually her bath water, right?"
         Also this combo is (in my opinion) the optimal one to get QUETTASPEED when combined with eL.
     ]],
+    -- 1.3 update
+    ['uEX eNH eMS eGV eVL eDH eIN eAS eDP'] = STRING.trimIndent [[
+        Ultra Hard Bath With A Friend, aka Peasant Revolution with a Friend. There's no achievement for this.
+    ]],
+    ['eEX uNH eMS eGV uDH eIN'] = STRING.trimIndent [[
+        "Well I'll be damned!"
+        "You may indeed, if you get lucky."
+    ]],
+    ['eEX eNH uMS uIN eAS eDP'] = STRING.trimIndent [[
+        "What the hell is this? This makes no sense."
+        "I dunno, don't ask me. I'm just as lost as you are."
+    ]],
+    ['eEX eNH uGV eVL uAS eDP'] = STRING.trimIndent [[
+        "Get your mind outta the gutter. Why are you always so immature?"
+    ]],
+    ['eEX eMS eGV uVL eDH uDP'] = STRING.trimIndent [[
+        "Stop hitting yourself! Stop hitting youself! Stop hitting youself! Stop hitting youself!"
+    ]],
 }
