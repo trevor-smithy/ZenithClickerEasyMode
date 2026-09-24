@@ -1041,39 +1041,55 @@ end
 local normalHelp = {
     COLOR.LL, "Welcome to ", COLOR.LF, "Zenith Clicker", COLOR.LL, "! Choose the required tarot cards and send players to scale the tower.\n",
     "The higher you go in the tower, the more tricky players you'll encounter!\n",
-    "There's a leaderboard for daily challenge, how high can you reach?\n",
+    "There's a Random Set button for a random challenge, how many can you master?\n",
     "[DYNAMIC TEXT]",
 }
 local ultraHelp = {
     COLOR.LL, "Welcome to ", COLOR.LR, "Zenith Clicker: ", COLOR.R, "Ultra Reverse", COLOR.LL, ". Activate a reversed mod to start ", COLOR.lR, "suffering.\n",
     COLOR.LL, "The higher you go in the tower, the more likely you are to ", COLOR.R, "die.\n",
-    COLOR.LL, "There are no more achievements, and ", COLOR.lR, "you are not expected to go very high up.\n",
+    COLOR.LL, "There are only modded achievements, and ", COLOR.lR, "you are not expected to go very high up.\n",
     COLOR.R, "Give Up: ", COLOR.LL, "ESC    ", COLOR.R, "Forfeit: ", COLOR.LL, "ESC    ", COLOR.R, "Quit: ", COLOR.LL, "ESC"
+}
+local uneasyHelp = {
+    COLOR.LL, "Welcome to ", COLOR.LR, "Zenith Clicker: ", COLOR.R, "Uneasy Mode", COLOR.LL, ". Activate an upright mod to start ", COLOR.lR, "struggling.\n",
+    COLOR.LL, "The higher you go in the tower, the more likely you are to ", COLOR.R, "falter.\n",
+    COLOR.LL, "Height gain is reduced to a third, so ", COLOR.lR, "you are not expected to go very high up.\n", COLOR.LL,
+    "[DYNAMIC TEXT]",
+}
+local stackerHelp = {
+    COLOR.LL, "Welcome to ", COLOR.LF, "Zenith Clicker: ", COLOR.G, "Stacker Mode", COLOR.LL, ". Commit with no cards selected to stack. \n",
+    COLOR.LL, "Succesfully clearing the combo will apply a multiplier to the next quest, up to a 16 combo!\n",
+    COLOR.LL, "Stacking beyond 16 quests will cause you to", COLOR.lR, " take damage with each additional quest stacked.\n", COLOR.LL,
+    "[DYNAMIC TEXT]",
 }
 function RefreshHelpText()
     local s = SCN.scenes.tower.widgetList
     ---@cast s Map<Zenitha.Widget.base | Zenitha.WidgetArg>
     if URM then
         s.help.text = "U"
-        s.help.floatText = ultraHelp
+        uneasyHelp[#uneasyHelp] = ("Commit: $1    Reset: $2    Forfeit/Quit: ESC"):repD(CONF.keybind[19]:upper(), CONF.keybind[20]:upper())
+        s.help.floatText = GAME.uneasyMode and uneasyHelp or ultraHelp
         if GAME.height >= 0 then
             s.help2.text = "!"
             s.help2.floatText = 
             GAME.ultimateChallenge and GAME.mod.DP == 0 and "The ULTIMATE challenge of Zenith Clicker Easy Mode. \nLower HP grants weaker versions of unused piece effects."
             or GAME.ultimateChallenge and "The FRIENDLY challenge. Killing one is recommended since \nlower HP grants weaker versions of unused piece effects."
-            or GAME.uneasyMode and "The Uneasy challenge. All climbing is reduced to a third. \nZP is multiplied by 3. Incompatible with Ultra Reverses."
+            or GAME.uneasyMode and TABLE.equal(GAME.getHand(true),{'eEX','eVL','eAS'}) and "All climbing is reduced to a third. ZP is multiplied by 3x.\nUneasy Smithy Mode Activated! Aim for TERASPEED!"
+            or GAME.uneasyMode and "The Uneasy challenge. All climbing is reduced to a third. \nZP is multiplied by 3x. Incompatible with Ultra Reverses."
+            or GAME.forceRev and "Special ULTRA REVERSE challenge active. ZP is multiplied \nby a minimum of 1.20x unless MULTIPLE PIECES are used."
             or "The final ULTRA REVERSE challenge.\n\"Because it is there.\""
         else
             s.help2.text = "B"
             s.help2.floatText = "B" .. GAME.negFloor .. ": " .. NegFloors[GAME.negFloor].name .. "\n" .. NegTexts['b' .. GAME.negFloor].desc
         end
     else
-        s.help.text = "?"
+        s.help.text = CONF.stacker and "S" or "?"
         normalHelp[#normalHelp] = ("Commit: $1    Reset: $2    Forfeit/Quit: ESC"):repD(CONF.keybind[19]:upper(), CONF.keybind[20]:upper())
-        s.help.floatText = normalHelp
+        stackerHelp[#stackerHelp] = ("Stack: (no cards selected) $1    Commit: $1    Reset: $2    Forfeit/Quit: ESC"):repD(CONF.keybind[19]:upper(), CONF.keybind[20]:upper())
+        s.help.floatText = CONF.stacker and stackerHelp or normalHelp
         s.help2.text = "?"
         local hand = GAME.getHand(true)
-        local lastLine = (
+        local lastLine = TABLE.equal(hand,{'eEX','eVL','eAS'}) and "Smithy Mode Activated! Aim for TERASPEED!" or (
             #hand == 0 and "Without any mods, " or
             #hand == 1 and "With this mod, " or
             "With this combo, "

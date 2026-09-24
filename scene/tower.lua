@@ -1145,17 +1145,29 @@ function scene.draw()
         -- MP & ZP Preview
         if not GAME.playing and STAT.maxFloor >= 10 and not GAME.badTime then
             gc_setColor(TextColor)
-            if GAME.forceRev and GAME.getComboZP(GAME.getHand(true)) < 1.2 then
-                gc_setColor(COLOR.rainbow_light(2.6 * t))
+            local speedMod = ((GAME.enightcore or GAME.nightcore) and 2 or 1) * (GAME.eslowmo and 0.75 or 1) * (GAME.slowmo and 0.5 or 1)
+            local prMod = 1.08422
+            local rainbowText = GAME.forceRev and GAME.getComboZP(GAME.getHand(true)) < 1.2
+            if GAME.peasantRevolution and floor(t * speedMod * prMod) % 2 == 1 then rainbowText = false end
+            if rainbowText then
+                gc_setColor(COLOR.rainbow_light(2.6 * t * speedMod))
             end
-            gc_setAlpha(.12 + abs(math.log(GAME.comboZP)) * (GAME.einvisUI and 1 or 2))
+            if rainbowText then
+                gc_setAlpha(1)
+            else
+                gc_setAlpha(.12 + abs(math.log(GAME.comboZP)) * (GAME.einvisUI and 1 or 2))
+            end
             gc_draw(TEXTS.zpPreview, 1370, 275, 0, 1, 1, TEXTS.zpPreview:getWidth())
-            if GAME.comboMP >= 6 or GAME.comboMP <= -3 then
+            if GAME.comboMP >= 6 or GAME.comboMP <= -3 or rainbowText then
                 local tempComboMP = GAME.comboMP
                 if GAME.comboMP < 0 then
                     tempComboMP = GAME.comboMP * -1
                 end
-                gc_setAlpha(clampInterpolate(2, 0, 8, 1, tempComboMP))
+                if rainbowText then
+                    gc_setAlpha(1)
+                else
+                    gc_setAlpha(clampInterpolate(2, 0, 8, 1, tempComboMP))
+                end
                 gc_draw(TEXTS.mpPreview, 1370, 235, 0, 1, 1, TEXTS.mpPreview:getWidth())
             end
         end

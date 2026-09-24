@@ -1929,6 +1929,8 @@ end
 --------------------------------------------------------------
 function GAME.secretComboName(comboStr)
     GAME.ultimateChallenge = false
+    GAME.customUltraCombo = false
+    GAME.forceRev = false
     GAME.peasantRevolution = false
     GAME.canBeRandomlySelected = false
     SCN.scenes.tower.widgetList.easy.textColor = COLOR.DG
@@ -1966,9 +1968,6 @@ function GAME.refreshCurrentCombo()
     end
     -- Trevor Smithy
     if not GAME.playing then GAME.smithyMode = (table.concat(TABLE.sort(hand)) == 'eASeEXeVL') end
-    GAME.customUltraCombo = false
-    GAME.forceRev = false
-    GAME.peasantRevolution = false
     local secretComboName
     if not GAME.playing then secretComboName = GAME.secretComboName(table.concat(TABLE.sort(hand))) end
     if secretComboName then comboName = secretComboName end

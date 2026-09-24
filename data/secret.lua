@@ -8,7 +8,7 @@ local d = {
     combos = {
         ultra = {
             -- Custom Ultras
-            { set = "eAS eDH eGV eIN eMS eNH eVL rEX", name = '"ULTRA HARD BATH WATER"', customUltraCombo = true, peasantRevolution = true},
+            { set = "eAS eDH eGV eIN eMS eNH eVL rEX", name = '"ULTRA HARD BATH WATER"', forceRev = true, customUltraCombo = true, peasantRevolution = true},
             { set = "eDH eEX eGV rNH", name = '"HOLY ASCENSION"', customUltraCombo = true},
             { set = "eDP eEX eIN rMS", name = '"STABILIZED ENTROPY"', customUltraCombo = true},
             { set = "eAS eDP eEX rGV", name = '"RESTRAINED COLLAPSE"', customUltraCombo = true},
