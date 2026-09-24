@@ -1236,7 +1236,7 @@ function scene.overDraw()
         -- Current combo
         if not GAME.playing or M.IN < 2 then
             local speedMod = ((GAME.enightcore or GAME.nightcore) and 2 or 1) * (GAME.eslowmo and 0.75 or 1) * (GAME.slowmo and 0.5 or 1)
-            if GAME.customUltraCombo then
+            if GAME.customUltraCombo and not GAME.playing then
                 local prMod = 1.08422
                 if not (GAME.peasantRevolution and floor(t * speedMod * prMod) % 2 == 1) then
                     TEXTS.mod:setFont(FONT.get(GAME.badTime and 90 or 60))

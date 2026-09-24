@@ -1057,7 +1057,7 @@ local uneasyHelp = {
     "[DYNAMIC TEXT]",
 }
 local stackerHelp = {
-    COLOR.LL, "Welcome to ", COLOR.LF, "Zenith Clicker: ", COLOR.G, "Stacker Mode", COLOR.LL, ". Commit with no cards selected to stack. \n",
+    COLOR.LL, "Welcome to ", COLOR.LF, "Zenith Clicker: ", COLOR.I, "Stacker Mode", COLOR.LL, ". Commit with no cards selected to stack. \n",
     COLOR.LL, "Succesfully clearing the combo will apply a multiplier to the next quest, up to a 16 combo!\n",
     COLOR.LL, "Stacking beyond 16 quests will cause you to", COLOR.lR, " take damage with each additional quest stacked.\n", COLOR.LL,
     "[DYNAMIC TEXT]",

@@ -3789,10 +3789,10 @@ function GAME.finish(reason)
         --for i = 1, 7 do
         -- Trevor Smithy
         if CONF.stacker then
-            TABLE.append(resStr, {COLOR.dI, "S"})
+            TABLE.append(resStr, {COLOR.I, "S"})
         end
         if GAME.uneasyMode or GAME.badTime then
-            TABLE.append(resStr, {COLOR.DR, "U"})
+            TABLE.append(resStr, {COLOR.dR, "U"})
         end
         for i = 1, #PieceData - 1 do
             if GAME[PieceData[i].id] then TABLE.append(resStr, PieceData[i].text) end
