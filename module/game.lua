@@ -2947,7 +2947,7 @@ function GAME.commit(auto, falseCommit)
             end 
         end
 
-        local roundedAttack = MATH.roundRnd(attack * GAME.attackMul * comboAttackMul / (1 + (#GAME.questStack)/4) / (GAME.badTime and 3 or 1))
+        local roundedAttack = MATH.round(attack * GAME.attackMul * comboAttackMul / (1 + (#GAME.questStack)/4) / (GAME.badTime and 3 or 1))
         if not falseCommit then
             GAME.spikeCounter = GAME.spikeCounter + roundedAttack + surge
             GAME.maxSpike = max(GAME.maxSpike, GAME.spikeCounter)
