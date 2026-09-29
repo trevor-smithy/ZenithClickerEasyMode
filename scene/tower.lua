@@ -1625,7 +1625,7 @@ function scene.overDraw()
                 -- Trevor Smithy
                 local k = M.DP ~= 0 and i <= 2 and 1 / i or i ^ -2
                 a = clamp(
-                    a * (1 - (((GAME.questTime - .26) * (GAME.floor + .62) * .26 * k) / ultimateChallengeMod)),
+                    a * (1 - (((GAME.questTime - .26) * (GAME.floor + .62) * .26 * k) / ultimateChallengeMod * (GAME.eslowmo and 0.75 or 1))),
                     GAME.faultWrong and (not URM or ultimateChallengeMod > 2) and i * .26 or 0, 1
                 )
             end
@@ -1647,7 +1647,7 @@ function scene.overDraw()
                 -- Trevor Smithy
                 local k = M.DP ~= 0 and 1 or 1 ^ -2
                 a = clamp(
-                    a * (1 - (((GAME.questTime - .26) * (GAME.floor + .62) * .26 * k) / ultimateChallengeMod)),
+                    a * (1 - (((GAME.questTime - .26) * (GAME.floor + .62) * .26 * k) / ultimateChallengeMod * (GAME.eslowmo and 0.75 or 1))),
                     GAME.faultWrong and (not URM or ultimateChallengeMod > 2) and 1 * .26 or 0, 1
                 )
             end

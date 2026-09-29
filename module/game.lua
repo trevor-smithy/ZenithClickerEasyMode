@@ -434,16 +434,38 @@ function GAME.getComboName(list, mode)
         if combo then
             fstr = combo.name:atomize()
             if URM and M.DH == 2 then
-                -- Shuffle letters except first and last
-                rem(fstr, #fstr)
-                local e = rem(fstr)
-                rem(fstr, 1)
-                local s = rem(fstr, 1)
-                TABLE.shuffle(fstr)
-                ins(fstr, 1, s)
-                ins(fstr, 1, "\"")
-                ins(fstr, e)
-                ins(fstr, "\"")
+                if CONF.easyName then
+                    -- Shuffle worlds
+                    if TABLE.find(fstr, ' ') then -- if more than one word, otherwise don't bother
+                        rem(fstr, #fstr) -- remove " at end
+                        rem(fstr, 1) -- remove " at start
+                        local wordCount = TABLE.countAll(fstr, ' ') + 1 -- count the number of spaces + 1 to get number of words
+                        fstr = table.concat(fstr) -- recombine the combo (minus the "")
+                        local wordList = {}
+                        for word in string.gmatch(fstr, "%S+") do
+                            table.insert(wordList, word) -- create new table of words
+                        end
+                        TABLE.shuffle(wordList) -- shuffle words
+                        for i = 1, wordCount do
+                            ins(wordList, i*2, ' ') -- put a space between each word
+                        end
+                        rem(wordList, #wordList) -- remove trailing space
+                        ins(wordList, 1, "\"") -- readd " at start
+                        ins(wordList, "\"") -- readd " at end
+                        fstr = wordList -- fstr is reassigned to be wordList
+                    end
+                else
+                    -- Shuffle letters except first and last
+                    rem(fstr, #fstr)
+                    local e = rem(fstr)
+                    rem(fstr, 1)
+                    local s = rem(fstr, 1)
+                    TABLE.shuffle(fstr)
+                    ins(fstr, 1, s)
+                    ins(fstr, 1, "\"")
+                    ins(fstr, e)
+                    ins(fstr, "\"")
+                end
             end
             -- Random gray
             for i = #fstr, 1, -1 do
@@ -3343,6 +3365,9 @@ function GAME.start()
     -- Trevor Smithy
     -- 3 if no rNH but rDH, 4 if no rNH but eDH, 1+1 = 2 if rNH AND eDH, 4 for anything else
     GAME.maxQuestSize = (M.NH == -1 and M.DH == 2) and 2 or (M.NH < 2 and M.DH == 2) and 3 or 4
+    if CONF.easyName and URM and GAME.maxQuestSize < 4 then -- Use Easy Names + uDH disables all NH leniency
+        GAME.maxQuestSize = GAME.maxQuestSize + 1
+    end
     -- 1+(1.26)=2.26 if rNH and no DH, 1+(1+2.42-1)=3.42 if rNH and DH, 1+(1+2.42-2)=2.42 if rNH and rDH, 1+0.26=1.26 if DH, 0 if no DH
     GAME.extraQuestBase = M.NH == 2 and (M.DH > 0 and 2.42 - M.DH or 1.26) or M.DH == 1 and 0.26 or 0
     -- 1.626 if DH, 0.374 if eDH, 1 if no DH (or rDH)
@@ -3537,11 +3562,19 @@ function GAME.finish(reason)
         W:reset()
     end
 
-    if (GAME.teramusic or GAME.teraLostHeight or GAME.finishTera) and GAME.smithyMode then
+    local teraCheck = GAME.teramusic or GAME.teraLostHeight or GAME.finishTera
+    if teraCheck and GAME.smithyMode then
         SubmitAchv('programmer_gamer', GAME.teraLostHeight > 0 and GAME.teraLostHeight or GAME.roundHeight)
     end
-    if (GAME.teramusic or GAME.teraLostHeight or GAME.finishTera) and URM and GAME.comboStr == "eASeDHeEXrGV" and GAME.enightcore then
+    if teraCheck and URM and GAME.comboStr == "eASeDHeEXrGV" and GAME.enightcore then
         SubmitAchv('one_of_mine', GAME.achv_noManualCommitH or GAME.roundHeight) 
+    end
+    -- The Originals Reprised
+    if teraCheck and URM and GAME.comboStr == "eASeEXeVLrDHrDPrGVrINrMSrNH" then
+        SubmitAchv('ultimate_smithy', GAME.teraLostHeight > 0 and GAME.teraLostHeight or GAME.roundHeight)
+    end
+    if teraCheck and URM and GAME.comboStr == "eDHeINeMSeNHrASrEXrGVrVL" and GAME.enightcore then
+        SubmitAchv('when_its_ready', GAME.achv_noManualCommitH or GAME.roundHeight)
     end
     -- Perfectly Balanced
     if GAME.comboMP == 4 then

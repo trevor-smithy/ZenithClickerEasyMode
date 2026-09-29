@@ -36,7 +36,8 @@ local d = {
             -- Quadruple Ultras
             --nh ms dh in, ex gv vl as
             {set = "eAS eEX eGV eVL rDH rIN rMS rNH", name = '"GUESSING GAME"', forceRev = true, customUltraCombo = true},
-            {set = "eDH eIN eMS eNH rAS rEX rGV rVL", name = '"FINAL DEVELOPMENT"', forceRev = true, customUltraCombo = true},
+            {set = "eDH eIN eMS eNH rAS rEX rGV rVL", checks = {'enightcore', false}, name = '"FINAL DEVELOPMENT"', forceRev = true, customUltraCombo = true},
+            {set = "eDH eIN eMS eNH rAS rEX rGV rVL", checks = {'canBeRandomlySelected', false, 'enightcore', true}, name = [["WHEN IT'S READY"]], forceRev = true, customUltraCombo = true},
             -- Ultimate Challenge
             {set = "eEX rAS rDH rGV rIN rMS rNH rVL",    name = '"ULTIMATE CHALLENGE"', forceRev = true, customUltraCombo = true, ultimateChallenge = true},
             {set = "eDP eEX rAS rDH rGV rIN rMS rNH rVL", name = '"FRIENDLY CHALLENGE"', forceRev = true, customUltraCombo = true, ultimateChallenge = true},
