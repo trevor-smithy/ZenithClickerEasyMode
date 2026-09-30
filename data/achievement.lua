@@ -2383,7 +2383,7 @@ local d = {
         comp = '<',
         scoreSimp = function(time) return string.format("%.2fs", time) end,
         scoreFull = function(time) return string.format("%.1f m/s", Floors[9].top / time) end,
-        rank = numberRankRev(90*1.5, 70*1.5, 60*1.5, 50*1.5, 40*1.5, 30*1.5, 20*1.5),
+        rank = numberRankRev(90*2, 70*2, 60*2, 50*2, 40*2, 30*2, 20*2),
         mod = "ZCEM",
     },
     {
@@ -2396,7 +2396,7 @@ local d = {
         comp = '<',
         scoreSimp = function(time) return string.format("%.2fs", time) end,
         scoreFull = function(time) return string.format("%.1f m/s", Floors[9].top / time) end,
-        rank = numberRankRev(90*2, 70*2, 60*2, 50*2, 40*2, 30*2, 20*2),
+        rank = numberRankRev(90*3, 70*3, 60*3, 50*3, 40*3, 30*3, 20*3),
         mod = "ZCEM",
     },
     {
@@ -2409,7 +2409,7 @@ local d = {
         comp = '<',
         scoreSimp = function(time) return string.format("%.2fs", time) end,
         scoreFull = function(time) return string.format("%.1f m/s", Floors[9].top / time) end,
-        rank = numberRankRev(90*4, 70*4, 60*4, 50*4, 40*4, 30*4, 20*4),
+        rank = numberRankRev(90*6, 70*6, 60*6, 50*6, 40*6, 30*6, 20*6),
         mod = "ZCEM",
     },
     {
@@ -2422,7 +2422,7 @@ local d = {
         comp = '<',
         scoreSimp = function(time) return string.format("%.2fs", time) end,
         scoreFull = function(time) return string.format("%.1f m/s", Floors[9].top / time) end,
-        rank = numberRankRev(90*7, 70*7, 60*7, 50*7, 40*7, 30*7, 20*7),
+        rank = numberRankRev(450, 360, 300, 270, 240, 210, 150),
         mod = "ZCEM",
     },
     {
@@ -2435,7 +2435,7 @@ local d = {
         comp = '<',
         scoreSimp = function(time) return string.format("%.2fs", time) end,
         scoreFull = function(time) return string.format("%.1f m/s", Floors[9].top / time) end,
-        rank = numberRankRev(90*10, 70*10, 60*10, 50*11, 40*12, 30*13, 20*14),
+        rank = numberRankRev(900, 720, 600, 540, 480, 420, 300),
         mod = "ZCEM",
     },
     {

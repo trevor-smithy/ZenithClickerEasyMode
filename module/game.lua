@@ -3562,7 +3562,7 @@ function GAME.finish(reason)
         W:reset()
     end
 
-    local teraCheck = GAME.teramusic or GAME.teraLostHeight or GAME.finishTera
+    local teraCheck = GAME.teramusic or GAME.teraLostHeight > 0 or GAME.finishTera
     if teraCheck and GAME.smithyMode then
         SubmitAchv('programmer_gamer', GAME.teraLostHeight > 0 and GAME.teraLostHeight or GAME.roundHeight)
     end
