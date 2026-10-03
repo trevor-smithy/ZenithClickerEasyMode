@@ -74,19 +74,19 @@ function scene.update()
             if code:find('12341234123412341234') then
                 SFX.play('warp')
                 SCN.swapTo('ending', 'warp')
-            elseif code:find('34653465346534653465') then
+            elseif code:find('34653465346534653465') then -- irrelevant because there is toggle in ZCEM menu
                 CONF.oldHitbox = not CONF.oldHitbox
                 MSG('dark', "Old hitbox: " .. (CONF.oldHitbox and "ON" or "OFF"))
                 SFX.play(CONF.oldHitbox and 'social_online' or 'social_offline')
                 TEXTS.version:set(SYSTEM .. (CONF.oldHitbox and " T" or " V") .. (require 'version'.verStr))
-            elseif code:find('34563456345634563456') then
+            elseif code:find('4444444444') then
                 UseAltName()
                 MSG('dark', "Alt strings applied")
                 SFX.play('social_online')
-            elseif code:find('3434343434') then
+            elseif code:find('1111111111') then
                 MSG('dark', OverDevProgressText)
                 SFX.play('social_online')
-            elseif code:find('5656565656') then
+            elseif code:find('2222222222') then
                 if not TestMode then
                     if STAT.srActive then
                         STAT.srActive = false
@@ -97,7 +97,7 @@ function scene.update()
                 else
                     MSG('info', "You are already in test mode!")
                 end
-            elseif code:find('6666666666') then
+            elseif code:find('3333333333') then
                 SFX.play('cutin_superlobby', 1, 0, Tone(-2))
                 SCN.go('_console')
             else
