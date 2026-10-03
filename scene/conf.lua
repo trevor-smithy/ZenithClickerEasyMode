@@ -119,7 +119,6 @@ local ZCEMclr = {
     cbFrame = { COLOR.HEX '6A82A7FF' },
 }
 local bpmMode = false
-local bpmModifier = 1
 local comboTimer = 0
 local combo = 0
 local leftx, rightx, leftbx, rightbx = 40, 500, 220, 685
@@ -455,48 +454,6 @@ function scene.update(dt)
     end
 end
 
-local function modifiedBPM()
-    if BGM.tell() < 0.1 then MusicBPM = nil end
-    local bpm = MusicBPM or BgmData[BgmPlaying].bpmData[1]
-    bpmModifier = 1
-    if GAME.nightcore then 
-        bpm = bpm * 2
-        bpmModifier = bpmModifier * 2
-    end
-    if GAME.enightcore then 
-        bpm = bpm * 2
-        bpmModifier = bpmModifier * 2
-    end
-    if GAME.slowmo then 
-        bpm = bpm / 2
-        bpmModifier = bpmModifier / 2
-    end
-    if GAME.eslowmo then
-        bpm = bpm * 0.70711
-        bpmModifier = bpmModifier * 0.70711
-    end
-    if GAME.mod.GV == -1 then
-        bpm = bpm * 0.70711
-        bpmModifier = bpmModifier * 0.70711
-    elseif GAME.mod.GV == 1 then
-        bpm = bpm * 1.05946
-        bpmModifier = bpmModifier * 0.70711
-    elseif GAME.mod.GV == 2 then
-        local mult = URM and 1.18921 or 1.12246
-        bpm = bpm * mult
-        bpmModifier = bpmModifier * mult
-    end
-    if GAME.uneasyMode then 
-        bpm = bpm * 1.01455 
-        bpmModifier = bpmModifier * 1.01455
-    end
-    if GAME.ultimateChallenge then
-        bpm = bpm / 2
-        bpmModifier = bpmModifier / 2
-    end
-    return bpm
-end
-
 function scene.draw()
     DrawBG(CONF.bgBrightness)
 
@@ -504,7 +461,7 @@ function scene.draw()
     local playTime = 0
     local beatLen = 0
     local beatBar = 0
-    local bpm = modifiedBPM()
+    local bpm, bpmModifier = ModifiedBPM()
     if bpmMode then
         playTime = BGM.tell()
         beatLen = 60 / bpm
@@ -744,7 +701,7 @@ end
 
 function scene.overDraw()
     -- BPM/Speed Indicator
-    local bpm = modifiedBPM()
+    local bpm, bpmModifier = ModifiedBPM()
     local speedMod = 1
     if GAME.nightcore then 
         speedMod = speedMod * 2.6

@@ -1368,6 +1368,48 @@ function Daemon_Slow()
     end
 end
 
+function ModifiedBPM()
+    if BGM.tell() < 0.1 then MusicBPM = nil end
+    local bpm = MusicBPM or BgmData[BgmPlaying].bpmData[1]
+    bpmModifier = 1
+    if GAME.nightcore then 
+        bpm = bpm * 2
+        bpmModifier = bpmModifier * 2
+    end
+    if GAME.enightcore then 
+        bpm = bpm * 2
+        bpmModifier = bpmModifier * 2
+    end
+    if GAME.slowmo then 
+        bpm = bpm / 2
+        bpmModifier = bpmModifier / 2
+    end
+    if GAME.eslowmo then
+        bpm = bpm * 0.70711
+        bpmModifier = bpmModifier * 0.70711
+    end
+    if GAME.mod.GV == -1 then
+        bpm = bpm * 0.70711
+        bpmModifier = bpmModifier * 0.70711
+    elseif GAME.mod.GV == 1 then
+        bpm = bpm * 1.05946
+        bpmModifier = bpmModifier * 0.70711
+    elseif GAME.mod.GV == 2 then
+        local mult = URM and 1.18921 or 1.12246
+        bpm = bpm * mult
+        bpmModifier = bpmModifier * mult
+    end
+    if GAME.uneasyMode then 
+        bpm = bpm * 1.01455 
+        bpmModifier = bpmModifier * 1.01455
+    end
+    if GAME.ultimateChallenge then
+        bpm = bpm / 2
+        bpmModifier = bpmModifier / 2
+    end
+    return bpm, bpmModifier
+end
+
 function Daemon_Fast()
     local max = math.max
     local hsv = COLOR.HSV
@@ -1383,7 +1425,6 @@ function Daemon_Fast()
 
     local beatS, beatE = 0, 0    -- Current beat's Start & End time
     local skipNextShuffle = true -- Flip-flop for MS shaking each 2 beats
-    local spinCount = 0 -- Flip-flop for EX spinning each 2 beats
     local MSactive = false       -- for skipping meaningless Ypos resets to improve performance
     local t = 0
     while true do
@@ -1449,9 +1490,9 @@ function Daemon_Fast()
             end
 
             -- Ultimate Challenge spinning
-            if newBeat and GAME.ultimateChallenge and not GAME.playing then
-                if spinCount == 2 then Cards[1]:spin() end
-                spinCount = spinCount == 3 and 0 or spinCount + 1
+                if GAME.ultimateChallenge then
+                    if (2 * T / bar % 1) < 0.1 then Cards[1]:spin() end
+                end
             end
 
             -- BGM time control
