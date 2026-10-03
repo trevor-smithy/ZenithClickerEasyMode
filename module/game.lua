@@ -1971,6 +1971,7 @@ function GAME.secretComboName(comboStr)
                 if c.ultimateChallenge then GAME.ultimateChallenge = true end
                 if c.forceRev and GAME.pieceCount() < 2 then GAME.forceRev = true end
                 if c.name == '"BAD TIME"' then
+                    SCN.scenes.tower.widgetList.easy:setVisible(false)
                     SCN.scenes.tower.widgetList.reset:setVisible(false)
                     SCN.scenes.tower.widgetList.help:setVisible(false)
                     SCN.scenes.tower.widgetList.help2:setVisible(false)
@@ -2368,6 +2369,13 @@ function GAME.task_toggleEasy()
         for i = 1, #list do
             list[i]:setActive(true)
             if list[i].id == 'EX' then list[i]:setActive(true, 3) elseif list[i].id ~= 'DP' then list[i]:setActive(true, 2) else list[i]:setActive(true) end
+            if interval then TASK.yieldT(interval) end
+        end
+    elseif GAME.ultimateChallenge and M.DP == 0 then
+        GAME.anyChange = true
+        for i = 1, #list do
+            list[i]:setActive(true)
+            if list[i].id == 'EX' then list[i]:setActive(true, 2) elseif list[i].id ~= 'DP' then list[i]:setActive(true, 3) else list[i]:setActive(true) end
             if interval then TASK.yieldT(interval) end
         end
     else
@@ -3520,6 +3528,7 @@ function GAME.finish(reason)
     SCN.scenes.tower.widgetList.help:setVisible(not GAME.zenithTraveler)
     SCN.scenes.tower.widgetList.help2:setVisible(not GAME.zenithTraveler)
     SCN.scenes.tower.widgetList.daily:setVisible(not GAME.zenithTraveler)
+    SCN.scenes.tower.widgetList.easy:setVisible(not GAME.zenithTraveler)
     TABLE.clear(HoldingButtons)
     MSG.clear()
 
@@ -4358,7 +4367,7 @@ function GAME.update(dt)
     end
     if GAME.reviveTime then
         GAME.reviveTime = GAME.reviveTime + dt
-        if M.DP == 2 and GAME.reviveTime > 60 then
+        if M.DP == 2 and M.NH ~= -1 and GAME.reviveTime > 60 then
             GAME.dmgHeal = GAME.dmgHeal - 0.05 * dt
         end
     end

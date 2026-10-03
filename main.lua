@@ -1368,6 +1368,8 @@ function Daemon_Slow()
     end
 end
 
+RAINBOWFLASH = false
+
 function ModifiedBPM()
     if BGM.tell() < 0.1 then MusicBPM = nil end
     local bpm = MusicBPM or BgmData[BgmPlaying].bpmData[1]
@@ -1490,8 +1492,12 @@ function Daemon_Fast()
             end
 
             -- Ultimate Challenge spinning
+            if newBeat and (GAME.ultimateChallenge or GAME.peasantRevolution) and not GAME.playing then
                 if GAME.ultimateChallenge then
                     if (2 * T / bar % 1) < 0.1 then Cards[1]:spin() end
+                end
+                if GAME.peasantRevolution then
+                    RAINBOWFLASH = (2 * T / bar % 1) > 0.5
                 end
             end
 

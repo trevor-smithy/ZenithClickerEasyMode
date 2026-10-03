@@ -305,11 +305,12 @@ local function keyTrigger(key)
                 return
             end
             GAME.anyChange = false
+            local ultimateChallenge = GAME.ultimateChallenge and M.DP == 0
             GAME.toggleEasy()
             if GAME.anyChange then
                 if not GAME.playing then
                     local hand = GAME.getHand(true)
-                    local revCount = table.concat(hand):count('r')
+                    local revCount = ultimateChallenge and 0 or table.concat(hand):count('r')
                     local pitch = M.GV < 0 and -6 or M.GV > 0 and (URM and M.GV == 2 and 3 or M.GV) or 0
                     if GAME.uneasyMode then pitch = pitch + 0.25 end
                     if GAME.slowmo then pitch = pitch - 12 end
@@ -430,8 +431,10 @@ local function generateRandomCombo(forceSpecial)
             local setIndex = 0
             if STAT.srMilestone.star_9 and STAT.clicker and ACHV.uneasy and math.random(2) > 1 then
                 local c = Secret.combos
+                local playSFX = true
                 setIndex = math.random(3)
                 c = setIndex == 1 and c.ultra or setIndex == 2 and c.uneasy or c.other
+                local hyperalert = setIndex == 1
                 c = c[math.random(#c)]
                 comboSet = c.set
                 if c.checks then
@@ -440,9 +443,11 @@ local function generateRandomCombo(forceSpecial)
                         if c.checks[1] == 'badTime' then break end
                         if c.checks[1] == 'canBeRandomlySelected' then notCondition = true end
                         if c.checks[1] == 'ultraIfRandom' then forceUltra = true end
-                        GAME[c.checks[i]] = notCondition and not c.checks[i+1] or c.checks[i+1]
+                        GAME[c.checks[i]] = (notCondition and (not c.checks[i+1])) or c.checks[i+1]
                     end
                 end
+                if c.ultimateChallenge or c.name == '"BAD TIME"' or c.peasantRevolution then playSFX = false end
+                if playSFX then SFX.play(hyperalert and 'hyperalert' or 'warning') end
             else
                 local index = math.random(47, #ComboData.menu)
                 comboSet = ComboData.menu[index].set
@@ -1145,10 +1150,9 @@ function scene.draw()
         -- MP & ZP Preview
         if not GAME.playing and STAT.maxFloor >= 10 and not GAME.badTime then
             gc_setColor(TextColor)
-            local speedMod = ((GAME.enightcore or GAME.nightcore) and 2 or 1) * (GAME.eslowmo and 0.75 or 1) * (GAME.slowmo and 0.5 or 1)
-            local prMod = 1.08422
+            local speedMod = ((GAME.enightcore and GAME.nightcore) and 4 or (GAME.enightcore or GAME.nightcore) and 2 or 1) * (GAME.eslowmo and 0.75 or 1) * (GAME.slowmo and 0.5 or 1)
             local rainbowText = GAME.forceRev and GAME.getComboZP(GAME.getHand(true)) < 1.2
-            if GAME.peasantRevolution and floor(t * speedMod * prMod) % 2 == 1 then rainbowText = false end
+            if GAME.peasantRevolution and RAINBOWFLASH then rainbowText = false end
             if rainbowText then
                 gc_setColor(COLOR.rainbow_light(2.6 * t * speedMod))
             end
@@ -1235,21 +1239,20 @@ function scene.overDraw()
     if not GAME.invisUI then
         -- Current combo
         if not GAME.playing or M.IN < 2 then
-            local speedMod = ((GAME.enightcore or GAME.nightcore) and 2 or 1) * (GAME.eslowmo and 0.75 or 1) * (GAME.slowmo and 0.5 or 1)
+            local speedMod = ((GAME.enightcore and GAME.nightcore) and 4 or (GAME.enightcore or GAME.nightcore) and 2 or 1) * (GAME.eslowmo and 0.75 or 1) * (GAME.slowmo and 0.5 or 1)
             if GAME.customUltraCombo and not GAME.playing then
-                local prMod = 1.08422
-                if not (GAME.peasantRevolution and floor(t * speedMod * prMod) % 2 == 1) then
+                if not (RAINBOWFLASH and GAME.peasantRevolution) then
                     TEXTS.mod:setFont(FONT.get(GAME.badTime and 90 or 60))
                     gc_setColor(COLOR.rainbow_light(2.6 * t * speedMod))
-                    if GAME.peasantRevolution then SCN.scenes.tower.widgetList.easy.textColor = COLOR.Y end
-                elseif GAME.peasantRevolution then
+                    if GAME.peasantRevolution or (GAME.ultimateChallenge and M.DP == 0) then SCN.scenes.tower.widgetList.easy.textColor = COLOR.Y end
+                elseif RAINBOWFLASH then
                     TEXTS.mod:setFont(FONT.get(30))
                     gc_setColor(TextColor)
                     SCN.scenes.tower.widgetList.easy.textColor = COLOR.DG
                     BGM.set('all', 'highgain', 1, 0.626/speedMod)
                 end
-                if GAME.peasantRevolution and floor(t * speedMod * prMod) % 2 == 1 then TEXTS.mod:set('"ULTRA HARD BATH WATER"') end
-                if GAME.peasantRevolution and floor(t * speedMod * prMod) % 2 == 0 then TEXTS.mod:set('"PEASANT REVOLUTION"') end
+                if GAME.peasantRevolution and RAINBOWFLASH then TEXTS.mod:set('"ULTRA HARD BATH WATER"')
+                elseif GAME.peasantRevolution and not RAINBOWFLASH then TEXTS.mod:set('"PEASANT REVOLUTION"') end
             elseif GAME.smithyMode then
                 TEXTS.mod:setFont(FONT.get(50))
                 gc_setColor(0,1,0)
@@ -2224,7 +2227,7 @@ function scene.overDraw()
     if GAME.ultimateChallenge and not GAME.playing then
         gc_replaceTransform(SCR.origin)
         local t = love.timer.getTime()
-        local speedMod = ((GAME.enightcore or GAME.nightcore) and 2 or 1) * (GAME.eslowmo and 0.75 or 1) * (GAME.slowmo and 0.5 or 1)
+        local speedMod = ((GAME.enightcore and GAME.nightcore) and 4 or (GAME.enightcore or GAME.nightcore) and 2 or 1) * (GAME.eslowmo and 0.75 or 1) * (GAME.slowmo and 0.5 or 1)
         gc_setColor(COLOR.rainbow_light(2.6 * t * speedMod))
         gc_setAlpha(0.35)
         gc_draw(TEXTURE.transition, 0, 0, 0, .42 / 128 * SCR.w, SCR.h)

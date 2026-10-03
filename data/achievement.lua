@@ -2339,6 +2339,7 @@ local d = {
         quote = [[A (poorly guarded) secret.]],
         type = 'issued',
         hide = TRUE,
+        credit = "TrevorSmithy",
         mod = "ZCEM",
     },
     { -- garbage_in_garbage_out
@@ -2348,6 +2349,7 @@ local d = {
         quote = [["That's good. O-ok. Alright. OK THAT'S GOOD! IT'S- IT'S ENOUGH SLICES!]],
         type = 'issued',
         hide = TRUE,
+        credit = "TrevorSmithy",
         mod = "ZCEM",
     },
     { -- its_a_feature
@@ -2357,6 +2359,7 @@ local d = {
         quote = [["Wait, that saves B2B? Certainly that's a bug..."]],
         type = 'issued',
         hide = TRUE,
+        credit = "TrevorSmithy",
         mod = "ZCEM",
     },
     { title = "Smithy", desc = "Added in v1.3, these all require using eEX/ueEX, eVL, and eAS with all other mods sharing the same (non-easy) state", mod = "ZCEM"},
