@@ -427,6 +427,7 @@ function scene.load()
 
     maxScroll = max(ceil((#achvLists[page] - 12) / 2) * 140, 0)
     clearNotice = false
+    if GAME.secretComboName(table.concat(TABLE.sort(GAME.getHand(true)))) == [["WHEN IT'S READY"]] and GAME.enightcore then whenItsReady = true end
 end
 
 function scene.unload()
@@ -532,20 +533,32 @@ function scene.draw()
         gc_print("Zenith Clicker Achievement System When?", 420, 380)
         gc_setColor(COLOR.D)
         gc_rectangle('fill', 480, 435, 560, 50)
-        gc_setColor(COLOR.lS)
-        gc_polygon('fill',
-            25 + 420, 435,
-            420, 435 + 25,
-            25 + 420, 435 + 50,
-            -25 + 420 + 102, 435 + 50,
-            420 + 102, 435 + 25,
-            -25 + 420 + 102, 435
-        )
+        if page == ZCEMpage then
+            gc_setColor(0,1,0)
+            gc_polygon('fill',
+                25 + 420, 435,
+                420, 435 + 25,
+                25 + 420, 435 + 50,
+                -25 + 420 + 232, 435 + 50,
+                420 + 232, 435 + 25,
+                -25 + 420 + 232, 435
+            )
+        else
+            gc_setColor(COLOR.lS)
+            gc_polygon('fill',
+                25 + 420, 435,
+                420, 435 + 25,
+                25 + 420, 435 + 50,
+                -25 + 420 + 102, 435 + 50,
+                420 + 102, 435 + 25,
+                -25 + 420 + 102, 435
+            )
+        end
         gc_setColor(COLOR.D)
-        gc_print("MrZ", 444, 440)
+        gc_print(page == ZCEMpage and "Trevor Smithy" or "MrZ", 444, 440)
         gc_setColor(COLOR.lD)
-        gc_print("at 2025/3/18 (Tue)", 535, 440)
-        gc_setColor(COLOR.lS)
+        gc_print(page == ZCEMpage and "at 2026/9/25 (Fri)" or "at 2025/3/18 (Tue)", page == ZCEMpage and 665 or 535, 440)
+        if page == ZCEMpage then gc_setColor(0,1,0) else gc_setColor(COLOR.lS) end
         gc_print("When it's ready.", 482, 515)
     else
         -- Board
