@@ -2310,6 +2310,7 @@ local d = {
         quote = [["Haha Smithy Cannon go brrrrrrrrr"]],
         credit = "@TrevorSmithy",
         type = 'issued',
+        hide = TRUE,
         mod = "ZCEM",
     },
     { -- gigaplonk
