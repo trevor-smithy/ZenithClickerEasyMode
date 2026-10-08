@@ -440,14 +440,20 @@ function GAME.getComboName(list, mode)
                         rem(fstr, #fstr) -- remove " at end
                         rem(fstr, 1) -- remove " at start
                         local wordCount = TABLE.countAll(fstr, ' ') + 1 -- count the number of spaces + 1 to get number of words
+                        local commaCount = TABLE.countAll(fstr, ',')
                         fstr = table.concat(fstr) -- recombine the combo (minus the "")
                         local wordList = {}
-                        for word in string.gmatch(fstr, "%S+") do
+                        for word in string.gmatch(fstr, "([^,%s]+)") do -- match every non-space/comma character
                             table.insert(wordList, word) -- create new table of words
                         end
                         TABLE.shuffle(wordList) -- shuffle words
                         for i = 1, wordCount do
-                            ins(wordList, i*2, ' ') -- put a space between each word
+                            if commaCount > 0 then
+                                ins(wordList, i*2, ', ') -- if there's a comma, put it in too
+                                commaCount = commaCount - 1
+                            else
+                                ins(wordList, i*2, ' ') -- put a space between each word
+                            end
                         end
                         rem(wordList, #wordList) -- remove trailing space
                         ins(wordList, 1, "\"") -- readd " at start
@@ -766,15 +772,15 @@ function GAME.genQuest()
         local var = floor * .26 * extraQuestVar
         local r = MATH.clamp(base + var * abs(MATH.randNorm()), 1, GAME.maxQuestSize)
 
-    GAME.atkBuffer = GAME.atkBuffer + r
-    if GAME.atkBuffer > GAME.atkBufferCap then
-        r = r - (GAME.atkBuffer - GAME.atkBufferCap)
-        GAME.atkBuffer = GAME.atkBufferCap
-    end
-    GAME.atkBuffer = clamp(GAME.atkBuffer - (max(floor / 3, GAME.atkBufferCap / 4) + MATH.rand(-.62, .62)), 0, GAME.atkBufferCap)
-    if M.DP > 0 then r = r * (GAME[GAME.getLifeKey(true)] == 0 and 1.26 or 1.1) end
-    
-    if M.DH == -1 then r = r * 5/8 end
+        GAME.atkBuffer = GAME.atkBuffer + r
+        if GAME.atkBuffer > GAME.atkBufferCap then
+            r = r - (GAME.atkBuffer - GAME.atkBufferCap)
+            GAME.atkBuffer = GAME.atkBufferCap
+        end
+        GAME.atkBuffer = clamp(GAME.atkBuffer - (max(floor / 3, GAME.atkBufferCap / 4) + MATH.rand(-.62, .62)), 0, GAME.atkBufferCap)
+        if M.DP > 0 then r = r * (GAME[GAME.getLifeKey(true)] == 0 and 1.26 or 1.1) end
+        
+        if M.DH == -1 then r = r * 5/8 end
         local pool = TABLE.copyAll(MD.weight)
 
         local lastQ = GAME.quests[#GAME.quests]
@@ -828,16 +834,16 @@ function GAME.genQuest()
                 pool[mod] = 0
                 local p = TABLE.find(CD, CD[mod])
                 if p then
-                if M.DH == -1 then --if easy DH, then "fix" the quest favor to increase the chance for adjacent cards instead of decrease
-                    if p > 1 then
-                        local left = CD[p - 1].id
-                        pool[left] = max(pool[left] * (1 + GAME.questFavor * .01), 0)
-                    end
-                    if p < 9 then
-                        local right = CD[p + 1].id
-                        pool[right] = max(pool[right] * (1 + GAME.questFavor * .01), 0)
-                    end
-                else
+                    if M.DH == -1 then --if easy DH, then "fix" the quest favor to increase the chance for adjacent cards instead of decrease
+                        if p > 1 then
+                            local left = CD[p - 1].id
+                            pool[left] = max(pool[left] * (1 + GAME.questFavor * .01), 0)
+                        end
+                        if p < 9 then
+                            local right = CD[p + 1].id
+                            pool[right] = max(pool[right] * (1 + GAME.questFavor * .01), 0)
+                        end
+                    else
                         if p > 1 then
                             local left = CD[p - 1].id
                             pool[left] = max(pool[left] * (1 - GAME.questFavor * .01), 0)
@@ -864,9 +870,7 @@ function GAME.genQuest()
         if #combo >= 4 then
             local pwr = #combo * 2 - 7
             if TABLE.find(combo, 'DH') then pwr = pwr + 1 end
-            if #combo >= 7 then
-                pwr = #combo
-            end
+            if #combo >= 7 then pwr = #combo end
             local tone = GAME.nightcore and 16.54 or 0
             if GAME.slowmo then tone = tone - 12 end
             for i = 1, tone == 0 and 1 or 2 do
