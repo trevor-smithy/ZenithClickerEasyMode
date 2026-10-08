@@ -151,6 +151,8 @@ function Card:setActive(auto, key, friendActivation)
     end
     -- Trevor Smithy
     self.active = not self.active -- the main flip
+
+    if self.active and GAME.height >= 650 and GAME.playing then GAME.achv_postF5ActivatedCards = GAME.achv_postF5ActivatedCards + 1 end
     --Closer Card
     if GAME.ecloseCard and GAME.playing and not (auto or friendActivation) then
         self.active = not self.active
@@ -270,6 +272,7 @@ function Card:setActive(auto, key, friendActivation)
                                     color = 'lM',
                                 }
                                 IssueAchv('cheat_death')
+                                GAME.achv_cheatDeathUAS = true
                             end
                         end
                     end

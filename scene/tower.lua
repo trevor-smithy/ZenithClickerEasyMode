@@ -333,6 +333,7 @@ local function keyTrigger(key)
                     end
                     if M.NH == -1 and (GAME.life > 0 or GAME.life2 > 0) then
                         IssueAchv('cheat_death')
+                        GAME.achv_cheatDeathSlowmo = true
                         MSG("dark", "OH NO YOU DON'T!!!",10)
                         TEXT:add {
                             text = 'WHAT ARE YOU DOING???',

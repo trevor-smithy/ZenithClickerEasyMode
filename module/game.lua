@@ -151,6 +151,13 @@ local ins, rem = table.insert, table.remove
 ---@field achv_cleanBreakQuest number
 ---@field achv_professionalCleanerQuest number
 ---@field achv_roldSmythyQuest number
+---@field achv_postF1CommittedQuests number
+---@field achv_postF1StackedQuests number
+---@field achv_postF5ActivatedCards number
+---@field achv_cheatDeathSlowmo boolean
+---@field achv_cheatDeathUAS boolean
+---@field achv_cheatDeathUDP boolean
+---@field achv_cheatDeathEEX boolean
 ---@field hasSubmittedTimedAchievements boolean
 ---@field comboSFX number
 ---@field comboBounceTime number
@@ -2661,6 +2668,9 @@ function GAME.commit(auto, falseCommit)
             if #hand == 7 and not TABLE.find(hand, 'DP') and M.EX == -1 and M.GV == -1 and M.IN == -1 then
                 IssueAchv('trip_to_hell')
             end
+
+           if GAME.height >= 50 then GAME.achv_postF1CommittedQuests = GAME.achv_postF1CommittedQuests + 1 end
+            
             if GAME.lifeState == 'danger' then
                 GAME.achv_clutchQuest = GAME.achv_clutchQuest + 1
                 SFX.play('clutch')
@@ -3019,6 +3029,7 @@ function GAME.commit(auto, falseCommit)
                         color = 'lM',
                     }
                     IssueAchv('cheat_death')
+                    GAME.achv_cheatDeathUDP = true
                 else
                     GAME.takeDamage(URM and attack / 2.6 or attack / 4, 'wrong', oldAllyHP > 0)
                 end
@@ -3194,6 +3205,7 @@ function GAME.commit(auto, falseCommit)
             ins(GAME.questStack, 1, {combo = GAME.quests[1].combo, name = GC.newText(FONT.get(70), GAME.getComboName(TABLE.copy(GAME.quests[1].combo), 'ingame')), y = 330, k = 1, a = 1,})
             rem(GAME.quests, 1)
             if GAME.fault and GAME.chain >= 4 and not ACHV.its_a_feature then IssueAchv('its_a_feature') end
+            if GAME.height >= 50 then GAME.achv_postF1StackedQuests = GAME.achv_postF1StackedQuests + 1 end
             GAME.genQuest()
             SFX.play("hold")
             if #GAME.questStack >= 20 then
@@ -3286,6 +3298,13 @@ function GAME.start()
     GAME.achv_cleanBreakQuest = 0
     GAME.achv_professionalCleanerQuest = 0
     GAME.achv_roldSmythyQuest = 0
+    GAME.achv_postF1CommittedQuests = 0
+    GAME.achv_postF1StackedQuests = 0
+    GAME.achv_postF5ActivatedCards = 0
+    GAME.achv_cheatDeathEEX = false
+    GAME.achv_cheatDeathSlowmo = false
+    GAME.achv_cheatDeathUAS = false
+    GAME.achv_cheatDeathUDP = false
     GAME.hasSubmittedTimedAchievements = false
     GAME.noManualActivate = true
     GAME.noMouseOrSpin = true
@@ -3640,6 +3659,10 @@ function GAME.finish(reason)
 
     if GAME.height >= 825000 and CONF.imperial then
         IssueAchv('im_gonna_be')
+    end
+
+    if GAME.achv_cheatDeathEEX and GAME.achv_cheatDeathSlowmo and GAME.achv_cheatDeathUAS and GAME.achv_cheatDeathUDP then
+        IssueAchv('adrenaline_junkie')
     end
 
     GAME.playing = false
@@ -4409,6 +4432,7 @@ function GAME.update(dt)
                     color = 'lB',
                 }
                 IssueAchv('cheat_death')
+                GAME.achv_cheatDeathEEX = true
             end
         elseif M.EX == -1 and M.NH == -1 and GAME.time >= finalFatigueTime and GAME.time < finalFatigueTimePostOSP then
             GAME.dmgHeal = 0
@@ -4664,6 +4688,7 @@ function GAME.update(dt)
                     end
                 )
             end
+            if GAME.achv_postF1CommittedQuests <= 1 and GAME.achv_postF1StackedQuests == 0 and GAME.achv_postF5ActivatedCards == 0 and GAME.pieceCount() == 0 then IssueAchv('modifier_stacking') end
         end
 
         -- KM line text
