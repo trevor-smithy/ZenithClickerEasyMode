@@ -939,65 +939,65 @@ function Card:draw()
                 gc_draw(activeFrame2, 0, 0, 0, sign(self.kx), 1, frame2W, frame2H)
             end
         end
-        -- Menu UI
-        if not playing then
-            gc_push('transform')
+    end
+    -- Menu UI
+    if not playing then
+        gc_push('transform')
 
-            -- Rev Throb
-            if not self.upright and GAME.revDeckSkin and faceUp then
-                gc_setColor(1, 1, 1, ThrobAlpha.card)
-                gc_setShader(SHADER.throb)
-                gc_draw(img, -img:getWidth() / 2, -img:getHeight() / 2)
-                gc_setShader()
-            end
-
-            -- Star
-            if completion[self.id] > 0 then
-                img = TEXTURE[self.active and (self.id == 'DP' and STAT.clicker and 'star2' or 'star1') or 'star0']
-                local t = (self.upright or self.easy) and self.float or 1
-                local blur = (FloatOnCard == self.initOrder or not self.upright) and 0 or -.2
-                local x = lerp(155, 0, t)
-                local y = lerp(-370, -330, t)
-                local cr = lerp(60, 180, t)
-                local revMastery = completion[self.id] == 2
-                local ang = -t * 6.2832
-                gc_scale(abs(1 / self.kx * self.ky), 1)
-                -- Base star
-                if self.upright or self.easy then
-                    gc_setColor(.26, .26, .26)
-                    gc_setBlendMode('add')
-                    gc_blurCircle(blur, x, y, cr)
-                    if revMastery then gc_blurCircle(blur, -x, -y, cr) end
-                    gc_setBlendMode('alpha')
-                    gc_setColor(1, 1, 1)
-                    gc_mDraw(img, x, y, ang, lerp(.16, .42, t))
-                    if revMastery then gc_mDraw(img, -x, -y, ang, lerp(.16, .42, t)) end
-                else
-                    gc_setColor(.6, .1, .1)
-                    gc_setBlendMode('add')
-                    gc_blurCircle(blur, x, y, cr)
-                    if revMastery then gc_blurCircle(blur, -x, -y, cr) end
-                    gc_setBlendMode('alpha')
-                    gc_setColor(1, .62 + .1 * sin(getTime() * 42), .26)
-                    gc_mDraw(img, x, y, ang, lerp(.16, .42, t))
-                    if revMastery then gc_mDraw(img, -x, -y, ang, lerp(.16, .42, t)) end
-                end
-                -- Float star
-                if not self.active then
-                    if revMastery then
-                        gc_setColor(.5, .5, .5, t)
-                        gc_setBlendMode('add')
-                        gc_blurCircle(blur, -x, -y, cr)
-                        gc_setBlendMode('alpha')
-                    end
-                    gc_setColor(1, 1, 1, t)
-                    local star1 = TEXTURE[self.id == 'DP' and STAT.clicker and 'star2' or 'star1']
-                    gc_mDraw(star1, x, y, ang, lerp(.16, .42, t))
-                    if revMastery then gc_mDraw(star1, -x, -y, ang, lerp(.16, .42, t)) end
-                end
-            end
-            gc_pop()
+        -- Rev Throb
+        if not self.upright and GAME.revDeckSkin and faceUp then
+            gc_setColor(1, 1, 1, ThrobAlpha.card)
+            gc_setShader(SHADER.throb)
+            gc_draw(img, -img:getWidth() / 2, -img:getHeight() / 2)
+            gc_setShader()
         end
+
+        -- Star
+        if completion[self.id] > 0 then
+            img = TEXTURE[self.active and (self.id == 'DP' and STAT.clicker and 'star2' or 'star1') or 'star0']
+            local t = (self.upright or self.easy) and self.float or 1
+            local blur = (FloatOnCard == self.initOrder or not self.upright) and 0 or -.2
+            local x = lerp(155, 0, t)
+            local y = lerp(-370, -330, t)
+            local cr = lerp(60, 180, t)
+            local revMastery = completion[self.id] == 2
+            local ang = -t * 6.2832
+            gc_scale(abs(1 / self.kx * self.ky), 1)
+            -- Base star
+            if self.upright or self.easy then
+                gc_setColor(.26, .26, .26)
+                gc_setBlendMode('add')
+                gc_blurCircle(blur, x, y, cr)
+                if revMastery then gc_blurCircle(blur, -x, -y, cr) end
+                gc_setBlendMode('alpha')
+                gc_setColor(1, 1, 1)
+                gc_mDraw(img, x, y, ang, lerp(.16, .42, t))
+                if revMastery then gc_mDraw(img, -x, -y, ang, lerp(.16, .42, t)) end
+            else
+                gc_setColor(.6, .1, .1)
+                gc_setBlendMode('add')
+                gc_blurCircle(blur, x, y, cr)
+                if revMastery then gc_blurCircle(blur, -x, -y, cr) end
+                gc_setBlendMode('alpha')
+                gc_setColor(1, .62 + .1 * sin(getTime() * 42), .26)
+                gc_mDraw(img, x, y, ang, lerp(.16, .42, t))
+                if revMastery then gc_mDraw(img, -x, -y, ang, lerp(.16, .42, t)) end
+            end
+            -- Float star
+            if not self.active then
+                if revMastery then
+                    gc_setColor(.5, .5, .5, t)
+                    gc_setBlendMode('add')
+                    gc_blurCircle(blur, -x, -y, cr)
+                    gc_setBlendMode('alpha')
+                end
+                gc_setColor(1, 1, 1, t)
+                local star1 = TEXTURE[self.id == 'DP' and STAT.clicker and 'star2' or 'star1']
+                gc_mDraw(star1, x, y, ang, lerp(.16, .42, t))
+                if revMastery then gc_mDraw(star1, -x, -y, ang, lerp(.16, .42, t)) end
+            end
+        end
+        gc_pop()
     end
 
     -- Icon cover
