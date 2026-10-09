@@ -930,11 +930,11 @@ function Card:draw()
                     gc_mRect('line', 0, 0, 240 * 2 - width*2-4, 330 * 2 - width*2-4, width/2-4)
                 end
             end
-            if a1 and not (GAME.einvisCard and GAME.playing) and not (GAME.glassCard and not CONF.classicMode) then
+            if a1 and not (GAME.einvisCard and GAME.playing) and (M.IN == -1 or not (GAME.glassCard and not CONF.classicMode)) then
                 gc_setColor(r1, g1, b1, a1)
                 gc_draw(activeFrame, 0, 0, 0, sign(self.kx), 1, frame1W, frame1H)
             end
-            if a2 and not (GAME.einvisCard and GAME.playing) and not (GAME.glassCard and not CONF.classicMode) then
+            if a2 and not (GAME.einvisCard and GAME.playing) and (M.IN == -1 or not (GAME.glassCard and not CONF.classicMode)) then
                 gc_setColor(r2, g2, b2, a2)
                 gc_draw(activeFrame2, 0, 0, 0, sign(self.kx), 1, frame2W, frame2H)
             end
