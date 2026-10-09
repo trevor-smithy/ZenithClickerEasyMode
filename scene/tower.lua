@@ -2208,6 +2208,14 @@ function scene.overDraw()
         end
     end
 
+    -- Steadfast cover
+    if (GAME.glassCard or GAME.eglassCard) and not CONF.classicMode then
+        gc_replaceTransform(SCR.origin)
+        gc_setColor(1, 0, 1, (GAME.playing and .626 or 1) * .42)
+        gc_draw(TEXTURE.transition, 0, 0, -1.5708, .35 / 128 * -SCR.h, SCR.w)
+        gc_draw(TEXTURE.transition, 0, SCR.h, -1.5708, .35 / 128 * SCR.h, SCR.w)
+    end
+
     -- Fastleak cover
     if GAME.fastLeak then
         gc_replaceTransform(SCR.origin)
@@ -2513,9 +2521,12 @@ scene.widgetList = {
                 -- Trevor Smithy
                 GAME.refreshCurrentCombo()
                 GAME.multiplePiecesActive = false
+                local string = GAME.pieceEffectID == 3 and not CONF.classicMode and { COLOR.lB, "J - Steadfast" }
+                    or GAME.pieceEffectID == 10 and not CONF.classicMode and { COLOR.lB, "eJ - Steadfast+" }
+                    or PieceData[GAME.pieceEffectID].popup
                 MSG({
                     cat = 'dark',
-                    str = PieceData[GAME.pieceEffectID].popup,
+                    str = string,
                     time = 1.2
                 })
             end

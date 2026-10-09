@@ -138,7 +138,7 @@ local descriptionTable = {
     "Use Easy Names: Mods use their Easy variants in-game, even with rDH!",
     "Imperial Units: Feet and Miles used instead of Meters.",
     "In-Game Lyrics: Enables lyrics in game for songs that have them.",
-    "Board UI: Toggles updated Board UI, may look weird with other toggles.",
+    "Classic Mode: Re-enables original ZCEM look, including Glass Card.",
 }
 local pieceDescriptionTable = {
     [0] = "Press to cycle through options' descriptions.",
@@ -161,7 +161,7 @@ local function refreshWidgets()
     for _, W in next, scene.widgetList do 
         W:setVisible() 
         local tabs = {'back', 'conf', 'utils', 'album', 'zcem'}
-        local zcem = {'gameplay', 'bpm', 'promotion', 'imperial', 'oldTransparentCard', 'oldHitbox', 'easyName', 'stacker', 'board', 'lyrics', 'pieces', 'ez', 'es', 'ej', 'el', 'et', 'eo', 'ei', 'urm', 'clear', 'help2'}
+        local zcem = {'gameplay', 'bpm', 'promotion', 'imperial', 'oldTransparentCard', 'oldHitbox', 'easyName', 'stacker', 'classicMode', 'lyrics', 'pieces', 'ez', 'es', 'ej', 'el', 'et', 'eo', 'ei', 'urm', 'clear', 'help2'}
         if not TABLE.find(tabs, W.name) and TABLE.find(zcem, W.name) then
             if GAME.ecloseCard then
                 if W.x < 700 then
@@ -212,6 +212,12 @@ local function refreshWidgets()
     if SongNamePlaying == 'teral' or SongNamePlaying == 'terael' then
         scene.widgetList.loops:setVisible(false)
     end
+    if CONF.classicMode then
+        scene.widgetList.ej.text = "eJ - Glass Card+"
+    else
+        scene.widgetList.ej.text = "eJ - Steadfast+"
+    end
+    scene.widgetList.ej:reset()
 end
 
 local function timePast(t1, t2)
@@ -1541,7 +1547,7 @@ pages[ZCEMpage] = {
                 SFX.play('no')
                 MSG('dark', "STACKER and PROMOTION GAUGE are MUTUALLY EXCLUSIVE!")
             else
-                SFX.play('social_dm')
+                SFX.play(CONF.stacker and 'combo_8_power' or 'combobreak')
             end
             GAME.multiplePiecesActive = false
             SaveConf()
@@ -1559,7 +1565,6 @@ pages[ZCEMpage] = {
             local multiple = GAME.multiplePiecesActive
             MSG.clear()
             CONF.lyrics = not CONF.lyrics
-            SFX.play(CONF.lyrics and 'social_online' or 'social_offline')
             MSG('dark', "In-Game Lyrics: " .. (CONF.lyrics and "Enabled" or " Disabled"))
             GAME.multiplePiecesActive = false
             SaveConf()
@@ -1567,21 +1572,22 @@ pages[ZCEMpage] = {
         end,
     },
     WIDGET.new {
-        name = 'board', type = 'checkBox',
+        name = 'classicMode', type = 'checkBox',
         fillColor = ZCEMclr.cbFill,
         frameColor = ZCEMclr.cbFrame,
-        textColor = ZCEMclr.T, text = "BOARD UI",
+        textColor = ZCEMclr.T, text = "CLASSIC MODE",
         x = baseX + 500, y = baseY + 310,
-        disp = function() return CONF.board end,
+        disp = function() return CONF.classicMode end,
         code = function()
             local multiple = GAME.multiplePiecesActive
             MSG.clear()
-            CONF.board = not CONF.board
-            SFX.play(CONF.board and 'social_online' or 'social_offline')
-            MSG('dark', "Board UI: " .. (CONF.board and "Enabled" or " Disabled"))
+            CONF.classicMode = not CONF.classicMode
+            SFX.play(CONF.classicMode and 'spin' or 'spinend')
+            MSG('dark', "Classic Mode: " .. (CONF.classicMode and "Enabled" or " Disabled"))
             GAME.multiplePiecesActive = false
             SaveConf()
             if multiple then GAME.multiplePiecesActive = true end
+            refreshWidgets()
         end,
     },
     WIDGET.new { -- BPM/Speed Button
@@ -1651,7 +1657,7 @@ pages[ZCEMpage] = {
         name = 'ej', type = 'checkBox',
         fillColor = ZCEMclr.cbFill,
         frameColor = ZCEMclr.cbFrame,
-        textColor = COLOR.lB, text = "eJ - Glass Card+",
+        textColor = COLOR.lB, text = CONF.classicMode and "eJ - Glass Card+" or "eJ - Steadfast+",
         x = baseX + 40, y = baseY + 50 + 480,
         disp = function() return GAME.eglassCard end,
         code = function()
@@ -1772,7 +1778,7 @@ pages[ZCEMpage] = {
             GAME.hardMode = GAME.mod.EX > 0 or GAME.anyRev and not URM
             GAME.refreshLayout()
             GAME.refreshUltra()
-            --GAME.refreshCurrentCombo()
+            if TABLE.equal(GAME.getHand(true), {'eEX','rNH','rMS','rGV','rVL','rDH','rIN','rAS'}) or TABLE.equal(GAME.getHand(true), {'eEX','rNH','rMS','rGV','rVL','rDH','rIN','rAS','eDP'}) then GAME.refreshCurrentCombo() end
             GAME.refreshPBText()
             RefreshBGM(mode)
             GAME.refreshRPC()
@@ -1876,9 +1882,12 @@ pages[ZCEMpage] = {
             GAME.refreshCurrentCombo()
             refreshWidgets()
             GAME.multiplePiecesActive = false
+            local string = GAME.pieceEffectID == 3 and not CONF.classicMode and { COLOR.lB, "J - Steadfast" }
+                or GAME.pieceEffectID == 10 and not CONF.classicMode and { COLOR.lB, "eJ - Steadfast+" }
+                or PieceData[GAME.pieceEffectID].popup
             MSG({
                 cat = 'dark',
-                str = PieceData[GAME.pieceEffectID].popup,
+                str = string,
                 time = 1.2
             })
         end,

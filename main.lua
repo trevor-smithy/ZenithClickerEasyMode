@@ -340,6 +340,7 @@ CONF = {
     stacker = false,
     oldTransparentCard = false,
     lyrics = false,
+    classicMode = true,
 }
 SR = {}
 LB = {}
@@ -1472,7 +1473,7 @@ function Daemon_Fast()
             -- MS shaking (each 2 beats)
             if newBeat then
                 if skipNextShuffle then
-                    if M.MS == 0 then
+                    if M.MS == 0 or ((GAME.glassCard or GAME.eglassCard) and not CONF.classicMode) then
                         if MSactive then
                             for i = 1, deckSize do Cards[i].visY = 0 end
                             GAME.refreshLayout()

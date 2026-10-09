@@ -2062,12 +2062,12 @@ function GAME.refreshLayout()
             else
                 C.tx = selX
             end
-            C.ty = baseY - ((C.active and 45 or 0) + (i == FloatOnCard and 55 or 0))
+            C.ty = (GAME.glassCard and not CONF.classicMode) and baseY or baseY - ((C.active and 45 or 0) + (i == FloatOnCard and 55 or 0))
         end
     else
         for i, C in ipairs(CD) do
             C.tx = 800 + (i - 5) * baseDist
-            C.ty = baseY - ((C.active and 45 or 0) + (i == FloatOnCard and 55 or 0))
+            C.ty = (GAME.glassCard and not CONF.classicMode) and baseY or baseY - ((C.active and 45 or 0) + (i == FloatOnCard and 55 or 0))
         end
     end
 end

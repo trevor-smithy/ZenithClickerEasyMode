@@ -362,7 +362,7 @@ function Card:setActive(auto, key, friendActivation)
     if self.active then
         local postfix = revOn and '_reverse' or ''
         SFX.play(
-            GAME.glassCard or GAME.eglassCard and 'harddrop' or 'card_select' .. postfix, 1, 0,
+            ((GAME.glassCard or GAME.eglassCard) and CONF.classicMode)  and 'harddrop' or 'card_select' .. postfix, 1, 0,
             key and clampInterpolate(-200, -4.2, 200, 4.2, self.y - MY) or MATH.rand(-2.6, 2.6)
         )
         local toneName = 'card_tone_' .. ModData.name[self.id]
@@ -742,7 +742,7 @@ function Card:draw()
         end
     end
 
-    if (GAME.glassCard or GAME.eglassCard) and not (GAME.einvisCard) then
+    if ((GAME.glassCard or GAME.eglassCard) and CONF.classicMode) and not (GAME.einvisCard) then
         local w, h = 240, 330
         gc_setColor((faceUp and ModData.textColor or ModData.color)[self.id])
         gc_setAlpha((CONF.cardBrightness / 100) ^ 2 * .872)
@@ -786,7 +786,7 @@ function Card:draw()
         end
     else
         -- Card
-        if not GAME.invisCard and not (GAME.glassCard or GAME.eglassCard) then
+        if not GAME.invisCard and not ((GAME.glassCard or GAME.eglassCard) and CONF.classicMode) then
             if self.burn then
                 if URM and M.AS == 2 then
                     gc_setColor(1, .42, .26)
@@ -809,7 +809,7 @@ function Card:draw()
             if img2 then
                 gc_draw(img2, -img2:getWidth() / 2, -img2:getHeight() / 2)
             end
-        elseif GAME.glassCard or GAME.eglassCard then
+        elseif ((GAME.glassCard or GAME.eglassCard) and CONF.classicMode) then
             local w, h = 240, 330
             gc_setColor((faceUp and ModData.textColor or ModData.color)[self.id])
             gc_setAlpha((CONF.cardBrightness / 100) ^ 2 * .26)
@@ -930,11 +930,11 @@ function Card:draw()
                     gc_mRect('line', 0, 0, 240 * 2 - width*2-4, 330 * 2 - width*2-4, width/2-4)
                 end
             end
-            if a1 and not (GAME.einvisCard and GAME.playing) then
+            if a1 and not (GAME.einvisCard and GAME.playing) and not (GAME.glassCard and not CONF.classicMode) then
                 gc_setColor(r1, g1, b1, a1)
                 gc_draw(activeFrame, 0, 0, 0, sign(self.kx), 1, frame1W, frame1H)
             end
-            if a2 and not (GAME.einvisCard and GAME.playing) then
+            if a2 and not (GAME.einvisCard and GAME.playing) and not (GAME.glassCard and not CONF.classicMode) then
                 gc_setColor(r2, g2, b2, a2)
                 gc_draw(activeFrame2, 0, 0, 0, sign(self.kx), 1, frame2W, frame2H)
             end
@@ -945,7 +945,7 @@ function Card:draw()
         gc_push('transform')
 
         -- Rev Throb
-        if not self.upright and GAME.revDeckSkin and faceUp then
+        if not self.upright and GAME.revDeckSkin and faceUp and not ((GAME.glassCard or GAME.eglassCard) and CONF.classicMode) then
             gc_setColor(1, 1, 1, ThrobAlpha.card)
             gc_setShader(SHADER.throb)
             gc_draw(img, -img:getWidth() / 2, -img:getHeight() / 2)
@@ -1002,7 +1002,7 @@ function Card:draw()
 
     -- Icon cover
     if faceUp then
-        gc_setColor(((GAME.glassCard or GAME.eglassCard) and ModData.color or ModData.textColor)[self.id])
+        gc_setColor((((GAME.glassCard or GAME.eglassCard) and CONF.classicMode) and ModData.color or ModData.textColor)[self.id])
         local active = playing and self.inLastCommit or not playing and self.active
         if M.EX <= 0 then
             if active then
