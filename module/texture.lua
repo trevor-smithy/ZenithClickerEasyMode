@@ -32,6 +32,7 @@ TEXTURE = {
     star0 = assets 'crystal-dark.png',
     star1 = assets 'crystal.png',
     star2 = assets 'crystal-fire.png',
+    cursor = assets 'cursor.png',
     panel = {
         glass_a = assets 'panel/glass-a.png',
         glass_b = assets 'panel/glass-b.png',
@@ -551,6 +552,11 @@ TEXTURE.transition = GC.initCanvas(128, 1, function()
         GC.setColor(1, 1, 1, 1 - x / 128)
         GC.rectangle('fill', x, 0, 1, 1)
     end
+end)
+
+TEXTURE.triangle = GC.initCanvas(100, 100, function()
+    GC.setColor(1, 1, 1)
+    GC.polygon('fill', 0, 0, 100, 0, 0, 100)
 end)
 
 TEXTURE.darkCorner = GC.initCanvas(128, 128, function()

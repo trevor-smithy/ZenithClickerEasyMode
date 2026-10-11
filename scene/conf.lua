@@ -1582,6 +1582,7 @@ pages[ZCEMpage] = {
             local multiple = GAME.multiplePiecesActive
             MSG.clear()
             CONF.classicMode = not CONF.classicMode
+            CONF.boardOpacity = CONF.classicMode and 0 or 50
             SFX.play(CONF.classicMode and 'spin' or 'spinend')
             MSG('dark', "Classic Mode: " .. (CONF.classicMode and "Enabled" or " Disabled"))
             GAME.multiplePiecesActive = false

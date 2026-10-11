@@ -580,6 +580,7 @@ end
 
 ModData = require 'data/mod'
 ComboData = require 'data/combo'
+BoardColorData = require 'data/boardcolor'
 UsernameData = require 'data/username'
 Fatigue = require 'data/fatigue'
 RevivePrompts = require 'data/revive'

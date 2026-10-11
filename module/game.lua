@@ -167,28 +167,12 @@ local ins, rem = table.insert, table.remove
 ---@field fallout boolean? for card effect
 ---@field lifeLeakMessage number?
 local GAME = {
-    forfeitTimer = 0,
-    exTimer = 0,
-    anyRev = false,
-    revTimer = 0,
-    revDeckSkin = false,
-    uiHide = 0,
-    bgX = 0,
-    bgXdir = 0,
-    bgH = 0,
-    bgLastH = 0,
-    lifeShow = 0,
-    lifeShow2 = 0,
-    prevPB = -2600,
-    modIB = GC.newSpriteBatch(TEXTURE.modIcon),
-    resIB = GC.newSpriteBatch(TEXTURE.modIcon),
-    comboMP = 0,
-    comboZP = 1,
-    isUltraRun = false,
-    endFloorFstr = {},
-    pieceFstr = {},
-    pieceFstrObj = GC.newText(FONT.get(70, 'symbol')),
+    --------------------------------------------------------------
+    -- Global
 
+    -- Progress
+    cursorProg = 0,
+    cursorHide = true,
     completion = { -- 0=not mastered, 1=mastered, 2=rev mastered
         EX = 0,
         NH = 0,
@@ -200,44 +184,46 @@ local GAME = {
         AS = 0,
         DP = 0,
     },
+    --revUnlocked = false,
 
-    mod = {
-        EX = 0,
-        NH = 0,
-        MS = 0,
-        GV = 0,
-        VL = 0,
-        DH = 0,
-        IN = 0,
-        AS = 0,
-        DP = 0,
-    },
+    -- Flags
+    zenithTraveler = false,
+    speedrunning = false,
+    clr_board = { 1, 1, 1 },
+    bgX = 0,
+    bgXdir = 0,
+    bgH = 0,
+    bgLastH = 0,
+    bgK = 1,
+    
+    -- Giga anim
+    giga_r = 0,
+    giga_g = 0,
+    giga_b = 0,
+    giga_a = 0,
+
+    -- UI Anim
+    revTimer = 0,
+    uiHide = 0,
+
+    prevPB = -2600,
+    modIB = GC.newSpriteBatch(TEXTURE.modIcon),
+    resIB = GC.newSpriteBatch(TEXTURE.modIcon),
+    endFloorFstr = {},
+    pieceFstr = {},
+    pieceFstrObj = GC.newText(FONT.get(70, 'symbol')),
+    exTimer = 0,
+    forfeitTimer = 0,
+
+    -- Mod active state
+    mod = { EX = 0, NH = 0, MS = 0, GV = 0, VL = 0, DH = 0, IN = 0, AS = 0, DP = 0 },
+    comboMP = 0,
+    comboZP = 1,
     hardMode = false,
+    anyRev = false,
+    revDeckSkin = false,
     numberRev = false,
 
-    quests = {},
-    -- Trevor Smithy
-    questStack = {},
-    --
-    reviveTasks = {},
-    currentTask = false,
-    lastFlip = false,
-    switch_sickness = 0,
-    hasseenDPnerf = false,
-    gigaspeedFloor = {},
-    teraspeedFloor = {},
-    petaFloor = {},
-    exaFloor = {},
-    zettaFloor = {},
-    yottaFloor = {},
-    ronnaFloor = {},
-    quettaFloor = {},
-    windupAnim = {}, ---@type Windup[]
-    koCharge = 0,
-    koBuffer = {}, ---@type {uid:string, timer:number, valid:boolean}[]
-    koAnim = {}, ---@type {id1:love.Text, id2:love.Text, a:number, timer:number, pos:number, showP1:boolean, toOppo:boolean}[]
-
-    zenithTraveler = false,
     pieceEffectID = 0,
     nightcore = false,
     slowmo = false,
@@ -255,6 +241,51 @@ local GAME = {
     einvisCard = false,
     einvisUI = false,
     --
+
+    -- Board
+    lifeShow = 0,
+    lifeShow2 = 0,
+    shakeTimer = 0,
+    boardAnim = 0,
+    boardDim = { 1, 1, 1 },
+    boardColorPatch = {
+        timer = 0,
+        color = COLOR.L,
+    },
+
+    --------------------------------------------------------------
+    -- Game
+
+    -- Basic states
+    playing = false,
+    isUltraRun = false,
+
+    reviveTasks = {},
+    currentTask = false,
+    lastFlip = false,
+    switch_sickness = 0,
+    hasseenDPnerf = false,
+    inputStat = { 0, 0, 0 },     -- Mouse / Keyboard / Touch
+    inputStatNorm = { 0, 0, 0 }, -- normalized inputStat
+
+    gigaspeedFloor = {},
+    teraspeedFloor = {},
+    petaFloor = {},
+    exaFloor = {},
+    zettaFloor = {},
+    yottaFloor = {},
+    ronnaFloor = {},
+    quettaFloor = {},
+    koCharge = 0,
+    koBuffer = {}, ---@type {uid:string, timer:number, valid:boolean}[]
+    koAnim = {}, ---@type {id1:love.Text, id2:love.Text, a:number, timer:number, pos:number, showP1:boolean, toOppo:boolean}[]
+
+    -- Other singletons
+    quests = {}, ---@type Question[]
+    -- Trevor Smithy
+    questStack = {},
+    --
+    windupAnim = {}, ---@type Windup[]
 
     achv_perfectH = nil,
     achv_demoteH = nil,
@@ -285,8 +316,6 @@ local GAME = {
 
     uneasyMode = false,
 }
-
-GAME.playing = false
 GAME.finishTime = -2600
 GAME.fullHealth = 20
 GAME.startingHealth = 20
@@ -340,17 +369,11 @@ function GAME.getHand(real)
         --     end
         -- end
     else
-        -- FASTER
-        for i = 1, #MD.deck do
+        for i = 1, #CD do
             if CD[i].active then
                 ins(list, CD[i].id)
             end
         end
-        -- for _, C in ipairs(Cards) do
-        --     if C.active then
-        --         ins(list, C.id)
-        --     end
-        -- end
     end
     return list
 end
@@ -688,6 +711,14 @@ function GAME.anim_setMenuHide_rev(t)
     GAME.anim_setMenuHide(1 - t)
 end
 
+function GAME.anim_setBoardAnim(t)
+    GAME.boardAnim = t
+end
+
+function GAME.anim_setBoardAnim_rev(t)
+    GAME.anim_setBoardAnim(1 - t)
+end
+
 local floorHeights = {}
 for i = 0, 9 do ins(floorHeights, Floors[i].top) end
 function GAME.calculateFloor(h)
@@ -751,18 +782,22 @@ function GAME.shuffleCards(messiness)
     local order = {}
     for i = 1, #CD do order[i] = i end
 
+    local attemptCnt = 0
     repeat
+        -- Random swap x3
         for _ = 1, 3 do
             local p = rnd(#CD - 1)
             order[p], order[p + 1] = order[p + 1], order[p]
         end
 
+        -- Calculate total distance
         local totalDist = 0
         for i = 1, #order do
             CD[i].tempOrder = order[i]
             totalDist = totalDist + abs(order[i] - CD[i].initOrder) ^ 1.6
         end
-    until totalDist >= messiness
+        attemptCnt = attemptCnt + 1
+    until totalDist >= messiness or attemptCnt >= 26
     table.sort(CD, function(a, b) return a.tempOrder < b.tempOrder end)
 
     GAME.refreshLayout()
@@ -890,7 +925,7 @@ function GAME.genQuest()
         ins(GAME.quests, {
             combo = combo,
             name = GC.newText(FONT.get(70), GAME.getComboName(TABLE.copy(combo), 'ingame')),
-            y = -100,
+            y = -260,
             k = .5,
             a = 0,
         })
@@ -988,6 +1023,7 @@ function GAME.startRevive()
 end
 
 function GAME.incrementPrompt(prompt, value)
+    if not GAME.playing then return end
     local t = GAME.currentTask
     if t and prompt == t.prompt then
         local oldProg = t.progress
@@ -1022,6 +1058,7 @@ function GAME.incrementPrompt(prompt, value)
 end
 
 function GAME.nixPrompt(prompt)
+    if not GAME.playing then return end
     local t = GAME.currentTask
     if t and prompt == t.prompt then
         if t.progress >= 1 then
@@ -1068,6 +1105,8 @@ function GAME.takeDamage(dmg, reason, toAlly)
         'bombdetonate', .872
     )
 
+    GAME.shakeTimer = min(dmg / 12, .62)
+
     GAME.achv_totalDmg = GAME.achv_totalDmg + dmg
     if not GAME.achv_perfectH then
         GAME.achv_perfectH = GAME.roundHeight
@@ -1112,6 +1151,7 @@ function GAME.takeDamage(dmg, reason, toAlly)
             if GAME.currentTask and GAME.currentTask.prompt == 'kill_yourself' and reason == 'wrong' then
                 GAME.incrementPrompt('kill_yourself')
             else
+                GAME.shakeTimer = .62
                 GAME.finish(reason)
             end
         end
@@ -1335,17 +1375,17 @@ function GAME.showFloorText(f, name, duration)
     if GAME.einvisUI then
         TEXT:add {
             text = "Floor",
-            x = 160, y = 290, k = 1.6, fontSize = 30,
+            x = 160, y = 305, k = 1, fontSize = 50,
             color = {.96, .92, .74, .2}, duration = duration,
         }
         TEXT:add {
             text = tostring(f),
-            x = 240, y = 280, k = 2.6, fontSize = 30,
+            x = 240, y = 295, k = 1.1, fontSize = 70,
             color = {.96, .92, .74, .2}, duration = duration, align = 'left',
         }
         TEXT:add {
             text = name,
-            x = 200, y = 350, k = 1.2, fontSize = 30,
+            x = 200, y = 360, k = 1, fontSize = 30,
             color = {.96, .92, .74, .2}, duration = duration,
         }
         return
@@ -1353,18 +1393,18 @@ function GAME.showFloorText(f, name, duration)
     --
     TEXT:add {
         text = "Floor",
-        x = 160, y = 290, k = 1.6, fontSize = 30,
-        color = 'LY', duration = duration,
+        x = 160, y = 305, k = 1, fontSize = 50,
+        color = CLR.l5YSS, duration = duration,
     }
     TEXT:add {
         text = tostring(f),
-        x = 240, y = 280, k = 2.6, fontSize = 30,
-        color = 'LY', duration = duration, align = 'left',
+        x = 240, y = 295, k = 1.1, fontSize = 70,
+        color = CLR.l5YSS, duration = duration, align = 'left',
     }
     TEXT:add {
         text = name,
-        x = 200, y = 350, k = 1.2, fontSize = 30,
-        color = 'LY', duration = duration,
+        x = 200, y = 360, k = 1, fontSize = 30,
+        color = CLR.l5YSS, duration = duration,
     }
 end
 
@@ -1432,14 +1472,21 @@ function GAME.showLyric(lyricSet, dx, dy, timeOffset)
             end
         end
     end
-    FONT.set(SCN.cur == 'conf' and 30 or lyricSet.fontSize or 45)
-    if lyricSet.color then
-        GC.setColor(lyricSet.color)
+    if SCN.cur == 'conf' then
+        FONT.set(30)
+        if lyricSet.color then
+            GC.setColor(lyricSet.color)
+        else
+            GC.setColor(COLOR.rainbow_light(2.6 * t))
+        end
+        GC.mStr(lyric, 400, height)
+        GC.mStr(hlyric, 400, height - 40)
     else
-        GC.setColor(COLOR.rainbow_light(2.6 * t))
+        height = height + (URM and M.GV == 2 and 50 or 15 * M.GV)
+        FONT.set(lyricSet.fontSize or 45)
+        GC.strokePrint('full', 2, {COLOR.rainbow_dark(2.6 * t)}, {COLOR.rainbow_light(2.6 * t)}, lyric, dx or 0, height, 2600, 'center', 0, 1, 1)
+        GC.strokePrint('full', 2, {COLOR.rainbow_dark(2.6 * t)}, {COLOR.rainbow_light(2.6 * t)}, hlyric, dx or 0, height-40, 2600, 'center', 0, 1, 1)
     end
-    GC.mStr(lyric, SCN.cur == 'conf' and 400 or dx or 0, height)
-    GC.mStr(hlyric, SCN.cur == 'conf' and 400 or dx or 0, height - 40)
 end
 
 function GAME.pieceCount()
@@ -1674,16 +1721,36 @@ function GAME.upFloor()
     GAME.refreshRPC()
 end
 
+function GAME.setFatigueColor(mode)
+    if mode == 'norm' then -- Normal
+        GAME.boardColorPatch.color = { COLOR.HEX "FF00C0" }
+        GAME.boardColorPatch.timer = 5
+    elseif mode == 'end' then -- Last original
+        GAME.boardColorPatch.color = { COLOR.HEX "FF0040" }
+        GAME.boardColorPatch.timer = 15
+    elseif mode == 'pos' then -- rDP Positive
+        GAME.boardColorPatch.color = { COLOR.HEX "FFB000" }
+        GAME.boardColorPatch.timer = 5
+    elseif mode == 'kill' then -- killscreen
+        GAME.boardColorPatch.color = { COLOR.HEX "B00000" }
+        GAME.boardColorPatch.timer = 1e99
+    end
+end
+
 function GAME.nextFatigue()
     local stage = GAME.fatigueSet[GAME.fatigue]
     local e = stage.event
-    for i = 1, #e, 2 do
-        GAME[e[i]] = GAME[e[i]] + e[i + 1]
+    if type(e) == 'function' then
+        e()
+    else
+        for i = 1, #e, 2 do
+            GAME[e[i]] = GAME[e[i]] + e[i + 1]
+        end
     end
     if stage.text then
         TEXT:add {
             text = stage.text,
-            x = 800, y = 265, fontSize = 30, k = 1.5,
+            x = 800, y = 285, fontSize = 30, k = 1.5,
             style = 'score', duration = stage.duration or 5,
             inPoint = .1, outPoint = .26,
             color = stage.color or 'lM',
@@ -1691,7 +1758,7 @@ function GAME.nextFatigue()
         if stage.desc then
             TEXT:add {
                 text = stage.desc,
-                x = 800, y = 300, fontSize = 30,
+                x = 800, y = 320, fontSize = 30,
                 style = 'score', duration = stage.duration or 5,
                 inPoint = .26, outPoint = .1,
                 color = stage.color or 'lM',
@@ -3321,6 +3388,10 @@ function GAME.start()
     if GAME.badTime then
         GAME.badTimeStarted = true
         GAME.fallout = false
+        if not CONF.stacker then
+            SCN.scenes.tower.widgetList.start.text = 'COMMENCE'
+            SCN.scenes.tower.widgetList.start:reset()
+        end
     end
     if CONF.stacker then
         SCN.scenes.tower.widgetList.start.text = ''
@@ -3389,7 +3460,6 @@ function GAME.start()
     GAME.fatigueSet = Fatigue[M.EX == 2 and 'rEX' or M.EX == -1 and 'eEX' or M.DP == 2 and 'rDP' or 'normal']
     GAME.fatigue = 1
     GAME.animDuration = GAME.slowmo and 26 or 1
-    GAME.lastCommit = {}
 
     -- Params
     GAME.maxQuestCount = M.NH == 2 and 2 or 3
@@ -3441,6 +3511,7 @@ function GAME.start()
     GAME.atkBuffer = 0
     GAME.atkBufferCap = 8 + (M.DH == 1 and M.NH < 2 and 2 or 0)
     GAME.shuffleMessiness = false
+    GAME.lastCommit = {}
 
     -- Spike
     GAME.spikeTimer = 0
@@ -3453,7 +3524,7 @@ function GAME.start()
     GAME.koCount = 0
     GAME.koCharge = 0
 
-    -- rDP
+    -- Ally (DP & rDP)
     GAME.onAlly = false
     GAME.life2 = GAME.fullHealth
     GAME.rankLimit = 26000
@@ -3476,6 +3547,26 @@ function GAME.start()
 
     GAME.refreshLifeState()
 
+    -- Bump floor from 0 to 1 & initialize some variables related to floor
+    GAME.upFloor()
+
+    -- Generate quests
+    TABLE.clear(GAME.quests)
+    GAME.genQuest()
+
+    -- Reset Stack & Combo
+    TABLE.clear(GAME.questStack)
+    GAME.comboSFX = 0
+    GAME.comboBounceTime = 0
+
+    -- Start a new starting animation
+    TASK.removeTask_code(task_startSpin)
+    TASK.new(task_startSpin)
+
+    -- Start UI animation
+    TWEEN.new(GAME.anim_setMenuHide):setOnFinish(GAME.anim_setMenuHide_finish):setDuration(GAME.slowmo and 2.6 or .26):setUnique('uiHide'):run()
+    TWEEN.new(GAME.anim_setBoardAnim):setEase('OutQuad'):setDuration(GAME.slowmo and 4.2 or .42):setUnique('boardAnim'):run()
+
     GAME.refreshModIcon()
     TABLE.clear(ComboColor)
     for k, v in next, M do
@@ -3490,20 +3581,11 @@ function GAME.start()
         ins(ComboColor, TABLE.copy(ComboColor[1]))
         TABLE.transpose(ComboColor)
     end
+    GAME.clr_board[1], GAME.clr_board[2], GAME.clr_board[3] = BoardColorData.r[1], BoardColorData.g[1], BoardColorData.b[1]
+    GAME.boardColorPatch.timer = 0
+    GAME.boardDim = { 1, 1, 1 }
 
-    GAME.upFloor()
-
-    TABLE.clear(GAME.quests)
-    TABLE.clear(GAME.questStack)
-    GAME.comboSFX = 0
-    GAME.comboBounceTime = 0
-    GAME.genQuest()
-
-    TASK.removeTask_code(task_startSpin)
-    TASK.new(task_startSpin)
-
-    TWEEN.new(GAME.anim_setMenuHide):setOnFinish(GAME.anim_setMenuHide_finish):setDuration(GAME.slowmo and 2.6 or .26):setUnique('uiHide'):run()
-
+    -- Reset achievement flags
     GAME.achv_plonkH = nil
     GAME.achv_perfectH = nil
     GAME.achv_demoteH = nil
@@ -4184,6 +4266,7 @@ function GAME.finish(reason)
     GAME.setGigaspeedAnim(false)
     GAME.stopTeraspeed('fin')
     TASK.removeTask_code(task_startSpin)
+    TWEEN.new(GAME.anim_setBoardAnim_rev):setEase('InQuart'):setDuration(GAME.slowmo and 6.26 or 1.26):setUnique('boardAnim'):run()
     GAME.refreshLockState()
     GAME.refreshCurrentCombo()
     GAME.refreshPBText()
@@ -4216,14 +4299,14 @@ function GAME.finish(reason)
 end
 
 local questStyle = {
-    { k = 1.4, y = 175, a = 1 },
-    { k = 1.1, y = 95,  a = .8 },
-    { k = 0.9, y = 30,  a = .5 },
+    { k = 1.4, y = -48,  a = 1.0 },
+    { k = 1.1, y = -128, a = 0.8 },
+    { k = 0.9, y = -193, a = 0.5 },
 }
 local questStyleDP = {
-    { k = 1.4,  y = 175, a = 1 },
-    { k = 1.3,  y = 95,  a = 1 },
-    { k = 0.85, y = 30,  a = .7 },
+    { k = 1.4, y = -45,  a = 1.0 },
+    { k = 1.3, y = -128, a = 1.0 },
+    { k = .85, y = -193, a = 0.7 },
 }
 
 ---Submits timed achievements if its combo is active

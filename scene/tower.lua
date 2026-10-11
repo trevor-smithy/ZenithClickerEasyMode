@@ -166,6 +166,8 @@ local function activateBadTime()
     if ACHV.intended_glitch then TABLE.insert(set, 'rDP') end
     applyCombo(set)
     GAME.badTime = true
+    SCN.scenes.tower.widgetList.start.text = ""
+    SCN.scenes.tower.widgetList.start:reset()
     GAME.badTimeStarted = false
     GAME.refreshCurrentCombo()
     TASK.new(function()
@@ -198,6 +200,7 @@ local function keyTrigger(key)
         if C then
             if GAME.playing or not C.lock then
                 GAME.nixPrompt('keep_no_keyboard')
+                GAME.inputStat[2] = GAME.inputStat[2] + 1
                 GAME.noKeyboardOrReset = false
                 FloatOnCard = bindID
                 SetMouseVisible(false)
@@ -225,34 +228,39 @@ local function keyTrigger(key)
                     SCN.back()
                 end
             end
-        elseif bindID == 20 then
-            GAME.nixPrompt('keep_no_keyboard')
-            local W = scene.widgetList.reset
-            W._pressTime = W._pressTimeMax * 2
-            W._hoverTime = W._hoverTimeMax
-            SFX.play('menuclick')
-            if M.AS == 0 then GAME.nixPrompt('keep_no_reset') end
-            GAME.noMouseOrSpin = false
-            GAME.noKeyboardOrReset = false
-            GAME.cancelAll()
-            if not GAME.achv_noKeyboardH then GAME.achv_noKeyboardH = GAME.roundHeight end
-        elseif bindID == 21 or bindID == 22 then
-            GAME.nixPrompt('keep_no_keyboard')
-            GAME.noKeyboardOrReset = false
-            scene.mouseDown(MX, MY, bindID == 21 and 1 or 2)
-            scene.mouseUp(MX, MY, bindID == 21 and 1 or 2)
-            if not GAME.achv_noKeyboardH then GAME.achv_noKeyboardH = GAME.roundHeight end
-        elseif bindID == 19 then
-            GAME.nixPrompt('keep_no_keyboard')
-            GAME.noKeyboardOrReset = false
-            local W = scene.widgetList.start
-            W._pressTime = W._pressTimeMax * 2
-            W._hoverTime = W._hoverTimeMax
-            if GAME.playing then
-                GAME.commit()
+        elseif bindID then
+            if bindID == 19 then
+                GAME.nixPrompt('keep_no_keyboard')
+                GAME.inputStat[2] = GAME.inputStat[2] + 1
+                GAME.noKeyboardOrReset = false
+                local W = scene.widgetList.start
+                W._pressTime = W._pressTimeMax * 2
+                W._hoverTime = W._hoverTimeMax
+                if GAME.playing then
+                    GAME.commit()
+                    if not GAME.achv_noKeyboardH then GAME.achv_noKeyboardH = GAME.roundHeight end
+                else
+                    GAME.start()
+                end
+            elseif bindID == 20 then
+                GAME.nixPrompt('keep_no_keyboard')
+                GAME.inputStat[2] = GAME.inputStat[2] + 1
+                local W = scene.widgetList.reset
+                W._pressTime = W._pressTimeMax * 2
+                W._hoverTime = W._hoverTimeMax
+                SFX.play('menuclick')
+                if M.AS == 0 then GAME.nixPrompt('keep_no_reset') end
+                GAME.noMouseOrSpin = false
+                GAME.noKeyboardOrReset = false
+                GAME.cancelAll()
                 if not GAME.achv_noKeyboardH then GAME.achv_noKeyboardH = GAME.roundHeight end
-            else
-                GAME.start()
+            elseif bindID == 21 or bindID == 22 then
+                GAME.nixPrompt('keep_no_keyboard')
+                GAME.inputStat[2] = GAME.inputStat[2] + 1
+                GAME.noKeyboardOrReset = false
+                scene.mouseDown(MX, MY, bindID == 21 and 1 or 2)
+                scene.mouseUp(MX, MY, bindID == 21 and 1 or 2)
+                if not GAME.achv_noKeyboardH then GAME.achv_noKeyboardH = GAME.roundHeight end
             end
         elseif key == '`' then
             if GAME.playing or GAME.badTime then
@@ -517,7 +525,7 @@ function scene.load()
 
     GAME.refreshDailyChallengeText()
     TASK.unlock('sure_quit')
-    ZENITHA.setAppInfo("Zenith Clicker")
+    ZENITHA.setAppInfo("Zenith Clicker Easy Mode")
 
     if PendingComboFromRecord then
         applyCombo(PendingComboFromRecord)
@@ -552,8 +560,10 @@ function scene.mouseMove(x, y, _, dy)
             STAT.maxHeight
         )
     else
-        GAME.nixPrompt('keep_no_mouse')
-        GAME.noMouseOrSpin = false
+        if TASK.lock('mouse_trigger_cooldown', .26) then
+            GAME.nixPrompt('keep_no_mouse')
+            GAME.noMouseOrSpin = false
+        end
         mouseMove(x, y)
     end
 end
@@ -585,6 +595,7 @@ function scene.mouseDown(x, y, k)
     if k == 3 and GAME.playing then return true end
     HoldingButtons['mouse' .. k] = true
     GAME.nixPrompt('keep_no_mouse')
+    GAME.inputStat[1] = GAME.inputStat[1] + 1
     GAME.noMouseOrSpin = false
     -- Trevor Smithy
     if getBtnPressed() > 1 + (URM and M.VL == 2 and 0 or M.VL == -1 and 0 or floor(M.VL / 2)) then return true end
@@ -605,7 +616,6 @@ function scene.mouseUp(x, y, k)
     GAME.noMouseOrSpin = false
     if k == 3 and GAME.playing then return end
 
-    --if getBtnPressed() > 1 + (URM and M.VL == 2 and 0 or floor(M.VL / 2)) then return end
     if getBtnPressed() > (URM and M.VL == 2 and 0 or M.VL == -1 and 0 or floor(M.VL / 2)) then return end
     if M.EX > 0 then
         mouseTrigger(x, y, k)
@@ -824,18 +834,20 @@ local f10colors = TABLE.transpose {
     { .8, 0,  1 },  -- 2393.75 m
     { .0, .0, 1 },  -- 2500 m
 }
-local gc = love.graphics
-local gc_push, gc_pop = gc.push, gc.pop
-local gc_replaceTransform = gc.replaceTransform
-local gc_translate, gc_scale, gc_rotate, gc_shear = gc.translate, gc.scale, gc.rotate, gc.shear
-local gc_setColor, gc_setLineWidth, gc_setBlendMode = gc.setColor, gc.setLineWidth, gc.setBlendMode
-local gc_draw = gc.draw
-local gc_line, gc_rectangle, gc_circle, gc_arc = gc.line, gc.rectangle, gc.circle, gc.arc
-local gc_mRect, gc_mDraw, gc_mDrawQ, gc_strokeDraw = GC.mRect, GC.mDraw, GC.mDrawQ, GC.strokeDraw
+local GC = GC
+local gc_push, gc_pop = GC.push, GC.pop
+local gc_replaceTransform = GC.replaceTransform
+local gc_translate, gc_scale = GC.translate, GC.scale
+local gc_setColor, gc_setLineWidth, gc_setBlendMode = GC.setColor, GC.setLineWidth, GC.setBlendMode
+local gc_draw, gc_line, gc_rectangle, gc_circle, gc_arc = GC.draw, GC.line, GC.rectangle, GC.circle, GC.arc
+local gc_mRect, gc_mDraw, gc_mDrawQ = GC.mRect, GC.mDraw, GC.mDrawQ
 local gc_setAlpha, gc_ucs_move, gc_ucs_back = GC.setAlpha, GC.ucs_move, GC.ucs_back
-local gc_blurCircle, gc_strokePrint = GC.blurCircle, GC.strokePrint
-local gc_setColorMask = GC.setColorMask
+local gc_strokePrint, gc_strokeDraw = GC.strokePrint, GC.strokeDraw
 local setFont = FONT.set
+local stc_reset, stc_setComp, stc_setPen, stc_stop = GC.stc_reset, GC.stc_setComp, GC.stc_setPen, GC.stc_stop
+
+local stc_rect, stc_mRect, stc_circ = GC.stc_rect, GC.stc_mRect, GC.stc_circ
+local gc_blurCircle, gc_setColorMask, gc_rotate, gc_shear = GC.blurCircle, GC.setColorMask, GC.rotate, GC.shear
 
 local TEXTURE = TEXTURE
 local Cards = Cards
@@ -855,7 +867,7 @@ local reviveInfo = {
 }
 local gvTimerColor1 = { 1, .942, .872, 0 }
 local gvTimerColor2 = { 0, 0, 0, 0 }
-local altitudeText = { 0, COLOR.dL, "m" }
+local altitudeText = { "0", COLOR.dL, "m" }
 local windupColor = {
     { COLOR.HEX "F5BE3FFF" },
     { COLOR.HEX "ED7F2EFF" },
@@ -872,96 +884,104 @@ local koMsgColor = {
     kill = { COLOR.HEX "FFB300FF" },
     death = { COLOR.HEX "910000FF" },
 }
+local inputStatColor = {
+    { COLOR.HEX 'FF7866C0' },
+    { COLOR.HEX 'FFEB55C0' },
+    { COLOR.HEX 'A3FF5CC0' },
+}
 
 function DrawBG(brightness, showRuler)
     gc_replaceTransform(SCR.origin)
-    if GAME.bgH > -50 then
-        local bgFloor = GAME.calculateFloor(GAME.bgH)
-        if CONF.bg and not (GAME.invisUI or GAME.einvisUI) then
-            if bgFloor < 10 then
-                gc_setColor(1, 1, 1)
-                local bottom = Floors[bgFloor - 1].top
-                local top = Floors[bgFloor].top
-                local bg = TEXTURE.towerBG[bgFloor]
-                local w, h = bg:getDimensions()
-                local quadStartH = interpolate(bottom, h, top, 0, GAME.bgH) - 640
-                bgQuad:setViewport(GAME.bgX, quadStartH, 1024, 640, w, h)
-                gc_mDrawQ(bg, bgQuad, SCR.w / 2, SCR.h / 2, 0, BgScale)
-                if bgFloor == 9 then
-                    if GAME.bgH > 1562 then
-                        gc_setColor(.5, .5, .5, interpolate(1562, 0, 1650, 1, GAME.bgH))
-                        gc_rectangle('fill', 0, 0, SCR.w, SCR.h)
-                    end
-                elseif quadStartH < 0 then
-                    bg = TEXTURE.towerBG[bgFloor + 1]
-                    w, h = bg:getDimensions()
-                    bgQuad:setViewport(GAME.bgX, h - 640, 1024, 640, w, h)
-                    gc_mDrawQ(bg, bgQuad, SCR.w / 2, SCR.h * interpolate(0, -.5, -640, .5, quadStartH), 0, BgScale)
-                end
-            else
-                -- Space color
-                if GAME.bgH < 2500 then
-                    -- Top
-                    if GAME.bgH < 1900 then
-                        gc_setColor(0, 0, interpolate(1650, .2, 1900, 0, GAME.bgH))
-                        gc_rectangle('fill', 0, 0, SCR.w, SCR.h)
-                    end
-
-                    -- Bottom
-                    local t = iLerp(1650, 2500, GAME.bgH)
-                    gc_setColor(
-                        lLerp(f10colors[1], t),
-                        lLerp(f10colors[2], t),
-                        lLerp(f10colors[3], t),
-                        .626 * (1 - t)
-                    )
-                    gc_draw(TEXTURE.transition, 0, SCR.h, -1.5708, SCR.h / 128, SCR.w)
-                elseif ComboColor[1] then
-                    -- Vacuum
-                    local t = GAME.time % 1
-                    gc_setColor(
-                        lLerp(ComboColor[1], t),
-                        lLerp(ComboColor[2], t),
-                        lLerp(ComboColor[3], t),
-                        icLerp(2500, 6200, GAME.bgH) * .355
-                    )
+    local bgFloor = GAME.calculateFloor(abs(GAME.bgH))
+    local imgBG = CONF.bg and not (GAME.invisUI or GAME.einvisUI) and GAME.bgH > -50
+    if imgBG then
+        if bgFloor < 10 then
+            gc_setColor(1, 1, 1)
+            local bottom = Floors[bgFloor - 1].top
+            local top = Floors[bgFloor].top
+            local bg = TEXTURE.towerBG[bgFloor]
+            local w, h = bg:getDimensions()
+            local quadStartH = interpolate(bottom, h, top, 0, GAME.bgH) - 640
+            bgQuad:setViewport(GAME.bgX, quadStartH, 1024, 640, w, h)
+            gc_mDrawQ(bg, bgQuad, SCR.w / 2, SCR.h / 2, 0, BgScale)
+            if bgFloor == 9 then
+                if GAME.bgH > 1562 then
+                    gc_setColor(.5, .5, .5, interpolate(1562, 0, 1650, 1, GAME.bgH))
                     gc_rectangle('fill', 0, 0, SCR.w, SCR.h)
                 end
-
-                -- Bodies
-                gc_setBlendMode('add')
-                gc_setColor(1, 1, 1, .8)
-                gc_draw(StarPS, SCR.w / 2, SCR.h / 2 + GAME.bgH * 2 * BgScale)
-                gc_mDraw(TEXTURE.moon, SCR.w / 2, SCR.h / 2 + (GAME.bgH - 2202.84) * 2 * BgScale, 0, .2 * BgScale)
-                gc_setBlendMode('alpha')
-
-                -- Tower
-                if GAME.bgH < 1700 then
-                    gc_setColor(1, 1, 1)
-                    local bg = TEXTURE.towerBG[10]
-                    local w, h = bg:getDimensions()
-                    local quadStartH = interpolate(1650, h, 1700, 0, GAME.bgH) - 640
-                    bgQuad:setViewport(0, quadStartH, 1024, 640, w, h)
-                    gc_mDrawQ(bg, bgQuad, SCR.w / 2, SCR.h / 2, 0, BgScale)
-                end
-
-                -- Cover
-                local f10CoverAlpha = max(icLerp(1660, 1650, GAME.bgH), 1 - (love.timer.getTime() - GAME.f10Time) / 2.6)
-                if f10CoverAlpha > 0 then
-                    gc_setColor(.5, .5, .5, f10CoverAlpha)
-                    gc_rectangle('fill', 0, 0, SCR.w, SCR.h)
-                end
+            elseif quadStartH < SCR.h / (2 * BgScale) - 320 then
+                bg = TEXTURE.towerBG[bgFloor + 1]
+                w, h = bg:getDimensions()
+                bgQuad:setViewport(GAME.bgX, h - 640, 1024, 640, w, h)
+                gc_mDrawQ(bg, bgQuad, SCR.w / 2, SCR.h / 2 - (640 + quadStartH) * BgScale, 0, bgScale)
             end
         else
-            local top = Floors[bgFloor].top
-            local t = icLerp(1, 10, bgFloor + clampInterpolate(top - 50, 0, top, 1, GAME.bgH))
-            gc_setColor(
-                lLerp(floorColors[1], t),
-                lLerp(floorColors[2], t),
-                lLerp(floorColors[3], t)
-            )
-            gc_rectangle('fill', 0, 0, SCR.w, SCR.h)
+            -- Space color
+            if GAME.bgH < 2500 then
+                -- Top
+                if GAME.bgH < 1900 then
+                    gc_setColor(0, 0, interpolate(1650, .2, 1900, 0, GAME.bgH))
+                    gc_rectangle('fill', 0, 0, SCR.w, SCR.h)
+                end
+
+                -- Bottom
+                local t = iLerp(1650, 2500, GAME.bgH)
+                gc_setColor(
+                    lLerp(f10colors[1], t),
+                    lLerp(f10colors[2], t),
+                    lLerp(f10colors[3], t),
+                    .626 * (1 - t)
+                )
+                gc_draw(TEXTURE.transition, 0, SCR.h, -1.5708, SCR.h / 128, SCR.w)
+            elseif ComboColor[1] then
+                -- Vacuum
+                local t = GAME.time % 1
+                gc_setColor(
+                    lLerp(ComboColor[1], t),
+                    lLerp(ComboColor[2], t),
+                    lLerp(ComboColor[3], t),
+                    icLerp(2500, 6200, GAME.bgH) * .355
+                )
+                gc_rectangle('fill', 0, 0, SCR.w, SCR.h)
+            end
+
+            -- Bodies
+            gc_setBlendMode('add')
+            gc_setColor(1, 1, 1, .8)
+            gc_draw(StarPS, SCR.w / 2, SCR.h / 2 + GAME.bgH * 2 * BgScale)
+            gc_mDraw(TEXTURE.moon, SCR.w / 2, SCR.h / 2 + (GAME.bgH - 2202.84) * 2 * BgScale, 0, .2 * BgScale)
+            gc_setBlendMode('alpha')
+
+            -- Tower
+            if GAME.bgH < 1700 then
+                gc_setColor(1, 1, 1)
+                local bg = TEXTURE.towerBG[10]
+                local w, h = bg:getDimensions()
+                local quadStartH = interpolate(1650, h, 1700, 0, GAME.bgH) - 640
+                bgQuad:setViewport(0, quadStartH, 1024, 640, w, h)
+                gc_mDrawQ(bg, bgQuad, SCR.w / 2, SCR.h / 2, 0, BgScale)
+            end
+
+            -- Cover
+            local f10CoverAlpha = max(icLerp(1660, 1650, GAME.bgH), 1 - (love.timer.getTime() - GAME.f10Time) / 2.6)
+            if f10CoverAlpha > 0 then
+                gc_setColor(.5, .5, .5, f10CoverAlpha)
+                gc_rectangle('fill', 0, 0, SCR.w, SCR.h)
+            end
         end
+    end
+    local alpha_dH = icLerp(62, 260, abs(GAME.bgH - GAME.height)) ^ .5
+    local alpha = max(imgBG and 0 or 1, alpha_dH)
+    if GAME.bgH < 0 then alpha = alpha * clampInterpolate(-0, 1, -26, .62, GAME.bgH) end
+    if alpha > 0 then            
+        local top = Floors[bgFloor].top
+        local t = icLerp(1, 10, bgFloor + clampInterpolate(top - 50, 0, top, 1, abs(GAME.bgH)))
+        local r, g, b =
+            lLerp(floorColors[1], t) * lerp(1, .42, alpha_dH),
+            lLerp(floorColors[2], t) * lerp(1, .42, alpha_dH),
+            lLerp(floorColors[3], t) * lerp(1, .42, alpha_dH)
+        gc_setColor(r, g, b, alpha)
+        gc_rectangle('fill', 0, 0, SCR.w, SCR.h)
     end
 
     -- Brightness cover
@@ -1044,6 +1064,14 @@ local function stackerStartButtonColor()
     W:reset()
 end
 
+local boardRX, boardRY = 790, 232
+local function switchBoardCoord()
+    local k = 42 * GAME.shakeTimer * 0 -- TODO CONF.damageShakiness / 100
+    if GAME.shakeTimer > 0 then gc_translate(MATH.rand(-1, 1) * k, MATH.rand(-1, 1) * k) end
+    gc_translate(800, boardRY + 5 + (GAME.playing and (GAME.boardAnim - 1) * 62 or (1 - GAME.boardAnim) * 1260))
+    if not GAME.playing then GC.rotate((1 - GAME.boardAnim) * .162) end
+end
+
 function scene.draw()
     local t = love.timer.getTime()
     if GAME.zenithTraveler then
@@ -1053,6 +1081,7 @@ function scene.draw()
     else
         DrawBG(CONF.bgBrightness, true)
     end
+    local eTAlpha = GAME.einvisUI and 5 or 1
 
     if not (GAME.invisUI or GAME.einvisUI) then
         -- Wind particles
@@ -1092,7 +1121,7 @@ function scene.draw()
             if gigaPower > 0 then
                 gc_replaceTransform(SCR.origin)
                 gc_setColor(GigaSpeed.r, GigaSpeed.g, GigaSpeed.b, .42 * GigaSpeed.alpha * gigaPower)
-                local h1 = SCR.y + 470 * SCR.k
+                local h1 = SCR.y + 478 * SCR.k
                 gc_draw(TEXTURE.transition, 0, 0, 0, .42 / 128 * SCR.w, h1)
                 gc_draw(TEXTURE.transition, SCR.w, 0, 0, -.42 / 128 * SCR.w, h1)
 
@@ -1102,11 +1131,203 @@ function scene.draw()
             end
         end
     end
-    if not (GAME.invisUI or GAME.einvisUI) or GAME.uneasyModIconSelected and M.DP == -1 then
+    if not GAME.invisUI then
+        local panelH = 697 + GAME.uiHide * (420 + GAME.height / 6.2)
+        -- Card Panel
         gc_replaceTransform(SCR.xOy)
+        gc_translate(0, DeckPress)
+        if not GAME.einvisUI then
+            gc_setColor(ShadeColor)
+            gc_draw(TEXTURE.transition, 800 - 1586 / 2, panelH - 303, 1.5708, 6.26, 1586, 0, 1)
+            if GAME.revDeckSkin then
+                gc_push()
+                gc_translate(800, panelH)
+                for i = 1, URM and 2 or 1 do
+                    gc_setColor(1, 1, 1, GAME.revTimer)
+                    gc_mDraw(TEXTURE.panel.glass_a)
+                    gc_mDraw(TEXTURE.panel.glass_b)
+                    gc_setColor(1, 1, 1, ThrobAlpha.bg1)
+                    gc_mDraw(TEXTURE.panel.throb_a)
+                    gc_setColor(1, 1, 1, ThrobAlpha.bg2)
+                    gc_mDraw(TEXTURE.panel.throb_b)
+                    gc_scale(-1, 1)
+                end
+                gc_pop()
+            end
+            gc_setColor(ShadeColor)
+            gc_draw(TEXTURE.transition, 800 - 1586 / 2, panelH - 303, 1.5708, 12.6, -3, 0, 1)
+            gc_draw(TEXTURE.transition, 800 + 1586 / 2, panelH - 303, 1.5708, 12.6, 3, 0, 1)
+            gc_setColor(TextColor)
+            gc_setAlpha(.626)
+            gc_mRect('fill', 800, panelH - 303, 1586 + 6, -3)
+        end
+
+        -- Board
+        if GAME.playing or GAME.boardAnim > 0 and not (GAME.invisUI or GAME.einvisUI) then
+            gc_push()
+            switchBoardCoord()
+
+            local boxRX, boxRY = boardRX - 13, 110
+            local boxY = -boardRY + boxRY + 13
+            local dmgTmrDY = 154
+            local dmgTmrW, dmgTmrH = 370, 41
+            local hpY, hpW, hpH = 210, 1540, 13
+
+            stc_reset()
+
+            -- Blank
+            stc_setPen('replace', 2)
+            stc_mRect(0, 0, boardRX * 2, boardRY * 2)
+
+            -- Cull UI elements
+            stc_setPen('replace', 1)
+            stc_mRect(0, boxY, boxRX * 2, boxRY * 2)                    -- Quest box
+            stc_rect(-boxRX, boxY + boxRY + dmgTmrDY, dmgTmrW, dmgTmrH) -- Damage timer
+            if M.GV > 0 then stc_circ(500, 47, 38) end                  -- GV timer
+
+            stc_setPen('replace', 2)
+            -- Bevel quest box corner
+            stc_circ(-boxRX, boxY - boxRY, 16, 4)
+            stc_circ(-boxRX, boxY + boxRY, 16, 4)
+            stc_circ(boxRX, boxY - boxRY, 16, 4)
+            stc_circ(boxRX, boxY + boxRY, 16, 4)
+            -- Damage timer border
+            stc_circ(-boxRX, boxY + boxRY + dmgTmrDY + dmgTmrH, 16, 4)
+            stc_circ(-boxRX + dmgTmrW, boxY + boxRY + dmgTmrDY + dmgTmrH, 16, 4)
+
+            -- Cull HP Bar (must after damage timer)
+            stc_setPen('replace', 1)
+            stc_mRect(0, hpY, hpW * GAME.fullHealth / GAME.startingHealth + 4, hpH + 4)
+
+            -- Cut board corner
+            stc_setPen('replace', 0)
+            stc_circ(-boardRX, -boardRY, 22, 4)
+            stc_circ(-boardRX, boardRY, 22, 4)
+            stc_circ(boardRX, -boardRY, 22, 4)
+            stc_circ(boardRX, boardRY, 22, 4)
+
+            -- Draw board
+            local boardClr = GAME.clr_board
+            stc_setComp('equal', 1)
+            gc_setColor(.05, .05, .05, (GAME.playing and GAME.boardAnim ^ 4.2 or 1) * CONF.boardOpacity / 100)
+            gc_mRect('fill', 0, 0, boardRX * 2, boardRY * 2)
+            stc_setComp('equal', 2)
+            gc_setColor(boardClr[1], boardClr[2], boardClr[3], (GAME.playing and GAME.boardAnim ^ 4.2 or 1) * CONF.boardOpacity / 100)
+            gc_mRect('fill', 0, 0, boardRX * 2, boardRY * 2)
+            stc_stop()
+            if M.EX > 0 then
+                -- EX deco
+                gc_setColor(1, 0, 0)
+                gc_draw(TEXTURE.triangle, boardRX, boardRY, 0, -15 / 100, -15 / 100)
+                gc_draw(TEXTURE.triangle, -boardRX, boardRY, 0, 15 / 100, -15 / 100)
+            end
+
+            -- HP Bar
+            local safeHP = GAME.playing and max(GAME.dmgWrong + GAME.dmgWrongExtra, GAME.dmgTime) or 0
+            gc_setColor(GAME.playing and GAME.life > safeHP and CLR.L or COLOR.R)
+            if M.DP == 0 then
+                gc_setAlpha(1/eTAlpha)
+                gc_mRect('fill', 0, hpY, hpW * GAME.lifeShow / GAME.startingHealth, hpH)
+
+                gc_setColor(CLR.LD); gc_setAlpha(1/eTAlpha); gc_mRect('fill', 0, hpY - 2, hpW * GAME.dmgTime / GAME.startingHealth, 3)
+                gc_setColor(.872, 0, 0); gc_setAlpha(1/eTAlpha); gc_mRect('fill', 0, hpY + 2, hpW * GAME.dmgWrong / GAME.startingHealth, 3)
+                gc_setColor(1, 0, 0, .626); gc_setAlpha(1/eTAlpha); gc_mRect('fill', 0, hpY + 2, hpW * (GAME.dmgWrong + GAME.dmgWrongExtra) / GAME.startingHealth, 2)
+            else
+                if GAME.onAlly then gc_setAlpha(.42/eTAlpha) else gc_setAlpha(1/eTAlpha) end
+                gc_rectangle('fill', 0, hpY - hpH / 2, -hpW / 2 * GAME.lifeShow / GAME.startingHealth, hpH)
+                gc_setColor(GAME.playing and GAME.life2 > safeHP and CLR.L or COLOR.R)
+                if not GAME.onAlly then gc_setAlpha(.42/eTAlpha) else gc_setAlpha(1/eTAlpha) end
+                gc_rectangle('fill', 0, hpY - hpH / 2, hpW / 2 * GAME.lifeShow2 / GAME.startingHealth, hpH)
+
+                local k = GAME.onAlly and .5 or -.5
+                gc_setColor(CLR.LD); gc_setAlpha(1/eTAlpha); gc_rectangle('fill', 0, hpY - 2 - 1.5, k * hpW * GAME.dmgTime / GAME.startingHealth, 3)
+                gc_setColor(.872, 0, 0); gc_setAlpha(1/eTAlpha); gc_rectangle('fill', 0, hpY + 2 - 1.5, k * hpW * GAME.dmgWrong / GAME.startingHealth, 3)
+                gc_setColor(1, 0, 0, .626); gc_setAlpha(1/eTAlpha); gc_rectangle('fill', 0, hpY + 2 - 1, k * hpW * (GAME.dmgWrong + GAME.dmgWrongExtra) / GAME.startingHealth, 2)
+            end
+
+            -- Achievement state mark
+            if M.DP > 0 then
+                if GAME.comboStr == 'rDP' and not GAME.achv_protectH then
+                    gc_setColor(COLOR.lG)
+                    gc_mRect('fill', 1540 / 2 * 10 / GAME.startingHealth, 210, 4, 20)
+                    gc_mRect('fill', -1540 / 2 * 10 / GAME.startingHealth, 210, 4, 20)
+                end
+                if not GAME.achv_shareModH then
+                    gc_setColor(COLOR.M)
+                    gc_mRect('fill', 0, 205, 10, 10)
+                end
+                if not GAME.achv_noShareModH then
+                    gc_setColor(COLOR.dR)
+                    gc_mRect('fill', 0, 215, 10, 10)
+                end
+            end
+
+            -- Damage Timer
+            do
+                local w = 364
+                local _w = w / GAME.dmgDelay * GAME.dmgTimerMul
+                local w1, w2, w3 = _w * GAME.dmgTimer, _w * GAME.dmgCycle, max(w * (1 - GAME.dmgTimerMul), 0)
+                stc_reset()
+                stc_rect(-774, 157, w, 36)
+                stc_setPen('replace', 0)
+                stc_rect(-410 - w2 - 3, 157, w2 + 3, 7)
+                stc_rect(-410 - w2 - 3, 157, 3, 36)
+                stc_circ(-774, 193, 15, 4)
+                stc_circ(-410, 193, 15, 4)
+                if GAME.dmgTimerMul < 1 then
+                    gc_setColor(1, 0, 1, .62 * (1 - MusicBeat))
+                    gc_setAlpha(1/eTAlpha)
+                    gc_rectangle('fill', -410 - w, 157, w3, 36)
+                end
+                gc_setColor(GAME.dmgTimer > GAME.dmgCycle and CLR.DL or COLOR.lR)
+                gc_setAlpha(1/eTAlpha)
+                gc_rectangle('fill', -410 - w1, 157, w1, 36)
+                stc_stop()
+                gc_setColor(COLOR.lR)
+                gc_setAlpha(1/eTAlpha)
+                gc_rectangle('fill', -410 - w2, 157, w2, 4)
+
+                -- Damage Timer number
+                setFont(30)
+                gc_strokePrint('full', 1, CLR.D, boardClr, GAME.dmgDelay, -777 + w3, 140, nil, nil, nil, .4)
+                gc_strokePrint('full', 1, CLR.D, boardClr, GAME.dmgCycle, -410 - w2, 140, nil, nil, nil, .4)
+            end
+
+            -- Gravity Timer
+            if M.GV > 0 then
+                gc_ucs_move(500, 47)
+                gc_setColor(CLR.DL)
+                if not GAME.gravTimer then
+                    gc_circle('fill', 0, 0, 35)
+                else
+                    local gravTimerMod = 1 * (GAME.eslowmo and 1.5 or 1) * (GAME.enightcore and 0.5 or 1)
+                    gc_setAlpha(1/eTAlpha)
+                    gc_arc('fill', 'pie', 0, 0, 35, -1.5708, -1.5708 + 6.2832 * GAME.gravTimer / GAME.gravDelay)
+                    if GAME.gravTimer < 4.2 then
+                        setFont(30)
+                        gvTimerColor1[4] = clampInterpolate(clamp(GAME.gravDelay, 2.6, 4.2), 0, min(GAME.gravDelay - .626, 2.6), 1, GAME.gravTimer)
+                        gvTimerColor2[4] = gvTimerColor1[4]
+                        gc_strokePrint('full', 1, gvTimerColor1, gvTimerColor2, ("%.1f"):format((GAME.gravTimer * gravTimerMod) + .05), 0, -21, nil, 'center')
+                    end
+                end
+                gc_ucs_back()
+            end
+            -- Quest counter
+            if GAME.totalQuest <= 40 then
+                gc_setColor(TextColor)
+                gc_setAlpha(1/eTAlpha)
+                GC.print(GAME.totalQuest, 1210, 230)
+            end
+            -- Revive counter
+            if GAME.reviveCount > 0 then
+                gc_strokePrint('full', 1, COLOR.D, COLOR.lR, GAME.reviveCount, 800, 440, 260, 'center')
+            end
+
+            gc_pop()
+        end
 
         -- Mod icons
-        if GAME.uiHide > 0 then
+        if GAME.uiHide > 0 and not GAME.einvisUI then
             gc_setColor(1, 1, 1, GAME.uiHide * (M.IN == 0 and 1 or 1 - M.IN * (.26 + .1 * sin(t * 2.6))))
             local y = 330 + (GAME.height - GAME.bgH) * (M.VL + 1)
             if GAME.anyRev then
@@ -1121,31 +1342,6 @@ function scene.draw()
             else
                 gc_draw(GAME.modIB, 1490, y, M.AS * .026 * sin(t), 1)
             end
-        end
-    end
-    if not GAME.invisUI then
-        local panelH = 697 + GAME.uiHide * (420 + GAME.height / 6.2)
-        -- Card Panel
-        gc_replaceTransform(SCR.xOy)
-        gc_translate(0, DeckPress)
-        if not GAME.einvisUI then
-            gc_setColor(ShadeColor)
-            gc_draw(TEXTURE.transition, 800 - 1586 / 2, panelH - 303, 1.5708, 6.26, 1586, 0, 1)
-            if GAME.revDeckSkin then
-                gc_setColor(1, 1, 1, GAME.revTimer)
-                gc_mDraw(TEXTURE.panel.glass_a, 800, panelH)
-                gc_mDraw(TEXTURE.panel.glass_b, 800, panelH)
-                gc_setColor(1, 1, 1, ThrobAlpha.bg1)
-                gc_mDraw(TEXTURE.panel.throb_a, 800, panelH)
-                gc_setColor(1, 1, 1, ThrobAlpha.bg2)
-                gc_mDraw(TEXTURE.panel.throb_b, 800, panelH)
-            end
-            gc_setColor(ShadeColor)
-            gc_draw(TEXTURE.transition, 800 - 1586 / 2, panelH - 303, 1.5708, 12.6, -3, 0, 1)
-            gc_draw(TEXTURE.transition, 800 + 1586 / 2, panelH - 303, 1.5708, 12.6, 3, 0, 1)
-            gc_setColor(TextColor)
-            gc_setAlpha(.626)
-            gc_mRect('fill', 800, panelH - 303, 1586 + 6, -3)
         end
 
         -- MP & ZP Preview
@@ -1212,6 +1408,15 @@ function scene.draw()
         gc_mDraw(TEXTS.zpChange, 220, 93, 0, .626)
         -- Version Check for records
         gc_mDraw(TEXTS.easyModeVersion, 220, 111, 0, .626)
+
+        -- Input stats
+        local w = TEXTS.endHeight:getWidth() * 1.8
+        local x = 0
+        for i = 1, 3 do
+            gc_setColor(inputStatColor[i])
+            gc_rectangle('fill', (x - .5) * w, 188, w * GAME.inputStatNorm[i], 3)
+            x = x + GAME.inputStatNorm[i]
+        end
     end
 
     -- Daily Challenge Button
@@ -1236,6 +1441,17 @@ function scene.overDraw()
     if GAME.zenithTraveler then return end
 
     gc_translate(0, DeckPress)
+    
+    -- Glow
+    if ImpactGlow[1] then
+        gc_setBlendMode('add')
+        for i = 1, #ImpactGlow do
+            local L = ImpactGlow[i]
+            gc_setColor(L.r, L.g, L.b, L.t)
+            gc_blurCircle(0, L.x, L.y, 120 * (L.t + 1.6) ^ 2)
+        end
+        gc_setBlendMode('alpha')
+    end
 
     if not GAME.invisUI then
         -- Current combo
@@ -1243,7 +1459,7 @@ function scene.overDraw()
             local speedMod = ((GAME.enightcore and GAME.nightcore) and 4 or (GAME.enightcore or GAME.nightcore) and 2 or 1) * (GAME.eslowmo and 0.75 or 1) * (GAME.slowmo and 0.5 or 1)
             if GAME.customUltraCombo and not GAME.playing then
                 if not (RAINBOWFLASH and GAME.peasantRevolution) then
-                    TEXTS.mod:setFont(FONT.get(GAME.badTime and 90 or 60))
+                    TEXTS.mod:setFont(FONT.get(GAME.badTime and 200 or 60))
                     gc_setColor(COLOR.rainbow_light(2.6 * t * speedMod))
                     if GAME.peasantRevolution or (GAME.ultimateChallenge and M.DP == 0) then SCN.scenes.tower.widgetList.easy.textColor = COLOR.Y end
                 elseif RAINBOWFLASH then
@@ -1265,24 +1481,13 @@ function scene.overDraw()
             if GAME.ultimateChallenge then
                 local text = M.DP == -1 and 'FRIENDLY CHALLENGE' or 'ULTIMATE CHALLENGE'
                 local x = M.DP == -1 and 802 or 800
-                setFont(70)
-                gc_strokePrint('full', 6, {COLOR.rainbow_gray(2.6 * t * speedMod)}, nil, text, x, 345, 2600, 'center', 0, 1, 1)
-                gc_strokePrint('full', 4, {COLOR.rainbow_dark(2.6 * t * speedMod)}, nil, text, x, 345, 2600, 'center', 0, 1, 1)
-                gc_strokePrint('full', 2, {COLOR.rainbow(2.6 * t * speedMod)}, {COLOR.rainbow_light(2.6 * t * speedMod)}, text, x, 345, 2600, 'center', 0, 1, 1)
+                setFont(65)
+                gc_strokePrint('full', 6, {COLOR.rainbow_gray(2.6 * t * speedMod)}, nil, text, x, 355, 2600, 'center', 0, 1, 1)
+                gc_strokePrint('full', 4, {COLOR.rainbow_dark(2.6 * t * speedMod)}, nil, text, x, 355, 2600, 'center', 0, 1, 1)
+                gc_strokePrint('full', 2, {COLOR.rainbow(2.6 * t * speedMod)}, {COLOR.rainbow_light(2.6 * t * speedMod)}, text, x, 355, 2600, 'center', 0, 1, 1)
             else
-                gc_mDraw(TEXTS.mod, 800, GAME.badTime and 390 or 396, 0, min(1, 760 / TEXTS.mod:getWidth()))
+                gc_mDraw(TEXTS.mod, 800, GAME.badTime and 330 or 396, 0, min(1, 760 / TEXTS.mod:getWidth()))
             end
-        end
-
-        -- Glow
-        if ImpactGlow[1] then
-            gc_setBlendMode('add')
-            for i = 1, #ImpactGlow do
-                local L = ImpactGlow[i]
-                gc_setColor(L.r, L.g, L.b, L.t)
-                gc_blurCircle(0, L.x, L.y, 120 * (L.t + 1.6) ^ 2)
-            end
-            gc_setBlendMode('alpha')
         end
 
         -- GigaSpeed Timer
@@ -1290,14 +1495,14 @@ function scene.overDraw()
             local w, h = TEXTS.gigatime:getDimensions()
             local gigaFade = clamp((GAME.time - (GAME.gigaspeedEntered or GAME.time) - 120) / 180, 0, 1)
             gc_setColor(GigaSpeed.r, GigaSpeed.g, GigaSpeed.b, .2 * (GigaSpeed.alpha - gigaFade)/eTAlpha)
-            gc_strokeDraw('full', 3, TEXTS.gigatime, 800, 264, 0, 1.5, 1.2, w * .5, h * .5)
+            gc_strokeDraw('full', 3, TEXTS.gigatime, 800, 277, 0, 1.4, 1.1, w * .5, h * .5)
             if M.DP < 2 then
                 gc_setAlpha(GigaSpeed.alpha/eTAlpha)
-                gc_draw(TEXTS.gigatime, 800, 264, 0, 1.5, 1.2, w * .5, h * .5)
+                gc_draw(TEXTS.gigatime, 800, 277, 0, 1.4, 1.1, w * .5, h * .5)
                 if gigaFade > 0 then
                     local l = gigaFade == 1 and .5 or .8
                     gc_setColor(l, l, l, GigaSpeed.alpha * gigaFade/eTAlpha)
-                    gc_draw(TEXTS.gigatime, 800, 264, 0, 1.5, 1.2, w * .5, h * .5)
+                    gc_draw(TEXTS.gigatime, 800, 277, 0, 1.4, 1.1, w * .5, h * .5)
                 end
             end
         end
@@ -1325,8 +1530,8 @@ function scene.overDraw()
 
         -- Spike counter
         if GAME.spikeCounter >= 8 and GAME.spikeTimer > 0 then
-            gc_push('transform')
-            gc_translate(1226, 300)
+            gc_push()
+            gc_translate(1226, 320)
             local _t = GAME.questTime
             local bk = _t < .12 and 1 + 62 * _t * (.12 - _t) or 1
             gc_scale(min(GAME.spikeCounter / 60, 1) + bk)
@@ -1340,351 +1545,12 @@ function scene.overDraw()
             gc_setBlendMode('alpha')
             gc_pop()
         end
-
-        -- Health Bar
-        local safeHP = GAME.playing and max(GAME.dmgWrong + GAME.dmgWrongExtra, GAME.dmgTime) or 0
-        if M.DP == 0 then
-            gc_setColor(GAME.playing and GAME.life > safeHP and COLOR.L or COLOR.R)
-            gc_setAlpha(1/eTAlpha)
-            gc_mRect('fill', 800, 440, 1540 * GAME.lifeShow / GAME.startingHealth, 10)
-            if GAME.playing then
-                gc_setColor(COLOR.LD)
-                gc_mRect('fill', 800, 440 - 2, 1540 * GAME.dmgTime / GAME.startingHealth, 3)
-                gc_setColor(.872, 0, 0)
-                gc_mRect('fill', 800, 440 + 2, 1540 * GAME.dmgWrong / GAME.startingHealth, 3)
-                gc_setColor(1, 0, 0, .626)
-                gc_mRect('fill', 800, 440 + 2, 1540 * (GAME.dmgWrong + GAME.dmgWrongExtra) / GAME.startingHealth, 2)
-            end
-        else
-            local onAlly = GAME.onAlly
-            gc_setColor(GAME.playing and GAME.life > safeHP and COLOR.L or COLOR.R)
-            if onAlly then gc_setAlpha(.42) end
-            gc_rectangle('fill', 800, 440 - 5, -1540 / 2 * GAME.lifeShow / GAME.startingHealth, onAlly and 8 * M.DP or 12)
-            gc_setColor(GAME.playing and GAME.life2 > safeHP and COLOR.L or COLOR.R)
-            if not onAlly then gc_setAlpha(.42) end
-            gc_rectangle('fill', 800, 440 - 5, 1540 / 2 * GAME.lifeShow2 / GAME.startingHealth, onAlly and 12 or 8 * M.DP)
-        end
     elseif M.EX == -1 and URM and M.DP == -1 and M.NH == 0 and M.MS == 0 and M.GV == 0 and M.VL == 0 and M.DH == 0 and M.AS == 0 and M.IN == 0 then
         TEXTS.mod:setFont(FONT.get(30))
         gc_setColor(TextColor)
         gc_setAlpha(.42 + .26 * sin(t * 2.6))
         gc_mDraw(TEXTS.mod, 800, 396, 0, min(1, 760 / TEXTS.mod:getWidth()))
     end
-
-    if GAME.playing then
-        if not GAME.invisUI then
-            -- Achievement state mark
-            if M.DP > 0 then
-                if GAME.comboStr == 'rDP' and not GAME.achv_protectH then
-                    gc_setColor(COLOR.lG)
-                    gc_setAlpha(1/eTAlpha)
-                    gc_mRect('fill', 800 + 1540 / 2 * 10 / GAME.startingHealth, 442, 4, 20)
-                    gc_mRect('fill', 800 - 1540 / 2 * 10 / GAME.startingHealth, 442, 4, 20)
-                end
-                if not GAME.achv_shareModH then
-                    gc_setColor(COLOR.M)
-                    gc_setAlpha(1/eTAlpha)
-                    gc_mRect('fill', 800, 435, 10, 10)
-                end
-                if not GAME.achv_noShareModH then
-                    gc_setColor(COLOR.dR)
-                    gc_setAlpha(1/eTAlpha)
-                    gc_mRect('fill', 800, 445, 10, 10)
-                end
-            end
-            setFont(30)
-            -- Quest counter
-            if GAME.totalQuest <= 40 then
-                gc_setColor(TextColor)
-                gc_setAlpha(1/eTAlpha)
-                gc.print(GAME.totalQuest, 1210, 230)
-            end
-            -- Revive counter
-            if GAME.reviveCount > 0 then
-                gc_strokePrint('full', 1, COLOR.D, COLOR.lR, GAME.reviveCount, 800, 440, 260, 'center')
-            end
-            if GAME.chain >= 4 then
-                -- Chain Counter
-                local c = GAME.chain
-                local _t = GAME.questTime
-                local bk = _t < .12 and 1 + 62 * _t * (.12 - _t) or 1
-                local k = clampInterpolate(6, .7, 26, 2, c)
-
-                local r, g, b, a
-                if GAME.fault then
-                    local l = M.AS < 2 and .62 or .42
-                    r, g, b, a = l, l, l, c < 8 and .26/eTAlpha or 1/eTAlpha
-                elseif M.AS < 2 then
-                    r, g, b, a = COLOR.HSL(
-                        26 / (c + 22) + 1.3, 1,
-                        icLerp(-260, 420, c),
-                        c < 8 and .26/eTAlpha or 1/eTAlpha
-                    )
-                else
-                    r, g, b, a = COLOR.HSV(
-                        clampInterpolate(4, .76, 26, 0.926, c), 1, 1,
-                        .16/eTAlpha
-                    )
-                    gc_setColor(0, 0, 0)
-                    gc_setAlpha(1/eTAlpha)
-                    gc_mDraw(TEXTURE.surgeIcon, 326, 270, GAME.time * 2.6, .25 * k * bk)
-                end
-
-                if URM and M.NH == 2 then
-                    r, g, b = .626 + r * .26, .626 + g * .26, .626 + b * .26
-                end
-
-                -- Spike ball
-                gc_setColor(r, g, b, a/eTAlpha)
-                gc_blurCircle(-.26, 326, 270, 100 * k)
-                gc_mDraw(TEXTURE.surgeIcon, 326, 270, GAME.time * 2.6, .25 * k * bk)
-
-                -- Spark
-                if not (URM and M.NH == 2) then
-                    gc_setColor(.7 + r * .3, .7 + g * .3, .7 + b * .3)
-                    gc_setAlpha(1/eTAlpha)
-                    for i = 1, 3 do gc_draw(SparkPS[i], 326, 270, 0, k * .8) end
-                end
-
-                -- "B2B x"
-                local x = 255 - 50 * k * bk
-                gc_setColor(COLOR.D)
-                gc_setAlpha(1/eTAlpha)
-                gc_draw(TEXTS.b2b, x, 216)
-                gc_setColor(r, g, b)
-                gc_setAlpha(1/eTAlpha)
-                gc_draw(TEXTS.b2b, x, 214)
-
-                -- Number
-                local chain = TEXTS[M.AS < 2 and 'chain' or 'chain2']
-                if M.AS < 2 then
-                    if c >= 8 then
-                        gc_setColor(COLOR.L)
-                        gc_setAlpha(1/eTAlpha)
-                        gc_strokeDraw('full', k * 2, chain, 326, 268, 0, k * bk, nil,
-                            chain:getWidth() / 2, chain:getHeight() / 2)
-                        gc_setColor(COLOR.D)
-                        gc_setAlpha(1/eTAlpha)
-                    end
-                    gc_mDraw(chain, 326, 268, 0, k * bk)
-                else
-                    gc_draw(WoundPS, 326, 266)
-
-                    if not GAME.fault then
-                        gc_setColor(r, g, b, .26 + .1 * math.sin(GAME.time * 4.2))
-                        gc_setAlpha(1/eTAlpha)
-                        gc_setBlendMode('add')
-                        gc_strokeDraw('full', 3.55 * k, chain, 326, 268, 0, k * bk)
-                        gc_setBlendMode('alpha')
-                    end
-                    gc_setColor(COLOR.L)
-                    gc_setAlpha(1/eTAlpha)
-                    gc_draw(chain, 326, 268, 0, k * bk)
-                end
-            elseif GAME.comboStr == 'VLrGV' then
-                GC.mStr(floor(GAME.achv_altFromSurge) .. "m", 326, 240)
-            end
-
-            -- Damage Timer
-            local delay = GAME.dmgDelay
-            local w = -360 * min(GAME.dmgTimerMul ^ .5, 1)
-            gc_setColor(GAME.dmgTimer > GAME.dmgCycle and COLOR.DL or COLOR.lR)
-            gc_setAlpha(1/eTAlpha)
-            gc_rectangle('fill', 390, 430, w * (GAME.dmgTimer / delay), -20 - 2 * delay)
-            gc_setLineWidth(3)
-            gc_setColor(COLOR.LD)
-            gc_setAlpha(1/eTAlpha)
-            gc_rectangle('line', 390, 430, w * (GAME.dmgCycle / delay), -20 - 2 * delay)
-            gc_rectangle('line', 390, 430, w, -20 - 2 * delay)
-
-            -- Gravity Timer
-            if M.GV ~= 0 then
-                gc_push('transform')
-                gc_translate(1300, 270)
-                gc_scale(GAME.uiHide)
-                gc_setColor(COLOR.DL)
-                gc_setAlpha(1/eTAlpha)
-                if GAME.gravTimer then
-                    gc_arc('fill', 'pie', 0, 0, 40, -1.5708,
-                        -1.5708 + 6.2832 * GAME.gravTimer / GAME.gravDelay)
-                else
-                    gc_circle('fill', 0, 0, 40)
-                end
-                gc_setColor(COLOR.LD)
-                gc_setAlpha(1/eTAlpha)
-                gc_circle('line', 0, 0, 40)
-                if GAME.gravTimer and GAME.gravTimer < 4.2 then
-                    setFont(30)
-                    gvTimerColor1[4] = clampInterpolate(clamp(GAME.gravDelay, 2.6, 4.2), 0, min(GAME.gravDelay - .626, 2.6), 1, GAME.gravTimer)
-                    gvTimerColor2[4] = gvTimerColor1[4]
-                    gc_strokePrint('full', 1, gvTimerColor1, gvTimerColor2, ("%.1f"):format(GAME.gravTimer + .05), 0, -21, nil, 'center')
-                end
-                gc_pop()
-            end
-
-            -- Promotion Gauge
-            if CONF.stacker and CONF.promotion then 
-                CONF.promotion = false -- forcibly disable promotion gauge with stacker
-                SaveConf()
-                SFX.play('warning')
-                MSG('dark', "STACKER and PROMOTION GAUGE are MUTUALLY EXCLUSIVE! \nPROMOTION GAUGE has been disabled!")
-            end
-            if CONF.promotion then
-                gc_push('transform')
-                gc_translate(460, 290)
-                gc_scale(GAME.uiHide)
-                local baseThickness = 6
-                local radius = 60
-                local colorList = {COLOR.R, COLOR.Y, COLOR.G, COLOR.B, COLOR.V, COLOR.lM }
-                local colorIndex = 1
-                local rank = GAME.rank
-                local xp = (M.VL == 2 and URM) and (5+GAME.chain) or GAME.commit(false, true)
-                local newXP, newRank = GAME.addXP(xp, true)
-                local revolutions = newRank - rank + (newXP/(4*(newRank))) -- 1/360
-                local tempRevolutions = newRank - rank 
-                if revolutions > 1 then
-                    while radius > 2 and tempRevolutions > 0 do
-                        for i = 1, floor(revolutions) do
-                            gc_setColor(colorList[colorIndex])
-                            gc_circle('fill', 0, 0, radius)
-                            if colorIndex == 6 then
-                                colorIndex = 1
-                            else
-                                colorIndex = colorIndex + 1
-                            end
-                            tempRevolutions = tempRevolutions - 1
-                            radius = radius - (revolutions <= 10 and 6 or revolutions <= 12 and 5 or revolutions <= 15 and 4 or revolutions <= 20 and 3 or revolutions <= 30 and 2 or 1)
-                        end
-                    end
-                    gc_setColor(colorList[colorIndex])
-                else
-                    radius = radius - baseThickness
-                    gc_setColor(COLOR.DL)
-                end
-                gc_setAlpha(1/eTAlpha)
-                gc_arc('fill', 'pie', 0, 0, radius, 0, 6.2832 * (revolutions - floor(revolutions)))
-                gc_setColor(GAME.rank > 126 and COLOR.LL or COLOR.LD)
-                gc_setAlpha(1/eTAlpha)
-                gc_circle('line', 0, 0, 60)
-                gc_pop()
-            end
-            -- Revive Task
-            local task = GAME.currentTask
-            if task then
-                local allyDie = GAME.life2 <= 0
-                gc_push('transform')
-
-                -- Lock
-                gc_translate(allyDie and 1150 or 450, 450)
-                gc_setColor(1, 1, 1)
-                local texture = TEXTURE.revive[M.DP < 2 and 'norm' or allyDie and 'rev_right' or 'rev_left']
-                local taskID
-                for i = #GAME.reviveTasks, 1, -1 do
-                    gc_mDrawQ(texture, reviveInfo.quad[i], 0, 0, 0, .4)
-                    if GAME.reviveTasks[i] == GAME.currentTask then
-                        taskID = i
-                        break
-                    end
-                end
-
-                -- Text
-                gc_rotate(reviveInfo.rotation[taskID])
-                gc_translate(reviveInfo.move[taskID], 0)
-                local txt = task.textObj
-                local w, h = txt:getDimensions()
-                local ky = h < 40 and 1 or .7
-                if task.target == 1 then
-                    local kx = min(ky, 310 / w)
-                    gc_draw(txt, (310 - w * kx) / 2, h < 40 and -12 or -22, 0, kx, ky)
-                else
-                    local kx = min(ky, 240 / w)
-                    gc_draw(txt, 0, h < 40 and -12 or -22, 0, kx, ky)
-                    -- Progres
-                    local w2 = task.progObj:getWidth()
-                    gc_draw(task.progObj, 310, -22, 0, min((300 - w * kx) / w2, 1.5), 1.5, w2)
-                end
-
-                -- gc_setColor(0, 1, 0)
-                -- gc_rectangle('line', 0, -25, 310, 63.5)
-                gc_pop()
-
-                -- Short Text & Panel
-                gc_setColor(.3, .1, 0, .62/eTAlpha)
-                gc_mRect('fill', 800, 330 - (CONF.stacker and GAME.questStack[1] and 60 or 0), GAME.currentTask.shortObj:getWidth() * 1.6 + 50, 75, 20)
-                gc_setColor(1, 1, 1)
-                gc_mDraw(GAME.currentTask.shortObj, 800, 330 - (CONF.stacker and GAME.questStack[1] and 60 or 0), 0, 1.6)
-            end
-        end
-
-        local ultimateChallengeMod = GAME.ultimateChallenge and not GAME.einvisCard and (1 + (M.DP == 0 and ((GAME.startingHealth-GAME.life)/GAME.startingHealth * 2) or ((GAME.startingHealth*2-(GAME.life+GAME.life2))/GAME.startingHealth))) or 1
-
-        -- Quests
-        for i = 1, GAME.maxQuestCount do
-            local Q = GAME.quests[i]
-            local text = Q.name
-            local kx = min(Q.k, 1550 / text:getWidth())
-            local ky = max(kx, Q.k)
-            local a = 1
-            if M.IN == 2 then
-                -- Trevor Smithy
-                local k = M.DP ~= 0 and i <= 2 and 1 / i or i ^ -2
-                a = clamp(
-                    a * (1 - (((GAME.questTime - .26) * (GAME.floor + .62) * .26 * k) / ultimateChallengeMod * (GAME.eslowmo and 0.75 or 1))),
-                    GAME.faultWrong and (not URM or ultimateChallengeMod > 2) and i * .26 or 0, 1
-                )
-            end
-            if a > 0 then
-                a = a * Q.a
-                gc_setColor(.2 * a, .2 * a, .2 * a, a)
-                gc_mDraw(text, 800, Q.y + 5, 0, kx, ky)
-                gc_setColor(1, 1, 1, a)
-                gc_mDraw(text, 800, Q.y, 0, kx, ky)
-            end
-        end
-        if CONF.stacker and GAME.questStack[1] then
-            local Q = GAME.questStack[1]
-            local text = Q.name
-            local kx = min(Q.k, 800 / text:getWidth())
-            local ky = max(kx, Q.k)
-            local a = 1
-            if M.IN == 2 then
-                -- Trevor Smithy
-                local k = M.DP ~= 0 and 1 or 1 ^ -2
-                a = clamp(
-                    a * (1 - (((GAME.questTime - .26) * (GAME.floor + .62) * .26 * k) / ultimateChallengeMod * (GAME.eslowmo and 0.75 or 1))),
-                    GAME.faultWrong and (not URM or ultimateChallengeMod > 2) and 1 * .26 or 0, 1
-                )
-            end
-            if a > 0 then
-                a = a * Q.a
-                gc_setColor(.2 * a, .2 * a, .2 * a, a)
-                gc_mDraw(text, 800, Q.y + 5, 0, kx, ky)
-                gc_setColor(1, 1, 1, a)
-                gc_mDraw(text, 800, Q.y, 0, kx, ky)
-            end
-        end
-        if CONF.stacker and GAME.comboBounceTime > 0 then
-            gc_setColor(1, 1, 1)
-            local alpha = 1
-            local x, y = 215, 315
-            if GAME.comboBounceTime < 3 then
-                alpha = 1/(3/max(GAME.comboBounceTime, 0.01))
-            end
-            if GAME.comboBounceTime > 3.8 then
-                y = y - 10 + (abs(3.9-GAME.comboBounceTime))*100
-            end
-            gc_setAlpha(alpha)
-            TEXTS.combo:setFont(FONT.get(70))
-            gc_draw(TEXTS.comboText, x, y)
-            gc_draw(TEXTS.combo, x - (TEXTS.combo:getWidth() > 50 and 95 or 60), y - 15)
-        end
-    end
-
-    -- Debug
-    -- setFont(30) gc_setColor(1, 1, 1)
-    -- for i = 1, #Cards do
-    --     gc.print(Cards[i].ty, Cards[i].x, Cards[i].y-260)
-    -- end
 
     -- bottom in-game UI
     if GAME.uiHide > 0 and not GAME.invisUI then
@@ -1801,10 +1667,18 @@ function scene.overDraw()
             setFont(30)
             gc_setColor(1, 0, 0, t % .52 < .26 and .872/eTAlpha or .42/eTAlpha)
             local attackMul = floor((GAME.attackMul / (GAME.badTime and 3 or 1)) * 1000)/1000
-            gc.print("x" .. attackMul, 1024, 926, 0, .7)
+            GC.print("x" .. attackMul, 1024, 926, 0, .7)
         end
 
         gc_ucs_back()
+    end
+
+    -- Piece effect
+    do
+        gc_replaceTransform(SCR.xOy_m)
+        GC.setColor(1, 1, 1, .26 * GAME.uiHide)
+        local w, h = GAME.pieceFstrObj:getDimensions()
+        GC.draw(GAME.pieceFstrObj, 0, -170 - (CONF.stacker and GAME.questStack[1] and 60 or 0), 0, min(4.2, 740 / w) * (CONF.stacker and GAME.questStack[1] and 0.62 or 1), nil, w / 2, h * .57)
     end
 
     -- Rev trigger for touchscreen
@@ -1840,8 +1714,23 @@ function scene.overDraw()
         for i = #Cards, 1, -1 do Cards[i]:draw() end
     end
 
-    if not GAME.invisUI then
-        -- Allspin keyboard hint Trevor Smithy (any AS and eEX or no EX)
+    -- Debug
+    if ZENITHA.getDebugMode() and false then
+        setFont(10); gc_setLineWidth(1); gc_setColor(1, 1, 1)
+        for i = 1, #Cards do
+            local c = Cards[i]
+            local x, y = c.x - 240 * c.size, c.y - 330 * c.size
+            gc_rectangle('line', x, y, 240 * 2 * c.size, 330 * 2 * c.size)
+            GC.print(c.id, x, y)
+            GC.print(floor(c.x) .. "," .. floor(c.y) .. "(" .. floor(c.x1) .. "," .. floor(c.y1) .. ")", x, y + 10)
+            GC.print('r_3d ' .. MATH.roundUnit(c.r_3d, .01), x, y + 20)
+            GC.print('r_3d_in ' .. MATH.roundUnit(c.r_3d_in, .01), x, y + 30)
+            GC.print('r_2d_rev ' .. MATH.roundUnit(c.r_2d_rev, .01), x, y + 40)
+            GC.print('r_2d_shake ' .. MATH.roundUnit(c.r_2d_shake, .01), x, y + 50)
+        end
+    end
+
+    -- Allspin keyboard hint Trevor Smithy (any AS and eEX or no EX)
         if M.AS ~= 0 and M.EX <= 0 then
             local texts = CardHintText
             for i = 1, #Cards do
@@ -1858,14 +1747,285 @@ function scene.overDraw()
             end
         end
 
+    -- Board
+    if GAME.playing or GAME.boardAnim > 0 then
+        gc_replaceTransform(SCR.xOy)
+        switchBoardCoord()
+
+        if not GAME.invisUI then
+            if GAME.chain >= 4 then
+                -- Chain Counter
+                local chain = GAME.chain
+                local _t = GAME.questTime
+                local bk = _t < .12 and 1 + 62 * _t * (.12 - _t) or 1
+                local k = clampInterpolate(6, .7, 26, 2, chain)
+
+                gc_ucs_move(-474, 52)
+                local xText = -71 - 50 * k * bk
+
+                local r, g, b, a
+                if GAME.fault then
+                    local l = M.AS < 2 and .62 or .42
+                    r, g, b, a = l, l, l, chain < 8 and .26/eTAlpha or 1/eTAlpha
+                elseif M.AS < 2 then
+                    r, g, b, a = COLOR.HSL(
+                        26 / (chain + 22) + 1.3, 1,
+                        icLerp(-260, 420, chain),
+                        chain < 8 and .26/eTAlpha or 1/eTAlpha
+                    )
+                else
+                    r, g, b, a = COLOR.HSV(
+                        clampInterpolate(4, .76, 26, 0.926, chain), 1, 1,
+                        .16/eTAlpha
+                    )
+                    gc_setColor(0, 0, 0)
+                    gc_setAlpha(1/eTAlpha)
+                    gc_mDraw(TEXTURE.surgeIcon, 0, 0, GAME.time * 2.6, .25 * k * bk)
+                end
+
+                if URM and M.NH == 2 then
+                    r, g, b = .626 + r * .26, .626 + g * .26, .626 + b * .26
+                end
+
+                -- Spike ball
+                gc_setColor(r, g, b, a/eTAlpha)
+                gc_blurCircle(-.26, 0, 0, 100 * k)
+                gc_mDraw(TEXTURE.surgeIcon, 0, 0, GAME.time * 2.6, .25 * k * bk)
+
+                -- Spark
+                if not (URM and M.NH == 2) then
+                    gc_setColor(.7 + r * .3, .7 + g * .3, .7 + b * .3)
+                    gc_setAlpha(1/eTAlpha)
+                    for i = 1, 3 do gc_draw(SparkPS[i], 0, 0, 0, k * .8) end
+                end
+
+                -- "B2B x"
+                gc_setColor(COLOR.D)
+                gc_setAlpha(1/eTAlpha)
+                gc_strokeDraw('full', 1, TEXTS.b2b, xText, -54)
+                gc_setColor(r, g, b, 1/eTAlpha)
+                gc_draw(TEXTS.b2b, xText, -54)
+
+                -- Particles
+                if M.AS == 2 then
+                    gc_setColor(r, g, b)
+                    gc_draw(WoundPS, 0, 0 - 2)
+                end
+
+                -- Number
+                if GAME.fault then
+                    gc_push()
+                    local strength = min(chain / 42, 1)
+                    GC.rotate((math.random() - .5) * .4 * strength)
+                    gc_translate(MATH.rand(-5, 5) * strength, MATH.rand(-5, 5) * strength)
+                end
+                local chainText = TEXTS[M.AS < 2 and 'chain' or 'chain2']
+                if M.AS < 2 then
+                    if chain >= 8 then
+                        gc_setColor(COLOR.L)
+                        gc_setAlpha(1/eTAlpha)
+                        gc_strokeDraw('full', k * 2, chainText, 0, 0, 0, k * bk, nil, chainText:getWidth() / 2, chainText:getHeight() / 2)
+                        gc_setColor(COLOR.D)
+                        gc_setAlpha(1/eTAlpha)
+                    end
+                    gc_mDraw(chainText, 0, 0, 0, k * bk)
+                else
+                    gc_draw(WoundPS, 0, 0)
+
+                    if not GAME.fault then
+                        gc_setColor(r, g, b, .26 + .1 * math.sin(GAME.time * 4.2))
+                        gc_setAlpha(1/eTAlpha)
+                        gc_setBlendMode('add')
+                        gc_strokeDraw('full', 3.55 * k, chainText, 0, 0, 0, k * bk)
+                        gc_setBlendMode('alpha')
+                    end
+                    gc_setColor(COLOR.L)
+                    gc_setAlpha(1/eTAlpha)
+                    gc_draw(chainText, 0, 0, 0, k * bk)
+                end
+                if GAME.fault then gc_pop() end
+
+                gc_ucs_back()
+            elseif GAME.comboStr == 'VLrGV' then
+                local x, y = -474, 52
+                gc_strokePrint('corner', 2, CLR.D, GAME.clr_board, floor(GAME.achv_altFromSurge) .. "m", x, y - 20, 260, 'center')
+            end
+
+            -- Promotion Gauge
+            if CONF.stacker and CONF.promotion then 
+                CONF.promotion = false -- forcibly disable promotion gauge with stacker
+                SaveConf()
+                SFX.play('warning')
+                MSG('dark', "STACKER and PROMOTION GAUGE are MUTUALLY EXCLUSIVE! \nPROMOTION GAUGE has been disabled!")
+            end
+            if CONF.promotion then
+                gc_push()
+                gc_translate(-340, 75)
+                gc_scale(GAME.uiHide)
+                local baseThickness = 6
+                local radius = 60
+                local colorList = {COLOR.R, COLOR.Y, COLOR.G, COLOR.B, COLOR.V, COLOR.lM }
+                local colorIndex = 1
+                local rank = GAME.rank
+                local xp = (M.VL == 2 and URM) and (5+GAME.chain) or GAME.commit(false, true)
+                local newXP, newRank = GAME.addXP(xp, true)
+                local revolutions = newRank - rank + (newXP/(4*(newRank))) -- 1/360
+                local tempRevolutions = newRank - rank 
+                if revolutions > 1 then
+                    while radius > 2 and tempRevolutions > 0 do
+                        for i = 1, floor(revolutions) do
+                            gc_setColor(colorList[colorIndex])
+                            gc_circle('fill', 0, 0, radius)
+                            if colorIndex == 6 then
+                                colorIndex = 1
+                            else
+                                colorIndex = colorIndex + 1
+                            end
+                            tempRevolutions = tempRevolutions - 1
+                            radius = radius - (revolutions <= 10 and 6 or revolutions <= 12 and 5 or revolutions <= 15 and 4 or revolutions <= 20 and 3 or revolutions <= 30 and 2 or 1)
+                        end
+                    end
+                    gc_setColor(colorList[colorIndex])
+                else
+                    radius = radius - baseThickness
+                    gc_setColor(COLOR.DL)
+                end
+                gc_setAlpha(1/eTAlpha)
+                gc_arc('fill', 'pie', 0, 0, radius, 0, 6.2832 * (revolutions - floor(revolutions)))
+                gc_setColor(GAME.rank > 126 and COLOR.LL or COLOR.LD)
+                gc_setAlpha(1/eTAlpha)
+                gc_circle('line', 0, 0, 60)
+                gc_pop()
+            end
+
+            -- Revive Task
+            local task = GAME.currentTask
+            if task then
+                local allyDie = GAME.life2 <= 0
+                gc_push()
+
+                -- Lock
+                gc_translate(allyDie and -350 or 350, 212)
+                gc_setColor(1, 1, 1)
+                local texture = TEXTURE.revive[M.DP < 2 and 'norm' or allyDie and 'rev_right' or 'rev_left']
+                local taskID
+                for i = #GAME.reviveTasks, 1, -1 do
+                    gc_mDrawQ(texture, reviveInfo.quad[i], 0, 0, 0, .4)
+                    if GAME.reviveTasks[i] == GAME.currentTask then
+                        taskID = i
+                        break
+                    end
+                end
+
+                -- Text
+                gc_rotate(reviveInfo.rotation[taskID])
+                gc_translate(reviveInfo.move[taskID], 0)
+                local txt = task.textObj
+                local w, h = txt:getDimensions()
+                local ky = h < 40 and 1 or .7
+                if task.target == 1 then
+                    local kx = min(ky, 310 / w)
+                    gc_draw(txt, (310 - w * kx) / 2, h < 40 and -12 or -22, 0, kx, ky)
+                else
+                    local kx = min(ky, 240 / w)
+                    gc_draw(txt, 0, h < 40 and -12 or -22, 0, kx, ky)
+                    -- Progres
+                    local w2 = task.progObj:getWidth()
+                    gc_draw(task.progObj, 310, -22, 0, min((300 - w * kx) / w2, 1.5), 1.5, w2)
+                end
+
+                -- gc_setColor(0, 1, 0)
+                -- gc_rectangle('line', 0, -25, 310, 63.5)
+                gc_pop()
+
+                -- Short Text & Panel
+                gc_setColor(.3, .1, 0, .62/eTAlpha)
+                gc_mRect('fill', 0, 92 - (CONF.stacker and GAME.questStack[1] and 60 or 0), GAME.currentTask.shortObj:getWidth() * 1.6 + 50, 75, 20)
+                gc_setColor(1, 1, 1)
+                gc_mDraw(GAME.currentTask.shortObj, 0, 92 - (CONF.stacker and GAME.questStack[1] and 60 or 0), 0, 1.6)
+            end
+        end
+
+        local ultimateChallengeMod = GAME.ultimateChallenge and not GAME.einvisCard and (1 + (M.DP == 0 and ((GAME.startingHealth-GAME.life)/GAME.startingHealth * 2) or ((GAME.startingHealth*2-(GAME.life+GAME.life2))/GAME.startingHealth))) or 1
+
+        -- Quests
+        for i = 1, GAME.maxQuestCount do
+            local Q = GAME.quests[i]
+            local text = Q.name
+            local kx = min(Q.k, 1550 / text:getWidth())
+            local ky = max(kx, Q.k)
+            local a = 1
+            if M.IN == 2 then
+                -- Trevor Smithy
+                local k = M.DP ~= 0 and i <= 2 and 1 / i or i ^ -2
+                a = clamp(
+                    a * (1 - (((GAME.questTime - .26) * (GAME.floor + .62) * .26 * k) / ultimateChallengeMod * (GAME.eslowmo and 0.75 or 1))),
+                    GAME.faultWrong and (not URM or ultimateChallengeMod > 2) and i * .26 or 0, 1
+                )
+            end
+            if a > 0 then
+                a = a * Q.a
+                gc_setColor(.2 * a, .2 * a, .2 * a, a)
+                gc_mDraw(text, 0, Q.y + 5, 0, kx, ky)
+                gc_setColor(1, 1, 1, a)
+                gc_mDraw(text, 0, Q.y, 0, kx, ky)
+            end
+        end
+        if CONF.stacker and GAME.questStack[1] then
+            gc_push()
+            gc_replaceTransform(SCR.xOy)
+            local Q = GAME.questStack[1]
+            local text = Q.name
+            local kx = min(Q.k, 800 / text:getWidth())
+            local ky = max(kx, Q.k)
+            local a = 1
+            if M.IN == 2 then
+                -- Trevor Smithy
+                local k = M.DP ~= 0 and 1 or 1 ^ -2
+                a = clamp(
+                    a * (1 - (((GAME.questTime - .26) * (GAME.floor + .62) * .26 * k) / ultimateChallengeMod * (GAME.eslowmo and 0.75 or 1))),
+                    GAME.faultWrong and (not URM or ultimateChallengeMod > 2) and 1 * .26 or 0, 1
+                )
+            end
+            if a > 0 then
+                a = a * Q.a
+                gc_setColor(.2 * a, .2 * a, .2 * a, a)
+                gc_mDraw(text, 800, Q.y + 5, 0, kx, ky)
+                gc_setColor(1, 1, 1, a)
+                gc_mDraw(text, 800, Q.y, 0, kx, ky)
+            end
+            gc_pop()
+        end
+        if CONF.stacker and GAME.comboBounceTime > 0 then
+            gc_setColor(1, 1, 1)
+            local alpha = 1
+            local x, y = -600, 0
+            if GAME.comboBounceTime < 3 then
+                alpha = 1/(3/max(GAME.comboBounceTime, 0.01))
+            end
+            if GAME.comboBounceTime > 3.8 then
+                y = y - 10 + (abs(3.9-GAME.comboBounceTime))*100
+            end
+            gc_setAlpha(alpha)
+            TEXTS.combo:setFont(FONT.get(70))
+            gc_draw(TEXTS.comboText, x, y)
+            gc_draw(TEXTS.combo, x - (TEXTS.combo:getWidth() > 50 and 95 or 60), y - 15)
+        end
+    end
+
+    if not GAME.invisUI then
         -- Section time
-        if GAME.uiHide > 0 then
+        if GAME.uiHide > 0 and GAME.time > 1 then
             gc_replaceTransform(SCR.xOy_dr)
             local ox, oy = TEXTS.floorTime:getDimensions()
             gc_setColor(0, 0, 0, .626/eTAlpha)
             gc_draw(TEXTS.floorTime, -10, -5 + 260 * (1 - GAME.uiHide), 0, .7, .7, ox, oy)
-            gc_setColor(.626, .626, .626, .626/eTAlpha)
-            gc_draw(TEXTS.floorTime, -10, -5 + 260 * (1 - GAME.uiHide), 0, .7, .7, ox, oy)
+            if GAME.teramusic then
+                gc_setColor(GAME.giga_r, GAME.giga_g, GAME.giga_b, .626)
+            else
+                gc_setColor(.626, .626, .626, .626/eTAlpha)
+            end
+            gc_draw(TEXTS.floorTime, -10 - 2, -5 - 2 + 260 * (1 - GAME.uiHide), 0, .7, .7, ox, oy)
         end
 
         -- UI
@@ -1937,7 +2097,7 @@ function scene.overDraw()
             if GAME.anyRev and M[infoID] == 2 then
                 local text = URM and MD.ultraName[infoID] or MD.revName[infoID]
                 setFont(70)
-                gc_push('transform')
+                gc_push()
                 gc_translate(0, -118)
                 gc_scale(1 + sin(t / 2.6) * .026)
                 gc_shear(sin(t) * .26, cos(t * 1.2) * .026)
@@ -2042,7 +2202,8 @@ function scene.overDraw()
             gc_line(0, 0, 520 * cos(a), 520 * sin(a))
             a = love.timer.getTime() / 30 * 3.1416 * 60
             gc_line(0, 0, 600 * cos(a), 600 * sin(a))
-        else
+        end
+        if GAME.slowmo then
             gc_setColor(1, 1, 1, GAME.playing and .0626 or .1)
             gc_circle('line', 0, 0, 620)
             gc_setColor(1, 1, 1, GAME.playing and .1 or .26)
@@ -2056,14 +2217,6 @@ function scene.overDraw()
             gc_setLineWidth(10)
             gc_line(0, 0, 420 * cos(a), 420 * sin(a))
         end
-    end
-
-    -- Piece effect
-    do
-        gc_replaceTransform(SCR.xOy_m)
-        GC.setColor(1, 1, 1, .26 * GAME.uiHide)
-        local w, h = GAME.pieceFstrObj:getDimensions()
-        GC.draw(GAME.pieceFstrObj, 0, -170 - (CONF.stacker and GAME.questStack[1] and 60 or 0), 0, min(4.2, 740 / w) * (CONF.stacker and GAME.questStack[1] and 0.62 or 1), nil, w / 2, h * .57)
     end
 
     -- Trevor Smithy
@@ -2147,7 +2300,7 @@ function scene.overDraw()
         -- gc_replaceTransform(SCR.xOy_ur)
         -- gc_translate(-10, 80 - GAME.uiHide * 70)
         gc_replaceTransform(SCR.xOy_m)
-        gc_translate(400 - 10, -260)
+        gc_translate(400 - 10, -240 + DeckPress)
         gc_scale(.6)
         for i = 1, #GAME.koAnim do
             local k = GAME.koAnim[i]
@@ -2381,7 +2534,7 @@ scene.widgetList = {
     },
     WIDGET.new {
         name = 'start', type = 'button',
-        pos = { .5, .5 }, y = -170, w = 800, h = 200,
+        pos = { .5, .5 }, y = -160, w = 800, h = 180,
         color = { .35, .12, .05 },
         textColor = TextColor,
         sound_hover = 'menuhover',

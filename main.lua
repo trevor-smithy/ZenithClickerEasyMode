@@ -328,6 +328,7 @@ CONF = {
     syscursor = false,
     cardBrightness = 90,
     bgBrightness = 40,
+    boardOpacity = 0,
     bg = true,
     sfx = 60,
     bgm = 100,
@@ -991,26 +992,32 @@ require 'module/initialize'
 local pressValue = 0
 local function starCursor(x, y)
     if CursorHide or GAME.zenithTraveler then return end
-    gc_translate(x, y)
-    gc_scale(1.42)
-    gc_rotate(MATH.lerp(-.626, -1.2, pressValue))
-    gc_scale(.8 + .2 * pressValue, 1)
-    local l = .626 + .374 * pressValue
-    gc_setColor(l, l, l)
-    gc_draw(TEXTURE.star0, 0, -6, 0, .14, .3, TEXTURE.star1:getWidth() * .5, 0)
-    gc_scale(.12, .26)
-    gc_setShader(SHADER.coloring)
-    gc_setColor(1, .626, .5)
-    gc_draw(TEXTURE.star0, -150, 0)
-    if CursorProgress <= .384626 then
-        local t = MATH.interpolate(0, 1, .384626, 0, CursorProgress)
-        gc_setColor(.9, .9, .9, t)
+    if CONF.classicMode then
+        gc_translate(x, y)
+        gc_scale(1.42)
+        gc_rotate(MATH.lerp(-.626, -1.2, pressValue))
+        gc_scale(.8 + .2 * pressValue, 1)
+        local l = .626 + .374 * pressValue
+        gc_setColor(l, l, l)
+        gc_draw(TEXTURE.star0, 0, -6, 0, .14, .3, TEXTURE.star1:getWidth() * .5, 0)
+        gc_scale(.12, .26)
+        gc_setShader(SHADER.coloring)
+        gc_setColor(1, .626, .5)
         gc_draw(TEXTURE.star0, -150, 0)
-        gc_setShader()
+        if CursorProgress <= .384626 then
+            local t = MATH.interpolate(0, 1, .384626, 0, CursorProgress)
+            gc_setColor(.9, .9, .9, t)
+            gc_draw(TEXTURE.star0, -150, 0)
+            gc_setShader()
+        else
+            gc_setShader()
+            gc_setColor(1, 1, 1, MATH.iLerp(.384626, 1, CursorProgress))
+            gc_draw(TEXTURE.star1, -150, 0)
+        end
     else
-        gc_setShader()
-        gc_setColor(1, 1, 1, MATH.iLerp(.384626, 1, CursorProgress))
-        gc_draw(TEXTURE.star1, -150, 0)
+        gc_setColor(1, 1, 1)
+        local k = .0026 * 90 --TODO CONF.cursorSize
+        gc_draw(TEXTURE.cursor, x, y, -.574 * pressValue, k, k, 12, 18)
     end
 end
 function ApplySettings()
@@ -1581,7 +1588,7 @@ function Daemon_Fast()
                     changed = true
                 end
             end
-            if changed and not (GAME.playing and CONF.stacker) then
+            if changed and not ((GAME.playing and CONF.stacker) or (GAME.badTime and not GAME.playing)) then
                 local W = SCN.scenes.tower.widgetList.start
                 W.text = startBtnTexts[startBtnPtr]
                 W:reset()
