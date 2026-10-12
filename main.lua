@@ -1669,7 +1669,7 @@ if SYSTEM == 'Web' then
     _G[('DiscordRPC')] = { update = NULL, setEnable = NULL }
 else
     DiscordRPC = require 'module/discordRPC'
-    DiscordRPC.setAppID('1341822039253712989')
+    DiscordRPC.setAppID('1559057959991124120')
     DiscordRPC.setEnable(true)
     DiscordRPC.update {
         details = "QUICK PICK",

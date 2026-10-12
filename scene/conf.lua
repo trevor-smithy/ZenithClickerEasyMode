@@ -1629,7 +1629,8 @@ pages[ZCEMpage] = {
             end
             GAME.enightcore = not GAME.enightcore
             MSG('dark', "eZ: " .. (GAME.enightcore and "ON" or "OFF"))
-            RefreshBGM(mode)
+            RefreshBGM()
+            GAME.refreshRPC()
         end,
     },
     WIDGET.new { -- es
@@ -1651,7 +1652,8 @@ pages[ZCEMpage] = {
             end
             GAME.eslowmo = not GAME.eslowmo
             MSG('dark', "eS: " .. (GAME.eslowmo and "ON" or "OFF"))
-            RefreshBGM(mode)
+            RefreshBGM()
+            GAME.refreshRPC()
         end,
     },
     WIDGET.new { -- ej
@@ -1674,7 +1676,7 @@ pages[ZCEMpage] = {
             GAME.eglassCard = not GAME.eglassCard
             MSG('dark', "eJ: " .. (GAME.eglassCard and "ON" or "OFF"))
             refreshWidgets()
-            RefreshBGM(mode)
+            RefreshBGM()
         end,
     },
     WIDGET.new { -- el
@@ -1696,7 +1698,7 @@ pages[ZCEMpage] = {
             end
             GAME.efastLeak = not GAME.efastLeak
             MSG('dark', "eL: " .. (GAME.efastLeak and "ON" or "OFF"))
-            RefreshBGM(mode)
+            RefreshBGM()
         end,
     },
     WIDGET.new { -- eT
@@ -1718,7 +1720,7 @@ pages[ZCEMpage] = {
             end
             GAME.einvisUI = not GAME.einvisUI
             MSG('dark', "eT: " .. (GAME.einvisUI and "ON" or "OFF"))
-            RefreshBGM(mode)
+            RefreshBGM()
         end,
     },
     WIDGET.new { -- eo
@@ -1740,7 +1742,7 @@ pages[ZCEMpage] = {
             end
             GAME.einvisCard = not GAME.einvisCard
             MSG('dark', "eO: " .. (GAME.einvisCard and "ON" or "OFF"))
-            RefreshBGM(mode)
+            RefreshBGM()
         end,
     },
     WIDGET.new { -- ei
@@ -1763,7 +1765,7 @@ pages[ZCEMpage] = {
             GAME.ecloseCard = not GAME.ecloseCard
             MSG('dark', "eI: " .. (GAME.ecloseCard and "ON" or "OFF"))
             refreshWidgets()  
-            RefreshBGM(mode)
+            RefreshBGM()
         end,
     },
     WIDGET.new { -- urm
@@ -1781,7 +1783,7 @@ pages[ZCEMpage] = {
             GAME.refreshUltra()
             if TABLE.equal(GAME.getHand(true), {'eEX','rNH','rMS','rGV','rVL','rDH','rIN','rAS'}) or TABLE.equal(GAME.getHand(true), {'eEX','rNH','rMS','rGV','rVL','rDH','rIN','rAS','eDP'}) then GAME.refreshCurrentCombo() end
             GAME.refreshPBText()
-            RefreshBGM(mode)
+            RefreshBGM()
             GAME.refreshRPC()
             RefreshHelpText()
         end,
@@ -1843,7 +1845,7 @@ pages[ZCEMpage] = {
             GAME.refreshUltra()
             GAME.refreshCurrentCombo()
             GAME.refreshPBText()
-            RefreshBGM(mode)
+            RefreshBGM()
             GAME.refreshRPC()
             RefreshHelpText()
             refreshWidgets()

@@ -759,6 +759,7 @@ TEXTS = { -- Font size should only be 30 50 70 here, to reduce memory usage of f
     combo      = GC.newText(FONT.get(50)),
     easyTitle  = GC.newText(FONT.get(50), "EASY QUICK PICK"),
     uneasyTitle= GC.newText(FONT.get(50), "UNEASY QUICK PICK"),
+    ultimateTitle= GC.newText(FONT.get(50), "ULTIMATE QUICK PICK"),
     easyModeVersion = GC.newText(FONT.get(30)),
     petaspeed  = GC.newText(FONT.get(50), {
         COLOR.R, "P", COLOR.O, "E", COLOR.Y, "T",

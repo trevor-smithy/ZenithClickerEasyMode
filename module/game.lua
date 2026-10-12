@@ -1843,12 +1843,20 @@ function GAME.nextNegEvent()
 end
 
 local revLetter = setmetatable({
-    P = "Ь", R = "ᖉ", T = "ꓕ", Q = "Ơ", U = "Ո", A = "Ɐ", L = "Γ", S = "Ƨ", Y = "⅄"
+    P = "Ь", R = "ᖉ", T = "ꓕ", Q = "Ơ", U = "Ո", A = "Ɐ", L = "Γ", S = "Ƨ", Y = "⅄", M = "W"
 }, { __index = function(_, k) return k end })
 function GAME.refreshRPC()
     local detailStr = "QUICK PICK"
     if M.EX > 0 then detailStr = "EXPERT " .. detailStr end
-    if M.EX == -1 then detailStr = "EASY " .. detailStr end
+    if M.EX == -1 then 
+        if URM and not GAME.anyRev then
+            detailStr = "UNEASY " .. detailStr
+        elseif GAME.ultimateChallenge then
+            detailStr = "ULTIMATE " .. detailStr
+        else
+            detailStr = "EASY " .. detailStr
+        end
+    end
     if M.DP ~= 0 then detailStr = detailStr:gsub("QUICK", "DUAL") end
     if TestMode then detailStr = detailStr:gsub("PICK", "TEST") end
     if GAME.anyRev then detailStr = detailStr:gsub(".", revLetter) end
@@ -1860,18 +1868,35 @@ function GAME.refreshRPC()
         else
             stateStr = GAME.teramusic and "SPEEDRUN: " or GAME.gigaspeed and "Speedrun: " or "In game: "
         end
-        if GAME.negFloor > 1 then
+        if GAME.negFloor > 1 and not GAME.einvisUI then
             stateStr = stateStr .. "B" .. GAME.negFloor
-        else
+        elseif not GAME.einvisUI then
             stateStr = stateStr .. "F" .. (GAME.floor == 10 and GAME.omega and "Ω" or GAME.floor)
         end
         local hand = GAME.getHand(true)
         if #hand > 0 then
             local comboName = GAME.getComboName(hand, 'rpc')
-            stateStr = stateStr .. " - "
+            if not GAME.einvisUI then stateStr = stateStr .. " - " end
             if GAME.anyUltra then
                 comboName = GAME.ultrafyComboName(comboName)
             end
+            local secretComboName = GAME.secretComboName(table.concat(TABLE.sort(hand)))
+            if secretComboName then comboName = secretComboName end
+            if GAME.uneasyMode then
+                if comboName:count('BATH') == 1 and comboName:count('HARD') == 0 then
+                    if M.DP == 0 or comboName == '"GAMER GIRL BATH WATER"' then
+                        comboName = comboName:gsub("WATER", "WATER?", 1)
+                    else
+                        comboName = comboName:gsub("FRIEND", "FRIEND?", 1)
+                    end
+                elseif comboName:count('EASY') == 1 and comboName:count('UNEASY') == 0 then
+                    comboName = comboName:gsub('EASY', 'UNEASY', 1)
+                elseif comboName:count('"') == 2 and not secretComboName then
+                    comboName = comboName:gsub("([^\"])", "UNEASY %1", 1)
+                end
+            end
+            if GAME.badTime then comboName = '"BAD TIME"' end
+            if GAME.peasantRevolution then comboName = '"PEASANT REVOLUTION"' end
             stateStr = stateStr .. comboName
         end
     else
@@ -1885,6 +1910,8 @@ function GAME.refreshRPC()
         -- Trevor Smithy
         if GAME.enightcore then pitch = pitch + 12 end
         if GAME.eslowmo then pitch = pitch - 6 end
+        if GAME.uneasyMode then pitch = pitch + 0.25 end
+        if GAME.ultimateChallenge then pitch = pitch - 12 end
         --
         if pitch ~= 0 then stateStr = stateStr .. (pitch > 0 and " (+" or " (") .. pitch .. ")" end
         if M.IN ~= 0 then stateStr = stateStr:gsub(".", { j = "r", s = "z", p = "b", c = "g", t = "d" }) end

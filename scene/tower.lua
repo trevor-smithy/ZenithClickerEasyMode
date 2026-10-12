@@ -1486,7 +1486,7 @@ function scene.overDraw()
                 gc_strokePrint('full', 4, {COLOR.rainbow_dark(2.6 * t * speedMod)}, nil, text, x, 355, 2600, 'center', 0, 1, 1)
                 gc_strokePrint('full', 2, {COLOR.rainbow(2.6 * t * speedMod)}, {COLOR.rainbow_light(2.6 * t * speedMod)}, text, x, 355, 2600, 'center', 0, 1, 1)
             else
-                gc_mDraw(TEXTS.mod, 800, GAME.badTime and 330 or 396, 0, min(1, 760 / TEXTS.mod:getWidth()))
+                gc_mDraw(TEXTS.mod, 800, GAME.badTime and not GAME.playing and 330 or 396, 0, min(1, 760 / TEXTS.mod:getWidth()))
             end
         end
 
@@ -2049,6 +2049,8 @@ function scene.overDraw()
                 gc_draw(TEXTS.title, lerp(-181, 10, exT), (h / 2 + 2) - d, 0, 1, 1 - 2 * revT, 0, (h / 2 + 2))
             elseif GAME.uneasyMode then
                 gc_draw(TEXTS.uneasyTitle, lerp(-181, 10, exT), (h / 2 + 2) - d, 0, 1, 1 - 2 * revT, 0, (h / 2 + 2))
+            elseif GAME.ultimateChallenge then
+                gc_draw(TEXTS.ultimateTitle, lerp(-181, 10, exT), (h / 2 + 2) - d, 0, 1, 1 - 2 * revT, 0, (h / 2 + 2))
             else
                 gc_draw(TEXTS.easyTitle, lerp(-181, 10, exT), (h / 2 + 2) - d, 0, 1, 1 - 2 * revT, 0, (h / 2 + 2))
             end
