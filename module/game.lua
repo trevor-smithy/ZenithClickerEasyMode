@@ -2099,7 +2099,7 @@ function GAME.refreshCurrentCombo()
     local secretComboName
     if not GAME.playing then secretComboName = GAME.secretComboName(table.concat(TABLE.sort(hand))) end
     if secretComboName then comboName = secretComboName end
-    if GAME.uneasyMode then
+    if GAME.uneasyMode and not GAME.playing then
         if comboName:count('BATH') == 1 and comboName:count('HARD') == 0 then
             if M.DP == 0 or comboName == '"GAMER GIRL BATH WATER"' then
                 comboName = comboName:gsub("WATER", "WATER?", 1)
