@@ -125,7 +125,7 @@ function Card:setActive(auto, key, friendActivation)
         self.charge = 0
     -- Trevor Smithy
     elseif M.VL == -1 then
-        SFX.play('combo_4', .626, 0, Tone(0))
+        --SFX.play('combo_4', .626, 0, Tone(0))
     end
 
     if GAME.currentTask then
@@ -360,7 +360,7 @@ function Card:setActive(auto, key, friendActivation)
 
     -- Sound and animation
     if self.active then
-        local postfix = revOn and '_reverse' or ''
+        local postfix = revOn and '_reverse' or ((easyOn or (GAME.playing and CONF.easyName)) and (GAME.smithyMode or GAME.forceSmithyNoises)) and '_easy_voice' or (easyOn or (GAME.playing and CONF.easyName)) and '_easy' or ''
         SFX.play(
             ((GAME.glassCard or GAME.eglassCard) and CONF.classicMode)  and 'harddrop' or 'card_select' .. postfix, 1, 0,
             key and clampInterpolate(-200, -4.2, 200, 4.2, self.y - MY) or MATH.rand(-2.6, 2.6)
@@ -377,15 +377,17 @@ function Card:setActive(auto, key, friendActivation)
                     SFX.play(toneName, toneVol * .6, 0, Tone(7))
                 end)
             end
-        else
+        elseif self.easy or (GAME.playing and CONF.easyName) then
             if GAME.uneasyMode and self.easy and not GAME.playing then
                 TASK.new(function()
-                    SFX.play(toneName, toneVol*.8, 0, Tone(-3))
-                    SFX.play(toneName, toneVol*.8, 0, Tone(-0))
+                    SFX.play(toneName .. postfix, toneVol, 0, Tone(-3))
+                    SFX.play(toneName .. postfix, toneVol, 0, Tone(-0))
                 end)
             else
-                SFX.play(toneName, toneVol, 0, Tone(0))
+                SFX.play(toneName .. postfix, toneVol*2, 0, Tone(0))
             end
+        else
+            SFX.play(toneName, toneVol, 0, Tone(0))
         end
         if revOn then
             self:revJump()

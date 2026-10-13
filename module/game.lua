@@ -955,7 +955,7 @@ function GAME.testWindup()
     if windupTest == 9 and not ACHV.the_windup then 
         TASK.new(function()
             TASK.yieldT(2.6)
-            IssueAchv("the_windup")
+            if SCN.cur == 'tower' then IssueAchv("the_windup") end
         end)
     end
     GAME.showWindup(windupTest)

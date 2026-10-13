@@ -53,6 +53,32 @@ function scene.update(dt)
                 for i = 1, 9 do
                     SFX.load('garbagewindup_'..i, 'assets/windup_'..i..'.ogg')
                 end
+                SFX.load('assets/card_tone_easy.ogg', 
+                    {
+                        card_tone_expert_easy = { 0, 1.12 },
+                        card_tone_nohold_easy = { 1.12, 1.13 },
+                        card_tone_messy_easy = { 2.24, 1.13 },
+                        card_tone_gravity_easy = { 3.37, 1.12 },
+                        card_tone_volatile_easy = { 4.49, 1.13 },
+                        card_tone_doublehole_easy = { 5.62, 1.12 },
+                        card_tone_invisible_easy = { 6.74, 1.13 },
+                        card_tone_allspin_easy = { 7.87, 1.13 },
+                        card_tone_duo_easy = { 9, 1 },
+                    }
+                )
+                SFX.load('assets/card_tone_easy_voice.ogg', 
+                    {
+                        card_tone_expert_easy_voice = { 0, 0.85 },
+                        card_tone_nohold_easy_voice = { 0.85, 0.65 },
+                        card_tone_messy_easy_voice = { 1.5, 0.75 },
+                        card_tone_gravity_easy_voice = { 2.25, 0.75 },
+                        card_tone_volatile_easy_voice = { 3, 0.75 },
+                        card_tone_doublehole_easy_voice = { 3.75, 0.75 },
+                        card_tone_invisible_easy_voice = { 4.5, 0.75 },
+                        card_tone_allspin_easy_voice = { 5.25, 0.75 },
+                        card_tone_duo_easy_voice = { 6, 0.63 },
+                    }
+                )
                 TASK.new(Daemon_Slow)
                 TASK.new(Daemon_Fast)
                 TASK.new(function()

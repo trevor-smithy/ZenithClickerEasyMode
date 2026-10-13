@@ -100,6 +100,11 @@ function scene.update()
             elseif code:find('3333333333') then
                 SFX.play('cutin_superlobby', 1, 0, Tone(-2))
                 SCN.go('_console')
+            elseif code:find('123123123') then
+                GAME.forceSmithyNoises = not GAME.forceSmithyNoises
+                SFX.play(GAME.forceSmithyNoises and 'card_tone_expert_easy_voice' or 'card_tone_expert_easy')
+            elseif code:find('321321') then
+                GAME.testWindup()
             else
                 return
             end
