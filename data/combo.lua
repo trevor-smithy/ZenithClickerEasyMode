@@ -108,6 +108,22 @@ d.menu = {
     -- Credit: F1e308
     { set = "eEX eNH eMS eGV eVL eDH eIN eAS DP",        name = "Bath With A Lover"},
     { set = "eEX eNH eMS eGV eVL eDH eIN eAS rDP",       name = "Bath With An Ex"},
+    { set = "rEX eNH eMS eGV eVL eDH eIN eAS",           name = "Super Hard Bath Water"},
+    { set = "eEX rNH eMS eGV eVL eDH eIN eAS",           name = "Scalding Bath Water"},
+    { set = "eEX eNH rMS eGV eVL eDH eIN eAS",           name = "Disgusting Bath Water"},
+    { set = "eEX eNH eMS rGV eVL eDH eIN eAS",           name = "Depressing Bath Water"},
+    { set = "eEX eNH eMS eGV rVL eDH eIN eAS",           name = "Chaotic Bath Water"},
+    { set = "eEX eNH eMS eGV eVL rDH eIN eAS",           name = "Cursed Bath Water"},
+    { set = "eEX eNH eMS eGV eVL eDH rIN eAS",           name = "Opaque Bath Water"},
+    { set = "eEX eNH eMS eGV eVL eDH eIN rAS",           name = "Exotic Bath Water"},
+    { set = "rEX eNH eMS eGV eVL eDH eIN eAS eDP",           name = "Super Hard Bath With A Friend"},
+    { set = "eEX rNH eMS eGV eVL eDH eIN eAS eDP",           name = "Scalding Bath With A Friend"},
+    { set = "eEX eNH rMS eGV eVL eDH eIN eAS eDP",           name = "Disgusting Bath With A Friend"},
+    { set = "eEX eNH eMS rGV eVL eDH eIN eAS eDP",           name = "Depressing Bath With A Friend"},
+    { set = "eEX eNH eMS eGV rVL eDH eIN eAS eDP",           name = "Chaotic Bath With A Friend"},
+    { set = "eEX eNH eMS eGV eVL rDH eIN eAS eDP",           name = "Cursed Bath With A Friend"},
+    { set = "eEX eNH eMS eGV eVL eDH rIN eAS eDP",           name = "Opaque Bath With A Friend"},
+    { set = "eEX eNH eMS eGV eVL eDH eIN rAS eDP",           name = "Exotic Bath With A Friend"},
     
     --misc (no dev commentary except programming smithy)
     { set = "eNH eGV",          name = "Shameless Cashgrab"},
