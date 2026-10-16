@@ -2,6 +2,24 @@ love.window.setIcon(love.image.newImageData('assets/iconZCEM.png'))
 love.mouse.setVisible(false)
 
 require 'Zenitha'
+--[[ for k, v in next, {
+    DR = 'd4RS', dR = 'd1RS', R = 'l2RS', lR = 'l4RS', LR = 'l5RS',
+    DF = 'd4RyS', dF = 'd1RyS', F = 'l2RyS', lF = 'l4RyS', LF = 'l5RyS',
+    DO = 'd4YrrS', dO = 'd1YrrS', O = 'l2YrrS', lO = 'l4YrrS', LO = 'l5YrrS',
+    DY = 'd4YS', dY = 'd1YS', Y = 'l2YS', lY = 'l4YS', LY = 'l5YSS',
+    DA = 'd4YggS', dA = 'd1YggS', A = 'l2YggS', lA = 'l4YggS', LA = 'l5Yggs',
+    DK = 'd4GyS', dK = 'd1GyS', K = 'l2GyS', lK = 'l4GyS', LK = 'l5Gys',
+    DG = 'd4GcS', dG = 'd1GcS', G = 'l2GcS', lG = 'l4GcS', LG = 'l5Gc',
+    DJ = 'd4CggS', dJ = 'd1CggS', J = 'l2CggS', lJ = 'l4CggS', LJ = 'l5CggS',
+    DC = 'd4CS', dC = 'd1CS', C = 'l2CS', lC = 'l4CS', LC = 'l5CS',
+    DI = 'd4CbbS', dI = 'd1CbbS', I = 'l2CbbS', lI = 'l4CbbS', LI = 'l5CbbS',
+    DS = 'd4BcS', dS = 'd1BcS', S = 'l2BcS', lS = 'l4BcS', LS = 'l5BcS',
+    DB = 'd4BmS', dB = 'd1BmS', B = 'l2BmS', lB = 'l4BmS', LB = 'l5BmS',
+    DP = 'd4MbbS', dP = 'd1MbbS', P = 'l2MbbS', lP = 'l4MbbS', LP = 'l5MbbS',
+    DV = 'd4MS', dV = 'd1MS', V = 'l2MS', lV = 'l4MS', LV = 'l5MS',
+    DM = 'd4MrrS', dM = 'd1MrrS', M = 'l2MrrS', lM = 'l4MrrS', LM = 'l5MrrS',
+    DW = 'd4RmS', dW = 'd1RmS', W = 'l2RmS', lW = 'l4RmS', LW = 'l5RmS',
+} do COLOR[k] = CLR[v] end ]]
 
 ZENITHA.setMainLoopSpeed(240)
 ZENITHA.setRenderRate(50)
@@ -319,20 +337,22 @@ Metatable = {
 }
 
 CONF = {
+    sfx = 60,
+    bgm = 100,
+    autoMute = false,
+    bg = true,
+    fullscreen = true,
+    syscursor = false,
     keybind = {
         "q", "w", "e", "r", "t", "y", "u", "i", "o",
         "a", "s", "d", "f", "g", "h", "j", "k", "l",
         "space", "z", "x", "c"
     },
-    fullscreen = true,
-    syscursor = false,
+    
     cardBrightness = 90,
     bgBrightness = 40,
     boardOpacity = 0,
-    bg = true,
-    sfx = 60,
-    bgm = 100,
-    autoMute = false,
+
     oldHitbox = false,
     -- Trevor Smithy
     easyName = false,
@@ -1543,6 +1563,30 @@ function Daemon_Fast()
 
         -- Speedrun timer
         STAT.srTimer_life = STAT.srTimer_life + dt
+        
+        -- Calculate board color
+        if GAME.playing and CONF.boardOpacity > 0 then
+            local r, g, b
+            local patch = GAME.boardColorPatch
+            local hp2 = GAME[GAME.getLifeKey(true)]
+            local allyInDanger = GAME.playing and M.DP > 0 and hp2 > 0 and hp2 <= max(GAME.dmgWrong + GAME.dmgWrongExtra, GAME.dmgTime)
+
+            if GAME.lifeState == 'danger' or allyInDanger then
+                r, g, b = 1, 0, 0
+            elseif patch.timer > 0 then
+                r, g, b = patch.color[1], patch.color[2], patch.color[3]
+                patch.timer = patch.timer - dt
+            else
+                local _t = MATH.ilLerp(BoardColorData.alt, GAME.height)
+                r = MATH.lLerp(BoardColorData.r, _t) * GAME.boardDim[1]
+                g = MATH.lLerp(BoardColorData.g, _t) * GAME.boardDim[2]
+                b = MATH.lLerp(BoardColorData.b, _t) * GAME.boardDim[3]
+            end
+            local boardClr = GAME.clr_board
+            boardClr[1] = MATH.linearApproach(boardClr[1], r, dt * 2)
+            boardClr[2] = MATH.linearApproach(boardClr[2], g, dt * 2)
+            boardClr[3] = MATH.linearApproach(boardClr[3], b, dt * 2)
+        end
 
         -- Mouse holding animation
         if not CONF.syscursor then
@@ -1613,6 +1657,7 @@ function Daemon_Fast()
             end
         end
 
+        -- Tera running light
         if GAME.finishTera and GAME.endFloorFstr[1] and TASK.lock('teraScroll', .05) then
             local l = GAME.endFloorFstr
             local lastColor = l[#l - 1]
