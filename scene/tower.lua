@@ -656,6 +656,7 @@ function scene.touchDown(x, y, id)
     if M.EX <= 0 then
         SFX.play('move')
         -- Trevor Smithy
+        GAME.inputStat[3] = GAME.inputStat[3] + 1
         mouseTrigger(x, y, next(easyHold) and 3 or next(revHold) and 2 or 1)
     else
         SFX.play('rotate')
@@ -677,6 +678,7 @@ function scene.touchUp(x, y, id)
     if not HoldingButtons['touch' .. tostring(id)] then return end
     HoldingButtons['touch' .. tostring(id)] = nil
     if M.EX > 0 then
+        GAME.inputStat[3] = GAME.inputStat[3] + 1
         mouseTrigger(x, y, next(easyHold) and 3 or next(revHold) and 2 or 1)
     end
 end
@@ -1376,38 +1378,40 @@ function scene.draw()
 
     -- Result
     if GAME.uiHide < 1 and not GAME.badTime then
-        local xOffset = -100
+        local screenWidth, screenHeight = love.graphics.getDimensions()
+        local ratio = screenWidth/screenHeight
+        local xOffset = ratio > 1.6 and ((ratio-1.6)*-500) or 0
         gc_replaceTransform(SCR.xOy_u)
         gc_translate(0, -224 * GAME.uiHide)
         gc_setColor(1, 1, 1)
-        gc_draw(GAME.resIB, 400, 150, 0, .9)
+        gc_draw(GAME.resIB, 400, 160, 0, .9)
         gc_setColor(COLOR.D)
-        gc_mDraw(TEXTS.endHeight, 0, 135, 0, 1.8)
-        gc_mDraw(TEXTS.zpChange, 220, 95, 0, .626)
+        gc_mDraw(TEXTS.endHeight, 0, 145, 0, 1.8)
+        gc_mDraw(TEXTS.zpChange, 220, 100, 0, .626)
         gc_draw(TEXTS.endResult, -617+xOffset, 80, 0, .626)
         gc_draw(TEXTS.floorTime, -617+xOffset, 226 - GAME.uiHide * 150, 0, .38)
         gc_draw(TEXTS.rankTime, -527+xOffset, 226 - GAME.uiHide * 150, 0, .38)
         gc_setColor(COLOR.L)
-        gc_mDraw(TEXTS.endHeight, 0, 130, 0, 1.8)
+        gc_mDraw(TEXTS.endHeight, 0, 140, 0, 1.8)
         gc_draw(TEXTS.endResult, -616+xOffset, 78, 0, .626)
         if GAME.gigaspeedEntered and GAME.gigaTime then
             gc_setColor(1, 1, 1, .1)
-            GC.strokeDraw('full', 2.5, TEXTS.endFloor, -TEXTS.endFloor:getWidth() / 2, 201 - TEXTS.endFloor:getHeight() / 2)
+            GC.strokeDraw('full', 2.5, TEXTS.endFloor, -TEXTS.endFloor:getWidth() / 2, 216 - TEXTS.endFloor:getHeight() / 2)
             gc_setColor(1, 1, 1, .2)
-            GC.strokeDraw('full', 1, TEXTS.endFloor, -TEXTS.endFloor:getWidth() / 2, 201 - TEXTS.endFloor:getHeight() / 2)
+            GC.strokeDraw('full', 1, TEXTS.endFloor, -TEXTS.endFloor:getWidth() / 2, 216 - TEXTS.endFloor:getHeight() / 2)
         else
             gc_setColor(COLOR.D)
-            gc_mDraw(TEXTS.endFloor, 0, 204)
+            gc_mDraw(TEXTS.endFloor, 0, 219)
         end
         gc_setColor(COLOR.L)
-        gc_mDraw(TEXTS.endFloor, 0, 201)
+        gc_mDraw(TEXTS.endFloor, 0, 216)
         gc_setColor(COLOR.DL)
         gc_draw(TEXTS.floorTime, -616+xOffset, 224 - GAME.uiHide * 150, 0, .38)
         gc_draw(TEXTS.rankTime, -526+xOffset, 224 - GAME.uiHide * 150, 0, .38)
         gc_setColor(COLOR.dL)
-        gc_mDraw(TEXTS.zpChange, 220, 93, 0, .626)
+        gc_mDraw(TEXTS.zpChange, 220, 98, 0, .626)
         -- Version Check for records
-        gc_mDraw(TEXTS.easyModeVersion, 220, 111, 0, .626)
+        gc_mDraw(TEXTS.easyModeVersion, 220, 116, 0, .626)
 
         -- Input stats
         local w = TEXTS.endHeight:getWidth() * 1.8

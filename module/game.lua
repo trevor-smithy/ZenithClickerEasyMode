@@ -3463,6 +3463,7 @@ function GAME.start()
     GAME.heightBonus = 0
     GAME.peakRank = 1
     GAME.rankTimer = TABLE.new(0, 62)
+    for k in next, GAME.inputStat do GAME.inputStat[k] = 0 end
 
     -- Time
     GAME.time = 0
@@ -3857,9 +3858,33 @@ function GAME.finish(reason)
             end
         end
 
-        -- ZP of current run
-        local zpGain = GAME.roundHeight * GAME.comboZP
-        TEXTS.zpChange:set(("%.0f ZP  (+%.0f%s)"):format(zpGain, 0, Daily.actived and ", 260%" or ""))
+        local sum = math.max(MATH.sum(GAME.inputStat), 1)
+        for i = 1, 3 do GAME.inputStatNorm[i] = GAME.inputStat[i] / sum end
+
+        -- ZP
+        local zpGain = abs(GAME.roundHeight) * GAME.comboZP
+        if GAME.roundHeight < 0 then zpGain = min(zpGain, 26000) end
+        local newZP = STAT.zp +
+            zpGain *                           -- base ZP gain
+            icLerp(26, 16, STAT.zp / zpGain) * -- soft cap: slow down after 16x, stop at 26x
+            (GAME.dailyActive and 2.6 or 1)    -- gain 2.6x on daily challenge
+
+        -- ZP text animation
+        TASK.new(function()
+            local str = GAME.dailyActive and "%.0f ZP  (+%.0f, 260%%)" or "%.0f ZP  (+%.0f)"
+            TEXTS.zpChange:set(str:format(zpGain, 0))
+
+            local zpAdd = newZP - STAT.zp
+            if zpAdd > 0 then
+                STAT.zp = newZP
+                STAT.peakZP = max(STAT.peakZP, STAT.zp)
+                TASK.yieldT(0.626)
+                TWEEN.new(function(t)
+                    TEXTS.zpChange:set(str:format(zpGain, zpAdd * t))
+                end):setTag('zpChange'):setEase('InOutCubic'):setDuration(2):run()
+                SFX.play('ratingraise', zpAdd ^ .5 / 60)
+            end
+        end)
 
         -- Easy Mode Version for records
         if not GAME.multiplePiecesActive then
