@@ -1185,7 +1185,7 @@ function scene.draw()
             stc_setPen('replace', 1)
             stc_mRect(0, boxY, boxRX * 2, boxRY * 2)                    -- Quest box
             stc_rect(-boxRX, boxY + boxRY + dmgTmrDY, dmgTmrW, dmgTmrH) -- Damage timer
-            if M.GV > 0 then stc_circ(500, 47, 38) end                  -- GV timer
+            if M.GV ~= 0 then stc_circ(500, 47, 38) end                  -- GV timer
 
             stc_setPen('replace', 2)
             -- Bevel quest box corner
@@ -1296,7 +1296,7 @@ function scene.draw()
             end
 
             -- Gravity Timer
-            if M.GV > 0 then
+            if M.GV ~= 0 then
                 gc_ucs_move(500, 47)
                 gc_setColor(CLR.DL)
                 if not GAME.gravTimer then
@@ -1864,6 +1864,7 @@ function scene.overDraw()
             end
             if CONF.promotion then
                 gc_push()
+                gc_setLineWidth(6)
                 gc_translate(-340, 75)
                 gc_scale(GAME.uiHide)
                 local baseThickness = 6
