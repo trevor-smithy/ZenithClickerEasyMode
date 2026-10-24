@@ -1477,15 +1477,15 @@ function GAME.showLyric(lyricSet, dx, dy, timeOffset)
         if lyricSet.color then
             GC.setColor(lyricSet.color)
         else
-            GC.setColor(COLOR.rainbow_light(2.6 * t))
+            GC.setColor(CLR.rainbow_light(2.6 * t))
         end
         GC.mStr(lyric, 400, height)
         GC.mStr(hlyric, 400, height - 40)
     else
         height = height + (URM and M.GV == 2 and 50 or 15 * M.GV)
         FONT.set(lyricSet.fontSize or 45)
-        GC.strokePrint('full', 2, {COLOR.rainbow_dark(2.6 * t)}, {COLOR.rainbow_light(2.6 * t)}, lyric, dx or 0, height, 2600, 'center', 0, 1, 1)
-        GC.strokePrint('full', 2, {COLOR.rainbow_dark(2.6 * t)}, {COLOR.rainbow_light(2.6 * t)}, hlyric, dx or 0, height-40, 2600, 'center', 0, 1, 1)
+        GC.strokePrint('full', 2, {CLR.rainbow_dark(2.6 * t)}, {CLR.rainbow_light(2.6 * t)}, lyric, dx or 0, height, 2600, 'center', 0, 1, 1)
+        GC.strokePrint('full', 2, {CLR.rainbow_dark(2.6 * t)}, {CLR.rainbow_light(2.6 * t)}, hlyric, dx or 0, height-40, 2600, 'center', 0, 1, 1)
     end
 end
 

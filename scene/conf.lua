@@ -527,7 +527,7 @@ function scene.draw()
         local speedMod = ((GAME.enightcore or GAME.nightcore) and 2 or 1) * (GAME.eslowmo and 0.75 or 1) * (GAME.slowmo and 0.5 or 1)
         gc_setColor(bgmColors[BgmPlaying] or clr.LT)
         if BgmPlaying == 'tera' or BgmPlaying == 'terar' or BgmPlaying == 'terae' or BgmPlaying == 'teral' or BgmPlaying == 'terael' then
-            gc_setColor(COLOR.rainbow_dark(2.6 * t * speedMod))
+            gc_setColor(CLR.rainbow_dark(2.6 * t * speedMod))
         end
     end
     gc_setAlpha(GAME.einvisCard and 0.626 or 1)
@@ -627,7 +627,7 @@ function scene.draw()
         gc_setColor(clr.L)
         gc_rectangle('fill', 0, 46, len, 4)
         if BgmPlaying == 'tera' or BgmPlaying == 'terar' or BgmPlaying == 'terae' or BgmPlaying == 'teral' or BgmPlaying == 'terael' then
-            gc_setColor(COLOR.rainbow_light(2.6 * t))
+            gc_setColor(CLR.rainbow_light(2.6 * t))
             if BgmPlaying == 'teral' or BgmPlaying == 'terael' then
                 GAME.showLyric(Lyric.terael, 0, 245, BgmPlaying == 'teral' and 0.1 or 0)
             end
@@ -733,7 +733,7 @@ function scene.overDraw()
             local bpmString = "BPM: "..tostring(MATH.floor(bpm*100)/100)
             gc_setColor(BgmPlaying ~= 'f0' and bgmColors[BgmPlaying] or ZCEMclr.LT)
             if BgmPlaying == 'tera' or BgmPlaying == 'terar' or BgmPlaying == 'terae' or BgmPlaying == 'teral' or BgmPlaying == 'terael' then
-                gc_setColor(COLOR.rainbow_light(2.6 * t * bpm/240))
+                gc_setColor(CLR.rainbow_light(2.6 * t * bpm/240))
             end
             gc_setAlpha(1)
             setFont(65)
@@ -742,7 +742,7 @@ function scene.overDraw()
             local speedString = "SPEED: "..tostring(MATH.floor(speedMod*100)/100) .. "x"
             gc_setColor(BgmPlaying ~= 'f0' and bgmColors[BgmPlaying] or ZCEMclr.LT)
             if BgmPlaying == 'tera' or BgmPlaying == 'terar' or BgmPlaying == 'terae' or BgmPlaying == 'teral' or BgmPlaying == 'terael' then
-                gc_setColor(COLOR.rainbow_light(2.6 * t * bpm/240))
+                gc_setColor(CLR.rainbow_light(2.6 * t * bpm/240))
             end
             gc_setAlpha(1)
             setFont(65)

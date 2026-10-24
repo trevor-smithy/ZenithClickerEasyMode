@@ -1353,7 +1353,7 @@ function scene.draw()
             local rainbowText = GAME.forceRev and GAME.getComboZP(GAME.getHand(true)) < 1.2
             if GAME.peasantRevolution and RAINBOWFLASH then rainbowText = false end
             if rainbowText then
-                gc_setColor(COLOR.rainbow_light(2.6 * t * speedMod))
+                gc_setColor(CLR.rainbow_light(2.6 * t * speedMod))
             end
             if rainbowText then
                 gc_setAlpha(1)
@@ -1464,7 +1464,8 @@ function scene.overDraw()
             if GAME.customUltraCombo and not GAME.playing then
                 if not (RAINBOWFLASH and GAME.peasantRevolution) then
                     TEXTS.mod:setFont(FONT.get(GAME.badTime and 200 or 60))
-                    gc_setColor(COLOR.rainbow_light(2.6 * t * speedMod))
+                    --gc_setColor(COLOR.rainbow_light(2.6 * t * speedMod))
+                    gc_setColor(CLR.HSV((0.4*t*speedMod)%1,0.4,0.9,1))
                     if GAME.peasantRevolution or (GAME.ultimateChallenge and M.DP == 0) then SCN.scenes.tower.widgetList.easy.textColor = COLOR.Y end
                 elseif RAINBOWFLASH then
                     TEXTS.mod:setFont(FONT.get(30))
@@ -1486,9 +1487,9 @@ function scene.overDraw()
                 local text = M.DP == -1 and 'FRIENDLY CHALLENGE' or 'ULTIMATE CHALLENGE'
                 local x = M.DP == -1 and 802 or 800
                 setFont(65)
-                gc_strokePrint('full', 6, {COLOR.rainbow_gray(2.6 * t * speedMod)}, nil, text, x, 355, 2600, 'center', 0, 1, 1)
-                gc_strokePrint('full', 4, {COLOR.rainbow_dark(2.6 * t * speedMod)}, nil, text, x, 355, 2600, 'center', 0, 1, 1)
-                gc_strokePrint('full', 2, {COLOR.rainbow(2.6 * t * speedMod)}, {COLOR.rainbow_light(2.6 * t * speedMod)}, text, x, 355, 2600, 'center', 0, 1, 1)
+                gc_strokePrint('full', 6, {CLR.rainbow(2.6*t*speedMod, 0.1, 0.5, 1)}, nil, text, x, 355, 2600, 'center', 0, 1, 1)
+                gc_strokePrint('full', 4, {CLR.rainbow(2.6*t*speedMod, 0.2, 0.4, 1)}, nil, text, x, 355, 2600, 'center', 0, 1, 1)
+                gc_strokePrint('full', 2, {CLR.rainbow(2.6*t*speedMod, 0.4, 0.6, 1)}, {CLR.rainbow(2.6*t*speedMod, 0.2, 0.8, 1)}, text, x, 355, 2600, 'center', 0, 1, 1)
             else
                 gc_mDraw(TEXTS.mod, 800, GAME.badTime and not GAME.playing and 330 or 396, 0, min(1, 760 / TEXTS.mod:getWidth()))
             end
@@ -2294,7 +2295,7 @@ function scene.overDraw()
         local r = MATH.between(w.time, 1, w.totalTime - .5) and 42 * (.5 - w.time % .5) ^ 4.2 or 0
         windupColor[w.lv][4] = w.alpha
         gc_setColor(windupColor[w.lv])
-        if w.lv == 9 then gc_setColor(COLOR.rainbow_light(2 * t)) end
+        if w.lv == 9 then gc_setColor(CLR.rainbow_light(2 * t)) end
         gc_mDraw(TEXTURE.windup, w.x, w.y, r, k)
         gc_setColor(1, 1, 1, r / (42 * .5 ^ 4.2))
         gc_mDraw(TEXTURE.windup, w.x, w.y, r, k)
@@ -2397,7 +2398,7 @@ function scene.overDraw()
         gc_replaceTransform(SCR.origin)
         local t = love.timer.getTime()
         local speedMod = ((GAME.enightcore and GAME.nightcore) and 4 or (GAME.enightcore or GAME.nightcore) and 2 or 1) * (GAME.eslowmo and 0.75 or 1) * (GAME.slowmo and 0.5 or 1)
-        gc_setColor(COLOR.rainbow_light(2.6 * t * speedMod))
+        gc_setColor(CLR.rainbow_light(2.6 * t * speedMod))
         gc_setAlpha(0.35)
         gc_draw(TEXTURE.transition, 0, 0, 0, .42 / 128 * SCR.w, SCR.h)
         gc_draw(TEXTURE.transition, SCR.w, 0, 0, -.42 / 128 * SCR.w, SCR.h)

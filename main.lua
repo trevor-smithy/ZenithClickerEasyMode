@@ -21,6 +21,16 @@ require 'Zenitha'
     DW = 'd4RmS', dW = 'd1RmS', W = 'l2RmS', lW = 'l4RmS', LW = 'l5RmS',
 } do COLOR[k] = CLR[v] end ]]
 
+function CLR.rainbow(phase, intensity, base, alpha)
+    return
+    MATH.sin(phase) * (intensity or .4) + (base or .6),
+    MATH.sin(phase+2.0944) * (intensity or .4) + (base or .6),
+    MATH.sin(phase-2.0944) * (intensity or .4) + (base or .6),
+    alpha or 1
+end
+function CLR.rainbow_light(phase, alpha) return CLR.rainbow(phase, 0.2, 0.7, alpha or 1) end
+function CLR.rainbow_dark(phase, alpha) return CLR.rainbow(phase, 0.2, 0.4, alpha or 1) end
+
 ZENITHA.setMainLoopSpeed(240)
 ZENITHA.setRenderRate(50)
 ZENITHA.setAppInfo("Zenith Clicker", SYSTEM .. " " .. (require 'version'.appVer))
