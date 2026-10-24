@@ -915,7 +915,7 @@ function DrawBG(brightness, showRuler)
                 bg = TEXTURE.towerBG[bgFloor + 1]
                 w, h = bg:getDimensions()
                 bgQuad:setViewport(GAME.bgX, h - 640, 1024, 640, w, h)
-                gc_mDrawQ(bg, bgQuad, SCR.w / 2, SCR.h / 2 - (640 + quadStartH) * BgScale, 0, bgScale)
+                gc_mDrawQ(bg, bgQuad, SCR.w / 2, SCR.h / 2 - (640 + quadStartH) * BgScale, 0, BgScale)
             end
         else
             -- Space color
