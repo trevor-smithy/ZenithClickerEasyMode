@@ -849,7 +849,7 @@ local setFont = FONT.set
 local stc_reset, stc_setComp, stc_setPen, stc_stop = GC.stc_reset, GC.stc_setComp, GC.stc_setPen, GC.stc_stop
 
 local stc_rect, stc_mRect, stc_circ = GC.stc_rect, GC.stc_mRect, GC.stc_circ
-local gc_blurCircle, gc_setColorMask, gc_rotate, gc_shear = GC.blurCircle, GC.setColorMask, GC.rotate, GC.shear
+local gc_setColorMask, gc_rotate, gc_shear = GC.setColorMask, GC.rotate, GC.shear
 
 local TEXTURE = TEXTURE
 local Cards = Cards
@@ -1452,7 +1452,7 @@ function scene.overDraw()
         for i = 1, #ImpactGlow do
             local L = ImpactGlow[i]
             gc_setColor(L.r, L.g, L.b, L.t)
-            gc_blurCircle(0, L.x, L.y, 120 * (L.t + 1.6) ^ 2)
+            GC.glowCircle(1, L.x, L.y, 120 * (L.t + 1.6) ^ 2)
         end
         gc_setBlendMode('alpha')
     end
@@ -1794,7 +1794,7 @@ function scene.overDraw()
 
                 -- Spike ball
                 gc_setColor(r, g, b, a/eTAlpha)
-                gc_blurCircle(-.26, 0, 0, 100 * k)
+                GC.glowCircle(1, 0, 0, 100 * k)
                 gc_mDraw(TEXTURE.surgeIcon, 0, 0, GAME.time * 2.6, .25 * k * bk)
 
                 -- Spark
