@@ -21,15 +21,9 @@ require 'Zenitha'
     DW = 'd4RmS', dW = 'd1RmS', W = 'l2RmS', lW = 'l4RmS', LW = 'l5RmS',
 } do COLOR[k] = CLR[v] end ]]
 
-function CLR.rainbow(phase, intensity, base, alpha)
-    return
-    MATH.sin(phase) * (intensity or .4) + (base or .6),
-    MATH.sin(phase+2.0944) * (intensity or .4) + (base or .6),
-    MATH.sin(phase-2.0944) * (intensity or .4) + (base or .6),
-    alpha or 1
-end
-function CLR.rainbow_light(phase, alpha) return CLR.rainbow(phase, 0.2, 0.7, alpha or 1) end
-function CLR.rainbow_dark(phase, alpha) return CLR.rainbow(phase, 0.2, 0.4, alpha or 1) end
+function CLR.rainbow(phase, saturation, lightness, alpha) return CLR.PSL(phase/(2*MATH.pi), saturation or 1, lightness or 0.6, alpha) end
+function CLR.rainbow_light(phase, alpha) return CLR.PSL(phase/(2*MATH.pi), 2/3, 0.7, alpha) end
+function CLR.rainbow_dark(phase, alpha) return CLR.PSL(phase/(2*MATH.pi), 0.5, 0.4, alpha) end
 
 ZENITHA.setMainLoopSpeed(240)
 ZENITHA.setRenderRate(50)
@@ -1677,6 +1671,21 @@ function Daemon_Fast()
             l[1] = lastColor
             TEXTS.endFloor:set(l)
         end
+
+        --[[ Ultimate Challenge rainbow text?
+        if GAME.ultimateChallenge and TASK.lock('ultimateChallengeScroll', .05) then
+            local comboName = M.DP == -1 and '"FRIENDLY CHALLENGE"' or '"ULTIMATE CHALLENGE"'
+            comboName = comboName:atomize()
+            local len = #comboName
+            for i = len, 1, -1 do TABLE.insert(comboName, i, { COLOR.HSV(i / len, .42, 1) }) end
+            local l = comboName
+            local lastColor = l[#l - 1]
+            for i = #l - 1, 1, -2 do
+                l[i] = l[i - 2]
+            end
+            l[1] = lastColor
+            TEXTS.mod:set(l)
+        end]]
     end
 end
 

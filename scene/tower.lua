@@ -1464,8 +1464,7 @@ function scene.overDraw()
             if GAME.customUltraCombo and not GAME.playing then
                 if not (RAINBOWFLASH and GAME.peasantRevolution) then
                     TEXTS.mod:setFont(FONT.get(GAME.badTime and 200 or 60))
-                    --gc_setColor(COLOR.rainbow_light(2.6 * t * speedMod))
-                    gc_setColor(CLR.HSV((0.4*t*speedMod)%1,0.4,0.9,1))
+                    gc_setColor(CLR.rainbow_light(2.6 * t * speedMod))
                     if GAME.peasantRevolution or (GAME.ultimateChallenge and M.DP == 0) then SCN.scenes.tower.widgetList.easy.textColor = COLOR.Y end
                 elseif RAINBOWFLASH then
                     TEXTS.mod:setFont(FONT.get(30))
