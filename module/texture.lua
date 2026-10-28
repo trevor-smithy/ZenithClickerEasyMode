@@ -455,6 +455,7 @@ TEXTURE = {
             lazy_bastard = aq(16, 8),
             easy_name = aq(16, 1),
             biased = aq(4, 5),
+            quick_pick = aq(2, 3),
         },
         frame = {
             [0] = assets 'achievements/frames/none.png',

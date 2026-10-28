@@ -2311,6 +2311,16 @@ local d = {
         credit = "TrevorSmithy",
         mod = "ZCEM",
     },
+    { -- quick_pick
+        id = 'quick_pick',
+        name = "Quick Pick",
+        desc = [[Select all mods within 2.6 seconds of entering the tower]],
+        quote = [["I look away for 2 seconds and you already selected that monstrosity???"]],
+        type = 'issued',
+        credit = "TrevorSmithy",
+        hide = TRUE,
+        mod = "ZCEM",
+    },
     { title = "Stacker", desc = "Added in v1.2/v1.3, these require doing something specific or unique with Stacker Mode enabled", mod = "ZCEM" },
     { -- hyperplonk
         id = 'hyperplonk',

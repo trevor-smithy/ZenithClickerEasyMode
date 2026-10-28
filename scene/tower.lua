@@ -722,12 +722,17 @@ end
 
 local KBIsDown, MSIsDown = love.keyboard.isDown, love.mouse.isDown
 local expApproach = MATH.expApproach
+local timer = 0
 function scene.update(dt)
     if dt > .26 then dt = .26 end
     if not GAME.playing then randomizeRNG() end
     comboTimer = comboTimer - dt
     if comboTimer <= 0 then
         combo = 0
+    end
+    if timer < 2.6 then
+        timer = timer + dt
+        if #GAME.getHand(false) == 9 and not ACHV.quick_pick then IssueAchv('quick_pick') end
     end
     if kbIsDown('left', 'right', 'up', 'down') then
         local spd = ZENITHA._cursor.speed * dt * (kbIsDown('lctrl', 'rctrl') and .6 or 1)
