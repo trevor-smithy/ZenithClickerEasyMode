@@ -1672,20 +1672,16 @@ function Daemon_Fast()
             TEXTS.endFloor:set(l)
         end
 
-        --[[ Ultimate Challenge rainbow text?
+        -- Ultimate Challenge rainbow text
         if GAME.ultimateChallenge and TASK.lock('ultimateChallengeScroll', .05) then
-            local comboName = M.DP == -1 and '"FRIENDLY CHALLENGE"' or '"ULTIMATE CHALLENGE"'
-            comboName = comboName:atomize()
-            local len = #comboName
-            for i = len, 1, -1 do TABLE.insert(comboName, i, { COLOR.HSV(i / len, .42, 1) }) end
-            local l = comboName
+            local l = GAME.ultimateChallengeComboName
             local lastColor = l[#l - 1]
             for i = #l - 1, 1, -2 do
                 l[i] = l[i - 2]
             end
             l[1] = lastColor
             TEXTS.mod:set(l)
-        end]]
+        end
     end
 end
 

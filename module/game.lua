@@ -2056,6 +2056,7 @@ end
 --------------------------------------------------------------
 function GAME.secretComboName(comboStr)
     GAME.ultimateChallenge = false
+    GAME.ultimateChallengeComboName = nil
     GAME.customUltraCombo = false
     GAME.forceRev = false
     GAME.peasantRevolution = false
@@ -2073,7 +2074,12 @@ function GAME.secretComboName(comboStr)
             if not failed then
                 if c.customUltraCombo then GAME.customUltraCombo = true end
                 if c.peasantRevolution then GAME.peasantRevolution = true end
-                if c.ultimateChallenge then GAME.ultimateChallenge = true end
+                if c.ultimateChallenge then 
+                    GAME.ultimateChallenge = true 
+                    GAME.ultimateChallengeComboName = c.name:atomize()
+                    local len = #GAME.ultimateChallengeComboName
+                    for i = len, 1, -1 do TABLE.insert(GAME.ultimateChallengeComboName, i, { CLR.PSL(i / len, 2/3, 0.7, 1) }) end
+                end
                 if c.forceRev and GAME.pieceCount() < 2 then GAME.forceRev = true end
                 if c.name == '"BAD TIME"' then
                     SCN.scenes.tower.widgetList.easy:setVisible(false)

@@ -1487,16 +1487,17 @@ function scene.overDraw()
                 gc_setColor(TextColor)
             end
             if M.IN == 2 then gc_setAlpha(.42 + .26 * sin(t * 2.6)) end
+            local xShift = 0
             if GAME.ultimateChallenge then
-                local text = M.DP == -1 and 'FRIENDLY CHALLENGE' or 'ULTIMATE CHALLENGE'
-                local x = M.DP == -1 and 802 or 800
-                setFont(65)
-                gc_strokePrint('full', 6, {CLR.rainbow(2.6*t*speedMod, 0.1, 0.5, 1)}, nil, text, x, 355, 2600, 'center', 0, 1, 1)
-                gc_strokePrint('full', 4, {CLR.rainbow(2.6*t*speedMod, 0.2, 0.4, 1)}, nil, text, x, 355, 2600, 'center', 0, 1, 1)
-                gc_strokePrint('full', 2, {CLR.rainbow(2.6*t*speedMod, 0.4, 0.6, 1)}, {CLR.rainbow(2.6*t*speedMod, 0.2, 0.8, 1)}, text, x, 355, 2600, 'center', 0, 1, 1)
-            else
-                gc_mDraw(TEXTS.mod, 800, GAME.badTime and not GAME.playing and 330 or 396, 0, min(1, 760 / TEXTS.mod:getWidth()))
+                local text = GC.newText(FONT.get(70), M.DP == -1 and '"FRIENDLY CHALLENGE"' or '"ULTIMATE CHALLENGE"')
+                if M.DP ~= -1 then gc_setColor(CLR.rainbow_dark(2.6 * t * speedMod)) end
+                gc_setAlpha(1)
+                GC.strokeDraw('full', 3, text, 800-(text:getWidth()/2)+(M.DP == -1 and 56.5 or 54.5), 403-(text:getHeight()/2), 0, min(1, (M.DP == -1 and 691 or 696) / text:getWidth()))
+                setFont(70)
+                gc_setColor(CLR.rainbow_light(2.6 * t * speedMod))
+                if M.DP == -1 then xShift = 2 end
             end
+            gc_mDraw(TEXTS.mod, 800 + xShift, GAME.badTime and not GAME.playing and 330 or 396, 0, min(1, 760 / TEXTS.mod:getWidth()))
         end
 
         -- GigaSpeed Timer
@@ -2140,16 +2141,25 @@ function scene.overDraw()
                         'full', 2, COLOR.DarkRed, COLOR.Red,
                         MD.uneasyDesc[infoID], 260, -68, 2600, 'center', 0, .8, 1
                     )
-                elseif GAME.ultimateChallenge and C.id == 'EX' then
+                elseif GAME.ultimateChallenge and (C.id == 'EX' or C.id == 'DP') then
+                    local text = C.id == 'EX' and "< EASY MODE >" or "< FRIEND >"
                     setFont(70)
-                    gc_strokePrint('full', 3, COLOR.DarkOrange, COLOR.Yellow, "< EASY MODE >", 130, -150, 2600, 'center', 0, .9, 1)
+                    gc_push()
+                    gc_translate(0, -118)
+                    gc_scale(1 + sin(t / 2.6) * .026)
+                    gc_shear(sin(t) * .26, cos(t * 1.2) * .026)
+                    gc_strokePrint('full', 6, C.id == 'EX' and COLOR.DO or COLOR.DM, nil, text, 130, -35 + 4, 2600, 'center', 0, .9, 1)
+                    gc_strokePrint('full', 4, C.id == 'EX' and COLOR.dO or COLOR.dM, nil, text, 130, -35 + 2, 2600, 'center', 0, .9, 1)
+                    gc_strokePrint(
+                        'full', 2, C.id == 'EX' and COLOR.O or COLOR.M, C.id == 'EX' and COLOR.Y or COLOR.lM,
+                        text, 130, -35, 2600, 'center', 0, .9, 1
+                    )
+                    gc_pop()
                     setFont(30)
-                    gc_strokePrint('full', 2, COLOR.DarkOrange, COLOR.Yellow, "WHAT DOESN'T KILL YOU MAKES YOU STRONGER", 260, -73, 2600, 'center', 0, .8, 1)
-                elseif GAME.ultimateChallenge and C.id == 'DP' then
-                    setFont(70)
-                    gc_strokePrint('full', 3, COLOR.DarkMagenta, COLOR.LightMagenta, "< FRIEND >", 130, -150, 2600, 'center', 0, .9, 1)
-                    setFont(30)
-                    gc_strokePrint('full', 2, COLOR.DarkMagenta, COLOR.LightMagenta, "A CHEAP SACRIFICE TO EMPOWER ONESELF", 260, -73, 2600, 'center', 0, .8, 1)
+                    gc_strokePrint(
+                        'full', 2, C.id == 'EX' and COLOR.DO or COLOR.DM, C.id == 'EX' and COLOR.Y or COLOR.lM,
+                        C.id == 'EX' and "WHAT DOESN'T KILL YOU MAKES YOU STRONGER" or "A CHEAP SACRIFICE TO EMPOWER ONESELF", 260, -68, 2600, 'center', 0, .8, 1
+                    )
                 else
                     setFont(70)
                     gc_strokePrint('full', 3, ShadeColor, TextColor, MD.easyName[infoID], 130, -150, 2600, 'center', 0, .9, 1)
