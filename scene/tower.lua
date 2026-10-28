@@ -1073,7 +1073,7 @@ end
 
 local boardRX, boardRY = 790, 232
 local function switchBoardCoord()
-    local k = 42 * GAME.shakeTimer * 0 -- TODO CONF.damageShakiness / 100
+    local k = 42 * GAME.shakeTimer * CONF.damageShakiness / 100
     if GAME.shakeTimer > 0 then gc_translate(MATH.rand(-1, 1) * k, MATH.rand(-1, 1) * k) end
     gc_translate(800, boardRY + 5 + (GAME.playing and (GAME.boardAnim - 1) * 62 or (1 - GAME.boardAnim) * 1260))
     if not GAME.playing then GC.rotate((1 - GAME.boardAnim) * .162) end
@@ -1688,7 +1688,7 @@ function scene.overDraw()
         gc_replaceTransform(SCR.xOy_m)
         GC.setColor(1, 1, 1, .26 * GAME.uiHide)
         local w, h = GAME.pieceFstrObj:getDimensions()
-        GC.draw(GAME.pieceFstrObj, 0, -170 - (CONF.stacker and GAME.questStack[1] and 60 or 0), 0, min(4.2, 740 / w) * (CONF.stacker and GAME.questStack[1] and 0.62 or 1), nil, w / 2, h * .57)
+        GC.draw(GAME.pieceFstrObj, 0, -170 - (CONF.stacker and GAME.questStack[1] and 60 or 0) + DeckPress, 0, min(4.2, 740 / w) * (CONF.stacker and GAME.questStack[1] and 0.62 or 1), nil, w / 2, h * .57)
     end
 
     -- Rev trigger for touchscreen

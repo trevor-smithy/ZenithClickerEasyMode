@@ -2147,27 +2147,27 @@ function GAME.refreshLayout()
             local C = CD[i]
             if i < FloatOnCard then
                 if not GAME.ecloseCard then 
-                    C.tx = MATH.interpolate(1, baseL, FloatOnCard - 1, selX - dodge, i) 
+                    C.x = MATH.interpolate(1, baseL, FloatOnCard - 1, selX - dodge, i) 
                 else
-                    C.tx = MATH.interpolate(1, baseL, FloatOnCard, selX, i) 
+                    C.x = MATH.interpolate(1, baseL, FloatOnCard, selX, i) 
                 end
-                if C.tx ~= C.tx then C.tx = baseL end
+                if C.x ~= C.x then C.x = baseL end
             elseif i > FloatOnCard then
                 if not GAME.ecloseCard then 
-                    C.tx = MATH.interpolate(#CD, baseR, FloatOnCard + 1, selX + dodge, i)
+                    C.x = MATH.interpolate(#CD, baseR, FloatOnCard + 1, selX + dodge, i)
                 else
-                    C.tx = MATH.interpolate(#CD, baseR, FloatOnCard, selX, i)
+                    C.x = MATH.interpolate(#CD, baseR, FloatOnCard, selX, i)
                 end
-                if C.tx ~= C.tx then C.tx = baseR end
+                if C.x ~= C.x then C.x = baseR end
             else
-                C.tx = selX
+                C.x = selX
             end
-            C.ty = (GAME.glassCard and not CONF.classicMode) and baseY or baseY - ((C.active and 45 or 0) + (i == FloatOnCard and 55 or 0))
+            C.y = (GAME.glassCard and not CONF.classicMode) and baseY or baseY - ((C.active and 45 or 0) + (i == FloatOnCard and 55 or 0))
         end
     else
         for i, C in ipairs(CD) do
-            C.tx = 800 + (i - 5) * baseDist
-            C.ty = (GAME.glassCard and not CONF.classicMode) and baseY or baseY - ((C.active and 45 or 0) + (i == FloatOnCard and 55 or 0))
+            C.x = 800 + (i - 5) * baseDist
+            C.y = (GAME.glassCard and not CONF.classicMode) and baseY or baseY - ((C.active and 45 or 0) + (i == FloatOnCard and 55 or 0))
         end
     end
 end
