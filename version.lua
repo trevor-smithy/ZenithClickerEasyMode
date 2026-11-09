@@ -3,6 +3,6 @@ return {
     ["apkCode"] = 010209,
     ["verCode"] = 010209,
 
-    ["appVer"] = "eV1.02.09-pre7",
-    ["verStr"] = "1.02.09-pre7",
+    ["appVer"] = "eV1.02.09-pre8",
+    ["verStr"] = "1.02.09-pre8",
 }

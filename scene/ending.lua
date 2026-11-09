@@ -3,7 +3,6 @@ local scene = {}
 local firstClear
 local badTime = nil
 local touchPressing
-EndText3 = GC.newText(FONT.get(70), "EASY MODE!")
 
 ---@param align? 'left' | 'center' | 'right'
 local function addText(text, x, y, scale, align, wraplimit)
@@ -284,17 +283,17 @@ function scene.draw()
             GC.mDraw(TEXTS.EndText2, 6 * math.cos(i * MATH.tau / 26), 6 * math.sin(i * MATH.tau / 26), 0, 1.626)
             if badTime then
                 GC.setColor(.1, .9, .1)
-                GC.mDraw(EndText3, 6 * math.cos(i * MATH.tau / 26), 6 * math.sin(i * MATH.tau / 26) + 120, 0, 1.626)
+                GC.mDraw(TEXTS.EndText3, 6 * math.cos(i * MATH.tau / 26), 6 * math.sin(i * MATH.tau / 26) + 120, 0, 1.626)
             end
         end
         GC.setColor(.1, .1, .1)
         for i = 0, 11 do
             GC.mDraw(TEXTS.EndText2, 2 * math.cos(i * MATH.tau / 11), 2 * math.sin(i * MATH.tau / 11), 0, 1.626)
-            if badTime then GC.mDraw(EndText3, 2 * math.cos(i * MATH.tau / 11), 2 * math.sin(i * MATH.tau / 11) + 120, 0, 1.626) end
+            if badTime then GC.mDraw(TEXTS.EndText3, 2 * math.cos(i * MATH.tau / 11), 2 * math.sin(i * MATH.tau / 11) + 120, 0, 1.626) end
         end
         GC.setColor(COLOR.L)
         GC.mDraw(TEXTS.EndText2, 0, 0, 0, 1.626)
-        if badTime then GC.mDraw(EndText3, 0, 120, 0, 1.626) end
+        if badTime then GC.mDraw(TEXTS.EndText3, 0, 120, 0, 1.626) end
     end
 end
 

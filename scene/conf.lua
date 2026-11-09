@@ -1528,6 +1528,13 @@ pages[ZCEMpage] = {
             GAME.multiplePiecesActive = false
             SaveConf()
             if multiple then GAME.multiplePiecesActive = true end
+            if CONF.easyName then
+                SCN.scenes.tower.widgetList.start.text = 'BEGIN'
+            elseif GAME.mod.DH == 0 then
+                SCN.scenes.tower.widgetList.start.text = 'START'
+            else
+                SCN.scenes.tower.widgetList.start.text = 'COMMENCE'
+            end
         end,
     },
     WIDGET.new { -- Stacker

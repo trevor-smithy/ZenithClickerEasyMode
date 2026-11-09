@@ -914,13 +914,14 @@ function RefreshBGM(mode)
     end
     local justBegin = BGM.tell() < 1
     BGM.set('all', 'pitch', pitch, GAME.ultimateChallenge and not GAME.playing and .62 or justBegin and 0 or .26)
-    BGM.set('all', 'highgain', (M.IN == 0 or GAME.fallout or GAME.ultimateChallenge and not GAME.playing) and 1 or (M.IN == 1 or M.IN == -1) and .8 or not URM and .626 or .55, justBegin and 0 or .626)
+    BGM.set('all', 'highgain', (M.IN <= 0 or GAME.fallout or GAME.ultimateChallenge and not GAME.playing) and 1 or M.IN == 1 and .8 or not URM and .626 or .55, justBegin and 0 or .626)
+    BGM.set('all', 'lowgain', (M.IN ~= -1 or GAME.forceRev) and 1 or (mode == 'f0r' or RevMusicMode()) and .95 or BgmPlaying ~= 'f0' and not GAME.uneasyMode and .9 or .8, justBegin and 0 or .626)
     if BgmPlaying == 'f0' then
         local revMode = mode == 'f0r' or RevMusicMode() or GAME.forceRev
         BGM.set('all', 'volume', revMode and not GAME.ultimateChallenge and 0 or uneasyMusic and MATH.max(MATH.min((1-(modifiedZP/0.7)), 1),0) or 1, 2.6)
         -- Trevor Smithy > to ~=
         BGM.set('expert', 'volume', M.EX > 0 and 1 or uneasyMusic and MATH.max(MATH.min(modifiedZP/0.7, 1),0) or 0, .26)
-        BGM.set('piano', 'volume', (M.NH == 0 or GAME.fallout or GAME.ultimateChallenge) and 1 or (M.NH == 1 or M.NH == -1) and .26 or 0)
+        BGM.set('piano', 'volume', (M.NH == 0 or GAME.fallout or GAME.ultimateChallenge) and 1 or M.NH == -1 and (GAME.uneasyMode and .4 or .62) or M.NH == 1 and .26 or 0)
         BGM.set('piano2', 'pitch', 2 * pitch, 0)
         BGM.set('piano2', 'volume', (M.DP ~= 0 or VALENTINE and not revMode) and .626 or 0, .26)
         BGM.set('violin', 'volume', (M.DP == -1 and GAME.ultimateChallenge or M.DP == 2) and 1 or 0, .26)
@@ -1643,7 +1644,7 @@ function Daemon_Fast()
             end
             if changed and not ((GAME.playing and CONF.stacker) or (GAME.badTime and not GAME.playing)) then
                 local W = SCN.scenes.tower.widgetList.start
-                W.text = startBtnTexts[startBtnPtr]
+                W.text = CONF.easyName and 'BEGIN' or startBtnTexts[startBtnPtr]
                 W:reset()
                 changed = false
             end
@@ -1771,3 +1772,5 @@ TASK.new(function()
         SFX.play(s)
     end
 end)
+-- If Easy Names active, set START button to BEGIN
+if CONF.easyName then SCN.scenes.tower.widgetList.start.text = 'BEGIN' end

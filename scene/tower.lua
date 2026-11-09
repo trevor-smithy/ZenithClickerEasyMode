@@ -722,17 +722,13 @@ end
 
 local KBIsDown, MSIsDown = love.keyboard.isDown, love.mouse.isDown
 local expApproach = MATH.expApproach
-local timer = 0
+local qp_timer, qp_delta = 0, 2 ^ -5
 function scene.update(dt)
     if dt > .26 then dt = .26 end
     if not GAME.playing then randomizeRNG() end
     comboTimer = comboTimer - dt
     if comboTimer <= 0 then
         combo = 0
-    end
-    if timer < 2.6 then
-        timer = timer + dt
-        if #GAME.getHand(false) == 9 and not ACHV.quick_pick then IssueAchv('quick_pick') end
     end
     if kbIsDown('left', 'right', 'up', 'down') then
         local spd = ZENITHA._cursor.speed * dt * (kbIsDown('lctrl', 'rctrl') and .6 or 1)
@@ -788,14 +784,35 @@ function scene.update(dt)
         end
     end
 
-    if not GAME.playing and TASK.lock('dcTimer', 1) then
-        local timeRemain = 86400 - (3600 * os.date("!%H") + 60 * os.date("!%M") + os.date("!%S"))
-        if timeRemain > lastTimeRemain then
-            RefreshDaily()
-            GAME.refreshDailyChallengeText()
+    if not GAME.playing then
+        if TASK.lock('dcTimer', 1) then
+            local timeRemain = 86400 - (3600 * os.date("!%H") + 60 * os.date("!%M") + os.date("!%S"))
+            if timeRemain > lastTimeRemain then
+                RefreshDaily()
+                GAME.refreshDailyChallengeText()
+            end
+            lastTimeRemain = timeRemain
+            --TEXTS.dcTimer:set(os.date("!%H:%M:%S", timeRemain))
         end
-        lastTimeRemain = timeRemain
-        --TEXTS.dcTimer:set(os.date("!%H:%M:%S", timeRemain))
+
+        if TASK.lock('qp_timer', qp_delta) then
+            local selCnt = 0
+            for i = #Cards, 1, -1 do
+                if Cards[i].active then
+                    selCnt = selCnt + 1
+                end
+            end
+            if selCnt == 0 then
+                qp_timer = 0
+            else
+                qp_timer = qp_timer + qp_delta
+                if selCnt == 9 and qp_timer < 2 and not GAME.badTime then
+                    IssueAchv('quick_pick')
+                    if qp_timer < 10 then MSG('info', ("QUICK PICKED in %.2fs"):format(qp_timer)) end
+                    qp_timer = 26
+                end
+            end
+        end
     end
 end
 

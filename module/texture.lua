@@ -752,6 +752,7 @@ TEXTS = { -- Font size should only be 30 50 70 here, to reduce memory usage of f
     credit      = GC.newText(FONT.get(30), "Most assets from TETR.IO"),
     EndText     = GC.newText(FONT.get(70)),
     EndText2    = GC.newText(FONT.get(70), "ZENITH CLICKER!"),
+    EndText3    = GC.newText(FONT.get(70), "EASY MODE!"),
     devNoteText = GC.newText(FONT.get(30)),
     aboutText   = GC.newText(FONT.get(70)),
     test        = GC.newText(FONT.get(70), "TEST"),

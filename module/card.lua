@@ -995,6 +995,7 @@ function Card:draw()
                 gc_draw(activeFrame2, 0, 0, 0, sign(self.kx), 1, frame2W, frame2H)
             end
         else
+            local aBoost = CONF.classicMode and 0 or 0.26
             if GAME.einvisCard then
                 local ultimateChallengeMod = GAME.ultimateChallenge and (1 + (M.DP == 0 and ((GAME.startingHealth-GAME.life)/GAME.startingHealth * 2) or ((GAME.startingHealth*2-(GAME.life+GAME.life2))/GAME.startingHealth))) or 1
                 local temp = M.IN == 1 and 2 or M.IN == 2 and not URM and 3 or M.IN == 2 and URM and 4 or 1
@@ -1007,7 +1008,7 @@ function Card:draw()
                 if self.required then 
                     gc_setColor(ModData.textColor[self.id]) 
                     if not self.active then
-                        gc_setAlpha((1.26 * ultimateChallengeMod)/temp + sin(love.timer.getTime() * 5.2/temp)/temp)
+                        gc_setAlpha((1.26 * ultimateChallengeMod)/temp + sin(love.timer.getTime() * 5.2/temp)/temp + aBoost)
                         width = (9-temp)*5
                     end
                     if self.active and GAME.playing then
@@ -1016,7 +1017,7 @@ function Card:draw()
                         else
                             gc_setColor(1,1,0)
                         end
-                        gc_setAlpha(min(1, 2/temp))
+                        gc_setAlpha(min(1, 2/temp + aBoost))
                         width = (9-temp)*5
                     end
                     if CONF.oldHitbox and MOBILE then
@@ -1026,7 +1027,7 @@ function Card:draw()
                     GC.mRect('line', 0, 0, 240 * 2 + width/2, 330 * 2 + width/2, width)
                 elseif not self.required and self.active and GAME.playing and not ((q2 and TABLE.equal(hand, q2)) or (q3 and TABLE.equal(hand, q3))) then               
                     gc_setColor(1,0,0)
-                    gc_setAlpha(min(1, 2/temp))
+                    gc_setAlpha(min(1, 2/temp + aBoost))
                     width = (9-temp)*5
                     gc_setLineWidth(width)
                     GC.mRect('line', 0, 0, 240 * 2 + width/2, 330 * 2 + width/2, width)
@@ -1034,7 +1035,7 @@ function Card:draw()
                 if self.required2 then
                     gc_setColor(1, 0.62, 0.9) 
                     if not self.active then
-                        gc_setAlpha(1.26/temp + sin(love.timer.getTime() * 5.2/temp)/(2*temp))
+                        gc_setAlpha(1.26/temp + sin(love.timer.getTime() * 5.2/temp)/(2*temp) + aBoost)
                     end
                     if self.active and GAME.playing then
                         if (q2 and TABLE.equal(hand, q2)) or (M.DP == -1 and GAME[GAME.getLifeKey(true)] > 0 and M.NH < 2 and q3 and q1 and TABLE.equal(hand, q3) and TABLE.equal(hand, q1)) then
@@ -1042,7 +1043,7 @@ function Card:draw()
                         else
                             gc_setColor(1,1,0)
                         end
-                        gc_setAlpha(min(1, 3/temp))
+                        gc_setAlpha(min(1, 2/temp + aBoost))
                     elseif GAME.playing and (M.DP == -1 and GAME[GAME.getLifeKey(true)] > 0 and M.NH < 2 and q3 and q1 and TABLE.equal(hand, q3) and TABLE.equal(hand, q1)) then
                         gc_setColor(0.13,1,0)
                     end
@@ -1055,17 +1056,17 @@ function Card:draw()
                     else
                         gc_setColor(1, 1, 0)
                     end
-                    gc_setAlpha(min(1, 2/temp))
+                    gc_setAlpha(min(1, 2/temp + aBoost))
                     gc_setLineWidth(width/2)
                     GC.mRect('line', 0, 0, 240 * 2 - width*2-4, 330 * 2 - width*2-4, width/2-4)
                 end
             end
             if a1 and not (GAME.einvisCard and GAME.playing) and (M.IN == -1 or not (GAME.glassCard and not CONF.classicMode)) then
-                gc_setColor(r1, g1, b1, a1)
+                gc_setColor(r1, g1, b1, a1 + aBoost)
                 gc_draw(activeFrame, 0, 0, 0, 1, 1, frame1W, frame1H)
             end
             if a2 and not (GAME.einvisCard and GAME.playing) and (M.IN == -1 or not (GAME.glassCard and not CONF.classicMode)) then
-                gc_setColor(r2, g2, b2, a2)
+                gc_setColor(r2, g2, b2, a2 + aBoost)
                 gc_draw(activeFrame2, 0, 0, 0, 1, 1, frame2W, frame2H)
             end
         end

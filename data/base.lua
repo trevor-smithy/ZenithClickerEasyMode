@@ -1,9 +1,9 @@
----------------------------------------------------------------------
---                      SPOILER WARNING                            --
--- This file contains secrets that may spoil your game experience. --
--- Be sure you've finished the game, including Ultra Reversed Mods --
---                   Read at your own risk.                        --
----------------------------------------------------------------------
+----------------------------------------------------------------------
+--                        SPOILER WARNING                           --
+-- This file contains contents that may spoil your game experience. --
+-- Be sure you've finished the game, including Ultra Reversed Mods  --
+--                     Read at your own risk.                       --
+----------------------------------------------------------------------
 AchvData = {
     [0] = { id = 'achv_none', bg = COLOR.D, fg = COLOR.LD, fg2 = COLOR.LD },
     { id = 'achv_bronze',   bg = COLOR.DO,          fg = COLOR.lO, fg2 = COLOR.O },
@@ -190,6 +190,7 @@ NegEvents = {
         event = function()
             GAME.attackMul = GAME.attackMul - .1
             GAME.dmgTimerMul = GAME.dmgTimerMul + .01
+            if GAME.mod.AS == 2 then Cards.AS.upright = false end
             GAME.mod.AS = 0
             TEXTS.chain:set(tostring(GAME.chain))
             GAME.refreshModIcon()
@@ -219,6 +220,7 @@ NegEvents = {
         event = function()
             GAME.attackMul = GAME.attackMul - .1
             GAME.dmgTimerMul = GAME.dmgTimerMul + .01
+            if GAME.mod.VL == 2 then Cards.VL.upright = false end
             GAME.mod.VL = 0
             GAME.refreshModIcon()
             GAME.refreshRPC()
@@ -234,6 +236,7 @@ NegEvents = {
             GAME.dmgCycle = GAME.dmgCycle + GAME.mod.IN * 1
             GAME.attackMul = GAME.attackMul - .1
             GAME.dmgTimerMul = GAME.dmgTimerMul + .01
+            if GAME.mod.IN == 2 then Cards.IN.upright = false end
             GAME.mod.IN = 0
             RefreshBGM()
             for _, C in ipairs(Cards) do C:flip() end
@@ -302,6 +305,7 @@ NegEvents = {
             GAME.dmgDelay = GAME.dmgDelay + GAME.mod.GV * 4
             GAME.attackMul = GAME.attackMul - .1
             GAME.dmgTimerMul = GAME.dmgTimerMul + .01
+            if GAME.mod.GV == 2 then Cards.GV.upright = false end
             GAME.mod.GV = 0
             GAME.refreshModIcon()
             GAME.refreshRPC()
@@ -369,6 +373,7 @@ NegEvents = {
             GAME.extraQuestBase = GAME.extraQuestBase - GAME.mod.MS * .2
             GAME.attackMul = GAME.attackMul - .1
             GAME.dmgTimerMul = GAME.dmgTimerMul + .01
+            if GAME.mod.MS == 2 then Cards.MS.upright = false end
             GAME.mod.MS = 0
             GAME.sortCards()
             GAME.refreshModIcon()
@@ -406,6 +411,7 @@ NegEvents = {
             GAME.extraQuestVar = GAME.extraQuestVar - GAME.mod.DH * .2
             GAME.attackMul = GAME.attackMul - .1
             GAME.dmgTimerMul = GAME.dmgTimerMul + .01
+            if GAME.mod.DH == 2 then Cards.DH.upright = false end
             GAME.mod.DH = 0
             GAME.refreshModIcon()
             GAME.refreshRPC()
@@ -443,6 +449,7 @@ NegEvents = {
             GAME.dmgHeal = GAME.dmgHeal + GAME.mod.NH * 3
             GAME.attackMul = GAME.attackMul - .1
             GAME.dmgTimerMul = GAME.dmgTimerMul + .01
+            if GAME.mod.NH == 2 then Cards.NH.upright = false end
             GAME.mod.NH = 0
             GAME.maxQuestCount = 3
             GAME.xpLockLevelMax = 5

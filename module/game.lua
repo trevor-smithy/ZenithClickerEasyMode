@@ -404,6 +404,7 @@ function GAME.getComboZP(list)
 
     if m.eMS and (m.eAS or m.AS or m.rAS) and not m.eIN then zp = zp * 1.06875 end
     if m.eDP and m.eDH then zp = zp * 17/18 end
+    if m.rGV and m.rAS then zp = zp + 0.0126 end
 
     if GAME.enightcore then zp = zp * .9 end
     if GAME.eslowmo then zp = zp * .826 end
@@ -3422,7 +3423,7 @@ function GAME.start()
         GAME.badTimeStarted = true
         GAME.fallout = false
         if not CONF.stacker then
-            SCN.scenes.tower.widgetList.start.text = 'COMMENCE'
+            SCN.scenes.tower.widgetList.start.text = CONF.easyName and 'BEGIN' or 'COMMENCE'
             SCN.scenes.tower.widgetList.start:reset()
         end
     end
