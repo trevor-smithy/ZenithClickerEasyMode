@@ -2098,25 +2098,26 @@ end
 function GAME.refreshCurrentCombo()
     local hand = GAME.getHand(not GAME.playing)
     local comboName = GAME.getComboName(hand, 'button')
+    local bathWater
     if not GAME.playing and GAME.anyUltra and #hand > 0 then
         comboName = GAME.ultrafyComboName(comboName)
     end
     -- Trevor Smithy
-    if not GAME.playing then GAME.smithyMode = (table.concat(TABLE.sort(hand)) == 'eASeEXeVL') end
     local secretComboName
-    if not GAME.playing then secretComboName = GAME.secretComboName(table.concat(TABLE.sort(hand))) end
-    if secretComboName then comboName = secretComboName end
-    if GAME.uneasyMode and not GAME.playing then
-        if comboName:count('BATH') == 1 and comboName:count('HARD') == 0 then
-            if M.DP == 0 or comboName == '"GAMER GIRL BATH WATER"' then
-                comboName = comboName:gsub("WATER", "WATER?", 1)
-            else
-                comboName = comboName:gsub("FRIEND", "FRIEND?", 1)
+    if not GAME.playing then 
+        bathWater = GAME.getBathWater(hand)
+        secretComboName = GAME.secretComboName(table.concat(TABLE.sort(hand)))
+        if bathWater and comboName:count('"') ~= 2 then 
+            comboName = GAME.anyUltra and #hand > 0 and M.DP ~= 2 and M.EX ~= 2 and GAME.ultrafyComboName(bathWater) or bathWater 
+        end
+        if secretComboName then comboName = secretComboName end
+        GAME.smithyMode = (table.concat(TABLE.sort(hand)) == 'eASeEXeVL') 
+        if GAME.uneasyMode and not bathWater then
+            if comboName:count('EASY') == 1 and comboName:count('UNEASY') == 0 then
+                comboName = comboName:gsub('EASY', 'UNEASY', 1)
+            elseif comboName:count('"') == 2 and not secretComboName then
+                comboName = comboName:gsub("([^\"])", "UNEASY %1", 1)
             end
-        elseif comboName:count('EASY') == 1 and comboName:count('UNEASY') == 0 then
-            comboName = comboName:gsub('EASY', 'UNEASY', 1)
-        elseif comboName:count('"') == 2 and not secretComboName then
-            comboName = comboName:gsub("([^\"])", "UNEASY %1", 1)
         end
     end
     --
@@ -4862,6 +4863,66 @@ function GAME.update(dt)
         GAME.dmgTimer = GAME.dmgCycle
         GAME.takeDamage(GAME.dmgTime, 'time')
     end
+end
+
+function GAME.getBathWater(list)
+    local anyDP = TABLE.find(list, 'eDP') or TABLE.find(list, 'DP') or TABLE.find(list, 'rDP')
+    local comboStr = table.concat(GAME.getHand(true))
+    local easyCount = comboStr:count('e') - (TABLE.find(list, 'eDP') and 1 or 0)
+    local revCount = comboStr:count('r') - (TABLE.find(list, 'rDP') and 1 or 0)
+    local uprightCount = #list - (easyCount + revCount + (anyDP and 1 or 0))
+    if #list < 8 and anyDP or #list < 7 or easyCount < 6 or revCount > 1 or uprightCount > 1 then return end
+    local comboName = "BATH"
+    -- Prefix
+    if easyCount < 8 then --i.e. if not all non duo mods
+        -- Missing
+        if comboStr:count('EX') == 0 then comboName = "NORMAL " .. comboName
+        elseif comboStr:count('NH') == 0 then comboName = "WARM " .. comboName
+        elseif comboStr:count('MS') == 0 then comboName = "CLEAN " .. comboName
+        elseif comboStr:count('GV') == 0 then comboName = "JACUZZI " .. comboName
+        elseif comboStr:count('VL') == 0 then comboName = "STILL " .. comboName
+        elseif comboStr:count('DH') == 0 then comboName = "HOLY " .. comboName
+        elseif comboStr:count('IN') == 0 then comboName = "CLOUDY " .. comboName
+        elseif comboStr:count('AS') == 0 then comboName = "PLAIN " .. comboName
+        end
+        -- Upright
+        if TABLE.find(list, 'EX') then comboName = "VERY HARD " .. comboName
+        elseif TABLE.find(list, 'NH') then comboName = "HOT " .. comboName
+        elseif TABLE.find(list, 'MS') then comboName = "DIRTY " .. comboName
+        elseif TABLE.find(list, 'GV') then comboName = "FLAT " .. comboName
+        elseif TABLE.find(list, 'VL') then comboName = "TURBULENT " .. comboName
+        elseif TABLE.find(list, 'DH') then comboName = "UNHOLY " .. comboName
+        elseif TABLE.find(list, 'IN') then comboName = "MURKY " .. comboName
+        elseif TABLE.find(list, 'AS') then comboName = "MAGICAL " .. comboName
+        end
+        -- Reverse
+        if TABLE.find(list, 'rEX') then comboName = (URM and "ULTRA HARD " or "SUPER HARD ") .. comboName
+        elseif TABLE.find(list, 'rNH') then comboName = "SCALDING " .. comboName
+        elseif TABLE.find(list, 'rMS') then comboName = "DISGUSTING " .. comboName
+        elseif TABLE.find(list, 'rGV') then comboName = "DEPRESSING " .. comboName
+        elseif TABLE.find(list, 'rVL') then comboName = "CHAOTIC " .. comboName
+        elseif TABLE.find(list, 'rDH') then comboName = "CURSED " .. comboName
+        elseif TABLE.find(list, 'rIN') then comboName = "OPAQUE " .. comboName
+        elseif TABLE.find(list, 'rAS') then comboName = "EXOTIC " .. comboName
+        end
+    elseif GAME.uneasyMode then -- Uneasy
+        comboName = "HARD " .. comboName
+    end
+    -- Suffix
+    if not anyDP then
+        comboName = comboName .. " WATER"
+    else
+        if TABLE.find(list, 'eDP') then comboName = comboName .. " WITH A FRIEND"
+        elseif TABLE.find(list, 'DP') then comboName = comboName .. " WITH A LOVER"
+        elseif not URM then comboName = comboName .. " WITH AN EX"
+        else comboName = comboName .. " WITH A STALKER"
+        end
+    end
+    -- Uneasy
+    if GAME.uneasyMode and comboName:count('HARD') == 0 then 
+        comboName = comboName .. '?'
+    end
+    return '"' .. comboName .. '"'
 end
 
 return GAME

@@ -18,8 +18,7 @@ local d = {
             { set = "eEX eNH eVL rAS", name = '"DEMYSTIFIED GRIMOIRE"', customUltraCombo = true},
             { set = "eEX eMS eVL rDP", name = '"LASTING EDEN"', customUltraCombo = true},
             -- Misc
-            { set = "eAS eDH eDP eGV eIN eMS eNH eVL rEX", name = '"ULTRA HARD BATH WITH A FRIEND"'},
-            { set = "eAS eDH eEX eGV eIN eMS eNH eVL rDP", name = '"BATH WITH A STALKER"'},
+            { set = "AS DH GV IN MS NH VL eEX rDP", name = "EASY SWAMP WATER WITH A STALKER"},
             { set = "eAS eDH eEX rGV", checks = {'canBeRandomlySelected', false, 'enightcore', false}, name = '"PATIENCE IS A VIRTUE..."'},
             { set = "eAS eDH eEX rGV", checks = {'enightcore', true}, name = [["BUT IT ISN'T ONE OF MINE"]], customUltraCombo = true},
             -- No Named Rev Equivalent
@@ -46,11 +45,8 @@ local d = {
             { set = "eAS eEX eVL rDH rDP rGV rIN rMS rNH", name = '"THE PARALYZED SMITHY"', forceRev = true, customUltraCombo = true},
         },
         uneasy = {
-            { set = "DP eAS eDH eEX eGV eIN eMS eNH eVL", name = '"BATH WITH A LOVER?"'},
             { set = "DH DP GV IN MS NH eAS eEX eVL", name = '"THE BOGGED-DOWN SMITHY"'},
             { set = "AS NH eEX", name = '"THE PIXEL ARTIST"'}, -- Credit: LovelyStar
-            { set = "eAS eDH eEX eGV eIN eMS eNH eVL", name = '"HARD BATH WATER"'},
-            { set = "eAS eDH eDP eEX eGV eIN eMS eNH eVL", name = '"HARD BATH WITH A FRIEND"'},
             { set = "eEX", name = 'UNEASY'},
             { set = "eEX eNH", checks = {'glassCard', true}, name = '"PROFLIGACY"'},
             { set = "eEX eMS", checks = {'slowmo', true}, name = '"DIOGENES SYNDROME"'},

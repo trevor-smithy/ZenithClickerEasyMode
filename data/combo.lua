@@ -53,42 +53,7 @@ d.menu = {
     -- Trevor Smithy
     { set = "eEX rGV eDH eAS",      name = "Patience is a Virtue" },
     
-    -- Bath Waters
-    { set = "eEX eNH eMS eGV eVL eDH eIN eAS",      name = "Bath Water"},
-    { set = "eNH eMS eGV eVL eDH eIN eAS",          name = "Normal Bath Water"}, -- soft e, normal, hard ue, very hard
-    { set = "eEX eMS eGV eVL eDH eIN eAS",          name = "Warm Bath Water"}, -- cool e, warm, hot
-    { set = "eEX eNH eGV eVL eDH eIN eAS",          name = "Clean Bath Water"}, -- pure e, clean, dirty
-    { set = "eEX eNH eMS eVL eDH eIN eAS",          name = "Jacuzzi Bath Water"}, -- jacuzzi, bubbly e, flat
-    { set = "eEX eNH eMS eGV eDH eIN eAS",          name = "Still Bath Water"}, -- still, calm e, turbulent
-    { set = "eEX eNH eMS eGV eVL eIN eAS",          name = "Holy Bath Water"}, -- sacred e, holy, unholy
-    { set = "eEX eNH eMS eGV eVL eDH eAS",          name = "Cloudy Bath Water"}, -- clear e, cloudy, murky 
-    { set = "eEX eNH eMS eGV eVL eDH eIN",          name = "Plain Bath Water"}, -- plain, mystical e, magical
-    { set = "EX eNH eMS eGV eVL eDH eIN eAS",       name = "Very Hard Bath Water"}, -- credit: TheBestNoob
-    { set = "eEX NH eMS eGV eVL eDH eIN eAS",       name = "Hot Bath Water"},
-    { set = "eEX eNH MS eGV eVL eDH eIN eAS",       name = "Dirty Bath Water"},
-    { set = "eEX eNH eMS GV eVL eDH eIN eAS",       name = "Flat Bath Water"},
-    { set = "eEX eNH eMS eGV VL eDH eIN eAS",       name = "Turbulent Bath Water"},
-    { set = "eEX eNH eMS eGV eVL DH eIN eAS",       name = "Unholy Bath Water"},
-    { set = "eEX eNH eMS eGV eVL eDH IN eAS",       name = "Murky Bath Water"},
-    { set = "eEX eNH eMS eGV eVL eDH eIN AS",       name = "Magical Bath Water"},
-    { set = "eEX eNH eMS eGV eVL eDH eIN eAS eDP",      name = "Bath With A Friend"},
-    { set = "eNH eMS eGV eVL eDH eIN eAS eDP",          name = "Normal Bath With A Friend"},
-    { set = "eEX eMS eGV eVL eDH eIN eAS eDP",          name = "Warm Bath With A Friend"},
-    { set = "eEX eNH eGV eVL eDH eIN eAS eDP",          name = "Clean Bath With A Friend"},
-    { set = "eEX eNH eMS eVL eDH eIN eAS eDP",          name = "Jacuzzi Bath With A Friend"},
-    { set = "eEX eNH eMS eGV eDH eIN eAS eDP",          name = "Still Bath With A Friend"},
-    { set = "eEX eNH eMS eGV eVL eIN eAS eDP",          name = "Holy Bath With A Friend"},
-    { set = "eEX eNH eMS eGV eVL eDH eAS eDP",          name = "Cloudy Bath With A Friend"},
-    { set = "eEX eNH eMS eGV eVL eDH eIN eDP",          name = "Plain Bath With A Friend"},
-    { set = "EX eNH eMS eGV eVL eDH eIN eAS eDP",       name = "Very Hard Bath With A Friend"},
-    { set = "rEX eNH eMS eGV eVL eDH eIN eAS eDP",      name = "Super Hard Bath With A Friend"},
-    { set = "eEX NH eMS eGV eVL eDH eIN eAS eDP",       name = "Hot Bath With A Friend"},
-    { set = "eEX eNH MS eGV eVL eDH eIN eAS eDP",       name = "Dirty Bath With A Friend"},
-    { set = "eEX eNH eMS GV eVL eDH eIN eAS eDP",       name = "Flat Bath With A Friend"},
-    { set = "eEX eNH eMS eGV VL eDH eIN eAS eDP",       name = "Turbulent Bath With A Friend"},
-    { set = "eEX eNH eMS eGV eVL DH eIN eAS eDP",       name = "Unholy Bath With A Friend"},
-    { set = "eEX eNH eMS eGV eVL eDH IN eAS eDP",       name = "Murky Bath With A Friend"},
-    { set = "eEX eNH eMS eGV eVL eDH eIN AS eDP",       name = "Magical Bath With A Friend"},
+    -- Bath Waters (now handled by GAME.getBathWater)
     -- Any non-messy combination with AS and/or DP = Gamer Girl Bath Water
     { set = "eEX eNH eGV eVL eDH eIN AS DP",            name = "Gamer Girl Bath Water"},
     { set = "eEX eNH eGV eVL eDH eIN eAS DP",           name = "Gamer Girl Bath Water"},
@@ -105,26 +70,8 @@ d.menu = {
     { set = "eEX NH MS GV VL DH IN AS",                 name = "Easy Swamp Water"},
     { set = "eEX NH MS GV VL DH IN AS eDP",             name = "Easy Swamp Water With A Friend"},
     { set = "eEX NH MS GV VL DH IN AS DP",              name = "Easy Swamp Water With A Lover"},
+    { set = "eEX NH MS GV VL DH IN AS rDP",              name = "Easy Swamp Water With An Ex"},
     -- Credit: F1e308
-    { set = "eEX eNH eMS eGV eVL eDH eIN eAS DP",        name = "Bath With A Lover"},
-    { set = "eEX eNH eMS eGV eVL eDH eIN eAS rDP",       name = "Bath With An Ex"},
-    { set = "rEX eNH eMS eGV eVL eDH eIN eAS",           name = "Super Hard Bath Water"},
-    { set = "eEX rNH eMS eGV eVL eDH eIN eAS",           name = "Scalding Bath Water"},
-    { set = "eEX eNH rMS eGV eVL eDH eIN eAS",           name = "Disgusting Bath Water"},
-    { set = "eEX eNH eMS rGV eVL eDH eIN eAS",           name = "Depressing Bath Water"},
-    { set = "eEX eNH eMS eGV rVL eDH eIN eAS",           name = "Chaotic Bath Water"},
-    { set = "eEX eNH eMS eGV eVL rDH eIN eAS",           name = "Cursed Bath Water"},
-    { set = "eEX eNH eMS eGV eVL eDH rIN eAS",           name = "Opaque Bath Water"},
-    { set = "eEX eNH eMS eGV eVL eDH eIN rAS",           name = "Exotic Bath Water"},
-    { set = "rEX eNH eMS eGV eVL eDH eIN eAS eDP",           name = "Super Hard Bath With A Friend"},
-    { set = "eEX rNH eMS eGV eVL eDH eIN eAS eDP",           name = "Scalding Bath With A Friend"},
-    { set = "eEX eNH rMS eGV eVL eDH eIN eAS eDP",           name = "Disgusting Bath With A Friend"},
-    { set = "eEX eNH eMS rGV eVL eDH eIN eAS eDP",           name = "Depressing Bath With A Friend"},
-    { set = "eEX eNH eMS eGV rVL eDH eIN eAS eDP",           name = "Chaotic Bath With A Friend"},
-    { set = "eEX eNH eMS eGV eVL rDH eIN eAS eDP",           name = "Cursed Bath With A Friend"},
-    { set = "eEX eNH eMS eGV eVL eDH rIN eAS eDP",           name = "Opaque Bath With A Friend"},
-    { set = "eEX eNH eMS eGV eVL eDH eIN rAS eDP",           name = "Exotic Bath With A Friend"},
-    
     --misc (no dev commentary except programming smithy)
     { set = "eNH eGV",          name = "Shameless Cashgrab"},
     { set = "eNH eMS eDH",      name = "Clean Break"},

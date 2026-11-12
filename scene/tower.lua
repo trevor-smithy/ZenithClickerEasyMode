@@ -27,6 +27,7 @@ local startMin = os.date('%M')
 local startSec = os.date('%S')
 local comboTimer = 0
 local combo = 0
+local quickPickDisabled = false
 local lastTimeRemain = 1e99 -- For checking if daily challenge should update
 
 ---@type Zenitha.Scene
@@ -89,6 +90,7 @@ local function mouseTrigger(x, y, k)
     local C = Cards[FloatOnCard]
     if C then
         if GAME.playing or not C.lock then
+            quickPickDisabled = false
             C:setActive(false, k)
         else
             C:flick()
@@ -205,6 +207,7 @@ local function keyTrigger(key)
                 FloatOnCard = bindID
                 SetMouseVisible(false)
                 MX, MY = C.x + math.random(-126, 126), C.y + math.random(-260, 260)
+                quickPickDisabled = false
                 C:setActive()
                 GAME.refreshLayout()
             else
@@ -241,6 +244,7 @@ local function keyTrigger(key)
                     if not GAME.achv_noKeyboardH then GAME.achv_noKeyboardH = GAME.roundHeight end
                 else
                     GAME.start()
+                    quickPickDisabled = false
                 end
             elseif bindID == 20 then
                 GAME.nixPrompt('keep_no_keyboard')
@@ -252,6 +256,7 @@ local function keyTrigger(key)
                 if M.AS == 0 then GAME.nixPrompt('keep_no_reset') end
                 GAME.noMouseOrSpin = false
                 GAME.noKeyboardOrReset = false
+                quickPickDisabled = false
                 GAME.cancelAll()
                 if not GAME.achv_noKeyboardH then GAME.achv_noKeyboardH = GAME.roundHeight end
             elseif bindID == 21 or bindID == 22 then
@@ -806,7 +811,7 @@ function scene.update(dt)
                 qp_timer = 0
             else
                 qp_timer = qp_timer + qp_delta
-                if selCnt == 9 and qp_timer < 2 and not GAME.badTime then
+                if selCnt == 9 and qp_timer < 2 and not (GAME.badTime or quickPickDisabled) then
                     IssueAchv('quick_pick')
                     if qp_timer < 10 then MSG('info', ("QUICK PICKED in %.2fs"):format(qp_timer)) end
                     qp_timer = 26
@@ -2632,6 +2637,7 @@ scene.widgetList = {
             --applyCombo(DAILY)
             if GAME.badTime then return end
             applyCombo(generateRandomCombo(k == 2 or kbIsDown('lctrl', 'rctrl') or next(revHold)))
+            quickPickDisabled = true
             if TABLE.equal(GAME.getHand(true),{'eEX','rGV','eDH','eAS'}) then -- but it isn't one of mine check
                 GAME.enightcore = true
                 URM = true
