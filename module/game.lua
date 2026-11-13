@@ -3708,7 +3708,7 @@ function GAME.finish(reason)
 
     if CONF.stacker then
         local W = SCN.scenes.tower.widgetList.start
-        W.text = M.DH ~= 0 and "COMMENCE" or "START"
+        W.text = CONF.easyName and "BEGIN" or M.DH ~= 0 and "COMMENCE" or "START"
         W:reset()
     end
 
