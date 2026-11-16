@@ -933,7 +933,7 @@ function Card:draw()
             end
             if GAME.einvisCard then
                 local b = CONF.cardBrightness / 100
-                gc_setColor(b,b,b,(CONF.cardBrightness / 100) ^ 2 * 0.26 + (CONF.classicMode and 0 or 0.4))
+                gc_setColor(b,b,b,(CONF.cardBrightness / 100) ^ 2 * 0.26)
             end
             gc_draw(img, -img:getWidth() / 2, -img:getHeight() / 2)
             if img2 then
@@ -978,7 +978,7 @@ function Card:draw()
                         gc_setAlpha(1.26/temp + sin(love.timer.getTime() * 5.2/temp)/temp)
                     end
                     if CONF.oldHitbox and MOBILE then
-                        gc_circle('fill', 0, 0, 40)
+                        GC.circle('fill', 0, 0, 40)
                     end
                 else
                     gc_setColor(1,1,1)
@@ -988,11 +988,11 @@ function Card:draw()
             end
             if a1 then
                 gc_setColor(r1, g1, b1, a1)
-                gc_draw(activeFrame, 0, 0, 0, sign(self.kx), 1, frame1W, frame1H)
+                gc_draw(activeFrame, 0, 0, 0, sign(self.x1), 1, frame1W, frame1H)
             end
             if a2 then
                 gc_setColor(r2, g2, b2, a2)
-                gc_draw(activeFrame2, 0, 0, 0, sign(self.kx), 1, frame2W, frame2H)
+                gc_draw(activeFrame2, 0, 0, 0, sign(self.x1), 1, frame2W, frame2H)
             end
         else
             local aBoost = CONF.classicMode and 0 or 0.26
