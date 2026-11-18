@@ -649,4 +649,15 @@ return {
     ['eEX eMS eGV uVL eDH uDP'] = STRING.trimIndent [[
         "Stop hitting yourself! Stop hitting youself! Stop hitting youself! Stop hitting youself!"
     ]],
+    ['eEX uNH uMS uGV uVL uDH uIN uAS'] = STRING.trimIndent [[
+        "Congratulations on completing the Ultimate Challenge! Completing this challenge proves
+        that you have mastered Zenith Clicker Easy Mode, and I have no greater challenge for you.
+        Well, I guess if you haven't done THE PARALYZED SMITHY, that might be something else to try,
+        although in my opinion, the removal of the insta-kill of uAS and the repetitive clicking of uVL
+        is about equal to the buffs provided by the gold EASY MODE. Thanks for playing, and as always, WAH-BAAM!"
+    ]],
+    ['eEX uNH uMS uGV uVL uDH uIN uAS eDP'] = STRING.trimIndent [[
+        "Congratulations on completing the Friendly Challenge!
+        Now just to stop relying on your friend and do it by yourself!"
+    ]],
 }
