@@ -51,6 +51,14 @@ local overallProgress = {
     ptAll = 0,
     ptText = "0/0 Pts",
 }
+local ZCEMoverallProgress = {
+    rank = { [0] = 0, 0, 0, 0, 0, 0 },
+    wreath = { [0] = 0, 0, 0, 0, 0, 0, 0 },
+    countStart = 0,
+    ptGet = 0,
+    ptAll = 0,
+    ptText = "0/0 Pts",
+}
 local smithys = {'programming_smithy', 'uneasy_smithy', 'swamped_smithy', 'bogged_smithy', 'overwhelmed_smithy', 'paralyzed_smithy'}
 local smithyRotation = {0, 0, 0, 0, 0, 0, 0, 0}
 
@@ -69,6 +77,12 @@ function RefreshAchvList(canShuffle)
     overallProgress.wreath[0] = 0
     overallProgress.ptGet = 0
     overallProgress.ptAll = 0
+    ZCEMoverallProgress.rank = TABLE.new(0, 5)
+    ZCEMoverallProgress.rank[0] = 0
+    ZCEMoverallProgress.wreath = TABLE.new(0, 6)
+    ZCEMoverallProgress.wreath[0] = 0
+    ZCEMoverallProgress.ptGet = 0
+    ZCEMoverallProgress.ptAll = 0
     for _, achvList in next, achvLists do
         TABLE.clear(achvList)
     end
@@ -107,11 +121,21 @@ function RefreshAchvList(canShuffle)
                 progress = r < 5 and r % 1 or r % 1 / .9999
                 wreath = r >= 5 and floor(MATH.clampInterpolate(0, 0, .9999, 6, r % 1)) or 0
                 if A.type ~= 'issued' then
-                    overallProgress.rank[rank] = overallProgress.rank[rank] + 1
-                    overallProgress.wreath[wreath] = overallProgress.wreath[wreath] + 1
+                    if A.mod == 'ZCEM' then
+                        ZCEMoverallProgress.rank[rank] = ZCEMoverallProgress.rank[rank] + 1
+                        ZCEMoverallProgress.wreath[wreath] = ZCEMoverallProgress.wreath[wreath] + 1
+                    else
+                        overallProgress.rank[rank] = overallProgress.rank[rank] + 1
+                        overallProgress.wreath[wreath] = overallProgress.wreath[wreath] + 1 
+                    end
                     if A.type == 'competitive' then
-                        overallProgress.ptGet = overallProgress.ptGet + floor(rank)
-                        overallProgress.ptAll = overallProgress.ptAll + 5
+                        if A.mod == 'ZCEM' then
+                            ZCEMoverallProgress.ptGet = ZCEMoverallProgress.ptGet + floor(rank)
+                            ZCEMoverallProgress.ptAll = ZCEMoverallProgress.ptAll + 5
+                        else
+                            overallProgress.ptGet = overallProgress.ptGet + floor(rank)
+                            overallProgress.ptAll = overallProgress.ptAll + 5
+                        end
                     end
                 end
                 local devScore = DevScore[A.id] or A.noScore or 0
@@ -233,6 +257,22 @@ function RefreshAchvList(canShuffle)
             for i = 0, 6 do
                 if overallProgress.wreath[i] > 0 then
                     overallProgress.countStart = i
+                    break
+                end
+            end
+        end
+        ZCEMoverallProgress.ptText = ZCEMoverallProgress.ptGet .. "/" .. ZCEMoverallProgress.ptAll .. " Pts"
+        if ZCEMoverallProgress.ptGet < ZCEMoverallProgress.ptAll then
+            for i = 0, 5 do
+                if ZCEMoverallProgress.rank[i] > 0 then
+                    ZCEMoverallProgress.countStart = i
+                    break
+                end
+            end
+        else
+            for i = 0, 6 do
+                if ZCEMoverallProgress.wreath[i] > 0 then
+                    ZCEMoverallProgress.countStart = i
                     break
                 end
             end
@@ -438,7 +478,7 @@ function scene.load()
         whenItsReady = URM and M.IN == 2 or MATH.roll(.01 + M.IN * .026)
     end
 
-    hyper = M.EX > 0 or BgmPlaying == 'tera' or BgmPlaying == 'terar'
+    hyper = M.EX ~= 0 or BgmPlaying == 'tera' or BgmPlaying == 'terar'
 
     RefreshAchvList(true)
 
@@ -594,7 +634,7 @@ function scene.draw()
         local ea = (colorRev and -.5 or .5) * M.AS ^ 2 * t
         local ka = colorRev and -3.1416 or 3.1416
         local texture = TEXTURE.achievement
-        local notAllRank5 = overallProgress.ptGet < overallProgress.ptAll
+        local notAllRank5 = page ~= ZCEMpage and overallProgress.ptGet < overallProgress.ptAll or page == ZCEMpage and ZCEMoverallProgress.ptGet < ZCEMoverallProgress.ptAll
         gc_translate(0, -420 - scroll1)
         for i = 1 + 2 * max(floor(scroll1 / 140) - 1, 0), min(2 * (floor(scroll1 / 140) + 8), #achvLists[page]) do
             local a = achvLists[page][i]
@@ -634,9 +674,9 @@ function scene.draw()
                 if a.id ~= '' then
                     -- Bottom rectangle
                     if hyper then
-                        if overallProgress.countStart == 6 then
+                        if overallProgress.countStart == 6 or ZCEMoverallProgress.countStart == 6 then
                             gc_setColor(CLR.rainbow_dark(i / 2.6 - t * 2.6, .42))
-                        elseif a.type == 'competitive' and (notAllRank5 and a.rank or a.wreath) == overallProgress.countStart then
+                        elseif a.type == 'competitive' and ((notAllRank5 and a.rank or a.wreath) == overallProgress.countStart or (notAllRank5 and a.rank or a.wreath) == ZCEMoverallProgress.countStart)then
                             gc_setColor(.26 + .1 * sin(t * 2.6 + ceil(i / 2) * 1.2), 0, 0, .626)
                         else
                             gc_setColor(0, 0, 0, .626)
@@ -794,22 +834,43 @@ function scene.draw()
     -- Badge (wreath) count
     if STAT.maxFloor >= 10 and not whenItsReady and not TestMode then
         gc_replaceTransform(SCR.xOy_ur)
-        if overallProgress.ptGet < overallProgress.ptAll then
-            for i = overallProgress.countStart, 5 do gc_print(overallProgress.rank[i], -1150 + 150 * i + 37, 5, 0, .9) end
-            gc_printf(overallProgress.ptText, -360, 0, 350, 'right')
-            gc_setColor(1, 1, 1)
-            for i = overallProgress.countStart, 5 do
-                gc_mDraw(TEXTURE.achievement.frame[i], -1150 + 150 * i, 35, 0, .26)
+        if page ~= ZCEMpage then
+            if overallProgress.ptGet < overallProgress.ptAll then
+                for i = overallProgress.countStart, 5 do gc_print(overallProgress.rank[i], -1150 + 150 * i + 37, 5, 0, .9) end
+                gc_printf(overallProgress.ptText, -360, 0, 350, 'right')
+                gc_setColor(1, 1, 1)
+                for i = overallProgress.countStart, 5 do
+                    gc_mDraw(TEXTURE.achievement.frame[i], -1150 + 150 * i, 35, 0, .26)
+                end
+            elseif overallProgress.countStart then
+                if overallProgress.countStart == 6 then gc_print("THANKS FOR PLAYING.", -760, 0) end
+                for i = overallProgress.countStart, 6 do gc_print(overallProgress.wreath[i], -1100 + 40 + 160 * i) end
+                gc_setColor(1, 1, 1)
+                for i = overallProgress.countStart, 6 do
+                    gc_mDraw(
+                        i > 0 and TEXTURE.achievement.wreath[i] or TEXTURE.achievement.frame[5],
+                        -1100 + 160 * i, 35, 0, .26
+                    )
+                end
             end
-        elseif overallProgress.countStart then
-            if overallProgress.countStart == 6 then gc_print("THANKS FOR PLAYING.", -760, 0) end
-            for i = overallProgress.countStart, 6 do gc_print(overallProgress.wreath[i], -1100 + 40 + 160 * i) end
-            gc_setColor(1, 1, 1)
-            for i = overallProgress.countStart, 6 do
-                gc_mDraw(
-                    i > 0 and TEXTURE.achievement.wreath[i] or TEXTURE.achievement.frame[5],
-                    -1100 + 160 * i, 35, 0, .26
-                )
+        else
+            if ZCEMoverallProgress.ptGet < ZCEMoverallProgress.ptAll then
+                for i = ZCEMoverallProgress.countStart, 5 do gc_print(ZCEMoverallProgress.rank[i], -1150 + 150 * i + 37, 5, 0, .9) end
+                gc_printf(ZCEMoverallProgress.ptText, -360, 0, 350, 'right')
+                gc_setColor(1, 1, 1)
+                for i = ZCEMoverallProgress.countStart, 5 do
+                    gc_mDraw(TEXTURE.achievement.frame[i], -1150 + 150 * i, 35, 0, .26)
+                end
+            elseif ZCEMoverallProgress.countStart then
+                if ZCEMoverallProgress.countStart == 6 then gc_print("THANKS FOR PLAYING MY MOD!", -1000, 0) end
+                for i = ZCEMoverallProgress.countStart, 6 do gc_print(ZCEMoverallProgress.wreath[i], -1100 + 40 + 160 * i) end
+                gc_setColor(1, 1, 1)
+                for i = ZCEMoverallProgress.countStart, 6 do
+                    gc_mDraw(
+                        i > 0 and TEXTURE.achievement.wreath[i] or TEXTURE.achievement.frame[5],
+                        -1100 + 160 * i, 35, 0, .26
+                    )
+                end
             end
         end
     end

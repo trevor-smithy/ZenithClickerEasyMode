@@ -1496,13 +1496,13 @@ local d = {
     },
     { title = "Ex-Vanilla", desc = "Achievements that were removed from vanilla Zenith Clicker but were kept in ZCEM", mod = "ZCEM" },
     { -- patience_is_a_virtue
-        ex = true,
         id = 'patience_is_a_virtue',
         name = "Patience is a Virtue",
         desc = [[HFD without manually committing]],
         quote = [[Opportunities always favor those who are prepared and wait.]],
         credit = "@The_111thBlitzer",
         rank = floorRank(1, 3, 5, 7, 9, 10, 2000),
+        type = 'unranked',
         mod = "ZCEM",
     },
     { title = "The Originals", desc = "Added in v1.0, includes a custom challenge for each Ultra Reversed mod", mod = "ZCEM" },
@@ -1514,17 +1514,16 @@ local d = {
         quote = [["WAH-BAAM!"]],
         credit = "@TrevorSmithy",
         rank = floorRank(1, 3, 5, 7, 9, 10, 6200),
-        type = 'unranked',
         mod = "ZCEM",
     },
     { -- one_of_mine
+        ex = true,
         id = 'one_of_mine',
         name = "But It Isn't One Of Mine",
         desc = [[HAR without manual commits with TERASPEED active or completed WU eEX, uGV, eDH, and eAS +eZ]],
         quote = [["Ain't nobody got time for that!"]],
         credit = "@TrevorSmithy",
         rank = floorRank(1, 3, 5, 7, 9, 10, 6200),
-        type = 'unranked',
         mod = "ZCEM",
     },
     { -- GGBW
@@ -1534,7 +1533,6 @@ local d = {
         quote = [["If only we could be together for real..."]],
         credit = "@TrevorSmithy",
         rank = floorRank(1, 3, 5, 7, 9, 10, 6200),
-        type = 'unranked',
         mod = "ZCEM",
     },
     { -- perfect_speedrun_plus
@@ -1547,7 +1545,6 @@ local d = {
         scoreFull = function(time) return string.format("%.2f quests/s", 864 / time) end,
         rank = numberRankRev(905, 800, 695, 590, 485, 380, 300),
         credit = "@TrevorSmithy",
-        type = 'unranked',
         mod = "ZCEM",
     },
     { -- perfectly_balanced
@@ -1557,7 +1554,6 @@ local d = {
         quote = [["As all things should be."]],
         credit = "@TrevorSmithy",
         rank = floorRank(1, 3, 5, 7, 9, 10, 6200),
-        type = 'unranked',
         mod = "ZCEM",
     },
     { -- uEX
@@ -1567,7 +1563,6 @@ local d = {
         quote = [["This psychotic sovereign shall rule no longer. All of us must fight!"]],
         credit = "@TrevorSmithy",
         rank = floorRank(1, 3, 5, 7, 9, 10, 2600),
-        type = 'unranked',
         mod = "ZCEM",
     },
     { -- uNH
@@ -1577,7 +1572,6 @@ local d = {
         quote = [["The key to ascending is taking the quick and simple path, no?"]],
         credit = "@TrevorSmithy",
         rank = floorRank(1, 3, 5, 7, 9, 10, 4000),
-        type = 'unranked',
         mod = "ZCEM",
     },
     { -- uMS
@@ -1587,7 +1581,6 @@ local d = {
         quote = [["As your friend, I can be the light you need in times of disarray."]],
         credit = "@TrevorSmithy",
         rank = floorRank(1, 3, 5, 7, 9, 10, 2600),
-        type = 'unranked',
         mod = "ZCEM",
     },
     { -- uGV
@@ -1597,7 +1590,6 @@ local d = {
         quote = [["Hey, can we combine our magic to stop the galaxy from imploding?"]],
         credit = "@TrevorSmithy",
         rank = floorRank(1, 3, 5, 7, 9, 10, 6200),
-        type = 'unranked',
         mod = "ZCEM",
     },
     { -- uVL
@@ -1607,7 +1599,6 @@ local d = {
         quote = [["With careful planning and a timely execution, we can rise again."]],
         credit = "@TrevorSmithy",
         rank = floorRank(1, 3, 5, 7, 9, 10, 6200),
-        type = 'unranked',
         mod = "ZCEM",
     },
     { -- uDH
@@ -1617,7 +1608,6 @@ local d = {
         quote = [["Just stop trying to decipher the message and follow my lead, alright?"]],
         credit = "@TrevorSmithy",
         rank = floorRank(1, 3, 5, 7, 9, 10, 4000),
-        type = 'unranked',
         mod = "ZCEM",
     },
     { -- uIN
@@ -1627,7 +1617,6 @@ local d = {
         quote = [["Dude, I'm telling you, just a bit of simple magic clears it all up."]],
         credit = "@TrevorSmithy",
         rank = floorRank(1, 3, 5, 7, 9, 10, 4000),
-        type = 'unranked',
         mod = "ZCEM",
     },
     { -- uAS
@@ -1637,7 +1626,6 @@ local d = {
         quote = [["Moderation and meditation can reform even a degenerate magician like you."]],
         credit = "@TrevorSmithy",
         rank = floorRank(1, 3, 5, 7, 9, 10, 6200),
-        type = 'unranked',
         mod = "ZCEM",
     },
     { -- uDP
@@ -1647,7 +1635,6 @@ local d = {
         quote = [["How about you just keep the place clean and quiet? Then we would be fine!"]],
         credit = "@TrevorSmithy",
         rank = floorRank(1, 3, 5, 7, 9, 10, 2600),
-        type = 'unranked',
         mod = "ZCEM",
     },
     { -- your_too_fast
@@ -1695,7 +1682,6 @@ local d = {
         desc = [[HFD with the "Easy Mode" mod]],
         quote = [[An easier challenge, for beginners to start with.]],
         rank = floorRank(1, 3, 5, 7, 9, 10, 6200),
-        type = 'unranked',
         mod = "ZCEM",
     },
     { -- eNH
@@ -1704,7 +1690,6 @@ local d = {
         desc = [[HFD with the "Moderate Hold" mod]],
         quote = [[Life is easier when you've made up your mind.]],
         rank = floorRank(1, 3, 5, 7, 9, 10, 4200),
-        type = 'unranked',
         mod = "ZCEM",
     },
     { -- eMS
@@ -1713,7 +1698,6 @@ local d = {
         desc = [[HFD with the "Tidiness" mod]],
         quote = [[The odds are always in your favor.]],
         rank = floorRank(1, 3, 5, 7, 9, 10, 4200),
-        type = 'unranked',
         mod = "ZCEM",
     },
     { -- eGV
@@ -1722,7 +1706,6 @@ local d = {
         desc = [[HFD with the "Lift" mod]],
         quote = [[Do you imagine floating weightless?]],
         rank = floorRank(1, 3, 5, 7, 9, 10, 4200),
-        type = 'unranked',
         mod = "ZCEM",
     },
     { -- eVL
@@ -1731,7 +1714,6 @@ local d = {
         desc = [[HFD with the "Tranquility" mod]],
         quote = [[You're safe, just right where you are.]],
         rank = floorRank(1, 3, 5, 7, 9, 10, 6200),
-        type = 'unranked',
         mod = "ZCEM",
     },
     { -- eDH
@@ -1740,7 +1722,6 @@ local d = {
         desc = [[HFD with the "Salvation" mod]],
         quote = [[A liberating life, and a peaceful death.]],
         rank = floorRank(1, 3, 5, 7, 9, 10, 4200),
-        type = 'unranked',
         mod = "ZCEM",
     },
     { -- eIN
@@ -1749,7 +1730,6 @@ local d = {
         desc = [[HFD with the "Visible" mod]],
         quote = [[You won't need to remember anything, if you're being honest.]],
         rank = floorRank(1, 3, 5, 7, 9, 10, 4200),
-        type = 'unranked',
         mod = "ZCEM",
     },
     { -- eAS
@@ -1758,7 +1738,6 @@ local d = {
         desc = [[HFD with the "Spin" mod]],
         quote = [[Anything is possible from within the tips of your fingers.]],
         rank = floorRank(1, 3, 5, 7, 9, 10, 4200),
-        type = 'unranked',
         mod = "ZCEM",
     },
     { -- eDP
@@ -1767,7 +1746,6 @@ local d = {
         desc = [[HFD with the "Friend" mod]],
         quote = [[Two best pals, created for each other.]],
         rank = floorRank(1, 3, 5, 7, 9, 10, 4200),
-        type = 'unranked',
         mod = "ZCEM",
     },
     { title = "Uneasy Mods", desc = "Added in v1.1, each pair is matched with a regular piece to make their 'Uneasy' variant", hide = function() return not ACHV.uneasy end, mod = "ZCEM",},
@@ -1782,7 +1760,6 @@ local d = {
         scoreFull = function(time) return string.format("%.2f m/s", 1650 / time) end,
         rank = numberRankRev(600, 540, 480, 420, 360, 300, 240),
         hide = function() return not ACHV.uneasy or not ACHV.eEX end,
-        type = 'unranked',
         mod = "ZCEM",
     },
     { -- ueEXeNH
@@ -1796,10 +1773,10 @@ local d = {
         scoreFull = function(time) return string.format("%.2f m/s", 1650 / time) end,
         rank = numberRankRev(600, 540, 480, 420, 360, 300, 240),
         hide = function() return not ACHV.uneasy or not ACHV.eNH end,
-        type = 'unranked',
         mod = "ZCEM",
     },
     { -- ueEXeMS
+        ex = true,
         id = 'ueEXeMS',
         name = "Diogenes Syndrome",
         desc = [[Fastest time to Floor 10 with ueEX, eMS + S]],
@@ -1810,10 +1787,10 @@ local d = {
         scoreFull = function(time) return string.format("%.2f m/s", 1650 / time) end,
         rank = numberRankRev(600, 540, 480, 420, 360, 300, 240),
         hide = function() return not ACHV.uneasy or not ACHV.eMS end,
-        type = 'unranked',
         mod = "ZCEM",
     },
     { -- ueEXeGV
+        ex = true,
         id = 'ueEXeGV',
         name = "Dysania",
         desc = [[Fastest time to Floor 10 with ueEX, eGV + S]],
@@ -1824,7 +1801,6 @@ local d = {
         scoreFull = function(time) return string.format("%.2f m/s", 1650 / time) end,
         rank = numberRankRev(600, 540, 480, 420, 360, 300, 240),
         hide = function() return not ACHV.uneasy or not ACHV.eGV end,
-        type = 'unranked',
         mod = "ZCEM",
     },
     { -- ueEXeVL
@@ -1838,10 +1814,10 @@ local d = {
         scoreFull = function(time) return string.format("%.2f m/s", 1650 / time) end,
         rank = numberRankRev(600, 540, 480, 420, 360, 300, 240),
         hide = function() return not ACHV.uneasy or not ACHV.eVL end,
-        type = 'unranked',
         mod = "ZCEM",
     },
     { -- ueEXeDH
+        ex = true,
         id = 'ueEXeDH',
         name = "Limbo",
         desc = [[Fastest time to Floor 10 with ueEX, eDH + Z]],
@@ -1852,7 +1828,6 @@ local d = {
         scoreFull = function(time) return string.format("%.2f m/s", 1650 / time) end,
         rank = numberRankRev(720, 660, 600, 540, 480, 420, 360),
         hide = function() return not ACHV.uneasy or not ACHV.eDH end,
-        type = 'unranked',
         mod = "ZCEM",
     },
     { -- ueEXeIN
@@ -1866,7 +1841,6 @@ local d = {
         scoreFull = function(time) return string.format("%.2f m/s", 1650 / time) end,
         rank = numberRankRev(600, 540, 480, 420, 360, 300, 240),
         hide = function() return not ACHV.uneasy or not ACHV.eIN end,
-        type = 'unranked',
         mod = "ZCEM",
     },
     { -- ueEXeAS
@@ -1880,7 +1854,6 @@ local d = {
         scoreFull = function(time) return string.format("%.2f m/s", 1650 / time) end,
         rank = numberRankRev(600, 540, 480, 420, 360, 300, 240),
         hide = function() return not ACHV.uneasy or not ACHV.eAS end,
-        type = 'unranked',
         mod = "ZCEM",
     },
     { -- ueEXeDP
@@ -1894,7 +1867,6 @@ local d = {
         scoreFull = function(time) return string.format("%.2f m/s", 1650 / time) end,
         rank = numberRankRev(600, 540, 480, 420, 360, 300, 240),
         hide = function() return not ACHV.uneasy or not ACHV.eDP end,
-        type = 'unranked',
         mod = "ZCEM",
     },
     { title = "Special Quests", desc = "Added in v1.1, each easy variant of the named combos has a special quest-based achievement goal", mod = "ZCEM" },
@@ -1906,7 +1878,6 @@ local d = {
         quote = [[Look at how much progress you've made in reforming your ways!]],
         scoreSimp = function(rank) return string.format("Rank %.2f", rank) end,
         rank = numberRank(9, 10, 11, 12, 13, 13.1, 13.2),
-        type = 'unranked',
         mod = "ZCEM",
     },
     { -- quest_feast
@@ -1919,7 +1890,6 @@ local d = {
         scoreSimp = function(roundHeight) return string.format("%.2fm", roundHeight) end,
         scoreFull = function(roundHeight) return string.format("%.2f meters/quest", roundHeight/40) end,
         rank = numberRankRev(600, 550, 500, 450, 400, 350, 300),
-        type = 'unranked',
         mod = "ZCEM",
     },
     { -- eDPeEX
@@ -1930,7 +1900,6 @@ local d = {
         quote = [["With the power of friendship, we will prevail!"]],
         scoreSimp = function(quest) return floor(quest) .. " Dunks" end,
         rank = numberRank(0, 15, 30, 50, 70, 85, 100),
-        type = 'unranked',
         mod = "ZCEM",
     }, 
     { -- eGVeIN
@@ -1942,7 +1911,6 @@ local d = {
         scoreSimp = function(spq) return string.format("%.2f seconds/quest", spq) end,
         --scoreFull = function(qps) return string.format("%.2f quests/s", 40 / time) end,
         rank = numberRank(0, 1, 2, 3, 3.5, 4, 4.5),
-        type = 'unranked',
         mod = "ZCEM",
     },
     { -- eGVeNH
@@ -1952,7 +1920,6 @@ local d = {
         quote = [["Anything to please our shareholders!"]],
         scoreSimp = function(quest) return floor(quest) .. " Mistakes" end,
         rank = numberRank(0, 20, 40, 60, 80, 100, 125),
-        type = 'unranked',
         mod = "ZCEM",
     },
     { -- eASeNH
@@ -1962,7 +1929,6 @@ local d = {
         quote = [["Do you just sit there all day?"]],
         scoreSimp = function(quest) return floor(quest) .. " Broken Chairs" end,
         rank = numberRank(0, 10, 20, 30, 40, 50, 60),
-        type = 'unranked',
         mod = "ZCEM",
     },
     { -- eASeDHeMS
@@ -1972,7 +1938,6 @@ local d = {
         quote = [["Are we sure that's not an oxymoron?" "Not EVERY gamer is a total slob, y'know!"]],
         scoreSimp = function(quest) return floor(quest) .. " Saved Mice" end,
         rank = numberRank(0, 50, 100, 150, 200, 250, 300),
-        type = 'unranked',
         mod = "ZCEM",
     },
     { -- eDHeMSeNH
@@ -1982,7 +1947,6 @@ local d = {
         quote = [[A methodical, clean exit strategy does not rely on unecessary elements.]],
         scoreSimp = function(quest) return floor(quest) .. " Saved Keyboards" end,
         rank = numberRank(0, 50, 100, 150, 200, 250, 300),
-        type = 'unranked',
         mod = "ZCEM",
     },
     { -- eDHeEXeMSeVL
@@ -1992,7 +1956,6 @@ local d = {
         quote = [[A good cleaner is a thorough cleaner: not fast nor slow, but consistent.]],
         scoreSimp = function(quest) return floor(quest) .. " Cleaned Rooms" end,
         rank = numberRank(0, 20, 40, 55, 70, 85, 100),
-        type = 'unranked',
         mod = "ZCEM",
     },
     { -- eDHeDPeGVeINeMSeNH
@@ -2274,6 +2237,7 @@ local d = {
         mod = "ZCEM",
     },
     { -- what_have_you_done (1.1.5)
+        ex = true,
         id = 'what_have_you_done',
         name = "WHAT HAVE YOU DONE!?",
         desc = [[Activate BAD TIME]],
@@ -2394,6 +2358,7 @@ local d = {
     },
     { title = "Smithy", desc = "Added in v1.3, these all require using eEX/ueEX, eVL, and eAS with all other mods sharing the same (non-easy) state", mod = "ZCEM"},
     {
+        ex = true,
         id = 'programming_smithy',
         name = "The Pro G(r)am(m)ing Smithy",
         desc = "Reach F10 as fast as possible while retaining GIGASPEED with Smithy",
@@ -2407,6 +2372,7 @@ local d = {
         mod = "ZCEM",
     },
     {
+        ex = true,
         id = 'uneasy_smithy',
         name = "The Uneasy Smithy",
         desc = "Reach F10 as fast as possible while retaining GIGASPEED with Smithy and Uneasy active",
@@ -2433,6 +2399,7 @@ local d = {
         mod = "ZCEM",
     },
     {
+        ex = true,
         id = 'bogged_smithy',
         name = "The Bogged-Down Smithy",
         desc = "Reach F10 as fast as possible while retaining GIGASPEED with Smithy, Uneasy, and Upright mods",
@@ -2601,6 +2568,7 @@ local d = {
     },
     -- Ultimate Challenge
     {
+        ex = true,
         id = 'ultimate_challenge',
         name = "Ultimate Challenge",
         desc = [[HFD with Easy Mode and all Ultras except Duo.]],
@@ -2611,6 +2579,7 @@ local d = {
         mod = "ZCEM",
     },
     {
+        ex = true,
         id = 'friendly_challenge',
         name = "Friendly Challenge",
         desc = [[HFD with "Best Friends" and all Ultras]],
