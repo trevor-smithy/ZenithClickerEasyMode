@@ -2386,7 +2386,7 @@ local d = {
         id = 'modifier_stacking',
         name = "Modifier Stacking",
         desc = [[Reach FΩ with no pieces, no quests stacked after F1, only 1 quest committed after F1, and no cards activated after F5]],
-        quote = [["For my next trick, watch as I go from to the Hall to the Stars with a single quest!"]],
+        quote = [["For my next trick, watch as I go from the Hall to the Stars with a single quest!"]],
         type = 'issued',
         hide = TRUE,
         credit = "@TrevorSmithy",
@@ -2495,9 +2495,9 @@ local d = {
         hide = function() return not (ACHV.paralyzed_smithy or ACHV.programmer_gamer) end,
         mod = "ZCEM",
     },
-    { title = "Double Ultras", desc = "Added in v1.2, includes custom challenges for pairs of each Ultra Reversed mod", mod = "ZCEM"},
+    { title = "Double Ultras", desc = "Added in v1.2, includes custom challenges for pairs of each Ultra Reversed mod, pieces and/or stacker recommended", mod = "ZCEM"},
     { -- uNHuDH
-        id = 'eEXeGVeINeMSrDHrNH',
+        id = 'blasphemous_ascension',
         name = "Blasphemous Ascension",
         desc = [[HFD with eEX, eGV, eIN, eMS, uDH, and uNH]],
         quote = [["Well I'll be damned!"]],
@@ -2507,7 +2507,7 @@ local d = {
         mod = "ZCEM",
     },
     { -- uMSuIN
-        id = 'eASeDPeEXeNHrINrMS',
+        id = 'paradoxical_entropy',
         name = "Paradoxical Entropy",
         desc = [[HFD with eAS, eDP, eEX, eNH, uIN, and uMS]],
         quote = [["What the hell is this? This makes no sense."]],
@@ -2517,7 +2517,7 @@ local d = {
         mod = "ZCEM",
     },
     { -- uASuGV
-        id = 'eDPeEXeNHeVLrASrGV',
+        id = 'depraved_galaxy',
         name = "Depraved Galaxy",
         desc = [[HFD with eDP, eEX, eNH, eVL, uAS, and uGV]],
         quote = [["Get your mind outta the gutter."]],
@@ -2527,7 +2527,7 @@ local d = {
         mod = "ZCEM",
     },
     { -- uDPuVL
-        id = 'eDHeEXeGVeMSrDPrVL',
+        id = 'severed_volition',
         name = "Severed Volition",
         desc = [[HFD with eDH, eEX, eGV, eMS, uDP, and uVL]],
         quote = [["Stop hitting yourself!"]],
@@ -2536,9 +2536,9 @@ local d = {
         type = 'unranked',
         mod = "ZCEM",
     },
-    { title = "3+ Ultras", desc = "Added in v1.3, this is a collection of increasingly difficult Ultra Reversed challenges", mod = "ZCEM"},
+    { title = "3+ Ultras", desc = "Added in v1.3, this is a collection of increasingly difficult Ultra Reversed challenges, pieces and/or stacker recommended", mod = "ZCEM"},
     { -- uASuEXuVL
-        id = 'eDHeDPeGVeINeMSeNHrASrEXrVL',
+        id = 'whelmed_smithy',
         name = "The Whelmed Smithy",
         desc = [[HFD with eDH, eDP, eGV, eIN, eMS, eNH, uAS, uEX, and uVL]],
         quote = [["Did you know whelmed is actually a synonym of overwhelmed? Now you do!"]],
@@ -2548,7 +2548,7 @@ local d = {
         mod = "ZCEM",
     },
     { -- uDHuMSuNH
-        id = 'eASeDPeEXeGVeINeVLrDHrMSrNH',
+        id = 'dead_on_arrival',
         name = "Dead On Arrival",
         desc = [[HFD with eAS, eDP, eEX, eGV, eIN, eVL, uDH, uMS, and uNH]],
         quote = [["I swear they were alive when I left..."]],
@@ -2558,7 +2558,7 @@ local d = {
         mod = "ZCEM",
     },
     { -- uDPuGVuIN
-        id = 'eASeDHeEXeMSeNHeVLrDPrGVrIN',
+        id = 'epic_grandmaster_duel',
         name = "Epic Grandmaster Duel",
         desc = [[HFD with eAS, eDH, eEX, eMS, eNH, eVL, uDP, uGV, and uIN]],
         quote = [["Finally! A worth opponent! Our battle will be legendary!"]],
@@ -2569,7 +2569,7 @@ local d = {
     },
     -- Quadruple Ultras
     { -- uDHuINuMSuNH
-        id = 'eASeEXeGVeVLrDHrINrMSrNH',
+        id = 'guessing_game',
         name = "Guessing Game",
         desc = [[HFD with eAS, eEX, eGV, eVL, uDH, uIN, uMS, and uNH]],
         quote = [["Shoot, what was the combo again???"]],
@@ -2579,7 +2579,7 @@ local d = {
         mod = "ZCEM",
     },
     { -- uASuEXuGVuVL
-        id = 'eDHeINeMSeNHrASrEXrGVrVL',
+        id = 'final_development',
         name = "Final Development",
         desc = [[HFD with eDH, eIN, eMS, eNH, uAS, uEX, uGV, and uVL]],
         quote = [["I swear I am not doing anything more after this update..."                 "probably"]],
@@ -2596,12 +2596,12 @@ local d = {
         credit = "@TrevorSmithy",
         rank = floorRank(1, 3, 5, 7, 8, 9, 10),
         type = 'unranked',
-        hide = function() return not (ACHV.eDHeINeMSeNHrASrEXrGVrVL or ACHV.one_of_mine) end,
+        hide = function() return not (ACHV.final_development or ACHV.one_of_mine) end,
         mod = "ZCEM",
     },
     -- Ultimate Challenge
     {
-        id = 'eEXrASrDHrGVrINrMSrNHrVL',
+        id = 'ultimate_challenge',
         name = "Ultimate Challenge",
         desc = [[HFD with Easy Mode and all Ultras except Duo.]],
         quote = [["The Peasants have Revolted, now it is time for you to put them down..."]],
@@ -2611,7 +2611,7 @@ local d = {
         mod = "ZCEM",
     },
     {
-        id = 'eDPeEXrASrDHrGVrINrMSrNHrVL',
+        id = 'friendly_challenge',
         name = "Friendly Challenge",
         desc = [[HFD with "Best Friends" and all Ultras]],
         quote = [["In times of desparation, sometimes you must sacrifice those closest to you..."]],

@@ -28,6 +28,7 @@ local function q2(ox, oy, w, h)
     )
 end
 local function aq(x, y) return GC.newQuad((x - 1) % 16 * 256, (y - 1) % 16 * 256, 256, 256, 4096, 2048) end
+--local function aq2(x, y) return GC.newQuad()
 TEXTURE = {
     star0 = assets 'crystal-dark.png',
     star1 = assets 'crystal.png',
@@ -456,6 +457,18 @@ TEXTURE = {
             easy_name = aq(16, 1),
             biased = aq(4, 5),
             quick_pick = aq(2, 3),
+            -- Misc
+            --adrenaline_junkie = aq(),
+            -- Easy Mode - Stacker
+            modifier_stacking = aq(7,6),
+            --[[glissando = aq(),
+            secret_grade = aq(),
+            garbage_in_garbage_out = aq(),
+            its_a_feature = aq(),
+            -- Easy Mode - Smithy
+            -- special?
+            eEXeGVeINeMSrDHrNH = aq(),
+            eASeDPeEXeNHrINrMS = aq(),]]
         },
         frame = {
             [0] = assets 'achievements/frames/none.png',

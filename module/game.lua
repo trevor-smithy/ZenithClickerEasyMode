@@ -4256,6 +4256,19 @@ function GAME.finish(reason)
             if ACHV['ggbw'] >= (GAME.achv_carriedH or GAME.roundHeight) then
                 MSG("dark", "The Biggest Fan Score: " .. (GAME.achv_carriedH or GAME.roundHeight) .. " meters", 60)
             end
+        elseif URM then
+            if     GAME.comboStr == 'eEXeGVeINeMSrDHrNH'          then SubmitAchv('blasphemous_ascension', GAME.roundHeight)
+            elseif GAME.comboStr == 'eASeDPeEXeNHrINrMS'          then SubmitAchv('paradoxical_entropy', GAME.roundHeight)
+            elseif GAME.comboStr == 'eDPeEXeNHeVLrASrGV'          then SubmitAchv('depraved_galaxy', GAME.roundHeight)
+            elseif GAME.comboStr == 'eDHeEXeGVeMSrDPrVL'          then SubmitAchv('severed_volition', GAME.roundHeight)
+            elseif GAME.comboStr == 'eDHeDPeGVeINeMSeNHrASrEXrVL' then SubmitAchv('whelmed_smithy', GAME.roundHeight)
+            elseif GAME.comboStr == 'eASeDPeEXeGVeINeVLrDHrMSrNH' then SubmitAchv('dead_on_arrival', GAME.roundHeight)
+            elseif GAME.comboStr == 'eASeDHeEXeMSeNHeVLrDPrGVrIN' then SubmitAchv('epic_grandmaster_duel', GAME.roundHeight)
+            elseif GAME.comboStr == 'eASeEXeGVeVLrDHrINrMSrNH'    then SubmitAchv('guessing_game', GAME.roundHeight)
+            elseif GAME.comboStr == 'eDHeINeMSeNHrASrEXrGVrVL'    then SubmitAchv('final_development', GAME.roundHeight)
+            elseif GAME.comboStr == 'eEXrASrDHrGVrINrMSrNHrVL'    then SubmitAchv('ultimate_challenge', GAME.roundHeight)
+            elseif GAME.comboStr == 'eDPeEXrASrDHrGVrINrMSrNHrVL' then SubmitAchv('friendly_challenge', GAME.roundHeight)
+            end
         end
         if M.GV ~= -1 then SubmitAchv('patience_is_a_virtue', GAME.achv_noManualCommitH or GAME.roundHeight) end
         if M.EX < 2 and M.DP < 2 then

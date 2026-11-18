@@ -256,7 +256,23 @@ local function refreshAchivement()
     }
     local swFin
     local maxMMP, maxZP = 0, 0
+    local ultras = {
+        'ueEXeGVeINeMSrDHrNH', 'ueASeDPeEXeNHrINrMS', 'ueDPeEXeNHeVLrASrGV', 'ueDHeEXeGVeMSrDPrVL',
+        'ueDHeDPeGVeINeMSeNHrASrEXrVL', 'ueASeDPeEXeGVeINeVLrDHrMSrNH', 'ueASeDHeEXeMSeNHeVLrDPrGVrIN',
+        'ueASeEXeGVeVLrDHrINrMSrNH', 'ueDHeINeMSeNHrASrEXrGVrVL',
+        'ueEXrASrDHrGVrINrMSrNHrVL', 'ueDPeEXrASrDHrGVrINrMSrNHrVL'
+    }
+    local ultrasNames = {
+        'blasphemous_ascension', 'paradoxical_entropy', 'depraved_galaxy', 'severed_volition',
+        'whelmed_smithy', 'dead_on_arrival', 'epic_grandmaster_duel',
+        'guessing_game', 'final_development',
+        'ultimate_challenge', 'friendly_challenge'
+    }
     for setStr, h in next, BEST.highScore do
+        local index = TABLE.find(ultras, setStr) or 0
+        if index > 0 and (not ACHV[setStr] or h > ACHV[setStr]) then
+            SubmitAchv(ultrasNames[index], h, true)
+        end
         setStr = setStr:gsub('^u', '')
         submit(setStr, h)
         local revCount = STRING.count(setStr, 'r')
