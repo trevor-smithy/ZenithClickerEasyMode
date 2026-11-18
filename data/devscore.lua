@@ -3,24 +3,27 @@ local d = {EXGVNHrMS=2860.57,havoc=3656.14,ASDPGVrMSrNH=2005.6,rMS=3982.7,rVL=60
     patience_is_a_virtue=43466.5,
 -- Trevor Smithy Dev scores
     --Easy Mode (v1.0) (No CR)
-    programmer_gamer=71730.2,one_of_mine=43466.5,ggbw=177032.9,perfect_speedrun_plus=361.02,perfectly_balanced=30716.5,peasant_revolution=29067.9,holy_ascention=4814.9,stabilized_entropy=3115.4,restrained_collapse=17205.3,restored_volition=8606.7,disproven_blasphemy=5223.9,solved_paradox=4103.1,demystified_grimoire=17952.5,restored_eden=2650.3,your_too_fast=187,
+    programmer_gamer=71730.2,one_of_mine=43466.5,ggbw=177032.9,perfect_speedrun_plus=361.02,perfectly_balanced=30716.5,peasant_revolution=29067.9,holy_ascention=4814.9,stabilized_entropy=3115.4,restrained_collapse=17205.3,restored_volition=8606.7,disproven_blasphemy=5223.9,solved_paradox=4103.1,demystified_grimoire=17952.5,restored_eden=2650.3,your_too_fast=702,
     --Easy Mods (v1.1) (No CR)
-    eEX=6385.7,eNH=5015.3,eMS=4505.9,eGV=5385.9,eVL=7933.4,eDH=14814.9,eIN=6097.8,eAS=22177.6,eDP=4751.4,
+    eEX=6385.7,eNH=5015.3,eMS=4505.9,eGV=5571.0,eVL=7933.4,eDH=14814.9,eIN=6097.8,eAS=22177.6,eDP=4751.4,
     --Uneasy Easy Mods (v1.1) (No CR)
-    ueEX=255.55,ueEXeNH=273.50,ueEXeMS=269.57,ueEXeGV=241.6,ueEXeVL=206.59,ueEXeDH=357.59,ueEXeIN=240.77,ueEXeAS=130.82,ueEXeDP=262.65,
+    ueEX=239.951,ueEXeNH=192.455,ueEXeMS=220.393,ueEXeGV=201.34,ueEXeVL=172.047,ueEXeDH=357.59,ueEXeIN=225.932,ueEXeAS=130.82,ueEXeDP=238.213,
     --Easy Mode - Special (v1.1) (No CR)
-    emperor_development=13.23,quest_feast=281.00,best_friends=101,humble_pupil=5.67,shameless_cashgrab=130,overweight_gamer=69,clean_gamer=319,clean_break=312,professional_cleaner=100,rold_smythy=520,
+    emperor_development=13.23,quest_feast=17.5,best_friends=101,humble_pupil=5.67,shameless_cashgrab=130,overweight_gamer=87,clean_gamer=319,clean_break=312,professional_cleaner=100,rold_smythy=520,
+    programming_smithy=16.633,uneasy_smithy=23.247,swamped_smithy=35.818,bogged_smithy=56.578,overwhelmed_smithy=133.471,paralyzed_smithy=276.956,speedrunning_smithy=542.703,ultimate_smithy=1731.4,
+    blasphemous_ascension=7742.4,paradoxical_entropy=3686.1,depraved_galaxy=3127,severed_volition=2628.1,
+    whelmed_smithy=1718.2,dead_on_arrival=1699.4,epic_grandmaster_duel=1746.3,guessing_game=1771.2,
+    final_development=1826.3,when_its_ready=1692.2,
     --Ultimate Challenge
-    eEXrASrDHrGVrINrMSrNHrVL = 3733.2,
+    ultimate_challenge = 3733.2, friendly_challenge=3642.2,
 }
--- Trevor Smithy Placeholder Dev Scores
-d["-3"] = 26000
-d["-4"] = 26000*2
-d["-5"] = 26000*3
-d["-6"] = 26000*4
-d["-7"] = 26000*5
-d["-8"] = 26000*6
-d["-9"] = 26000*7
+d["-3"] = 62849.1
+d["-4"] = 369663.6
+d["-5"] = 787555.5
+d["-6"] = 1933469.6
+d["-7"] = 1896338.2
+d["-8"] = 2205070.4
+d["-9"] = 1065655.1
 
 d.contender = 6200
 d.clicker = 620e3
