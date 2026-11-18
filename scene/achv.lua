@@ -51,6 +51,8 @@ local overallProgress = {
     ptAll = 0,
     ptText = "0/0 Pts",
 }
+local smithys = {'programming_smithy', 'uneasy_smithy', 'swamped_smithy', 'bogged_smithy', 'overwhelmed_smithy', 'paralyzed_smithy'}
+local smithyRotation = {0, 0, 0, 0, 0, 0, 0, 0}
 
 local page = 2
 local maxPage = 2
@@ -397,7 +399,6 @@ local function refreshAchivement()
         )
     end
 
-    local smithys = {'programming_smithy', 'uneasy_smithy', 'swamped_smithy',        'bogged_smithy',          'overwhelmed_smithy',          'paralyzed_smithy'}
     local combos =  {'eASeEXeVL',          'ueASeEXeVL',    'DHDPGVINMSNHeASeEXeVL', 'uDHDPGVINMSNHeASeEXeVL', 'eASeEXeVLrDHrDPrGVrINrMSrNH', 'ueASeEXeVLrDHrDPrGVrINrMSrNH'}
     _t = 0
     for combo, smithy in next, smithys do
@@ -519,6 +520,12 @@ function scene.update(dt)
             TEXTURE.achievement.iconQuad[tostring(i)]:setViewport(
                 (2 - 1) % 16 * 256 - r, (3 - 1) % 16 * 256 - r2, 256, 256, 4096, 2048
             )
+        end
+    end
+    for i = 1, 8 do
+        if TASK.lock('smithy_icon_' .. i, 0.02) then
+            smithyRotation[i] = smithyRotation[i] + (8.5-i)/26
+            if smithyRotation[i] > 2*3.141592654 then smithyRotation[i] = 0 end
         end
     end
     if M.EX == 2 then scroll = min(scroll + .26, maxScroll) end
@@ -683,13 +690,17 @@ function scene.draw()
                     -- Icon
                     local slice = texture.iconQuad[a.id]
                     if slice and (a.rank > 0 or a.progress > 0) then
+                        local upsideDown = {'-3', '-4', '-5', '-6', '-7', '-8', '-9', 'whelmed_smithy'}
+                        local index = TABLE.find(smithys, a.id) or a.id == "speedrunning_smithy" and 7 or a.id == 'ultimate_smithy' and 8 or 0
                         if a.rank > 0 then
                             gc_setColor(0, 0, 0, .872)
                         else
                             gc_setColor(1, 1, 1, .26)
                         end
-                        if a.id == "-3" or a.id == "-4"or a.id == "-5" or a.id == "-6" or a.id == "-7" or a.id == "-8" or a.id == "-9" then
-                            gc_mDrawQ(texture.icons, slice or texture.iconQuad._undef, 65, 65, math.pi, .24)
+                        if TABLE.find(upsideDown, a.id) then
+                            gc_mDrawQ(texture.icons, slice or texture.iconQuad._undef, 65, 65, 3.141592654, .24)
+                        elseif index > 0 then
+                            gc_mDrawQ(texture.icons, slice or texture.iconQuad._undef, 65, 65, smithyRotation[index], .24)
                         else
                             gc_mDrawQ(texture.icons, slice or texture.iconQuad._undef, 65, 65, 0, .24)
                         end

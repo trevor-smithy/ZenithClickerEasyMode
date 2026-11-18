@@ -458,17 +458,36 @@ TEXTURE = {
             biased = aq(4, 5),
             quick_pick = aq(2, 3),
             -- Misc
-            --adrenaline_junkie = aq(),
+            adrenaline_junkie = aq(5, 5),
             -- Easy Mode - Stacker
-            modifier_stacking = aq(7,6),
-            --[[glissando = aq(),
-            secret_grade = aq(),
-            garbage_in_garbage_out = aq(),
-            its_a_feature = aq(),
+            modifier_stacking = aq(7, 6),
+            glissando = aq(15, 8),
+            secret_grade = aq(8, 6),
+            garbage_in_garbage_out = aq(4, 7),
+            its_a_feature = aq(6, 5),
             -- Easy Mode - Smithy
-            -- special?
-            eEXeGVeINeMSrDHrNH = aq(),
-            eASeDPeEXeNHrINrMS = aq(),]]
+                --special
+                programming_smithy = aq(10, 8),
+                uneasy_smithy = aq(10, 8),
+                swamped_smithy = aq(10, 8),
+                bogged_smithy = aq(10, 8),
+                overwhelmed_smithy = aq(10, 8),
+                paralyzed_smithy = aq(10, 8),
+                speedrunning_smithy = aq(10, 8),
+                ultimate_smithy = aq(10, 8),
+            -- Ultras
+            blasphemous_ascension = aq(11, 1),
+            paradoxical_entropy = aq(13, 1),
+            depraved_galaxy = aq(10, 1),
+            severed_volition = aq(9, 1),
+            whelmed_smithy = aq(10, 8),
+            dead_on_arrival = aq(16, 1),
+            epic_grandmaster_duel = aq(9, 3),
+            guessing_game = aq(12, 1),
+            final_development = aq(15, 6),
+            when_its_ready = aq(10, 6),
+            ultimate_challenge = aq(16, 6),
+            friendly_challenge = aq(1, 6),
         },
         frame = {
             [0] = assets 'achievements/frames/none.png',
