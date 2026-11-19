@@ -660,4 +660,9 @@ return {
         "Congratulations on completing the Friendly Challenge!
         Now just to stop relying on your friend and do it by yourself!"
     ]],
+    ['uEX eNH eMS uGV uVL eDH eIN uAS'] = STRING.trimIndent [[
+        "I swear I am not doing anything more after this update...
+        I say that, but chances are that I'm eventually going to find something else I want to do with ZCEM.
+        In any case, this is just a new beginning for my role in this community. Big things coming soon..."
+    ]],
 }
