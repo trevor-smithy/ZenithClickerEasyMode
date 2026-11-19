@@ -84,7 +84,10 @@ function scene.update()
                 MSG('dark', "Alt strings applied")
                 SFX.play('social_online')
             elseif code:find('1111111111') then
-                MSG('dark', OverDevProgressText)
+                MSG('dark', OverDevProgressText, 5)
+                if OverDevProgressText ~= OverZCEMDevProgressText then
+                    MSG('dark', OverZCEMDevProgressText, 5)
+                end
                 SFX.play('social_online')
             elseif code:find('2222222222') then
                 if not TestMode then

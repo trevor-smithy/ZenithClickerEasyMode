@@ -1095,7 +1095,7 @@ end
 
 local boardRX, boardRY = 790, 232
 local function switchBoardCoord()
-    local k = 42 * GAME.shakeTimer * CONF.damageShakiness / 100
+    local k = 42 * GAME.shakeTimer * (CONF.classicMode and 0 or CONF.damageShakiness) / 100
     if GAME.shakeTimer > 0 then gc_translate(MATH.rand(-1, 1) * k, MATH.rand(-1, 1) * k) end
     gc_translate(800, boardRY + 5 + (GAME.playing and (GAME.boardAnim - 1) * 62 or (1 - GAME.boardAnim) * 1260))
     if not GAME.playing then GC.rotate((1 - GAME.boardAnim) * .162) end
@@ -1238,10 +1238,10 @@ function scene.draw()
             -- Draw board
             local boardClr = GAME.clr_board
             stc_setComp('equal', 1)
-            gc_setColor(.05, .05, .05, (GAME.playing and GAME.boardAnim ^ 4.2 or 1) * CONF.boardOpacity / 100)
+            gc_setColor(.05, .05, .05, (GAME.playing and GAME.boardAnim ^ 4.2 or 1) * (CONF.classicMode and 0 or CONF.boardOpacity) / 100)
             gc_mRect('fill', 0, 0, boardRX * 2, boardRY * 2)
             stc_setComp('equal', 2)
-            gc_setColor(boardClr[1], boardClr[2], boardClr[3], (GAME.playing and GAME.boardAnim ^ 4.2 or 1) * CONF.boardOpacity / 100)
+            gc_setColor(boardClr[1], boardClr[2], boardClr[3], (GAME.playing and GAME.boardAnim ^ 4.2 or 1) * (CONF.classicMode and 0 or CONF.boardOpacity) / 100)
             gc_mRect('fill', 0, 0, boardRX * 2, boardRY * 2)
             stc_stop()
             if M.EX > 0 then
@@ -2406,7 +2406,7 @@ function scene.overDraw()
     end
 
     -- Steadfast cover
-    if (GAME.glassCard or GAME.eglassCard) and not CONF.classicMode then
+    if (GAME.glassCard or (GAME.eglassCard and CONF.steadfastOverlay)) and not CONF.classicMode then
         gc_replaceTransform(SCR.origin)
         gc_setColor(1, 0, 1, (GAME.playing and .626 or 1) * .42)
         gc_draw(TEXTURE.transition, 0, 0, -1.5708, .35 / 128 * -SCR.h, SCR.w)

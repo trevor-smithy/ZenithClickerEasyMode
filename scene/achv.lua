@@ -15,6 +15,7 @@ local Achievements = Achievements
 local M = GAME.mod
 
 OverDevProgressText = "Open ACHV page to refresh the over-dev progress."
+OverZCEMDevProgressText = "Open ACHV page to refresh the over-dev progress."
 
 ---@class EmptyAchv
 ---@field title string
@@ -86,7 +87,7 @@ function RefreshAchvList(canShuffle)
     for _, achvList in next, achvLists do
         TABLE.clear(achvList)
     end
-    local odCount, odCap, countSinceLastTitle = 0, 0, 0
+    local odCount, odCap, ZCEModCount, ZCEModCap, countSinceLastTitle = 0, 0, 0, 0, 0
     for i = 1, #Achievements do
         local A = Achievements[i]
         local modAchvList = achvList
@@ -140,7 +141,11 @@ function RefreshAchvList(canShuffle)
                 end
                 local devScore = DevScore[A.id] or A.noScore or 0
                 overDev = selfScore == devScore or A.comp(selfScore, devScore)
-                odCap = odCap + 1
+                if A.mod == 'ZCEM' then
+                    ZCEModCap = ZCEModCap + 1
+                else
+                    odCap = odCap + 1
+                end
             end
             TEXTS.temp30:set(A.desc)
             local hidden = A.hide() and not ACHV[A.id]
@@ -166,13 +171,18 @@ function RefreshAchvList(canShuffle)
                 countSinceLastTitle = countSinceLastTitle + 1
             end
             if overDev then
-                odCount = odCount + 1
+                if A.mod == "ZCEM" then 
+                    ZCEModCount =  ZCEModCount + 1 
+                else
+                    odCount = odCount + 1
+                end
             end
         end
     end
     if odCount >= odCap * .62 then IssueSecret('exceed_dev', true) end
     if odCount >= odCap * .26 then IssueSecret('exceed_dev_half', true) end
     OverDevProgressText = "ACHV scores better than Dev: " .. odCount .. "/" .. odCap
+    OverZCEMDevProgressText = "ACHV scores better than ZCEM Dev: " .. ZCEModCount .. "/" .. ZCEModCap
     if canShuffle then
         if M.NH == 2 then
             TABLE.foreach(achvLists[page], function(v) return not v.id end, true)
@@ -478,7 +488,7 @@ function scene.load()
         whenItsReady = URM and M.IN == 2 or MATH.roll(.01 + M.IN * .026)
     end
 
-    hyper = M.EX ~= 0 or BgmPlaying == 'tera' or BgmPlaying == 'terar'
+    hyper = M.EX ~= 0 or BgmPlaying == 'tera' or BgmPlaying == 'terar' or BgmPlaying == 'terae' or BgmPlaying == 'teral' or BgmPlaying == 'terael'
 
     RefreshAchvList(true)
 

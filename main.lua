@@ -359,7 +359,7 @@ CONF = {
     damageShakiness = 0,
     cursorSize = 90,
     rot3D = false,
-    rot3D_focal = 50,
+    rot3D_focal = 0,
     rot3D_tilt = 50,
 
     oldHitbox = false,
@@ -371,6 +371,7 @@ CONF = {
     oldTransparentCard = false,
     lyrics = false,
     classicMode = true,
+    steadfastOverlay = true,
 }
 SR = {}
 LB = {}
@@ -1023,8 +1024,9 @@ local pressValue = 0
 local function starCursor(x, y)
     if CursorHide or GAME.zenithTraveler then return end
     if CONF.classicMode then
+        local k = CONF.cursorSize/100
         gc_translate(x, y)
-        gc_scale(1.42)
+        gc_scale(1.42*k)
         gc_rotate(MATH.lerp(-.626, -1.2, pressValue))
         gc_scale(.8 + .2 * pressValue, 1)
         local l = .626 + .374 * pressValue
@@ -1575,7 +1577,7 @@ function Daemon_Fast()
         STAT.srTimer_life = STAT.srTimer_life + dt
         
         -- Calculate board color
-        if GAME.playing and CONF.boardOpacity > 0 then
+        if GAME.playing and (CONF.classicMode and 0 or CONF.boardOpacity) > 0 then
             local r, g, b
             local patch = GAME.boardColorPatch
             local hp2 = GAME[GAME.getLifeKey(true)]

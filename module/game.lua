@@ -4437,6 +4437,7 @@ local KBisDown = love.keyboard.isDown
 local damned = false
 function GAME.update(dt)
     GAME.spikeTimer = GAME.spikeTimer - dt
+    GAME.shakeTimer = GAME.shakeTimer - dt
     for i = #GAME.windupAnim, 1, -1 do
         local w = GAME.windupAnim[i]
         w.bumpTime = w.bumpTime - (GAME.slowmo and dt / 2 or dt)

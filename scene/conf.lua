@@ -6,9 +6,9 @@ local scene = {}
 -- 2. User
 -- 3. Album
 -- 4. ZCEM
-local ZCEMpage = 4
+local ZCEMpage = 5
 local page = 1
-local maxPage = 4
+local maxPage = 5
 local uidList = {} ---@type ({uid: string, modTime?: string} | false)[]
 
 local anonUser
@@ -198,7 +198,7 @@ local function refreshWidgets()
                 end
                 W:resetPos()
             end
-            if GAME.eglassCard and TABLE.find(zcem, W.name) then
+            if GAME.eglassCard and CONF.classicMode and TABLE.find(zcem, W.name) then
                 if W.name and #W.name > 2 and W.type ~= "button" and W.type ~= "hint" and W.name ~= "urm" then
                     W.textColor = COLOR.L
                 end
@@ -523,7 +523,7 @@ function scene.draw()
         SCN.curScroll = -dy
     end
     gc_setColor(page == ZCEMpage and ZCEMclr.D or clr.D)
-    if GAME.eglassCard then
+    if GAME.eglassCard and CONF.classicMode then
         local speedMod = ((GAME.enightcore or GAME.nightcore) and 2 or 1) * (GAME.eslowmo and 0.75 or 1) * (GAME.slowmo and 0.5 or 1)
         gc_setColor(bgmColors[BgmPlaying] or clr.LT)
         if BgmPlaying == 'tera' or BgmPlaying == 'terar' or BgmPlaying == 'terae' or BgmPlaying == 'teral' or BgmPlaying == 'terael' then
@@ -545,6 +545,16 @@ function scene.draw()
         gc_setColor(0, .42, 1, (GAME.mod.EX > 0 and .62 or .42))
         gc_draw(TEXTURE.transition, 0, 0, 0, .42 / 128 * SCR.w, SCR.h)
         gc_draw(TEXTURE.transition, SCR.w, 0, 0, -.42 / 128 * SCR.w, SCR.h)
+        gc_replaceTransform(SCR.xOy)
+        gc.translate(baseX, baseY)
+    end
+
+    -- Steadfast cover
+    if ((GAME.eglassCard and CONF.steadfastOverlay)) and not CONF.classicMode then
+        gc_replaceTransform(SCR.origin)
+        gc_setColor(1, 0, 1, (GAME.playing and .626 or 1) * .42)
+        gc_draw(TEXTURE.transition, 0, 0, -1.5708, .35 / 128 * -SCR.h, SCR.w)
+        gc_draw(TEXTURE.transition, 0, SCR.h, -1.5708, .35 / 128 * SCR.h, SCR.w)
         gc_replaceTransform(SCR.xOy)
         gc.translate(baseX, baseY)
     end
@@ -670,6 +680,16 @@ function scene.draw()
             gc_mRect('fill', len * BgmNeedSkip[2] / playingBgmLength, 48, 2, 9)
         end
         gc_ucs_back()
+    elseif page == 4 then
+            drawSliderComponents(180, "CURSOR SIZE", "SMALL", "LARGE", CONF.cursorSize)
+        if not CONF.classicMode then
+            drawSliderComponents(340, "BOARD  OPACITY", "TRANSPARENT", "OPAQUE", CONF.boardOpacity)
+            drawSliderComponents(420, "DAMAGE  SHAKINESS", "STIFF", "SHAKY", CONF.damageShakiness)
+            drawSliderComponents(580, "3D  ROTATION  TILT", "PLAIN", "TILT", CONF.rot3D_tilt)
+            drawSliderComponents(660, "3D  ROTATION  FOCAL", "FAR", "CLOSE", CONF.rot3D_focal)
+        else
+            drawSliderComponents(580, "2D  ROTATION  TILT", "PLAIN", "TILT", CONF.rot3D_tilt)
+        end
     end
 
     -- Top bar & title
@@ -1417,7 +1437,116 @@ albumBtn {
     end,
     visibleFunc = function() return page == 3 and ACHV.programmer_gamer and ACHV.programmer_gamer >= 1650 end,
 }
-
+pages[4] = {
+    WIDGET.new {
+        type = 'checkBox',
+        fillColor = clr.cbFill,
+        frameColor = clr.cbFrame,
+        textColor = clr.T, text = "CLASSIC MODE",
+        x = baseX + 50, y = baseY + 50,
+        disp = function() return CONF.classicMode end,
+        code = function()
+            local multiple = GAME.multiplePiecesActive
+            MSG.clear()
+            CONF.classicMode = not CONF.classicMode
+            SFX.play(CONF.classicMode and 'spin' or 'spinend')
+            MSG('dark', "Classic Mode: " .. (CONF.classicMode and "Enabled" or " Disabled"))
+            GAME.multiplePiecesActive = false
+            SaveConf()
+            if multiple then GAME.multiplePiecesActive = true end
+            refreshWidgets()
+        end,
+    },
+    WIDGET.new {
+        name = 'steadfastOverlay', type = 'checkBox',
+        fillColor = clr.cbFill,
+        frameColor = clr.cbFrame,
+        textColor = clr.T, text = "STEADFAST+ OVERLAY",
+        x = baseX + 400, y = baseY + 50,
+        disp = function() return CONF.steadfastOverlay end,
+        code = function()
+            local multiple = GAME.multiplePiecesActive
+            MSG.clear()
+            CONF.steadfastOverlay = not CONF.steadfastOverlay
+            SFX.play(CONF.steadfastOverlay and 'spin' or 'spinend')
+            MSG('dark', "Steadfast+ Overlay: " .. (CONF.steadfastOverlay and "Enabled" or "Disabled"))
+            GAME.multiplePiecesActive = false
+            SaveConf()
+            if multiple then GAME.multiplePiecesActive = true end
+            refreshWidgets()
+        end,
+        visibleFunc = function() return page == 4 and not CONF.classicMode end,
+    },
+    WIDGET.new { -- Cursor
+        type = 'text', alignX = 'left',
+        text = "CURSOR",
+        color = clr.T,
+        fontSize = 50,
+        x = baseX + 30, y = baseY + 110,
+    },
+    WIDGET.new { -- cursor size
+        name = 'cursorSize', type = 'slider',
+        x = baseX + 240 + 85, y = baseY + 180, w = 400,
+        axis = { 50, 120, 5 },
+        frameColor = 'dD', fillColor = clr.D,
+        disp = function() return CONF.cursorSize end,
+        code = function(value) CONF.cursorSize = value end,
+        sound_drag = 'rotate',
+    },
+    WIDGET.new { -- Board
+        type = 'text', alignX = 'left',
+        text = "BOARD",
+        color = clr.T,
+        fontSize = 50,
+        x = baseX + 30, y = baseY + 260,
+    },
+    WIDGET.new { -- board opacity
+        type = 'slider',
+        x = baseX + 240 + 85, y = baseY + 340, w = 400,
+        axis = { 0, 80, 10 },
+        frameColor = 'dD', fillColor = clr.D,
+        disp = function() return CONF.boardOpacity end,
+        code = function(value) CONF.boardOpacity = value end,
+        sound_drag = 'rotate',
+        visibleFunc = function() return page == 4 and not CONF.classicMode end,
+    },
+    WIDGET.new { -- damage shakiness
+        type = 'slider',
+        x = baseX + 240 + 85, y = baseY + 420, w = 400,
+        axis = { 0, 100, 10 },
+        frameColor = 'dD', fillColor = clr.D,
+        disp = function() return CONF.damageShakiness end,
+        code = function(value) CONF.damageShakiness = value end,
+        sound_drag = 'rotate',
+        visibleFunc = function() return page == 4 and not CONF.classicMode end,
+    },
+    WIDGET.new { -- Card
+        type = 'text', alignX = 'left',
+        text = "CARD",
+        color = clr.T,
+        fontSize = 50,
+        x = baseX + 30, y = baseY + 500,
+    },
+    WIDGET.new { -- 3D rotation tilt
+        name = 'rot3D_tilt', type = 'slider',
+        x = baseX + 240 + 85, y = baseY + 580, w = 400,
+        axis = { 0, 100, 10 },
+        frameColor = 'dD', fillColor = clr.D,
+        disp = function() return CONF.rot3D_tilt end,
+        code = function(value) CONF.rot3D_tilt = value end,
+        sound_drag = 'rotate',
+    },
+    WIDGET.new { -- 3D rotation focal
+        name = 'rot3D_focal', type = 'slider',
+        x = baseX + 240 + 85, y = baseY + 660, w = 400,
+        axis = { 0, 100, 10 },
+        frameColor = 'dD', fillColor = clr.D,
+        disp = function() return CONF.rot3D_focal end,
+        code = function(value) CONF.rot3D_focal = value end,
+        sound_drag = 'rotate',
+        visibleFunc = function() return page == 4 and not CONF.classicMode end,
+    },
+}
 -- ZCEM page
 pages[ZCEMpage] = {
     WIDGET.new { -- Game Play
@@ -1589,7 +1718,6 @@ pages[ZCEMpage] = {
             local multiple = GAME.multiplePiecesActive
             MSG.clear()
             CONF.classicMode = not CONF.classicMode
-            CONF.boardOpacity = CONF.classicMode and 0 or 50
             SFX.play(CONF.classicMode and 'spin' or 'spinend')
             MSG('dark', "Classic Mode: " .. (CONF.classicMode and "Enabled" or " Disabled"))
             GAME.multiplePiecesActive = false
@@ -1937,6 +2065,7 @@ local tab = {
     newTabBtn("CONF   ", 140 + 90 * 0, '1'),
     newTabBtn("USER   ", 140 + 90 * 1, '2'),
     newTabBtn("ALB   ", 140 + 90 * 2, '3'),
+    newTabBtn("UI    ", 140 + 90 * 3, '4'),
     newTabBtn("ZCEM   ", 140 + 90 * (ZCEMpage - 1), tostring(ZCEMpage), 'DG', { .15, .75, .15 }),
     WIDGET.new {
         name = 'back', type = 'button',
